@@ -244,7 +244,8 @@ class Tile: public TTexture{
 		SDL_Rect render(int xpos, int ypos, int tscale, TileProperties tProps);
 		void renderEd(int xpos, int ypos, Palette* tpal);
 		int loadFromFile(std::string filename,Palette* tpal);
-		int loadFromBuffer(std::vector<unsigned char> &cTileBuf,Palette* tpal);		
+		int loadFromBuffer(std::vector<unsigned char> &cTileBuf,Palette* tpal);	
+		int createNew(Palette* tpal);	
 		bool bIsSelected = false;
 };	
 
@@ -257,6 +258,7 @@ class TileSet{
 		SDL_Rect mTileSetBackGround;
 		int loadFromFolder(std::string tpath, Palette* tpal);
 		int saveToFolder(std::string tpath);
+		int createNew(Palette* tpal);
 		int render(int ypos, int mScroll);
 };
 
@@ -280,6 +282,7 @@ class TileMap{
 		std::vector<SDL_Rect> TileAreas;
 		int loadFromFile(std::string path, std::string filename);
 		int saveToFolder(std::string tpath);
+		int createNew();
 		int render(int xpos,int ypos,TileSet* mTiles);
 		std::map<int,int> mTilemapSizesIn = {{0,32},{1,64},{2,128},{3,256}};
 		std::map<int,int> mTilemapSizesOut = {{32,0},{64,1},{128,2},{256,3}};
@@ -696,6 +699,14 @@ int Palette::render(int xpos,int ypos){
 return 0;
 }
 
+int Tile::createNew(Palette* tpal){
+	initTile();
+	initTexture();
+    FileData.resize(mGlobalSettings.TileSize * mGlobalSettings.TileSize, 0);
+	updateTexture(tpal);
+	return 0;
+}
+
 int Tile::initTile(){
 	PixelAreas.resize(mGlobalSettings.TileSize*mGlobalSettings.TileSize);
 	return 0;
@@ -763,6 +774,16 @@ int Tile::loadFromFile(std::string filename,Palette* tpal){
 int Tile::loadFromBuffer(std::vector<unsigned char> &cTileBuf,Palette* tpal){ 
 	initTile();	
 	return TTexture::loadFromBuffer(cTileBuf,tpal);
+}
+
+int TileSet::createNew(Palette* tpal){
+
+	TTiles.resize(1);
+	TileAreas.resize(1);
+
+	TTiles[0].createNew(tpal);
+
+	return 0;
 }
 
 int TileSet::loadFromFolder(std::string path, Palette* tpal){ 
@@ -876,6 +897,14 @@ int TileSet::render(int ypos, int mScroll){
 
 
 return 0;
+}
+
+int TileMap::createNew(){
+
+	FileData.resize(mGlobalSettings.TileMapWidth * mGlobalSettings.TileMapHeight * 2, 0);
+	TileAreas.resize(mGlobalSettings.TileMapWidth * mGlobalSettings.TileMapHeight);
+
+	return 0;
 }
 
 int TileMap::loadFromFile(std::string path, std::string filename){
@@ -1527,10 +1556,34 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 }
 
 int TEditor::createNewProject(){
-	std::cout << "Creating Project" << std::endl;
-	std::cout << "TileMapWidth: " << mGlobalSettings.TileMapWidth << " TileMapHeight: " << mGlobalSettings.TileMapHeight << " TileSize: " << mGlobalSettings.TileSize << std::endl;												
-	return 1;
+	std::cout << "Creating Project: " << mGlobalSettings.ProjectPath << std::endl;
+	std::cout << "TileMapWidth: " << mGlobalSettings.TileMapWidth << " TileMapHeight: " << mGlobalSettings.TileMapHeight << " TileSize: " << mGlobalSettings.TileSize << std::endl;	
+	mPalette.initPalette();
+	mPalette.initTPixels();
+	mTileMap.createNew();										
+	mTileSet.createNew(&mPalette);
+
+	mMapSelectedTile = 0;
+	mTileSelectedTile = &mTileSet.TTiles[0];
+	mTileSelectedTile->bIsSelected = true;
+	mColorSelectedTile = mPalette.TPixels[0];
+	mColorSelectedTile->bPixelSelected = true;
+	mColorSelected = 0;
+
+	mLastAction = &mEmptyAction;
+	mSaveDialog.init();
+	mSaveAsDialog.mDialogTextInput = mTileMap.DataPath;
+	mSaveAsDialog.init();
+	mSaveAsDialog.mSubDialog = &mSaveDialog;
+	mHelpDialog.init();
+	mTopBar.mEditor = this;
+	mTopBar.init();
+	mProjectInfo.init();
+
+	return 0;
 }
+
+
 
 int TEditor::loadFromFolder(std::string path){
 	mPalette.initPalette();
@@ -2141,7 +2194,7 @@ void printUsage(){
 		std::cout << "Usage:" << std::endl;	
 		std::cout << "tilemaped -o <folder>" << std::endl;
 		std::cout << "Or" << std::endl;	
-		std::cout << "tilemaped -n <mapsize> <tilesize>" << std::endl;
+		std::cout << "tilemaped -n <mapwidth> <mapheight> <tilesize> <folder>" << std::endl;
 		std::cout << "Fx: tilemaped -n 128 16" << std::endl;
 		std::cout << "tilemaped -h (For help on UI usage)" << std::endl;		
 }
@@ -2151,10 +2204,11 @@ int main( int argc, char* args[] )
 	TEditor mEditor;
 	std::stringstream mConvert;
 	int nTileSize = 0;
-	int nMapSize = 0;
+	int nMapSizeX = 0;
+	int nMapSizeY = 0;	
 	bool mCreateNewProject=false;
 	
-	if((argc == 1) || (argc == 2) || (argc > 5)){
+	if((argc < 3) || ((argc > 3) && (argc < 6)) || (argc > 6)){
 		if((argc == 2) && (std::string(args[1]) == "-h")){
 			mGlobalSettings.printHelpText();
 		} else {
@@ -2176,40 +2230,36 @@ int main( int argc, char* args[] )
 		}
 	}
 	
-	if((argc == 4) || (argc == 5)){
+	if(argc == 6){
 		if(std::string(args[1]) != "-n"){
 			printUsage();
 			return 1;
 		}
 		
 		mConvert << std::string(args[2]) << std::endl;
-		mConvert >> nMapSize;
+		mConvert >> nMapSizeX;
 		
-		if((nMapSize == 32) || (nMapSize == 64) || (nMapSize == 128) || (nMapSize == 256)){	
-			mGlobalSettings.TileMapHeight = nMapSize;
-			mGlobalSettings.TileMapWidth = nMapSize;						
+		if((nMapSizeX == 32) || (nMapSizeX == 64) || (nMapSizeX == 128) || (nMapSizeX == 256)){				
+			mGlobalSettings.TileMapWidth = nMapSizeX;						
 		} else {
 			std::cout << "Wrong TileMap Size!" << std::endl;
 			std::cout << "Valid Values are: 32, 64, 128, 256" << std::endl;						
 			return 1;
 		}
 		
-		if(argc == 5){
-			mConvert << std::string(args[3]) << std::endl;
-			mConvert >> nMapSize;
+		mConvert << std::string(args[3]) << std::endl;
+		mConvert >> nMapSizeY;
 		
-			if((nMapSize == 32) || (nMapSize == 64) || (nMapSize == 128) || (nMapSize == 256)){	
-				mGlobalSettings.TileMapHeight = nMapSize;
-			} else {
-				std::cout << "Wrong TileMap Size!" << std::endl;
-				std::cout << "Valid Values are: 32, 64, 128, 256" << std::endl;						
-				return 1;
-			}			
-		}
+		if((nMapSizeY == 32) || (nMapSizeY == 64) || (nMapSizeY == 128) || (nMapSizeY == 256)){	
+			mGlobalSettings.TileMapHeight = nMapSizeY;
+		} else {
+			std::cout << "Wrong TileMap Size!" << std::endl;
+			std::cout << "Valid Values are: 32, 64, 128, 256" << std::endl;						
+			return 1;
+		}			
+	
 
-		if(argc == 5){mConvert << std::string(args[4]) << std::endl;} else {
-			mConvert << std::string(args[3]) << std::endl;}
-		
+		mConvert << std::string(args[4]) << std::endl;		
 		mConvert >> nTileSize;
 	
 		if((nTileSize == 16) || (nTileSize == 8)){	
@@ -2219,6 +2269,14 @@ int main( int argc, char* args[] )
 			std::cout << "Valid Values are: 8, 16" << std::endl;						
 			return 1;
 		}
+
+		if(fs::exists(fs::status(args[5]))){
+			std::cout << "Error Folder Exists! " << std::endl;						
+			return 1;
+		} else {
+			mGlobalSettings.ProjectPath = std::string(args[5]);						
+		}		
+
 		mCreateNewProject=true;
 		
 	}
