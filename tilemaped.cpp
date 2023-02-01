@@ -1969,8 +1969,7 @@ int TSettings::initSettings(){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
 		return 1;
 	}
-	TWindow = SDL_CreateWindow( "Simple TileMap Editor", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WindowWidth, WindowHeight, SDL_WINDOW_SHOWN );
-
+	TWindow = SDL_CreateWindow( "Simple Tilemap Editor", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WindowWidth, WindowHeight, SDL_WINDOW_SHOWN );
 	if( TWindow == NULL ){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
 		return 1;

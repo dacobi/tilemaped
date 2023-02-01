@@ -1,6 +1,8 @@
 # tilemaped
 Simple Tilemap Editor is a tilemap editor for the Commander X16 retro computer.
 
+(It's not currently functional, but is being worked on)
+
 It uses C++17 and SDL2, SDL2_image and SDL2_ttf.
 
 The only OS specific code is #define DIRDEL "/" so it should compile on any system with a working C++17 compiler and the required SDL2 libs.
