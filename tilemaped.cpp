@@ -14,6 +14,7 @@
 
 #include "cx16_palette.h"
 
+//#define DIRDEL "\"
 #define DIRDEL "/"
 
 namespace fs = std::filesystem;
