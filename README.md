@@ -1,4 +1,4 @@
-# tilemaped
+# Tilemaped
 Simple Tilemap Editor is a tilemap editor for the Commander X16 retro computer.
 
 (It's not currently complete, but is being worked on)
