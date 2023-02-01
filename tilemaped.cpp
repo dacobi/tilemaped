@@ -1598,10 +1598,14 @@ int TEditor::render(){
 	}
 	
 	if(mCurMode == EMODE_TILE){
-		mPalette.render(100+mGlobalSettings.mTileEdScale*mGlobalSettings.TileSize*mGlobalSettings.TileSize,50);	
+		mPalette.render(100+mGlobalSettings.mTileEdScale*mGlobalSettings.TileSize*mGlobalSettings.TileSize,50+mTopBar.mDialogHeight);	
 		mColorSelectedTile->bPixelSelected = false;
-		mTileSelectedTile->renderEd(50,50,&mPalette);
+		mTileSelectedTile->renderEd(50,50+mTopBar.mDialogHeight,&mPalette);
 		mColorSelectedTile->bPixelSelected = true;
+		if(mActiveDialog){
+			mActiveDialog->render((mGlobalSettings.WindowWidth/2)-(mActiveDialog->mDialogWidth/2),(mGlobalSettings.WindowHeight/2)-(mActiveDialog->mDialogHeight/2));
+		}
+		mTopBar.render(0,0);
 	}
 
 	return 0;
@@ -1613,6 +1617,7 @@ int TEditor::switchMode(){
 	} else {
 		mCurMode = EMODE_MAP;
 	}
+	mTopBar.init();
 	return 0;
 }
 
