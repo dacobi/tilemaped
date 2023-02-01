@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iterator>
 #include <set>
+#include <map>
 #include <filesystem>
 #include <sstream>
 
@@ -46,6 +47,7 @@ class TSettings{
 		int TileMapWidth=128;
 		int TileSize=16;
 		std::string ProjectPath;
+		int mProjectSaveState = 0;
 		int TopBarHeight = 50;
 		SDL_Renderer *TRenderer;
 		SDL_Window *TWindow;
@@ -254,6 +256,7 @@ class TileSet{
 		int mCurTileScale=10;
 		SDL_Rect mTileSetBackGround;
 		int loadFromFolder(std::string tpath, Palette* tpal);
+		int saveToFolder(std::string tpath);
 		int render(int ypos, int mScroll);
 };
 
@@ -276,8 +279,12 @@ class TileMap{
 		TileProperties getTileProp(int cTile);
 		std::vector<SDL_Rect> TileAreas;
 		int loadFromFile(std::string path, std::string filename);
+		int saveToFolder(std::string tpath);
 		int render(int xpos,int ypos,TileSet* mTiles);
+		std::map<int,int> mTilemapSizesIn = {{0,32},{1,64},{2,128},{3,256}};
+		std::map<int,int> mTilemapSizesOut = {{32,0},{64,1},{128,2},{256,3}};
 };
+
 
 class TEAction{
 	public:
@@ -410,6 +417,7 @@ class TEditor{
 		int handleEvents(SDL_Event* cEvent);
 		int handleEvents();
 		int loadFromFolder(std::string path);
+		int saveToFolder(std::string path);
 		int createNewProject();
 		int render();
 		int switchMode();
@@ -807,11 +815,29 @@ int TileSet::loadFromFolder(std::string path, Palette* tpal){
 
 	for(auto &mTile : TTiles){
 		std::vector<unsigned char>::const_iterator first = tbuffer.begin() + (tCount * tmpTileSize);
-		std::vector<unsigned char>::const_iterator last = tbuffer.begin() + ((tCount * tmpTileSize) + (tmpTileSize - 1));
+		std::vector<unsigned char>::const_iterator last = tbuffer.begin() + ((tCount * tmpTileSize) + (tmpTileSize));
 		std::vector<unsigned char> tbuffer2(first, last);
 		mTile.loadFromBuffer(tbuffer2 ,tpal);
 		tCount++;
 	}
+
+	return 0;
+}
+
+int TileSet::saveToFolder(std::string tpath){
+	std::ofstream outfile(tpath+DIRDEL+"tiles.bin", std::ios::binary );
+
+	std::vector<unsigned char> obuffer;
+
+	obuffer.push_back(mGlobalSettings.TileSize);
+	obuffer.push_back(mGlobalSettings.TileSize);
+
+	for(auto &mTile : TTiles){		
+		obuffer.insert(obuffer.end(), mTile.FileData.begin(), mTile.FileData.end());
+	}
+
+	outfile.write((char*)obuffer.data(),obuffer.size());
+	outfile.close();
 
 	return 0;
 }
@@ -868,6 +894,22 @@ int TileMap::loadFromFile(std::string path, std::string filename){
     	int twidth = tbuffer[0];
     	int theigth = tbuffer[1];
         
+		if((twidth >= 0) && (twidth <= 3)){
+			twidth = mTilemapSizesIn[twidth];
+		} else {
+			std::cout << "TileMap File Error!" << std::endl;
+			return 1;
+		}
+
+
+		if((theigth >= 0) && (theigth <= 3)){
+			theigth = mTilemapSizesIn[theigth];
+		} else {
+			std::cout << "TileMap File Error!" << std::endl;
+			return 1;
+		}
+
+
 	tbuffer.erase(tbuffer.begin());
 	tbuffer.erase(tbuffer.begin());
 
@@ -885,6 +927,23 @@ int TileMap::loadFromFile(std::string path, std::string filename){
 
     return 0;
 }
+
+int TileMap::saveToFolder(std::string tpath){
+   	std::ofstream outfile(tpath+DIRDEL+"map.bin", std::ios::binary );
+
+	std::vector<unsigned char> obuffer;
+
+	obuffer.push_back(mTilemapSizesOut[mGlobalSettings.TileMapWidth]);
+	obuffer.push_back(mTilemapSizesOut[mGlobalSettings.TileMapHeight]);
+
+	obuffer.insert(obuffer.end(), FileData.begin(), FileData.end());
+
+	outfile.write((char*)obuffer.data(),obuffer.size());
+	outfile.close();
+
+	return 0;
+}
+
 
 int TileMap::getTile(int cTile){
 	if((cTile > -1) && (cTile < TileAreas.size())){
@@ -1029,6 +1088,7 @@ void SDialog::recieveInput(int mKey){
 	std::cout << "recieveInput " << mKey << std::endl;
 	if(mKey == SDLK_y){
 		bInputIsAccept=true;
+		mGlobalSettings.mProjectSaveState = 1;
 		std::cout << "bInputIsAccept=true" << std::endl;
 	}
 	if(mKey == SDLK_n){
@@ -1133,6 +1193,8 @@ void SADialog::recieveInput(int mKey){
 			if(mKey == SDLK_y){
 				bInputIsAccept=true;
 				bSubDialogActive = false;
+				mGlobalSettings.mProjectSaveState = 1;
+				mGlobalSettings.ProjectPath = mTextInput.mDialogTextMain;
 				std::cout << "bInputIsAccept=true" << std::endl;			
 			}	
 			if(mKey == SDLK_n){
@@ -1146,7 +1208,9 @@ void SADialog::recieveInput(int mKey){
 			if(fs::is_directory(fs::status(mTextInput.mDialogTextMain))){
 				bSubDialogActive = true;
 				bDialogIsWatingForText = false;
-			} else {		
+			} else {
+				mGlobalSettings.mProjectSaveState = 1;
+				mGlobalSettings.ProjectPath = mTextInput.mDialogTextMain;
 				bInputIsAccept=true;
 				std::cout << "bInputIsAccept=true" << std::endl;
 			}
@@ -1505,6 +1569,19 @@ int TEditor::loadFromFolder(std::string path){
 	return 0;
 }
 
+int TEditor::saveToFolder(std::string path){
+
+	fs::path cpath = path;
+	if(!fs::is_directory(fs::status(cpath))){
+		fs::create_directory(cpath);
+	}
+	
+	mTileSet.saveToFolder(path);
+	mTileMap.saveToFolder(path);
+
+	return 0;
+}
+
 int TEditor::render(){
 	mGlobalSettings.updateTicks();
 
@@ -1744,6 +1821,10 @@ int TEditor::handleEvents(){
 	
 	if(mActiveDialog){
 		if(mActiveDialog->bInputIsAccept){
+			if(mGlobalSettings.mProjectSaveState = 1){
+				saveToFolder(mGlobalSettings.ProjectPath);
+				mGlobalSettings.mProjectSaveState = 0;
+			}
 			cancelActiveDialog();
 			return 0;
 		}
