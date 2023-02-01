@@ -83,7 +83,8 @@ class TTFTexture{
 		SDL_Texture *TTFTex=NULL;
 		std::string mTexText;
 		int mTexWidth = 0;
-		int mTexHeight = 0;		
+		int mTexHeight = 0;
+		SDL_Color mTextColor;
 		void setColor(Uint8 red, Uint8 green, Uint8 blue);
 		void setBlendMode(SDL_BlendMode blend);
 		void setAlpha(Uint8 alpha);
@@ -126,6 +127,8 @@ int TTFTexture::loadTTFFromUTF8(std::string cTexText, SDL_Color textColor, TTF_F
 	}
 
 	
+	mTextColor = textColor;
+
 	mTexText = cTexText;
 
 	SDL_Surface* textSurf =  TTF_RenderUTF8_Solid(cFont, cTexText.c_str(), textColor);
@@ -1238,6 +1241,10 @@ void SADialog::recieveInput(int mKey){
 				bSubDialogActive = true;
 				bDialogIsWatingForText = false;
 			} else {
+				if(fs::exists(fs::status(mTextInput.mDialogTextMain))){
+					mTextInput.mTextColor =  {0xff, 0x00, 0x00, 0xff};					
+					return;
+				}
 				mGlobalSettings.mProjectSaveState = 1;
 				mGlobalSettings.ProjectPath = mTextInput.mDialogTextMain;
 				bInputIsAccept=true;
@@ -1256,6 +1263,7 @@ void SADialog::recieveInput(int mKey){
 void SADialog::dropLastInputChar(){
 	if(mTextInput.mDialogTextMain.size()){
 		mTextInput.mDialogTextMain.pop_back();
+		mTextInput.mTextColor =  {0x20, 0x20, 0x20, 0xff};
 		mTextInput.init();
 		resize();
 	}
