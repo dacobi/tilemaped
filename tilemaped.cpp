@@ -32,6 +32,7 @@ class TEAction;
 class TEActionGroup;
 class TEActionReplaceTile;
 class TEActionReplacePixel;
+class TEActionAddTile;
 class Dialog;
 class SDialog;
 class SADialog;
@@ -273,6 +274,8 @@ class TileSet{
 		Tile* createNew(Palette* tpal);
 		Tile* createNewFromBuffer(std::vector<unsigned char> &newBuf, Palette* tpal);
 		Tile* createNewFromFile(std::string newPAth, Palette* tpal);
+		void dropLastTile();
+		void appendTile(Tile* addTile);
 		int render(int ypos, int mScroll);
 };
 
@@ -302,10 +305,16 @@ class TileMap{
 		std::map<int,int> mTilemapSizesOut = {{32,0},{64,1},{128,2},{256,3}};
 };
 
+enum {
+	ACTION_EMPTY,
+	ACTION_TILE,
+	ACTION_PIXEL,
+	ACTION_TILENEW
+} actions;
 
 class TEAction{
 	public:
-		int TEActionType=0;
+		int TEActionType=ACTION_EMPTY;
 		virtual void undo();
 		virtual void redo();
 		bool operator==(const TEAction& rhs){ if(TEActionType == rhs.TEActionType){return this->doCompare(rhs);} else {return false;}}
@@ -478,8 +487,8 @@ class TEditor{
 		ITDialog mOpenTileDialog;
 		HDialog mHelpDialog;
 		PIDialog mProjectInfo;
-		int createNewTile();
-		int createNewTileFromFile(std::string newTilePath);
+		Tile* createNewTile();
+		Tile* createNewTileFromFile(std::string newTilePath);
 		int activateSaveDialog();
 		int activateOpenTileDialog();
 		int activateHelpDialog();
@@ -536,6 +545,20 @@ class TEActionReplacePixel: public TEAction{
 		}
 };
 
+class TEActionAddTile: public TEAction{
+	public:
+		Tile* mNewTile;
+		TileSet *mTiles;
+		int mOldValue;
+		int mNewValue;
+		void doAction(Tile* cNewTile, int mOld, int mNew, TileSet *cTiles);	
+		virtual void undo();
+		virtual void redo();
+		virtual bool doCompare(const TEAction& rhs){
+			 return false;
+		}
+};
+
 void TEAction::undo(){
 
 }
@@ -566,7 +589,7 @@ void TEActionReplaceTile::doAction(TileMap *cTileMap, int mCurTile, int mOld, in
 	mOldValue = mOld;
 	mNewValue = mNew;
 	mTileMap->setTile(mCurrentTile, mNew);
-	TEActionType=1;
+	TEActionType=ACTION_TILE;
 }
 
 void TEActionReplacePixel::doAction(Tile* mCurTile, int mCurPix, int mOld, int mNew, Palette* mPal){
@@ -577,7 +600,24 @@ void TEActionReplacePixel::doAction(Tile* mCurTile, int mCurPix, int mOld, int m
 	mCurrentPalette = mPal;
 	mCurrentTile->FileData[mCurrentPixel] = mNewValue;
 	mCurrentTile->updateTexture(mCurrentPalette);
-	TEActionType=2;
+	TEActionType=ACTION_PIXEL;
+}
+
+
+void TEActionAddTile::doAction(Tile* cNewTile, int mOld, int mNew, TileSet *cTiles){
+	mTiles = cTiles;
+	mNewTile = cNewTile;
+	mOldValue = mOld;
+	mNewValue = mNew;
+	TEActionType=ACTION_TILENEW;
+}
+
+void TEActionAddTile::undo(){
+	mTiles->dropLastTile();
+}
+
+void TEActionAddTile::redo(){
+	mTiles->appendTile(mNewTile);
 }
 
 void TEActionGroup::undo(){
@@ -625,18 +665,13 @@ int TTexture::initTexture(){
 }
 
 int TTexture::updateTexture(Palette* tpal){
-	if(PixelData.size()){
-		std::cout << "PIXEL KILL!!!" << std::endl;
+	if(PixelData.size()){		
 		PixelData.erase(PixelData.begin(),PixelData.end());
 	}
 
-	int oi=0;
 	for(int i = 0; i < (mGlobalSettings.TileSize * mGlobalSettings.TileSize); i++){
     		PixelData.push_back(tpal->mapPaletteColor(FileData[i]));
-			oi = i; 
 	}
-
-	std::cout << "PixelData: " << oi << std::endl;
 
     SDL_UpdateTexture(TileTex, NULL, PixelData.data(), mGlobalSettings.TileSize * sizeof(Uint32));
 	return 0;
@@ -891,6 +926,14 @@ Tile* TileSet::createNew(Palette* tpal){
 	std::vector<unsigned char> tbuf;
 	tbuf.resize(mGlobalSettings.TileSize * mGlobalSettings.TileSize,0);
 	return createNewFromBuffer(tbuf, tpal);
+}
+
+void TileSet::dropLastTile(){
+	TTiles.pop_back();
+}
+
+void TileSet::appendTile(Tile* addTile){
+	TTiles.push_back(addTile);
 }
 
 int TileSet::loadFromFolder(std::string path, Palette* tpal){ 
@@ -1764,7 +1807,7 @@ int TEditor::createNewProject(){
 
 	mLastAction = &mEmptyAction;
 	mSaveDialog.init();
-	mSaveAsDialog.mDialogTextInput = mTileMap.DataPath;
+	mSaveAsDialog.mDialogTextInput = mGlobalSettings.ProjectPath; 
 	mSaveAsDialog.init();
 	mSaveAsDialog.mSubDialog = &mSaveDialog;
 	mHelpDialog.init();
@@ -1804,7 +1847,7 @@ int TEditor::loadFromFolder(std::string path){
 
 	mLastAction = &mEmptyAction;
 	mSaveDialog.init();
-	mSaveAsDialog.mDialogTextInput = mTileMap.DataPath;
+	mSaveAsDialog.mDialogTextInput = mGlobalSettings.ProjectPath; //mTileMap.DataPath;
 	mSaveAsDialog.init();
 	mSaveAsDialog.mSubDialog = &mSaveDialog;
 	mHelpDialog.init();
@@ -1951,14 +1994,23 @@ int TEditor::activateProjectInfo(){
 }
 
 
-int TEditor::createNewTile(){
-	mTileSet.createNew(&mPalette);
-	return 0;
+Tile* TEditor::createNewTile(){
+
+Tile* newTile = mTileSet.createNew(&mPalette);
+	if(newTile){
+			TEActionAddTile* newActionTile = new TEActionAddTile();
+			newActionTile->doAction(newTile, mTileSet.TTiles.size(), mTileSet.TTiles.size()+1, &mTileSet);
+      			newActionGroup();	
+      			addAction(newActionTile);
+      			mLastAction = newActionTile;
+       			redoClearStack();
+				return newTile;
+	}
+	return NULL;
 }
 
-int TEditor::createNewTileFromFile(std::string newTilePath){
-	mTileSet.createNewFromFile(newTilePath, &mPalette);
-	return 0;
+Tile* TEditor::createNewTileFromFile(std::string newTilePath){
+	return mTileSet.createNewFromFile(newTilePath, &mPalette);
 }
 
 
@@ -1969,7 +2021,6 @@ int TEditor::activateHelpDialog(){
 
 int TEditor::activateSaveDialog(){
 	mActiveDialog = &mSaveDialog;
-//	mActiveDialog->bDialogIsWatingForInput = true;
 	return 0;
 }
 
@@ -1977,7 +2028,6 @@ int TEditor::activateSaveAsDialog(){
 	mActiveDialog = &mSaveAsDialog;
 	mActiveDialog->bDialogIsWatingForText = true;
 	SDL_StartTextInput();
-//	mActiveDialog->bDialogIsWatingForInput = true;
 	return 0;
 }
 
@@ -2097,7 +2147,15 @@ int TEditor::handleEvents(){
 				mGlobalSettings.mProjectSaveState = 0;
 			}
 			if(mGlobalSettings.mOpenTileState == 1){
-				createNewTileFromFile(mGlobalSettings.mNewTilePath);
+				Tile* newTile = createNewTileFromFile(mGlobalSettings.mNewTilePath);
+				if(newTile){
+					TEActionAddTile* newActionTile = new TEActionAddTile();
+					newActionTile->doAction(newTile, mTileSet.TTiles.size(), mTileSet.TTiles.size()+1, &mTileSet);
+	       			newActionGroup();	
+	       			addAction(newActionTile);
+	       			mLastAction = newActionTile;
+	       			redoClearStack();	       			
+				}
 				mGlobalSettings.mOpenTileState = 0;
 			}
 			cancelActiveDialog();
@@ -2109,7 +2167,6 @@ int TEditor::handleEvents(){
 		}
 		if(leftMouseButtonDown){
 			mActiveDialog->recieveInput(x,y);
-			//leftMouseButtonDown=false;
 			waitLeftMouseButton=true;
 		}
 		return 0;
