@@ -22,6 +22,7 @@ namespace fs = std::filesystem;
 
 class TTexture;
 class TTFTexture;
+class TPixel; 
 class Palette;
 class Tile;
 class TileSet;
@@ -230,12 +231,23 @@ class TTexture{
 		bool bPixelSelected = false;
 };
 
+class TPixel{
+	public:
+		SDL_Color PixelColor;
+		SDL_Rect CurrentArea;
+		int setPixelColor(unsigned char tcolor, Palette* tpal);
+		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
+		bool bPixelSelected = false;
+};
+
+
+
 class Palette{
 	public:
 		std::vector<SDL_Color> TPalette;
 		int initPalette();
 		int loadFromFile(std::string palPath);
-		std::vector<TTexture*> TPixels;
+		std::vector<TPixel*> TPixels;
 		std::vector<SDL_Rect> PixelAreas;
 		int initTPixels();
 		Uint32 mapPaletteColor(int tcolor);		
@@ -448,7 +460,7 @@ class TEditor{
 		int mMapSelectedTile;
 		Tile* mTileSelectedTile;
 		int mColorSelected;
-		TTexture* mColorSelectedTile;
+		TPixel* mColorSelectedTile;
 		bool bEditorRunning=true;
 		int handleEvents(SDL_Event* cEvent);
 		int handleEvents();
@@ -680,12 +692,12 @@ int TTexture::updateTexture(Palette* tpal){
 
 SDL_Rect TTexture::render(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
 	SDL_Rect renderQuad = { xpos, ypos, mGlobalSettings.TileSize*tscale, mGlobalSettings.TileSize*tscale};
-        SDL_RenderCopy(mGlobalSettings.TRenderer, TileTex, NULL, &renderQuad);	
-        if(drawGrid){
+    SDL_RenderCopy(mGlobalSettings.TRenderer, TileTex, NULL, &renderQuad);	
+    if(drawGrid){
 		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0x00,0x00,0x00,0xff);
 		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &renderQuad);
-        }
-        if(bPixelSelected){
+    }
+    if(bPixelSelected){
 		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0xFF,0x00,0x00,0xff);
 		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &renderQuad);
 		SDL_Rect sndRect = renderQuad;
@@ -695,12 +707,45 @@ SDL_Rect TTexture::render(int xpos, int ypos, int tscale, bool updateRect ,bool 
 		sndRect.h = sndRect.h+2;
 
 		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &sndRect);
-        }
-        if(updateRect){
+    }
+    if(updateRect){
         	CurrentArea = renderQuad;
-        }
-        return renderQuad;
+    }
+    return renderQuad;
 }
+
+int TPixel::setPixelColor(unsigned char tcolor, Palette* tpal){
+	PixelColor = tpal->TPalette[tcolor];
+	return 0;
+}
+
+
+
+SDL_Rect TPixel::render(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
+	CurrentArea = { xpos, ypos, mGlobalSettings.TileSize*tscale, mGlobalSettings.TileSize*tscale};
+
+	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, PixelColor.r,PixelColor.g,PixelColor.b,0xff);
+	SDL_RenderFillRect(mGlobalSettings.TRenderer, &CurrentArea);
+    
+	if(drawGrid){
+		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0x00, 0x00, 0x00,0xff);
+		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &CurrentArea);
+	}
+
+    if(bPixelSelected){
+		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0xFF,0x00,0x00,0xff);
+		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &CurrentArea);
+		SDL_Rect sndRect = CurrentArea;
+		sndRect.x = sndRect.x-1;
+		sndRect.y = sndRect.y-1;
+		sndRect.w = sndRect.w+2;
+		sndRect.h = sndRect.h+2;
+
+		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &sndRect);
+    }
+    return CurrentArea;
+}
+
 
 SDL_Rect TTexture::renderEx(int xpos, int ypos, int tscale, SDL_RendererFlip flip){
 	SDL_Rect renderQuad = { xpos, ypos, mGlobalSettings.TileSize*tscale, mGlobalSettings.TileSize*tscale};
@@ -776,11 +821,11 @@ int Palette::initPalette(){
 }
 
 int Palette::initTPixels(){
-	TTexture *tmptpix;
+	TPixel *tmptpix;
 	for(int i = 0; i < 256; i++){
-		tmptpix = new TTexture;
-		tmptpix->initTexture();
-		tmptpix->setAllPixels(i, this);
+		tmptpix = new TPixel;
+		//tmptpix->initTexture();
+		tmptpix->setPixelColor(i, this);
 		TPixels.push_back(tmptpix);
 	}
 	return 0;
