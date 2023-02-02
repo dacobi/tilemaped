@@ -16,9 +16,22 @@ int main(int argc, char *argv[])
     outbuffer.push_back(16);
     outbuffer.push_back(42);
 
+    unsigned char tmpChar;
+    int cCount=0;
+
     for(int i = 0; i < 256; i++){
 	for(int j = 0; j < 3; j++){
-            outbuffer.push_back(palette[i][j]);
+	    if(cCount == 0){
+	    	tmpChar = (palette[i][j])/0xf;
+		tmpChar = tmpChar << 4;
+		cCount++;
+		continue;
+	    }
+	    if(cCount == 1){
+	    	tmpChar += (palette[i][j])/0xf;
+	        outbuffer.push_back(tmpChar);
+		cCount = 0;		
+	    }
 	}
     }
 
