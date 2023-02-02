@@ -23,15 +23,21 @@ int main(int argc, char *argv[])
 	for(int j = 0; j < 3; j++){
 	    if(cCount == 0){
 	    	tmpChar = (palette[i][j])/0xf;
-		tmpChar = tmpChar << 4;
+                outbuffer.push_back(tmpChar);
 		cCount++;
 		continue;
 	    }
 	    if(cCount == 1){
-	    	tmpChar += (palette[i][j])/0xf;
-	        outbuffer.push_back(tmpChar);
-		cCount = 0;		
+	    	tmpChar = (palette[i][j])/0xf;
+		tmpChar = tmpChar << 4;
+		cCount++;
+		continue;
 	    }
+	    if(cCount == 2){
+		tmpChar += (palette[i][j])/0xf;
+	        outbuffer.push_back(tmpChar);
+		cCount = 0;
+	    }		
 	}
     }
 
