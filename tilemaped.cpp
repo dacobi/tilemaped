@@ -2400,7 +2400,8 @@ void TSettings::initHelpText(){
 	mHelpText.push_back("Mouse Scroll Wheel: Scale TileMap and Scroll TileSet");
 	mHelpText.push_back("LCTRL + Left Mouse Button: Move TileMap and Scroll TileSet");
 	mHelpText.push_back("Space: Switch between TileMap and Tile Editor");
-	mHelpText.push_back("F: Flip Selected Tile");
+	mHelpText.push_back("F3: Create Empty Tile");
+	mHelpText.push_back("F4: Import Tile from file");
 	mHelpText.push_back("T: Toggle Show Selected Tile in TileMap Editor");									
 	mHelpText.push_back("S: Toggle Show Selected Tile Type in TileMap Editor");
 	mHelpText.push_back("P: Toggle Show Pixel Grid in Tile Editor");
