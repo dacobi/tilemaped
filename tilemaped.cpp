@@ -239,6 +239,7 @@ class Palette{
 		std::vector<SDL_Rect> PixelAreas;
 		int initTPixels();
 		Uint32 mapPaletteColor(int tcolor);
+		unsigned char mapInputColor(unsigned char inCol);
 		int render(int xpos, int ypos);
 		SDL_Rect renderTileEd(int xpos,int ypos, int tcolor);
 		
@@ -729,6 +730,16 @@ Uint32 Palette::mapPaletteColor(int tcolor){
 	return tmpcol;
 }
 
+unsigned char Palette::mapInputColor(unsigned char inCol){
+	switch(inCol){	
+		case 0xf:
+			return 0xff;
+			break;
+	};
+	return inCol * 0xf;
+}
+
+
 int Palette::loadFromFile(std::string filename){
 
 	std::ifstream infile(filename, std::ios::binary );
@@ -745,9 +756,10 @@ int Palette::loadFromFile(std::string filename){
 	if((magic1 == 16) && (magic2 == 42) && (tbuffer.size() == 512)){
 		for(int i = 0; i < 512; i+=2){
 			SDL_Color tmpcol;
-			tmpcol.r = tbuffer[i]*0xf;
-			tmpcol.g = (tbuffer[i+1] >> 4)*0xf;
-			tmpcol.b = (tbuffer[i+1] & 0xf)*0xf;
+			//std::cout << "In Color: " << (int)(tbuffer[i]) << "," << (int)(tbuffer[i+1] >> 4) << "," << (int)(tbuffer[i+1] & 0xf) << std::endl;
+			tmpcol.r = mapInputColor(tbuffer[i]);
+			tmpcol.g = mapInputColor(tbuffer[i+1] >> 4);
+			tmpcol.b = mapInputColor(tbuffer[i+1] & 0xf);
 			tmpcol.a = 255;
 			TPalette.push_back(tmpcol);
 		}
