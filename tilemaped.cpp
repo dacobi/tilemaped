@@ -238,11 +238,10 @@ class Palette{
 		std::vector<TTexture*> TPixels;
 		std::vector<SDL_Rect> PixelAreas;
 		int initTPixels();
-		Uint32 mapPaletteColor(int tcolor);
-		unsigned char mapInputColor(unsigned char inCol);
+		Uint32 mapPaletteColor(int tcolor);		
 		int render(int xpos, int ypos);
 		SDL_Rect renderTileEd(int xpos,int ypos, int tcolor);
-		
+		std::map<int,int> mMapColorIn = {{0,0},{1,17},{2,34},{3,51},{4,68},{5,85},{6,102},{7,119},{8,136},{9,153},{10,170},{11,187},{12,204},{13,221},{14,238},{15,255}};
 };
 
 
@@ -712,7 +711,7 @@ SDL_Rect TTexture::renderEx(int xpos, int ypos, int tscale, SDL_RendererFlip fli
 void TTexture::renderEd(int xpos, int ypos, Palette* tpal){
 	for(int i=0; i < mGlobalSettings.TileSize; i++){
 		for(int j=0; j < mGlobalSettings.TileSize; j++){
-			tpal->renderTileEd(xpos + mGlobalSettings.TileSize*j, ypos + mGlobalSettings.TileSize*i, FileData[j+(i*mGlobalSettings.TileSize)]);
+			tpal->renderTileEd(xpos + mGlobalSettings.TileSize*j, ypos + mGlobalSettings.TileSize*i, FileData[j+(i*mGlobalSettings.TileSize)]);			
 		}
 	}
 
@@ -729,16 +728,6 @@ Uint32 Palette::mapPaletteColor(int tcolor){
 
 	return tmpcol;
 }
-
-unsigned char Palette::mapInputColor(unsigned char inCol){
-	switch(inCol){	
-		case 0xf:
-			return 0xff;
-			break;
-	};
-	return inCol * 0xf;
-}
-
 
 int Palette::loadFromFile(std::string filename){
 
@@ -757,9 +746,9 @@ int Palette::loadFromFile(std::string filename){
 		for(int i = 0; i < 512; i+=2){
 			SDL_Color tmpcol;
 			//std::cout << "In Color: " << (int)(tbuffer[i]) << "," << (int)(tbuffer[i+1] >> 4) << "," << (int)(tbuffer[i+1] & 0xf) << std::endl;
-			tmpcol.r = mapInputColor(tbuffer[i]);
-			tmpcol.g = mapInputColor(tbuffer[i+1] >> 4);
-			tmpcol.b = mapInputColor(tbuffer[i+1] & 0xf);
+			tmpcol.r = mMapColorIn[tbuffer[i]];
+			tmpcol.g = mMapColorIn[tbuffer[i+1] >> 4];
+			tmpcol.b = mMapColorIn[tbuffer[i+1] & 0xf];
 			tmpcol.a = 255;
 			TPalette.push_back(tmpcol);
 		}
@@ -1868,7 +1857,10 @@ int TEditor::createNewProject(){
 int TEditor::loadFromFolder(std::string path){
 
 	if(fs::exists(fs::status(path+DIRDEL+"pal.bin"))){
-		mPalette.loadFromFile(std::string(path+DIRDEL+"pal.bin"));
+		if(mPalette.loadFromFile(std::string(path+DIRDEL+"pal.bin"))){
+			std::cout << "Error loading palette: " << path +DIRDEL+"pal.bin" << std::endl;
+			return 1;
+		}
 	} else {
 		mPalette.initPalette();
 	}
