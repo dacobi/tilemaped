@@ -234,6 +234,7 @@ class Palette{
 	public:
 		std::vector<SDL_Color> TPalette;
 		int initPalette();
+		int loadFromFile(std::string palPath);
 		std::vector<TTexture*> TPixels;
 		std::vector<SDL_Rect> PixelAreas;
 		int initTPixels();
@@ -726,6 +727,38 @@ Uint32 Palette::mapPaletteColor(int tcolor){
 	tmpcol += 255;
 
 	return tmpcol;
+}
+
+int Palette::loadFromFile(std::string filename){
+
+	std::ifstream infile(filename, std::ios::binary );
+    std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
+
+	int magic1,magic2;
+
+	magic1 = tbuffer[0];
+	magic2 = tbuffer[1];
+
+	tbuffer.erase(tbuffer.begin());
+	tbuffer.erase(tbuffer.begin());
+	
+	if((magic1 == 16) && (magic2 == 42) && (tbuffer.size() == 512)){
+		for(int i = 0; i < 512; i+=2){
+			SDL_Color tmpcol;
+			tmpcol.r = tbuffer[i]*0xf;
+			tmpcol.g = (tbuffer[i+1] >> 4)*0xf;
+			tmpcol.b = (tbuffer[i+1] & 0xf)*0xf;
+			tmpcol.a = 255;
+			TPalette.push_back(tmpcol);
+		}
+		
+		PixelAreas.resize(256);	
+
+		std::cout << "Palette loaded from: " << filename << std::endl;
+		return 0;
+	}
+
+	return 1;
 }
 
 int Palette::initPalette(){
@@ -1366,7 +1399,6 @@ SDL_Rect SADialog::render(int xpos, int ypos){
 }
 
 void SADialog::recieveInput(std::string mText){		
-	std::cout << "recieveInput(std::string mText)" << std::endl;
 	mTextInput.mDialogTextMain += mText;
 	mTextInput.mTextColor =  {0x20, 0x20, 0x20, 0xff};
 	mTextInput.init();
@@ -1822,7 +1854,13 @@ int TEditor::createNewProject(){
 
 
 int TEditor::loadFromFolder(std::string path){
-	mPalette.initPalette();
+
+	if(fs::exists(fs::status(path+DIRDEL+"pal.bin"))){
+		mPalette.loadFromFile(std::string(path+DIRDEL+"pal.bin"));
+	} else {
+		mPalette.initPalette();
+	}
+
 	mPalette.initTPixels();
 		
 		
