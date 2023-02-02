@@ -239,8 +239,14 @@ class Palette{
 		
 };
 
+
+
+
 class Tile: public TTexture{
 	public:
+		//Tile();
+		//~Tile();
+		//Tile(const Tile &copyTile);
 		std::vector<SDL_Rect> PixelAreas;
 		int initTile();
 		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
@@ -255,7 +261,7 @@ class Tile: public TTexture{
 class TileSet{
 	public:
 		std::string DataPath;
-		std::vector<Tile> TTiles;
+		std::vector<Tile*> TTiles;
 		std::vector<SDL_Rect> TileAreas;
 		int mCurTileScale=10;
 		SDL_Rect mTileSetBackGround;
@@ -457,6 +463,7 @@ class TEditor{
 		SADialog mSaveAsDialog;
 		HDialog mHelpDialog;
 		PIDialog mProjectInfo;
+		int createNewTile();
 		int activateSaveDialog();
 		int activateHelpDialog();
 		int cancelActiveDialog();
@@ -602,13 +609,19 @@ int TTexture::initTexture(){
 
 int TTexture::updateTexture(Palette* tpal){
 	if(PixelData.size()){
+		std::cout << "PIXEL KILL!!!" << std::endl;
 		PixelData.erase(PixelData.begin(),PixelData.end());
 	}
+
+	int oi=0;
 	for(int i = 0; i < (mGlobalSettings.TileSize * mGlobalSettings.TileSize); i++){
     		PixelData.push_back(tpal->mapPaletteColor(FileData[i]));
+			oi = i; 
 	}
 
-        SDL_UpdateTexture(TileTex, NULL, PixelData.data(), mGlobalSettings.TileSize * sizeof(Uint32));
+	std::cout << "PixelData: " << oi << std::endl;
+
+    SDL_UpdateTexture(TileTex, NULL, PixelData.data(), mGlobalSettings.TileSize * sizeof(Uint32));
 	return 0;
 }
 
@@ -703,15 +716,22 @@ return 0;
 }
 
 int Tile::createNew(Palette* tpal){
+	std::cout << "initTile" << std::endl;
 	initTile();
+	std::cout << "initTexture" << std::endl;
 	initTexture();
+
     FileData.resize(mGlobalSettings.TileSize * mGlobalSettings.TileSize, 0);
-	updateTexture(tpal);
+	std::cout << "setAllPixels" << std::endl;
+	setAllPixels(0, tpal);
+	//std::cout << "updateTexture" << std::endl;
+	//updateTexture(tpal);
 	return 0;
 }
 
 int Tile::initTile(){
-	PixelAreas.resize(mGlobalSettings.TileSize*mGlobalSettings.TileSize);
+	SDL_Rect eRect = {0,0,1,1};
+	PixelAreas.resize(mGlobalSettings.TileSize*mGlobalSettings.TileSize,eRect);
 	return 0;
 }
 
@@ -779,12 +799,42 @@ int Tile::loadFromBuffer(std::vector<unsigned char> &cTileBuf,Palette* tpal){
 	return TTexture::loadFromBuffer(cTileBuf,tpal);
 }
 
+//Tile::Tile(){
+//	TileTex=NULL;
+//}
+
+//Tile::~Tile(){
+//	if(TileTex){
+//		SDL_DestroyTexture(TileTex);		
+//	}
+//}
+
+
+/*Tile::Tile(const Tile &copyTile){
+	TileTex = copyTile.TileTex;
+	FileData = copyTile.FileData;
+	PixelData = copyTile.PixelData;
+	PixelAreas = copyTile.PixelAreas;
+
+}*/
+
 int TileSet::createNew(Palette* tpal){
 
-	TTiles.resize(1);
-	TileAreas.resize(1);
+	Tile *newTile = new Tile();
+	SDL_Rect newRect;// = {0,0,0,0};
 
-	TTiles[0].createNew(tpal);
+	std::cout << "Tile create new" << std::endl;
+
+	std::vector<unsigned char> tbuf;
+	tbuf.resize(mGlobalSettings.TileSize * mGlobalSettings.TileSize,0);
+
+	newTile->loadFromBuffer(tbuf, tpal);
+	TileAreas.push_back(newRect);
+	TTiles.push_back(newTile);
+	
+	//newTile->loadFromBuffer(tbuf,tpal);
+
+	//(*(TTiles.end()-1)).loadFromBuffer(tbuf,tpal);
 
 	return 0;
 }
@@ -832,18 +882,24 @@ int TileSet::loadFromFolder(std::string path, Palette* tpal){
 
 	ntiles = tbuffer.size() / tmpTileSize;
 
-	TTiles.resize(ntiles);
+	//TTiles.resize(ntiles);
 	TileAreas.resize(ntiles);
 
-	int tCount = 0;
+	
 
-	for(auto &mTile : TTiles){
+	Tile *mTile;
+
+	//for(auto &mTile : TTiles){
+
+	for(int tCount = 0; tCount < ntiles; tCount++){
+		mTile = new Tile();
 		std::vector<unsigned char>::const_iterator first = tbuffer.begin() + (tCount * tmpTileSize);
 		std::vector<unsigned char>::const_iterator last = tbuffer.begin() + ((tCount * tmpTileSize) + (tmpTileSize));
 		std::vector<unsigned char> tbuffer2(first, last);
-		mTile.loadFromBuffer(tbuffer2 ,tpal);
-		tCount++;
+		mTile->loadFromBuffer(tbuffer2 ,tpal);
+		TTiles.push_back(mTile);
 	}
+	//}
 
 	return 0;
 }
@@ -857,7 +913,7 @@ int TileSet::saveToFolder(std::string tpath){
 	obuffer.push_back(mGlobalSettings.TileSize);
 
 	for(auto &mTile : TTiles){		
-		obuffer.insert(obuffer.end(), mTile.FileData.begin(), mTile.FileData.end());
+		obuffer.insert(obuffer.end(), mTile->FileData.begin(), mTile->FileData.end());
 	}
 
 	outfile.write((char*)obuffer.data(),obuffer.size());
@@ -875,7 +931,7 @@ int TileSet::render(int ypos, int mScroll){
 	SDL_RenderFillRect(mGlobalSettings.TRenderer, &mTileSetBackGround);
 	
 	for(int i = 0; i < TTiles.size(); i++){
-		TileAreas[i] = TTiles[i].render((mTileSetBackGround.x+(mGlobalSettings.TileSetWidth - (mCurTileScale*mGlobalSettings.TileSize))/2),mTileSetBackGround.y + mScroll + ((mGlobalSettings.TileSetWidth - (mCurTileScale * mGlobalSettings.TileSize))/2) + (((mGlobalSettings.TileSize*mCurTileScale)+2)*i), 10,true,true);
+		TileAreas[i] = TTiles[i]->render((mTileSetBackGround.x+(mGlobalSettings.TileSetWidth - (mCurTileScale*mGlobalSettings.TileSize))/2),mTileSetBackGround.y + mScroll + ((mGlobalSettings.TileSetWidth - (mCurTileScale * mGlobalSettings.TileSize))/2) + (((mGlobalSettings.TileSize*mCurTileScale)+2)*i), 10,true,true);
 	}
 
 	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0x20,0x20,0x20,0xff);
@@ -1550,7 +1606,7 @@ TileProperties TileMap::getTileProp(int cTile){
 int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 	for(int i=0; i < mGlobalSettings.TileMapHeight; i++){
 		for(int j=0; j < mGlobalSettings.TileMapWidth; j++){
-			TileAreas[j+(i*mGlobalSettings.TileMapWidth)] = mTiles->TTiles[getTile(j+(i*mGlobalSettings.TileMapWidth))].render(xpos + (mGlobalSettings.TileSize * j * mGlobalSettings.TileMapScale), ypos + (mGlobalSettings.TileSize * i * mGlobalSettings.TileMapScale), mGlobalSettings.TileMapScale, getTileProp(j+(i*mGlobalSettings.TileMapWidth)));
+			TileAreas[j+(i*mGlobalSettings.TileMapWidth)] = mTiles->TTiles[getTile(j+(i*mGlobalSettings.TileMapWidth))]->render(xpos + (mGlobalSettings.TileSize * j * mGlobalSettings.TileMapScale), ypos + (mGlobalSettings.TileSize * i * mGlobalSettings.TileMapScale), mGlobalSettings.TileMapScale, getTileProp(j+(i*mGlobalSettings.TileMapWidth)));
 			if(mGlobalSettings.bShowSelectedTile){
 				if(mGlobalSettings.mSelectedTile == (j+(i*mGlobalSettings.TileMapWidth))){
 					SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0xFF,0xFF,0xFF,0xff);
@@ -1572,7 +1628,7 @@ int TEditor::createNewProject(){
 	mTileSet.createNew(&mPalette);
 
 	mMapSelectedTile = 0;
-	mTileSelectedTile = &mTileSet.TTiles[0];
+	mTileSelectedTile = mTileSet.TTiles[0];
 	mTileSelectedTile->bIsSelected = true;
 	mColorSelectedTile = mPalette.TPixels[0];
 	mColorSelectedTile->bPixelSelected = true;
@@ -1611,7 +1667,7 @@ int TEditor::loadFromFolder(std::string path){
 	mGlobalSettings.ProjectPath = path;
 	
 	mMapSelectedTile = 0;
-	mTileSelectedTile = &mTileSet.TTiles[0];
+	mTileSelectedTile = mTileSet.TTiles[0];
 	mTileSelectedTile->bIsSelected = true;
 	mColorSelectedTile = mPalette.TPixels[0];
 	mColorSelectedTile->bPixelSelected = true;
@@ -1650,7 +1706,7 @@ int TEditor::render(){
  		if(!mGlobalSettings.bShowTypeSelection) mTileSelectedTile->bIsSelected = false;		
 		mTileMap.render(mTileMapScrollX,mGlobalSettings.TopBarHeight+mTileMapScrollY,&mTileSet);
 		mTileSelectedTile->bIsSelected = true;
-		//mTileSet.render(50,50+mTileSetScrollY);
+		
 		mTileSet.render(mGlobalSettings.TopBarHeight, mTileSetScrollY);
 		if(mActiveDialog){
 			mActiveDialog->render((mGlobalSettings.WindowWidth/2)-(mActiveDialog->mDialogWidth/2),(mGlobalSettings.WindowHeight/2)-(mActiveDialog->mDialogHeight/2));
@@ -1764,6 +1820,12 @@ int TEditor::activateProjectInfo(){
 	return 0;
 }
 
+
+int TEditor::createNewTile(){
+	mTileSet.createNew(&mPalette);
+	return 0;
+}
+
 int TEditor::activateHelpDialog(){
 	mActiveDialog = &mHelpDialog;
 	return 0;
@@ -1823,7 +1885,7 @@ int TEditor::findSelected(){
 		if(tSel != -1){
    	 		mMapSelectedTile = tSel;
    	 		mTileSelectedTile->bIsSelected = false;
-   	 		mTileSelectedTile = &mTileSet.TTiles[tSel];
+   	 		mTileSelectedTile = mTileSet.TTiles[tSel];
    	 		mTileSelectedTile->bIsSelected = true;
 		} else {
 		     	tSel = searchRects(mTileMap.TileAreas);
@@ -2053,7 +2115,11 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			if(cEvent->key.keysym.sym == SDLK_F2){
 	  				std::cout << "activateProjectInfo();" << std::endl;
 		  			activateProjectInfo();
-	  			}	  				  			
+	  			}
+	  			if(cEvent->key.keysym.sym == SDLK_F3){
+	  				std::cout << "createNewTile();" << std::endl;
+		  			createNewTile();
+	  			}	  				  						  				  			
 	  			if(cEvent->key.keysym.sym == SDLK_F12){
 	  				std::cout << "activateSaveDialog()" << std::endl;
 		  			activateSaveDialog();
@@ -2310,14 +2376,17 @@ int main( int argc, char* args[] )
 
 		while( mEditor.bEditorRunning ){
 
+				
+				
+			
+
 			SDL_SetRenderDrawColor(  mGlobalSettings.TRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 			SDL_RenderClear( mGlobalSettings.TRenderer );
-				
+
 			mEditor.render();
-			//mTestTex.render(50,50);
  
 			SDL_RenderPresent( mGlobalSettings.TRenderer );
-				
+
 			while( SDL_PollEvent( &e ) != 0 ){
 				mEditor.handleEvents(&e);
 			}
