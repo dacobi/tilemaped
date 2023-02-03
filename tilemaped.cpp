@@ -504,6 +504,8 @@ class TEditor{
 		bool bTileMapGrapped = false;
 		bool bTileSetGrapped = false;
 		int flipSelectedTile();
+		int selectTile(int mx, int my);
+		int searchRectsXY(std::vector<SDL_Rect> &sRects, int mx, int my);
 		int searchRects(std::vector<SDL_Rect> &sRects);
 		int findSelected();
 		int toggleSelectedTile();
@@ -2073,6 +2075,15 @@ int TEditor::switchMode(){
 	return 0;
 }
 
+int TEditor::searchRectsXY(std::vector<SDL_Rect> &sRects, int mx, int my){
+	for(int i = 0; i < sRects.size(); i++){
+		if( (mx >= sRects[i].x) && (mx <= (sRects[i].x + sRects[i].w)) && (my >= sRects[i].y) && (my <= (sRects[i].y + sRects[i].h)) ){
+			return i;
+		}
+	}
+	return -1;
+}
+
 int TEditor::searchRects(std::vector<SDL_Rect> &sRects){
 	for(int i = 0; i < sRects.size(); i++){
 		if( (mouseSelX >= sRects[i].x) && (mouseSelX <= (sRects[i].x + sRects[i].w)) && (mouseSelY >= sRects[i].y) && (mouseSelY <= (sRects[i].y + sRects[i].h)) ){
@@ -2245,6 +2256,28 @@ int TEditor::flipSelectedTile(){
 	return 1;
 }
 
+int TEditor::selectTile(int mx, int my){
+	if(mCurMode == EMODE_MAP){
+		int tSel = -1;
+		if(mx > (mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth)){
+			tSel = searchRectsXY(mTileSet.TileAreas, mx, my);
+			if(tSel != -1){
+   	 			mMapSelectedTile = tSel;
+   	 			mTileSelectedTile->bIsSelected = false;
+   	 			mTileSelectedTile = mTileSet.TTiles[tSel];
+   	 			mTileSelectedTile->bIsSelected = true;
+			}		
+		} else {
+			tSel = searchRectsXY(mTileMap.TileAreas, mx, my);
+	       		if(tSel != -1){
+	       			mGlobalSettings.mSelectedTile = tSel;
+					mGlobalSettings.bShowSelectedTile = true;
+				}
+		}
+	}
+	return 0;
+}
+
 int TEditor::findSelected(){
 	int tSel = -1;
 	if(mCurMode == EMODE_MAP){
@@ -2316,7 +2349,8 @@ int TEditor::handleEvents(){
 	if(mButtonState & SDL_BUTTON(SDL_BUTTON_RIGHT)){
 		rightMouseButtonDown = true;
 	} else {
-		waitRightMouseButton=false;		
+		rightMouseButtonDown = false;
+		waitRightMouseButton = false;		
 	}
 	
 	if(mActiveDialog){
@@ -2367,6 +2401,12 @@ int TEditor::handleEvents(){
 		}
 		return 0;
 	} else {
+		if(!waitRightMouseButton){
+			if(rightMouseButtonDown){
+				selectTile(x,y);
+			}			
+		}
+
 		if(!waitLeftMouseButton){		
 			if(leftMouseButtonDown){
 				if(bLCTRLisDown){
