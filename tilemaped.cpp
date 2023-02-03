@@ -73,8 +73,10 @@ class TSettings{
 		int mTileEdScale = 4;
 		TTF_Font *TFont;
 		TTF_Font *LFont;
+		SDL_Color DefaultBGColor = {0xe0,0xe0,0xe0,0xff};
 		SDL_Color DefaultTextColor = {0x20,0x20,0x20,0xff};
 		SDL_Color DefaultBorderColor = {0x00,0x00,0xff,0xff};
+		SDL_Color DefaultButtonColor = {0x90,0x90,0x90,0xff};
 		SDL_Color ErrorTextColor = {0xff,0x00,0x00,0xff};
 		SDL_Color ErrorBorderColor = {0xc0,0x00,0x00,0xff};
 		std::vector<std::string> mHelpText;
@@ -349,7 +351,7 @@ class TEAction{
 
 class Dialog{
 	public:
-		SDL_Color mDialogColor= {0xff,0xff,0xff,0xff};
+		SDL_Color mDialogColor= {0xe0,0xe0,0xe0,0xff};
 		SDL_Color mDialogBorderColor= {0x00,0x00,0xff,0xff};
 		SDL_Color mTextColor = {0x00,0x00,0x00,0xff};
 		void setColorScheme(int nScheme);
@@ -1168,7 +1170,7 @@ int TileSet::render(int ypos, int mScroll){
 	mTileSetBackGround.y = ypos;
 	mTileSetBackGround.w = mGlobalSettings.TileSetWidth; 
 
-	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0xFF,0xFF,0xFF,0xff);
+	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.DefaultBGColor.r,  mGlobalSettings.DefaultBGColor.g,  mGlobalSettings.DefaultBGColor.b, 0xff);//0xFF,0xFF,0xFF,0xff);
 	SDL_RenderFillRect(mGlobalSettings.TRenderer, &mTileSetBackGround);
 	
 	if(mCurColumns > 0){
@@ -1369,6 +1371,7 @@ SDL_Rect Dialog::render(int xpos, int ypos){
 	tmpBorder2.y = ypos+mDialogBorder;
 	tmpBorder2.w = mDialogWidth-(mDialogBorder*2);
 	tmpBorder2.h = mDialogHeight-(mDialogBorder*2);	
+	//SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.DefaultBGColor.r,  mGlobalSettings.DefaultBGColor.g,  mGlobalSettings.DefaultBGColor.b, 0xff);//0xFF,0xFF,0xFF,0xff);
 	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mDialogColor.r,mDialogColor.g,mDialogColor.b,mDialogColor.a);
 	SDL_RenderFillRect(mGlobalSettings.TRenderer, &tmpBorder2);
 	return tmpBorder;
@@ -1662,9 +1665,10 @@ int ITDialog::recieveInput(int mx, int my){
 }
 
 void BDialog::init(){
-	mDialogBorder=3;
-	mDialogBorderColor= {0x20,0x20,0x20,0xff};
-	
+	mDialogBorder = 3;
+	mDialogBorderColor = mGlobalSettings.DefaultTextColor; ////{0x20,0x20,0x20,0xff};
+	mDialogColor = mGlobalSettings.DefaultButtonColor; //{0x90,0x90,0x90,0xff};
+
 	mTexDialogTextMain.loadTTFFromString(mDialogTextMain, mTextColor);
 	
 	mDialogWidth = mTexDialogTextMain.mTexWidth;
@@ -1712,7 +1716,7 @@ void BDialog::setColorScheme(int nScheme){
 
 void TIDialog::init(){
 	mDialogBorder=3;
-	mDialogBorderColor= {0x20,0x20,0x20,0xff};
+	mDialogBorderColor= mGlobalSettings.DefaultTextColor; //{0x20,0x20,0x20,0xff};
 	mCursorTime += mGlobalSettings.getTicks();
 	if(mCursorTime > 500){
 		mCursorTime = 0;
@@ -2873,7 +2877,7 @@ int main( int argc, char* args[] )
 				
 			
 
-			SDL_SetRenderDrawColor(  mGlobalSettings.TRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+			SDL_SetRenderDrawColor(  mGlobalSettings.TRenderer, mGlobalSettings.DefaultBGColor.r,  mGlobalSettings.DefaultBGColor.g,  mGlobalSettings.DefaultBGColor.b, 0xff);//0xFF, 0xFF, 0xFF, 0xFF );
 			SDL_RenderClear( mGlobalSettings.TRenderer );
 
 			mEditor.render();
