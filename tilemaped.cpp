@@ -292,6 +292,7 @@ class TileSet{
 		int mCurTileScale=10;
 		int mCurColumns=1;
 		int mColSpace = 10;
+		int mMaxScrollY=0;
 		int reCalculateScale();
 		SDL_Rect mTileSetBackGround;
 		int loadFromFolder(std::string tpath, Palette* tpal);
@@ -1183,6 +1184,16 @@ int TileSet::render(int ypos, int mScroll){
 			}										
 		}
 	}
+	
+	int cMax = (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.TileSize ) +mColSpace ) * TTiles.size() )  / mCurColumns )) + (4 * mGlobalSettings.TileSize);
+	if((cMax - mTileSetBackGround.h) > 0 ){
+		mMaxScrollY = -(cMax - mTileSetBackGround.h);
+	} else {
+		mMaxScrollY = 0;
+	}
+	
+
+	
 
 	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0x20,0x20,0x20,0xff);
 	SDL_RenderDrawRect(mGlobalSettings.TRenderer, &mTileSetBackGround);
@@ -2146,7 +2157,9 @@ int TEditor::applyScroll(int mx,int my, int amount, int xamount){
 	mouseSelY = my;
 	if(mCurMode == EMODE_MAP){ 
 		if( mx > (mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth)){
-			mTileSetScrollY += amount*20;		
+			mTileSetScrollY += amount*20;
+			if(mTileSetScrollY > 0){mTileSetScrollY = 0;}
+			if(mTileSetScrollY < mTileSet.mMaxScrollY){mTileSetScrollY = mTileSet.mMaxScrollY;}	
 		} else {
 			//if(!bTileMapGrapped && !bLCTRLisDown){
 				if(amount > 0){mGlobalSettings.TileMapScale++; if(mGlobalSettings.TileMapScale > 10){mGlobalSettings.TileMapScale=10; }}	
@@ -2460,7 +2473,9 @@ int TEditor::handleEvents(){
 					if(mCurMode == EMODE_MAP){
 						if(bTileSetGrapped){
 							mTileSetScrollY += ry * 2;
-							if(mTileSetScrollY > 0){mTileSetScrollY = 0;}			
+							if(mTileSetScrollY > 0){mTileSetScrollY = 0;}
+							if(mTileSetScrollY < mTileSet.mMaxScrollY){mTileSetScrollY = mTileSet.mMaxScrollY;}
+							
 						} else if(bTileMapGrapped){
 							mTileMapScrollX += rx;// * 2;
 							mTileMapScrollY += ry;// * 2;
