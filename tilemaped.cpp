@@ -63,6 +63,7 @@ class TSettings{
 		int WindowWidth=1920;
 		int WindowHeight=1080;
 		int TileSetWidth=200;
+		int TileSetDefaultScale=10;
 		int TileMapScale=3;
 		int initSettings();
 		bool bShowTypeSelection=false;
@@ -289,6 +290,7 @@ class TileSet{
 		std::vector<Tile*> TTiles;
 		std::vector<SDL_Rect> TileAreas;
 		int mCurTileScale=10;
+		int mCurColumns=1;
 		SDL_Rect mTileSetBackGround;
 		int loadFromFolder(std::string tpath, Palette* tpal);
 		int saveToFolder(std::string tpath);
@@ -1126,15 +1128,66 @@ int TileSet::saveToFolder(std::string tpath){
 }
 
 int TileSet::render(int ypos, int mScroll){
+	//mTileSetBackGround.x = mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth;
+	//mTileSetBackGround.y = ypos;
+	//mTileSetBackGround.w = mGlobalSettings.TileSetWidth; 
+	mTileSetBackGround.h = mGlobalSettings.WindowHeight- mGlobalSettings.TopBarHeight;
+	//SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0xFF,0xFF,0xFF,0xff);
+	//SDL_RenderFillRect(mGlobalSettings.TRenderer, &mTileSetBackGround);
+	
+	int colSpace = 10;
+
+	if(mCurColumns < 4){
+		if(        (int)((float)((((mCurTileScale*mGlobalSettings.TileSize)+colSpace)*TTiles.size())  / mCurColumns))> mTileSetBackGround.h ){
+		//if(mCurTileScale > 8){
+
+			
+			mCurTileScale--;
+		
+			if(mCurTileScale < 5){
+				mCurColumns++;		
+			}
+			std::cout << "CurCol, WinHeight: "  << (int)((float)((((mCurTileScale*mGlobalSettings.TileSize)+colSpace)*TTiles.size())  / mCurColumns)) << "," << mTileSetBackGround.h  << std::endl;
+		}
+	}
+
+	mGlobalSettings.TileSetWidth = (((mCurTileScale*mGlobalSettings.TileSize)+colSpace)*mCurColumns)+(colSpace*3);
+
+	//((mGlobalSettings.TileSetWidth - (mCurTileScale * mGlobalSettings.TileSize))/2)
+	int isOdd = TTiles.size() % mCurColumns;
+	int cRowNum = TTiles.size() / mCurColumns;
+
 	mTileSetBackGround.x = mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth;
 	mTileSetBackGround.y = ypos;
 	mTileSetBackGround.w = mGlobalSettings.TileSetWidth; 
-	mTileSetBackGround.h = mGlobalSettings.WindowHeight;
+	//mTileSetBackGround.h = mGlobalSettings.WindowHeight- mGlobalSettings.TopBarHeight;
 	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0xFF,0xFF,0xFF,0xff);
 	SDL_RenderFillRect(mGlobalSettings.TRenderer, &mTileSetBackGround);
 	
-	for(int i = 0; i < TTiles.size(); i++){
-		TileAreas[i] = TTiles[i]->render((mTileSetBackGround.x+(mGlobalSettings.TileSetWidth - (mCurTileScale*mGlobalSettings.TileSize))/2),mTileSetBackGround.y + mScroll + ((mGlobalSettings.TileSetWidth - (mCurTileScale * mGlobalSettings.TileSize))/2) + (((mGlobalSettings.TileSize*mCurTileScale)+2)*i), 10,true,true);
+	// ((mCurTileScale*mGlobalSettings.TileSize)/2)
+	//std::cout << "Tiles: " << TTiles.size() << " Rows & Columns: " << cRowNum << "," << mCurColumns << " isOdd: " << isOdd << std::endl;
+	if(mCurColumns > 0){
+		for(int i = 0; i < cRowNum; i++){
+				for(int j = 0; j < mCurColumns; j++){
+					TileAreas[(j*cRowNum)+i] = TTiles[(j*cRowNum)+i]->render((mTileSetBackGround.x+ (colSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSize)+colSpace)*j),mTileSetBackGround.y + mScroll + (((mCurTileScale * mGlobalSettings.TileSize))/2) + (((mGlobalSettings.TileSize*mCurTileScale)+colSpace)*i), mCurTileScale,true,true);					
+				}				
+			}
+		if(isOdd){
+				int i = cRowNum;
+				for(int j = 0; j <isOdd; j++){
+					TileAreas[(j*cRowNum)+i] = TTiles[(j*cRowNum)+i]->render((mTileSetBackGround.x+ (colSpace*2) +((mCurTileScale*mGlobalSettings.TileSize)+colSpace)*j),mTileSetBackGround.y + mScroll + (((mCurTileScale * mGlobalSettings.TileSize))/2) + (((mGlobalSettings.TileSize*mCurTileScale)+colSpace)*i), mCurTileScale,true,true);					
+					//TileAreas[(j*cRowNum)+i] = TTiles[(j*cRowNum)+i]->render((mTileSetBackGround.x+(mGlobalSettings.TileSetWidth - (mCurTileScale*mGlobalSettings.TileSize))*i),mTileSetBackGround.y + mScroll + (((mCurTileScale * mGlobalSettings.TileSize))/2) + (((mGlobalSettings.TileSize*mCurTileScale)+2)*j), mCurTileScale,true,true);					
+				}										
+		}
+
+
+	} else {
+
+	//PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->render(xpos + ((mGlobalSettings.TileSize+2)*i), ypos + ((mGlobalSettings.TileSize+2)*j), 1,true,true);
+
+		//for(int i = 0; i < TTiles.size(); i++){																																											
+		//	TileAreas[i] = TTiles[i]->render((mTileSetBackGround.x+(mGlobalSettings.TileSetWidth - (mCurTileScale*mGlobalSettings.TileSize))/2),mTileSetBackGround.y + mScroll + (((mCurTileScale * mGlobalSettings.TileSize))/2) + (((mGlobalSettings.TileSize*mCurTileScale)+2)*i), mCurTileScale,true,true);
+		//}
 	}
 
 	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0x20,0x20,0x20,0xff);
@@ -2412,7 +2465,8 @@ int TEditor::handleEvents(){
 				if(bLCTRLisDown){
 					if(mCurMode == EMODE_MAP){
 						if(bTileSetGrapped){
-							mTileSetScrollY += ry * 2;				
+							mTileSetScrollY += ry * 2;
+							if(mTileSetScrollY > 0){mTileSetScrollY = 0;}			
 						} else if(bTileMapGrapped){
 							mTileMapScrollX += rx;// * 2;
 							mTileMapScrollY += ry;// * 2;
