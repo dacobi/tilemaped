@@ -60,14 +60,15 @@ class TSettings{
 		int TopBarHeight = 50;
 		SDL_Renderer *TRenderer;
 		SDL_Window *TWindow;
-		int WindowWidth=1920;
-		int WindowHeight=1080;
+		int WindowWidth=1900;
+		int WindowHeight=1000;
 		int TileSetWidth=200;
 		int TileSetDefaultScale=10;
 		int TileMapScale=3;
 		int initSettings();
 		bool bShowTypeSelection=false;
 		bool bShowPixelSelection=true;
+		bool bShowPixelType = false;
 		bool bShowSelectedTile = false;
 		int mSelectedTile = 0;
 		int mTileEdScale = 4;
@@ -81,6 +82,7 @@ class TSettings{
 		SDL_Color DefaultButtonBorderColor = {0x20,0x20,0x20,0xff};
 		SDL_Color DefaultGUIBorderColor = {0x20,0x20,0x20,0xff};
 		SDL_Color DefaultHighlightColor = {0xff,0xff,0xff,0xff};
+		SDL_Color AltHighlightColor = {0x00,0x00,0xff,0xff};
 		SDL_Color ErrorTextColor = {0xff,0x00,0x00,0xff};
 		SDL_Color ErrorBorderColor = {0xc0,0x00,0x00,0xff};
 		std::vector<std::string> mHelpText;
@@ -95,8 +97,6 @@ class TSettings{
 };
 
 TSettings mGlobalSettings;
-
-
 
 class TTFTexture{
 	public:
@@ -495,6 +495,7 @@ class TEditor{
 		bool bEditorRunning=true;
 		int handleEvents(SDL_Event* cEvent);
 		int handleEvents();
+		int resizeWindowEvent(SDL_Event* event);
 		void initDialogs();
 		int loadFromFolder(std::string path);
 		int saveToFolder(std::string path);
@@ -737,7 +738,7 @@ SDL_Rect TTexture::render(int xpos, int ypos, int tscale, bool updateRect ,bool 
 		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &renderQuad);
     }
     if(bPixelSelected){
-		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0xFF,0x00,0x00,0xff);
+		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.AltHighlightColor.r, mGlobalSettings.AltHighlightColor.r, mGlobalSettings.AltHighlightColor.r, 0xff);
 		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &renderQuad);
 		SDL_Rect sndRect = renderQuad;
 		sndRect.x = sndRect.x-1;
@@ -772,7 +773,7 @@ SDL_Rect TPixel::render(int xpos, int ypos, int tscale, bool updateRect ,bool dr
 	}
 
     if(bPixelSelected){
-		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0xFF,0x00,0x00,0xff);
+		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.AltHighlightColor.r, mGlobalSettings.AltHighlightColor.g, mGlobalSettings.AltHighlightColor.b, 0xff); //(0xFF,0x00,0x00,0xff);
 		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &CurrentArea);
 		SDL_Rect sndRect = CurrentArea;
 		sndRect.x = sndRect.x-1;
@@ -908,7 +909,7 @@ int Tile::initTile(){
 SDL_Rect Tile::render(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
 	SDL_Rect tmpRect = TTexture::render(xpos, ypos, tscale, updateRect, drawGrid);
 	if(bIsSelected){
-		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0xFF,0x00,0x00,0xff);
+		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.AltHighlightColor.r, mGlobalSettings.AltHighlightColor.g, mGlobalSettings.AltHighlightColor.b, 0xff); //0xFF,0x00,0x00,0xff);
 		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &tmpRect);
 		SDL_Rect sndRect = tmpRect;
 		sndRect.x = sndRect.x-1;
@@ -937,7 +938,7 @@ SDL_Rect Tile::render(int xpos, int ypos, int tscale,TileProperties tProps){
 	SDL_Rect tmpRect = TTexture::renderEx(xpos, ypos, tscale, flip);
 	
 	if(bIsSelected){
-		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0xFF,0x00,0x00,0xff);
+		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.AltHighlightColor.r, mGlobalSettings.AltHighlightColor.g, mGlobalSettings.AltHighlightColor.b, 0xff);
 		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &tmpRect);
 		SDL_Rect sndRect = tmpRect;
 		sndRect.x = sndRect.x-1;
@@ -1141,6 +1142,7 @@ int TileSet::saveToFolder(std::string tpath){
 
 int TileSet::reCalculateScale(){
 	if(mCurColumns > 1){
+		mTileSetBackGround.h = mGlobalSettings.WindowHeight-mGlobalSettings.TopBarHeight;
 		if( (int)( (float)( ( ( ((mCurTileScale+1)*mGlobalSettings.TileSize )+ mColSpace ) * TTiles.size() )  / ( mCurColumns - 1 ) ) ) < mTileSetBackGround.h ){
 			mCurTileScale++;
 			mCurColumns--;
@@ -2118,7 +2120,7 @@ int TEditor::render(){
 	
 	if(mCurMode == EMODE_TILE){
 		mPalette.render(100+mGlobalSettings.mTileEdScale*mGlobalSettings.TileSize*mGlobalSettings.TileSize,50+mTopBar.mDialogHeight);	
-		mColorSelectedTile->bPixelSelected = false;
+		if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
 		mTileSelectedTile->renderEd(50,50+mTopBar.mDialogHeight,&mPalette);
 		mColorSelectedTile->bPixelSelected = true;
 		if(mActiveDialog){
@@ -2527,6 +2529,11 @@ int TEditor::handleEvents(){
 int TEditor::handleEvents(SDL_Event* cEvent){
 
 	switch (cEvent->type){
+		case SDL_WINDOWEVENT:
+			if (cEvent->window.event == SDL_WINDOWEVENT_RESIZED){
+				resizeWindowEvent(cEvent);
+			}
+			break;
 		case SDL_TEXTINPUT:
 	  		if(mActiveDialog){
 				if(mActiveDialog->bDialogIsWatingForText){
@@ -2583,10 +2590,12 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  				switchMode();
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_s){
-	  				mGlobalSettings.bShowTypeSelection = !mGlobalSettings.bShowTypeSelection;
+					if(mCurMode == EMODE_MAP) mGlobalSettings.bShowTypeSelection = !mGlobalSettings.bShowTypeSelection;
+					if(mCurMode == EMODE_TILE) mGlobalSettings.bShowPixelType = !mGlobalSettings.bShowPixelType;
+					
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_p){
-		  			mGlobalSettings.bShowPixelSelection = !mGlobalSettings.bShowPixelSelection;
+		  			if(mCurMode == EMODE_TILE) mGlobalSettings.bShowPixelSelection = !mGlobalSettings.bShowPixelSelection;
 	  			}	  			  		
 	  			if(cEvent->key.keysym.sym == SDLK_LCTRL){
 	  				bLCTRLisDown = true;
@@ -2663,6 +2672,22 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	return 0;
 }
 
+int TEditor::resizeWindowEvent(SDL_Event* event){
+  	
+	SDL_Window* win = SDL_GetWindowFromID(event->window.windowID);
+    
+	if(win != mGlobalSettings.TWindow){return 1;}
+ 	
+	int newWidth,newHeight;
+ 	SDL_GetWindowSize(mGlobalSettings.TWindow, &newWidth, &newHeight);
+ 	mGlobalSettings.WindowWidth = newWidth;
+ 	mGlobalSettings.WindowHeight = newHeight; 
+	
+	mTileSet.reCalculateScale();
+
+	return 0;
+}
+
 static int resizeEventHandler(void* data, SDL_Event* event) {
   if (event->type == SDL_WINDOWEVENT &&
       event->window.event == SDL_WINDOWEVENT_RESIZED) {
@@ -2682,7 +2707,7 @@ int TSettings::initSettings(){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
 		return 1;
 	}
-	TWindow = SDL_CreateWindow( "Simple Tilemap Editor", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WindowWidth, WindowHeight, SDL_WINDOW_SHOWN );
+	TWindow = SDL_CreateWindow( "Simple Tilemap Editor", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WindowWidth, WindowHeight, SDL_WINDOW_SHOWN );
 	if( TWindow == NULL ){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
 		return 1;
@@ -2744,14 +2769,15 @@ int TSettings::getTicks(){
 
 void TSettings::initHelpText(){
 
-	mHelpText.push_back("Left Mouse Button: Select Tiles/Colors and place in TileMap or Tile");
+	mHelpText.push_back("Left Mouse Button: Select Tile/Color and place in TileMap or Tile");
+	mHelpText.push_back("Right Mouse Button: Select Tile in TileMap or TileSet");
 	mHelpText.push_back("Mouse Scroll Wheel: Scale TileMap and Scroll TileSet");
 	mHelpText.push_back("LCTRL + Left Mouse Button: Move TileMap and Scroll TileSet");
 	mHelpText.push_back("Space: Switch between TileMap and Tile Editor");
 	mHelpText.push_back("F3: Create Empty Tile");
 	mHelpText.push_back("F4: Import Tile from file");
 	mHelpText.push_back("T: Toggle Show Selected Tile in TileMap Editor");									
-	mHelpText.push_back("S: Toggle Show Selected Tile Type in TileMap Editor");
+	mHelpText.push_back("S: Toggle Show Selected Tile Type/Pixel Color");
 	mHelpText.push_back("P: Toggle Show Pixel Grid in Tile Editor");
 	mHelpText.push_back("U: Undo last Action");
 	mHelpText.push_back("R: Redo last Action");
@@ -2870,7 +2896,7 @@ int main( int argc, char* args[] )
 			}		
 		}
 	
-		SDL_AddEventWatch(resizeEventHandler, mGlobalSettings.TWindow);
+		//SDL_AddEventWatch(resizeEventHandler, mGlobalSettings.TWindow);
 		
 		SDL_Event e;
 
