@@ -1,9 +1,7 @@
 #include <SDL.h> 
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include <stdio.h>
 #include <string>
-#include <cmath>
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -14,7 +12,6 @@
 #include <sstream>
 
 #include "cx16_palette.h"
-
 
 namespace fs = std::filesystem;
 
