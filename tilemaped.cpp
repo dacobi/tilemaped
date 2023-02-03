@@ -23,7 +23,7 @@ namespace fs = std::filesystem;
 class TTexture;
 class TTFTexture;
 class TPixel; 
-class Palette;
+class TPalette;
 class Tile;
 class TileSet;
 class TileProperties;
@@ -71,7 +71,7 @@ class TSettings{
 		int mTileEdScale = 4;
 		TTF_Font *TFont;
 		TTF_Font *LFont;
-		SDL_Color DefaultBGColor = {0xe0,0xe0,0xe0,0xff};
+		SDL_Color DefaultBGColor = {0xc0,0xc0,0xc0,0xff};
 		SDL_Color DefaultDarkBGColor = {0xb0,0xb0,0xb0,0xff};
 		SDL_Color DefaultTextColor = {0x20,0x20,0x20,0xff};
 		SDL_Color DefaultBorderColor = {0x00,0x00,0xff,0xff};
@@ -79,7 +79,7 @@ class TSettings{
 		SDL_Color DefaultButtonBorderColor = {0x20,0x20,0x20,0xff};
 		SDL_Color DefaultGUIBorderColor = {0x20,0x20,0x20,0xff};
 		SDL_Color DefaultHighlightColor = {0xff,0xff,0xff,0xff};
-		SDL_Color AltHighlightColor = {0x00,0x00,0xff,0xff};
+		SDL_Color AltHighlightColor = {0x00,0xff,0xff,0xff};
 		SDL_Color ErrorTextColor = {0xff,0x00,0x00,0xff};
 		SDL_Color ErrorBorderColor = {0xc0,0x00,0x00,0xff};
 		SDL_Color PixelGridColor = {0x20,0x20,0x20,0xff};
@@ -208,15 +208,15 @@ class TTexture{
 		std::vector<Uint32> PixelData;
 		SDL_Rect CurrentArea;
 		int initTexture();
-		int updateTexture(Palette* tpal);
-		int loadFromFile(std::string filename,Palette* tpal);
-		int loadFromBuffer(std::vector<unsigned char> &cTileBuf,Palette* tpal);		
+		int updateTexture(TPalette* tpal);
+		int loadFromFile(std::string filename,TPalette* tpal);
+		int loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal);		
 		int saveToFile(std::string filename);
-		int setPixel(int xpos, int ypos, unsigned char tcolor, Palette* tpal);
-		int setAllPixels(unsigned char tcolor, Palette* tpal);
+		int setPixel(int xpos, int ypos, unsigned char tcolor, TPalette* tpal);
+		int setAllPixels(unsigned char tcolor, TPalette* tpal);
 		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderEx(int xpos, int ypos, int tscale, SDL_RendererFlip flip);
-		void renderEd(int xpos, int ypos, Palette* tpal);
+		void renderEd(int xpos, int ypos, TPalette* tpal);
 		bool bPixelSelected = false;
 };
 
@@ -224,14 +224,14 @@ class TPixel{
 	public:
 		SDL_Color PixelColor;
 		SDL_Rect CurrentArea;
-		int setPixelColor(unsigned char tcolor, Palette* tpal);
+		int setPixelColor(unsigned char tcolor, TPalette* tpal);
 		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		bool bPixelSelected = false;
 };
 
 
 
-class Palette{
+class TPalette{
 	public:
 		std::vector<SDL_Color> TPalette;
 		int initPalette();
@@ -254,10 +254,10 @@ class Tile: public TTexture{
 		int initTile();
 		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect render(int xpos, int ypos, int tscale, TileProperties tProps);
-		void renderEd(int xpos, int ypos, Palette* tpal);
-		int loadFromFile(std::string filename,Palette* tpal);
-		int loadFromBuffer(std::vector<unsigned char> &cTileBuf,Palette* tpal);	
-		int createNew(Palette* tpal);	
+		void renderEd(int xpos, int ypos, TPalette* tpal);
+		int loadFromFile(std::string filename,TPalette* tpal);
+		int loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal);	
+		int createNew(TPalette* tpal);	
 		bool bIsSelected = false;
 };	
 
@@ -272,11 +272,11 @@ class TileSet{
 		int mMaxScrollY=0;
 		int reCalculateScale();
 		SDL_Rect mTileSetBackGround;
-		int loadFromFolder(std::string tpath, Palette* tpal);
+		int loadFromFolder(std::string tpath, TPalette* tpal);
 		int saveToFolder(std::string tpath);
-		Tile* createNew(Palette* tpal);
-		Tile* createNewFromBuffer(std::vector<unsigned char> &newBuf, Palette* tpal);
-		Tile* createNewFromFile(std::string newPAth, Palette* tpal);
+		Tile* createNew(TPalette* tpal);
+		Tile* createNewFromBuffer(std::vector<unsigned char> &newBuf, TPalette* tpal);
+		Tile* createNewFromFile(std::string newPAth, TPalette* tpal);
 		void dropLastTile();
 		void appendTile(Tile* addTile);
 		int render(int ypos, int mScroll);
@@ -455,7 +455,7 @@ enum {
 
 class TEditor{
 	public:
-		Palette mPalette;
+		TPalette mPalette;
 		TileSet mTileSet;
 		TileMap mTileMap;
 		TBDialog mTopBar;
@@ -554,8 +554,8 @@ class TEActionReplacePixel: public TEAction{
 		int mCurrentPixel;
 		int mOldValue;
 		int mNewValue;
-		Palette* mCurrentPalette;
-		void doAction(Tile* mCurTile, int mCurPix, int mOld, int mNew, Palette* mPal);	
+		TPalette* mCurrentPalette;
+		void doAction(Tile* mCurTile, int mCurPix, int mOld, int mNew, TPalette* mPal);	
 		virtual void undo();
 		virtual void redo();
 		virtual bool doCompare(const TEAction& rhs){
@@ -616,7 +616,7 @@ void TEActionReplaceTile::doAction(TileMap *cTileMap, int mCurTile, int mOld, in
 	TEActionType=ACTION_TILE;
 }
 
-void TEActionReplacePixel::doAction(Tile* mCurTile, int mCurPix, int mOld, int mNew, Palette* mPal){
+void TEActionReplacePixel::doAction(Tile* mCurTile, int mCurPix, int mOld, int mNew, TPalette* mPal){
 	mCurrentTile = mCurTile;
 	mCurrentPixel = mCurPix;
 	mOldValue = mOld;
@@ -656,7 +656,7 @@ void TEActionGroup::redo(){
 	}
 }
 
-int TTexture::loadFromFile(std::string filename,Palette* tpal){
+int TTexture::loadFromFile(std::string filename,TPalette* tpal){
     initTexture();
     std::ifstream infile(filename, std::ios::binary );
 
@@ -669,7 +669,7 @@ int TTexture::loadFromFile(std::string filename,Palette* tpal){
     return 0;
 }
 
-int TTexture::loadFromBuffer(std::vector<unsigned char> &cTileBuf,Palette* tpal){
+int TTexture::loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal){
 	initTexture();
     FileData.resize(mGlobalSettings.TileSize * mGlobalSettings.TileSize);
 	FileData = cTileBuf;
@@ -677,7 +677,7 @@ int TTexture::loadFromBuffer(std::vector<unsigned char> &cTileBuf,Palette* tpal)
 	return 0;
 }
 
-int TTexture::setAllPixels(unsigned char tcolor, Palette* tpal){
+int TTexture::setAllPixels(unsigned char tcolor, TPalette* tpal){
 	FileData.resize(mGlobalSettings.TileSize * mGlobalSettings.TileSize, tcolor);
 	updateTexture(tpal);
 	return 0;
@@ -688,7 +688,7 @@ int TTexture::initTexture(){
 	return 0;
 }
 
-int TTexture::updateTexture(Palette* tpal){
+int TTexture::updateTexture(TPalette* tpal){
 	if(PixelData.size()){		
 		PixelData.erase(PixelData.begin(),PixelData.end());
 	}
@@ -725,7 +725,7 @@ SDL_Rect TTexture::render(int xpos, int ypos, int tscale, bool updateRect ,bool 
     return renderQuad;
 }
 
-int TPixel::setPixelColor(unsigned char tcolor, Palette* tpal){
+int TPixel::setPixelColor(unsigned char tcolor, TPalette* tpal){
 	PixelColor = tpal->TPalette[tcolor];
 	return 0;
 }
@@ -764,7 +764,7 @@ SDL_Rect TTexture::renderEx(int xpos, int ypos, int tscale, SDL_RendererFlip fli
         return renderQuad;
 }
 
-void TTexture::renderEd(int xpos, int ypos, Palette* tpal){
+void TTexture::renderEd(int xpos, int ypos, TPalette* tpal){
 	for(int i=0; i < mGlobalSettings.TileSize; i++){
 		for(int j=0; j < mGlobalSettings.TileSize; j++){
 			tpal->renderTileEd(xpos + mGlobalSettings.TileSize*j, ypos + mGlobalSettings.TileSize*i, FileData[j+(i*mGlobalSettings.TileSize)]);			
@@ -773,7 +773,7 @@ void TTexture::renderEd(int xpos, int ypos, Palette* tpal){
 
 }
 
-Uint32 Palette::mapPaletteColor(int tcolor){
+Uint32 TPalette::mapPaletteColor(int tcolor){
 	Uint32 tmpcol = TPalette[tcolor].r;
 	tmpcol = tmpcol << 8;
 	tmpcol += TPalette[tcolor].g;
@@ -785,7 +785,7 @@ Uint32 Palette::mapPaletteColor(int tcolor){
 	return tmpcol;
 }
 
-int Palette::loadFromFile(std::string filename){
+int TPalette::loadFromFile(std::string filename){
 
 	std::ifstream infile(filename, std::ios::binary );
     std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
@@ -818,7 +818,7 @@ int Palette::loadFromFile(std::string filename){
 	return 1;
 }
 
-int Palette::initPalette(){
+int TPalette::initPalette(){
 	for(int i = 0; i < 256; i++){
 		SDL_Color tmpcol;
 		tmpcol.r = palette[i][0];
@@ -831,7 +831,7 @@ int Palette::initPalette(){
 	return 0;
 }
 
-int Palette::initTPixels(){
+int TPalette::initTPixels(){
 	TPixel *tmptpix;
 	for(int i = 0; i < 256; i++){
 		tmptpix = new TPixel;
@@ -842,11 +842,11 @@ int Palette::initTPixels(){
 	return 0;
 }
 
-SDL_Rect Palette::renderTileEd(int xpos,int ypos, int tcolor){
+SDL_Rect TPalette::renderTileEd(int xpos,int ypos, int tcolor){
 	return TPixels[tcolor]->render(xpos, ypos, mGlobalSettings.mTileEdScale,false,mGlobalSettings.bShowPixelGrip);
 }
 
-int Palette::render(int xpos,int ypos){
+int TPalette::render(int xpos,int ypos){
 
 	for(int i = 0; i < 16; i++){
 		for(int j = 0; j < 16; j++){
@@ -857,7 +857,7 @@ int Palette::render(int xpos,int ypos){
 return 0;
 }
 
-int Tile::createNew(Palette* tpal){
+int Tile::createNew(TPalette* tpal){
 	std::cout << "initTile" << std::endl;
 	initTile();
 	std::cout << "initTexture" << std::endl;
@@ -922,7 +922,7 @@ SDL_Rect Tile::render(int xpos, int ypos, int tscale,TileProperties tProps){
 	return tmpRect;
 }
 
-void Tile::renderEd(int xpos, int ypos, Palette* tpal){
+void Tile::renderEd(int xpos, int ypos, TPalette* tpal){
 	for(int i=0; i < mGlobalSettings.TileSize; i++){
 		for(int j=0; j < mGlobalSettings.TileSize; j++){
 			PixelAreas[j+(mGlobalSettings.TileSize*i)] = tpal->renderTileEd(xpos + (mGlobalSettings.TileSize * mGlobalSettings.mTileEdScale)*j, ypos + (mGlobalSettings.TileSize * mGlobalSettings.mTileEdScale)*i, FileData[j+(i*mGlobalSettings.TileSize)]);
@@ -930,17 +930,17 @@ void Tile::renderEd(int xpos, int ypos, Palette* tpal){
 	}
 }
 
-int Tile::loadFromFile(std::string filename,Palette* tpal){ 
+int Tile::loadFromFile(std::string filename,TPalette* tpal){ 
 	initTile();	
 	return TTexture::loadFromFile(filename,tpal);
 }
 
-int Tile::loadFromBuffer(std::vector<unsigned char> &cTileBuf,Palette* tpal){ 
+int Tile::loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal){ 
 	initTile();	
 	return TTexture::loadFromBuffer(cTileBuf,tpal);
 }
 
-Tile* TileSet::createNewFromFile(std::string newPath, Palette* tpal){
+Tile* TileSet::createNewFromFile(std::string newPath, TPalette* tpal){
 	if(fs::exists(fs::status(newPath))){
 		if(fs::is_directory(fs::status(newPath))){
 			return NULL;
@@ -976,7 +976,7 @@ Tile* TileSet::createNewFromFile(std::string newPath, Palette* tpal){
 	return NULL;
 }
 
-Tile* TileSet::createNewFromBuffer(std::vector<unsigned char> &newBuf, Palette* tpal){
+Tile* TileSet::createNewFromBuffer(std::vector<unsigned char> &newBuf, TPalette* tpal){
 
 	Tile *newTile = new Tile();
 	SDL_Rect newRect;
@@ -988,7 +988,7 @@ Tile* TileSet::createNewFromBuffer(std::vector<unsigned char> &newBuf, Palette* 
 
 }
 
-Tile* TileSet::createNew(Palette* tpal){	
+Tile* TileSet::createNew(TPalette* tpal){	
 	std::vector<unsigned char> tbuf;
 	tbuf.resize(mGlobalSettings.TileSize * mGlobalSettings.TileSize,0);
 	return createNewFromBuffer(tbuf, tpal);
@@ -1006,7 +1006,7 @@ void TileSet::appendTile(Tile* addTile){
 	TileAreas.push_back(newRect);
 }
 
-int TileSet::loadFromFolder(std::string path, Palette* tpal){ 
+int TileSet::loadFromFolder(std::string path, TPalette* tpal){ 
 
 	fs::path cTileFile;
 	int ntiles=0;
@@ -2594,6 +2594,15 @@ int TSettings::initSettings(){
 
 	initHelpText();
 	initTicks();
+
+	int cWin = SDL_GetWindowDisplayIndex(TWindow);
+	SDL_DisplayMode mCurDispMode;
+
+	SDL_GetCurrentDisplayMode(cWin, &mCurDispMode);
+
+	if(mCurDispMode.w <= 1920){
+		mTileEdScale--;		
+	}
 
 	return 0;	
 }
