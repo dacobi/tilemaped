@@ -47,25 +47,24 @@ class MEDialog;
 
 class TSettings{
 	public:
+		SDL_Renderer *TRenderer;
+		SDL_Window *TWindow;			
 		int WindowWidth=1900;
 		int WindowHeight=1000;
+		int TopBarHeight = 50;
 		int TileSetWidth=200;
 		int TileSetDefaultScale=10;
 		int TileMapScale=3;
 		int TileMapHeight=128;
-		int TileMapWidth=128;
+		int TileMapWidth=128;		
 		int TileSize=16;
 		int PaletteScale=2;
 		std::string ProjectPath;
 		int mProjectSaveState = 0;
 		int mOpenTileState = 0;
-		std::string mNewTilePath = "";
-		int TopBarHeight = 50;
-		SDL_Renderer *TRenderer;
-		SDL_Window *TWindow;		
-		int initSettings();
-		bool bShowTypeSelection=false;
-		bool bShowPixelSelection=true;
+		std::string mNewTilePath = "";				
+		bool bShowTypeSelection = false;
+		bool bShowPixelGrip = true;
 		bool bShowPixelType = false;
 		bool bShowSelectedTile = false;
 		int mSelectedTile = 0;
@@ -85,14 +84,14 @@ class TSettings{
 		SDL_Color ErrorBorderColor = {0xc0,0x00,0x00,0xff};
 		SDL_Color PixelGridColor = {0x20,0x20,0x20,0xff};
 		std::vector<std::string> mHelpText;
-		void initHelpText();
-		void printHelpText();
 		int mLastTick = 0;
 		int mCurrentTick = 0;
+		int initSettings();
+		void initHelpText();
+		void printHelpText();		
 		int initTicks();
 		int updateTicks();
 		int getTicks();
-
 };
 
 TSettings mGlobalSettings;
@@ -844,7 +843,7 @@ int Palette::initTPixels(){
 }
 
 SDL_Rect Palette::renderTileEd(int xpos,int ypos, int tcolor){
-	return TPixels[tcolor]->render(xpos, ypos, mGlobalSettings.mTileEdScale,false,mGlobalSettings.bShowPixelSelection);
+	return TPixels[tcolor]->render(xpos, ypos, mGlobalSettings.mTileEdScale,false,mGlobalSettings.bShowPixelGrip);
 }
 
 int Palette::render(int xpos,int ypos){
@@ -2469,7 +2468,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					if(mCurMode == EMODE_TILE) mGlobalSettings.bShowPixelType = !mGlobalSettings.bShowPixelType;					
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_p){
-		  			if(mCurMode == EMODE_TILE) mGlobalSettings.bShowPixelSelection = !mGlobalSettings.bShowPixelSelection;
+		  			if(mCurMode == EMODE_TILE) mGlobalSettings.bShowPixelGrip = !mGlobalSettings.bShowPixelGrip;
 	  			}	  			  		
 	  			if(cEvent->key.keysym.sym == SDLK_LCTRL){
 	  				bLCTRLisDown = true;
