@@ -74,9 +74,13 @@ class TSettings{
 		TTF_Font *TFont;
 		TTF_Font *LFont;
 		SDL_Color DefaultBGColor = {0xe0,0xe0,0xe0,0xff};
+		SDL_Color DefaultDarkBGColor = {0xb0,0xb0,0xb0,0xff};
 		SDL_Color DefaultTextColor = {0x20,0x20,0x20,0xff};
 		SDL_Color DefaultBorderColor = {0x00,0x00,0xff,0xff};
 		SDL_Color DefaultButtonColor = {0x90,0x90,0x90,0xff};
+		SDL_Color DefaultButtonBorderColor = {0x20,0x20,0x20,0xff};
+		SDL_Color DefaultGUIBorderColor = {0x20,0x20,0x20,0xff};
+		SDL_Color DefaultHighlightColor = {0xff,0xff,0xff,0xff};
 		SDL_Color ErrorTextColor = {0xff,0x00,0x00,0xff};
 		SDL_Color ErrorBorderColor = {0xc0,0x00,0x00,0xff};
 		std::vector<std::string> mHelpText;
@@ -351,9 +355,10 @@ class TEAction{
 
 class Dialog{
 	public:
-		SDL_Color mDialogColor= {0xe0,0xe0,0xe0,0xff};
-		SDL_Color mDialogBorderColor= {0x00,0x00,0xff,0xff};
-		SDL_Color mTextColor = {0x00,0x00,0x00,0xff};
+	
+		SDL_Color mDialogColor = mGlobalSettings.DefaultBGColor;// {0xe0,0xe0,0xe0,0xff};
+		SDL_Color mDialogBorderColor = mGlobalSettings.DefaultBorderColor; //{0x00,0x00,0xff,0xff};
+		SDL_Color mTextColor = mGlobalSettings.DefaultTextColor ;//{0x00,0x00,0x00,0xff};
 		void setColorScheme(int nScheme);
 		int mDialogWidth=200;
 		int mDialogHeight=100;
@@ -1033,9 +1038,7 @@ Tile* TileSet::createNewFromBuffer(std::vector<unsigned char> &newBuf, Palette* 
 
 }
 
-Tile* TileSet::createNew(Palette* tpal){
-
-	
+Tile* TileSet::createNew(Palette* tpal){	
 	std::vector<unsigned char> tbuf;
 	tbuf.resize(mGlobalSettings.TileSize * mGlobalSettings.TileSize,0);
 	return createNewFromBuffer(tbuf, tpal);
@@ -1194,10 +1197,9 @@ int TileSet::render(int ypos, int mScroll){
 		mMaxScrollY = 0;
 	}
 	
+	//mGlobalSettings.DefaultGUIBorderColor.r,
 
-	
-
-	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0x20,0x20,0x20,0xff);
+	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.DefaultGUIBorderColor.r,mGlobalSettings.DefaultGUIBorderColor.g,mGlobalSettings.DefaultGUIBorderColor.b,0xff);
 	SDL_RenderDrawRect(mGlobalSettings.TRenderer, &mTileSetBackGround);
 
 	
@@ -1206,7 +1208,7 @@ int TileSet::render(int ypos, int mScroll){
 	mTileSetBackGround.w = mTileSetBackGround.w - 2; 
 	mTileSetBackGround.h = mTileSetBackGround.h - 2;
 
-	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0x20,0x20,0x20,0xff);
+	//SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0x20,0x20,0x20,0xff);
 	SDL_RenderDrawRect(mGlobalSettings.TRenderer, &mTileSetBackGround);
 
 	mTileSetBackGround.x = mTileSetBackGround.x + 1;
@@ -1214,7 +1216,7 @@ int TileSet::render(int ypos, int mScroll){
 	mTileSetBackGround.w = mTileSetBackGround.w - 2; 
 	mTileSetBackGround.h = mTileSetBackGround.h - 2;
 
-	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0x20,0x20,0x20,0xff);
+	//SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0x20,0x20,0x20,0xff);
 	SDL_RenderDrawRect(mGlobalSettings.TRenderer, &mTileSetBackGround);
 
 
@@ -1383,7 +1385,8 @@ int Dialog::recieveInput(int mx, int my){
 
 void TBDialog::init(){
 	mDialogBorder=3;
-	mDialogBorderColor= {0x20,0x20,0x20,0xff};
+	mDialogColor = mGlobalSettings.DefaultDarkBGColor;
+	mDialogBorderColor=  mGlobalSettings.DefaultButtonBorderColor; //{0x20,0x20,0x20,0xff};
 	mDialogWidth = mGlobalSettings.WindowWidth;
 	mDialogHeight =  mGlobalSettings.TopBarHeight;
 	mDialogTextActions = mTexDialogTextActions.mFloppy +" Save/Save As: F12/F11    " + mTexDialogTextActions.mBook + " Help: F1";	
@@ -1536,7 +1539,7 @@ SDL_Rect SADialog::render(int xpos, int ypos){
 
 void SADialog::recieveInput(std::string mText){		
 	mTextInput.mDialogTextMain += mText;
-	mTextInput.mTextColor =  {0x20, 0x20, 0x20, 0xff};
+	mTextInput.mTextColor =  mGlobalSettings.DefaultTextColor; //{0x20, 0x20, 0x20, 0xff};
 	mTextInput.init();
 	resize();	
 }
@@ -1564,7 +1567,7 @@ void SADialog::recieveInput(int mKey){
 				bDialogIsWatingForText = false;
 			} else {
 				if(fs::exists(fs::status(mTextInput.mDialogTextMain))){
-					mTextInput.mTextColor =  {0xff, 0x00, 0x00, 0xff};					
+					mTextInput.mTextColor = mGlobalSettings.ErrorTextColor;// {0xff, 0x00, 0x00, 0xff};					
 					return;
 				}
 				mGlobalSettings.mProjectSaveState = 1;
@@ -1585,7 +1588,7 @@ void SADialog::recieveInput(int mKey){
 void SADialog::dropLastInputChar(){
 	if(mTextInput.mDialogTextMain.size()){
 		mTextInput.mDialogTextMain.pop_back();
-		mTextInput.mTextColor =  {0x20, 0x20, 0x20, 0xff};
+		mTextInput.mTextColor =  mGlobalSettings.DefaultTextColor;//{0x20, 0x20, 0x20, 0xff};
 		mTextInput.init();
 		resize();
 	}
@@ -1628,7 +1631,7 @@ void ITDialog::init(){
 
 void ITDialog::cancel(){
 		Dialog::cancel();
-		mTextInput.mTextColor =  {0x20, 0x20, 0x20, 0xff};
+		mTextInput.mTextColor =  mGlobalSettings.DefaultTextColor;//{0x20, 0x20, 0x20, 0xff};
 		mTextInput.mDialogTextMain = "";
 }
 
@@ -1636,7 +1639,7 @@ void ITDialog::recieveInput(int mKey){
 	if(mKey == SDLK_y){
 		if(fs::exists(fs::status(mTextInput.mDialogTextMain))){
 			if(fs::is_directory(fs::status(mTextInput.mDialogTextMain))){
-				mTextInput.mTextColor =  {0xff, 0x00, 0x00, 0xff};					
+				mTextInput.mTextColor = mGlobalSettings.ErrorTextColor; //// {0xff, 0x00, 0x00, 0xff};					
 				return;
 			}
 			bInputIsAccept=true;	
@@ -1646,7 +1649,7 @@ void ITDialog::recieveInput(int mKey){
 			SDL_StopTextInput();
 			return;
 		} else {
-				mTextInput.mTextColor =  {0xff, 0x00, 0x00, 0xff};					
+				mTextInput.mTextColor =  mGlobalSettings.ErrorTextColor; //{0xff, 0x00, 0x00, 0xff};					
 				return;
 			}
 		}
@@ -1666,7 +1669,7 @@ int ITDialog::recieveInput(int mx, int my){
 
 void BDialog::init(){
 	mDialogBorder = 3;
-	mDialogBorderColor = mGlobalSettings.DefaultTextColor; ////{0x20,0x20,0x20,0xff};
+	mDialogBorderColor = mGlobalSettings.DefaultButtonBorderColor; //mGlobalSettings.DefaultTextColor; ////{0x20,0x20,0x20,0xff};
 	mDialogColor = mGlobalSettings.DefaultButtonColor; //{0x90,0x90,0x90,0xff};
 
 	mTexDialogTextMain.loadTTFFromString(mDialogTextMain, mTextColor);
@@ -2007,7 +2010,7 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 			TileAreas[j+(i*mGlobalSettings.TileMapWidth)] = mTiles->TTiles[getTile(j+(i*mGlobalSettings.TileMapWidth))]->render(xpos + (mGlobalSettings.TileSize * j * mGlobalSettings.TileMapScale), ypos + (mGlobalSettings.TileSize * i * mGlobalSettings.TileMapScale), mGlobalSettings.TileMapScale, getTileProp(j+(i*mGlobalSettings.TileMapWidth)));
 			if(mGlobalSettings.bShowSelectedTile){
 				if(mGlobalSettings.mSelectedTile == (j+(i*mGlobalSettings.TileMapWidth))){
-					SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, 0xFF,0xFF,0xFF,0xff);
+					SDL_SetRenderDrawColor(mGlobalSettings.TRenderer,mGlobalSettings.DefaultHighlightColor.r,mGlobalSettings.DefaultHighlightColor.g,mGlobalSettings.DefaultHighlightColor.b, 0xff); //0xFF,0xFF,0xFF,0xff);
 					SDL_RenderDrawRect(mGlobalSettings.TRenderer, &TileAreas[j+(i*mGlobalSettings.TileMapWidth)]);
 				}
 			}
@@ -2691,7 +2694,7 @@ int TSettings::initSettings(){
 		return 1;
 	}
 	
-	SDL_SetRenderDrawColor( TRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+	SDL_SetRenderDrawColor( TRenderer, mGlobalSettings.DefaultHighlightColor.r,mGlobalSettings.DefaultHighlightColor.g,mGlobalSettings.DefaultHighlightColor.b,0xff);
 
 	int imgFlags = IMG_INIT_PNG;
 	if( !( IMG_Init( imgFlags ) & imgFlags ) ){
