@@ -538,7 +538,7 @@ class TEActionReplaceMany: public TEAction{
 	public:
 		std::vector<int> mSelection;
 		std::vector<TEAction*> mSubActions;
-		//virtual void doSubActions();
+		
 		bool compareSelection(TEActionReplaceMany *mCmp){
 			if(mSelection.size() == mCmp->mSelection.size()){
 				for(int i = 0; i < mSelection.size(); i++){
@@ -601,7 +601,7 @@ class TEActionReplacePixels: public TEActionReplaceMany{
 		int mNewValue;
 		TPalette* mCurrentPalette;
 		void doAction(Tile* mCurTile, std::vector<int> &newSel, int mOldColor, int mNewColor, TPalette* mPal);	
-		virtual void doSubActions();
+		//virtual void doSubActions();
 		virtual bool doCompare(const TEAction& rhs){
 			const TEActionReplacePixels* mrhs =  dynamic_cast<const TEActionReplacePixels*>(&rhs); 
 			if(mrhs){
@@ -690,9 +690,7 @@ void TEActionReplacePixels::doAction(Tile* mCurTile, std::vector<int> &newSel,in
 
 }
 
-void TEActionReplacePixels::doSubActions(){
-
-}
+//void TEActionReplacePixels::doSubActions(){}
 
 void TEActionAddTile::doAction(Tile* cNewTile, int mOld, int mNew, TileSet *cTiles){
 	mTiles = cTiles;
@@ -1070,6 +1068,7 @@ void TileSet::appendTile(Tile* addTile){
 	TTiles.push_back(addTile);
 	SDL_Rect newRect;
 	TileAreas.push_back(newRect);
+	reCalculateScale();
 }
 
 int TileSet::loadFromFolder(std::string path, TPalette* tpal){ 
@@ -1187,6 +1186,21 @@ int TileSet::render(int ypos, int mScroll){
 	SDL_RenderFillRect(mGlobalSettings.TRenderer, &mTileSetBackGround);
 	
 	if(mCurColumns > 0){
+		for(int i = 0; i < mCurColumns; i++){
+			for(int j = 0; j < cRowNum; j++){
+				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->render((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSize)+mColSpace)*i),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSize*mCurTileScale)+mColSpace)*j), mCurTileScale,true,true);
+			}								
+		}	
+		if(isOdd){
+			std::cout << "isOdd: " <<isOdd << " cRow: "  << cRowNum << " mCol: " << (mCurColumns) << " index:  " << ((mCurColumns)*cRowNum) << std::endl;
+			int i = mCurColumns;
+			for(int j = 0; j < isOdd; j++){
+				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->render((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSize)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSize*mCurTileScale)+mColSpace)*(cRowNum)), mCurTileScale,true,true);
+			}
+		}
+		
+
+		/*
 		for(int i = 0; i < cRowNum; i++){
 				for(int j = 0; j < mCurColumns; j++){
 					TileAreas[(j*cRowNum)+i] = TTiles[(j*cRowNum)+i]->render((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSize)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSize*mCurTileScale)+mColSpace)*i), mCurTileScale,true,true);
@@ -1194,10 +1208,11 @@ int TileSet::render(int ypos, int mScroll){
 			}
 		if(isOdd){
 			int i = cRowNum;
-			for(int j = 0; j <isOdd; j++){
-				TileAreas[(j*cRowNum)+i] = TTiles[(j*cRowNum)+i]->render((mTileSetBackGround.x+ (mColSpace*2) +((mCurTileScale*mGlobalSettings.TileSize)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSize*mCurTileScale)+mColSpace)*i), mCurTileScale,true,true);				
+			for(int j = 0; j < isOdd; j++){
+				TileAreas[(j*cRowNum)+i+1] = TTiles[(j*cRowNum)+i]->render((mTileSetBackGround.x+ (mColSpace*2) +((mCurTileScale*mGlobalSettings.TileSize)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSize*mCurTileScale)+mColSpace)*i), mCurTileScale,true,true);				
 			}										
 		}
+		*/
 	}
 	
 	int cMax = (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.TileSize ) +mColSpace ) * TTiles.size() )  / mCurColumns )) + (4 * mGlobalSettings.TileSize);
@@ -2212,8 +2227,14 @@ Tile* TEditor::createNewTile(){
 	Tile* newTile = mTileSet.createNew(&mPalette);
 		if(newTile){
 				TEActionAddTile* newActionTile = new TEActionAddTile();
+				/*
+				mMapSelectedTile = tSel;
+   	 			mTileSelectedTile->bIsSelected = false;
+   	 			mTileSelectedTile = mTileSet.TTiles[tSel];
+   	 			mTileSelectedTile->bIsSelected = true;
+				*/
 
-				newActionTile->doAction(newTile, mTileSet.TTiles.size(), mTileSet.TTiles.size()+1, &mTileSet);
+				newActionTile->doAction(newTile, mMapSelectedTile, mTileSet.TTiles.size(), &mTileSet);
       			newActionGroup();	
       			addAction(newActionTile);
       			
