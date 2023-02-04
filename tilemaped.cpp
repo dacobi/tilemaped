@@ -37,6 +37,7 @@ class TEActionReplacePixel;
 class TEActionAddTile;
 class TEActionReplaceMany;
 class TEActionReplacePixels;
+class TEActionReplaceTiles;
 class TEActionUndoStack;
 class Dialog;
 class SDialog;
@@ -635,7 +636,7 @@ class TEActionReplacePixels: public TEActionReplaceMany{
 		int mNewValue;
 		TPalette* mCurrentPalette;
 		void doAction(Tile* mCurTile, std::vector<int> &newSel, int mOldColor, int mNewColor, TPalette* mPal);	
-		//virtual void doSubActions();
+		
 		virtual bool doCompare(const TEAction& rhs){
 			const TEActionReplacePixels* mrhs =  dynamic_cast<const TEActionReplacePixels*>(&rhs); 
 			if(mrhs){
@@ -647,6 +648,25 @@ class TEActionReplacePixels: public TEActionReplaceMany{
 		}
 };
 
+
+class TEActionReplaceTiles: public TEActionReplaceMany{
+	public:
+		Tile* mCurrentTile;		
+		int mOldValue;
+		int mNewValue;
+		TileMap *mTileMap;
+		void doAction(TileMap* cTileMap, std::vector<int> &newSel, int mOld, int mNew);	
+		
+		virtual bool doCompare(const TEAction& rhs){
+			const TEActionReplaceTiles* mrhs =  dynamic_cast<const TEActionReplaceTiles*>(&rhs); 
+			if(mrhs){
+				if((mCurrentTile == mrhs->mCurrentTile) &&  (mNewValue == mrhs->mNewValue)){ // Not testing mOldValue
+					return compareSelection((TEActionReplaceMany*)mrhs);
+				}
+			}	
+			 return false;
+		}
+};
 
 class TEActionAddTile: public TEAction{
 	public:
@@ -2441,6 +2461,12 @@ int TEditor::selectTile(int mx, int my){
 	       		if(tSel != -1){
 	       			mGlobalSettings.mSelectedTile = tSel;
 					mGlobalSettings.bShowSelectedTile = true;
+					if(mGlobalSettings.bShowTypeSelection){
+						mMapSelectedTile = mTileMap.getTile(tSel);
+   	 					mTileSelectedTile->bIsSelected = false;
+   	 					mTileSelectedTile = mTileSet.TTiles[mMapSelectedTile];
+   	 					mTileSelectedTile->bIsSelected = true;
+					}
 				}
 		}
 	}
