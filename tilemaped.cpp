@@ -10,6 +10,7 @@
 #include <map>
 #include <filesystem>
 #include <sstream>
+#include <cstdlib>
 
 #include "cx16_palette.h"
 
@@ -34,6 +35,8 @@ class TEActionGroup;
 class TEActionReplaceTile;
 class TEActionReplacePixel;
 class TEActionAddTile;
+class TEActionReplaceMany;
+class TEActionReplacePixels;
 class Dialog;
 class SDialog;
 class SADialog;
@@ -312,7 +315,8 @@ enum {
 	ACTION_EMPTY,
 	ACTION_TILE,
 	ACTION_PIXEL,
-	ACTION_TILENEW
+	ACTION_TILENEW,
+	ACTION_PIXELS
 } actions;
 
 class TEAction{
@@ -489,6 +493,7 @@ class TEditor{
 		bool bTileSetGrapped = false;
 		int flipSelectedTile();
 		int selectTile(int mx, int my);
+		int replaceSelectedColor(int x, int y);
 		int searchRectsXY(std::vector<SDL_Rect> &sRects, int mx, int my);
 		int searchRects(std::vector<SDL_Rect> &sRects);
 		int findSelected();
@@ -499,6 +504,7 @@ class TEditor{
 		TEAction *mLastAction;
 		void newActionGroup();
 		void addAction(TEAction *newAction);
+		void addSubActions(std::vector<TEAction*> &cSubActions);
 		void undoLastActionGroup();
 		void redoLastActionGroup();
 		void redoClearStack();
@@ -526,6 +532,24 @@ class TEActionGroup{
 		std::vector<TEAction*> mActions;
 		void undo();
 		void redo();
+};
+
+class TEActionReplaceMany: public TEAction{
+	public:
+		std::vector<int> mSelection;
+		std::vector<TEAction*> mSubActions;
+		//virtual void doSubActions();
+		bool compareSelection(TEActionReplaceMany *mCmp){
+			if(mSelection.size() == mCmp->mSelection.size()){
+				for(int i = 0; i < mSelection.size(); i++){
+					if(mSelection[i] != mCmp->mSelection[i]){
+						return false;
+					}
+				}
+				return true;
+			}
+			return false;
+		}
 };
 
 class TEActionReplaceTile: public TEAction{
@@ -568,6 +592,27 @@ class TEActionReplacePixel: public TEAction{
 			 return false;
 		}
 };
+
+
+class TEActionReplacePixels: public TEActionReplaceMany{
+	public:
+		Tile* mCurrentTile;		
+		int mOldValue;
+		int mNewValue;
+		TPalette* mCurrentPalette;
+		void doAction(Tile* mCurTile, std::vector<int> &newSel, int mOldColor, int mNewColor, TPalette* mPal);	
+		virtual void doSubActions();
+		virtual bool doCompare(const TEAction& rhs){
+			const TEActionReplacePixels* mrhs =  dynamic_cast<const TEActionReplacePixels*>(&rhs); 
+			if(mrhs){
+				if((mCurrentTile == mrhs->mCurrentTile) &&  (mNewValue == mrhs->mNewValue)){ // Not testing mOldValue
+					return compareSelection((TEActionReplaceMany*)mrhs);
+				}
+			}	
+			 return false;
+		}
+};
+
 
 class TEActionAddTile: public TEAction{
 	public:
@@ -627,6 +672,27 @@ void TEActionReplacePixel::doAction(Tile* mCurTile, int mCurPix, int mOld, int m
 	TEActionType=ACTION_PIXEL;
 }
 
+
+void TEActionReplacePixels::doAction(Tile* mCurTile, std::vector<int> &newSel,int mOldColor, int mNewColor, TPalette* mPal){
+	mCurrentTile = mCurTile;		
+	mNewValue = mNewColor;
+	mCurrentPalette = mPal;
+	mSelection = newSel;
+	TEActionType=ACTION_PIXELS;
+
+	for(auto &mSelElement : mSelection){
+		if(mSelElement > -1){ 
+			TEActionReplacePixel* newAction = new TEActionReplacePixel();
+			newAction->doAction(mCurrentTile, mSelElement, mOldColor, mNewValue, mCurrentPalette);
+			mSubActions.push_back(newAction);
+		}
+	}
+
+}
+
+void TEActionReplacePixels::doSubActions(){
+
+}
 
 void TEActionAddTile::doAction(Tile* cNewTile, int mOld, int mNew, TileSet *cTiles){
 	mTiles = cTiles;
@@ -2094,6 +2160,12 @@ void TEditor::addAction(TEAction *newAction){
 	}
 }
 
+void TEditor::addSubActions(std::vector<TEAction*> &cSubActions){
+	for(auto *newAction: cSubActions){
+		addAction(newAction);
+	}
+}
+
 void TEditor::undoLastActionGroup(){
 	if(mUndoStack.size()){
 		TEActionGroup *mGroup = *(mUndoStack.end()-1);
@@ -2222,6 +2294,34 @@ int TEditor::flipSelectedTile(){
 		}
 	}
 	return 1;
+}
+
+int TEditor::replaceSelectedColor(int x, int y){
+	if(mGlobalSettings.bShowPixelType){
+				int mOldColor = mColorSelected;
+				int tSel = searchRectsXY(mPalette.PixelAreas, x, y);
+				if(tSel > -1){					
+					std::vector<int> newSelection;
+					int cPixIndex = 0;
+					for(auto &cPixel : mTileSelectedTile->FileData){
+						if(cPixel == mOldColor){
+							newSelection.push_back(cPixIndex);
+						}
+						cPixIndex++;
+					}
+					if(newSelection.size()){
+						TEActionReplacePixels* newAction = new TEActionReplacePixels();
+						newAction->doAction(mTileSelectedTile, newSelection, mOldColor, tSel, &mPalette);
+						if(!(newAction == mLastAction)){
+							mLastAction = newAction;
+							newActionGroup();
+							addSubActions(newAction->mSubActions);
+						}
+					}
+
+				}
+	}
+	return 0;
 }
 
 int TEditor::selectTile(int mx, int my){
@@ -2364,9 +2464,16 @@ int TEditor::handleEvents(){
 		return 0;
 	} else {
 		if(!waitRightMouseButton){
-			if(rightMouseButtonDown){
-				selectTile(x,y);
-			}			
+			if(mCurMode == EMODE_MAP){
+				if(rightMouseButtonDown){
+					selectTile(x,y);
+				}			
+			}
+			if(mCurMode == EMODE_TILE){
+				if(rightMouseButtonDown){
+					replaceSelectedColor(x,y);
+				}			
+			}
 		}
 		if(!waitLeftMouseButton){		
 			if(leftMouseButtonDown){
@@ -2603,6 +2710,8 @@ int TSettings::initSettings(){
 	if(mCurDispMode.w <= 1920){
 		mTileEdScale--;		
 	}
+
+	srand(time(0));
 
 	return 0;	
 }
