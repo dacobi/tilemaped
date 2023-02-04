@@ -331,7 +331,7 @@ class TEAction{
 class Dialog{
 	public:
 	
-		SDL_Color mDialogColor = mGlobalSettings.DefaultBGColor;
+		SDL_Color mDialogColor = mGlobalSettings.DefaultDarkBGColor;
 		SDL_Color mDialogBorderColor = mGlobalSettings.DefaultBorderColor;
 		SDL_Color mTextColor = mGlobalSettings.DefaultTextColor;
 		void setColorScheme(int nScheme);
@@ -1182,7 +1182,7 @@ int TileSet::render(int ypos, int mScroll){
 	mTileSetBackGround.y = ypos;
 	mTileSetBackGround.w = mGlobalSettings.TileSetWidth; 
 
-	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.DefaultBGColor.r,  mGlobalSettings.DefaultBGColor.g,  mGlobalSettings.DefaultBGColor.b, 0xff);//0xFF,0xFF,0xFF,0xff);
+	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.DefaultBGColor.r,  mGlobalSettings.DefaultBGColor.g,  mGlobalSettings.DefaultBGColor.b, 0xff);
 	SDL_RenderFillRect(mGlobalSettings.TRenderer, &mTileSetBackGround);
 	
 	if(mCurColumns > 0){
@@ -1191,28 +1191,12 @@ int TileSet::render(int ypos, int mScroll){
 				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->render((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSize)+mColSpace)*i),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSize*mCurTileScale)+mColSpace)*j), mCurTileScale,true,true);
 			}								
 		}	
-		if(isOdd){
-			std::cout << "isOdd: " <<isOdd << " cRow: "  << cRowNum << " mCol: " << (mCurColumns) << " index:  " << ((mCurColumns)*cRowNum) << std::endl;
+		if(isOdd){			
 			int i = mCurColumns;
 			for(int j = 0; j < isOdd; j++){
-				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->render((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSize)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSize*mCurTileScale)+mColSpace)*(cRowNum)), mCurTileScale,true,true);
+				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->render((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSize)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSize*mCurTileScale)+mColSpace)*cRowNum), mCurTileScale,true,true);
 			}
 		}
-		
-
-		/*
-		for(int i = 0; i < cRowNum; i++){
-				for(int j = 0; j < mCurColumns; j++){
-					TileAreas[(j*cRowNum)+i] = TTiles[(j*cRowNum)+i]->render((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSize)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSize*mCurTileScale)+mColSpace)*i), mCurTileScale,true,true);
-				}				
-			}
-		if(isOdd){
-			int i = cRowNum;
-			for(int j = 0; j < isOdd; j++){
-				TileAreas[(j*cRowNum)+i+1] = TTiles[(j*cRowNum)+i]->render((mTileSetBackGround.x+ (mColSpace*2) +((mCurTileScale*mGlobalSettings.TileSize)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSize*mCurTileScale)+mColSpace)*i), mCurTileScale,true,true);				
-			}										
-		}
-		*/
 	}
 	
 	int cMax = (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.TileSize ) +mColSpace ) * TTiles.size() )  / mCurColumns )) + (4 * mGlobalSettings.TileSize);
