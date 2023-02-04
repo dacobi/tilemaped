@@ -66,9 +66,9 @@ class TSettings{
 		int mProjectSaveState = 0;
 		int mOpenTileState = 0;
 		std::string mNewTilePath = "";				
-		bool bShowTypeSelection = false;
+		bool bShowTypeSelection = true;
 		bool bShowPixelGrip = true;
-		bool bShowPixelType = false;
+		bool bShowPixelType = true;
 		bool bShowSelectedTile = false;
 		int mSelectedTile = 0;
 		int mTileEdScale = 4;
@@ -87,6 +87,8 @@ class TSettings{
 		SDL_Color ErrorBorderColor = {0xc0,0x00,0x00,0xff};
 		SDL_Color PixelGridColor = {0x20,0x20,0x20,0xff};
 		std::vector<std::string> mHelpText;
+		std::vector<std::string> mHelpTextMap;
+		std::vector<std::string> mHelpTextTile;
 		int mLastTick = 0;
 		int mCurrentTick = 0;
 		int initSettings();
@@ -414,7 +416,10 @@ class ITDialog: public SADialog{
 
 class HDialog: public SDialog{
 	public:
+
 		std::vector<TTFTexture*> mHelpText;
+		std::string	mCurModeHead;
+		std::vector<std::string> mCurModeText;
 		BDialog mCloseButton;
 		virtual void init();
 		virtual void recieveInput(int mKey);
@@ -512,7 +517,8 @@ class TEditor{
 		SDialog mSaveDialog;
 		SADialog mSaveAsDialog;
 		ITDialog mOpenTileDialog;
-		HDialog mHelpDialog;
+		HDialog mHelpDialogMap;
+		HDialog mHelpDialogTile;
 		PIDialog mProjectInfo;
 		MEDialog mInfoMessage;
 		MEDialog mErrorMessage;
@@ -1749,10 +1755,24 @@ void TIDialog::recieveInput(std::string mTextInput){
 void HDialog::init(){
 	
 	TTFTexture* mNewText = new TTFTexture();
-	std::string tmpStr = mNewText->mBook + " UI Guide";
+	std::string tmpStr = mNewText->mBook + " UI Guide: " + mCurModeHead;
 	mNewText->loadTTFFromUTF8(tmpStr, mTextColor, mGlobalSettings.LFont);
 	mHelpText.push_back(mNewText);
 	
+	for(const auto& mStr : mCurModeText){
+		mNewText = new TTFTexture();
+		mNewText->loadTTFFromString(mStr, mTextColor);
+		mHelpText.push_back(mNewText);
+	}
+
+		mNewText = new TTFTexture();
+		mNewText->loadTTFFromString(" ", mTextColor);
+		mHelpText.push_back(mNewText);
+
+		mNewText = new TTFTexture();
+		mNewText->loadTTFFromString("General:", mTextColor);
+		mHelpText.push_back(mNewText);
+
 	for(const auto& hStr : mGlobalSettings.mHelpText){
 		mNewText = new TTFTexture();
 		mNewText->loadTTFFromString(hStr, mTextColor);
@@ -2017,7 +2037,15 @@ void TEditor::initDialogs(){
 	mSaveAsDialog.mDialogTextInput = mGlobalSettings.ProjectPath;
 	mSaveAsDialog.init();
 	mSaveAsDialog.mSubDialog = &mSaveDialog;
-	mHelpDialog.init();
+	
+	mHelpDialogMap.mCurModeText = mGlobalSettings.mHelpTextMap;
+	mHelpDialogMap.mCurModeHead = "TileMap";
+	mHelpDialogMap.init();
+	
+	mHelpDialogTile.mCurModeText = mGlobalSettings.mHelpTextTile;
+	mHelpDialogTile.mCurModeHead = "Tile";
+	mHelpDialogTile.init();
+	
 	mTopBar.mEditor = this;
 	mTopBar.init();
 	mProjectInfo.init();
@@ -2248,7 +2276,13 @@ int TEditor::showMessage(std::string cMessage, bool isError){
 }
 
 int TEditor::activateHelpDialog(){
-	mActiveDialog = &mHelpDialog;
+	if(mCurMode == EMODE_MAP){
+		mActiveDialog = &mHelpDialogMap;
+	}
+	if(mCurMode == EMODE_TILE){
+		mActiveDialog = &mHelpDialogTile;
+	}
+
 	return 0;
 }
 
@@ -2738,22 +2772,46 @@ int TSettings::getTicks(){
 
 void TSettings::initHelpText(){
 
-	mHelpText.push_back("Left Mouse Button: Select Tile/Color and place in TileMap or Tile");
-	mHelpText.push_back("Right Mouse Button: Select Tile in TileMap or TileSet");
-	mHelpText.push_back("Mouse Scroll Wheel: Scale TileMap and Scroll TileSet");
-	mHelpText.push_back("LCTRL + Left Mouse Button: Move TileMap and Scroll TileSet");
-	mHelpText.push_back("Space: Switch between TileMap and Tile Editor");
+	mHelpTextMap.push_back("Left Mouse Button: Select Tile and place in TileMap");
+	mHelpTextTile.push_back("Left Mouse Button: Select Color and place in Tile");
+
+	mHelpTextMap.push_back("Right Mouse Button: Select Tile in TileMap or TileSet");
+	mHelpTextTile.push_back("Right Mouse Button: Replace Selected Pixel Color with new Color");
+
+	mHelpTextMap.push_back("Mouse Scroll Wheel: Scale TileMap and Scroll TileSet");
+	mHelpTextMap.push_back("LCTRL + Left Mouse Button: Move TileMap and Scroll TileSet");
+	mHelpTextMap.push_back("T: Toggle Show Selected Tile in TileMap Editor");									
+
+	mHelpTextMap.push_back("S: Toggle Show Selected Tile Type");
+	mHelpTextTile.push_back("S: Toggle Show Selected Pixel Color");
+
+	mHelpTextTile.push_back("P: Toggle Show Pixel Grid in Tile Editor");
+
+	mHelpText.push_back("Space: Switch between TileMap and Tile Editor");	
 	mHelpText.push_back("F3: Create Empty Tile");
-	mHelpText.push_back("F4: Import Tile from file");
-	mHelpText.push_back("T: Toggle Show Selected Tile in TileMap Editor");									
-	mHelpText.push_back("S: Toggle Show Selected Tile Type/Pixel Color");
-	mHelpText.push_back("P: Toggle Show Pixel Grid in Tile Editor");
+	mHelpText.push_back("F4: Import Tile from file");	
 	mHelpText.push_back("U: Undo last Action");
 	mHelpText.push_back("R: Redo last Action");
 }
 
 void TSettings::printHelpText(){
 	initHelpText();
+	std::cout << "TileMap Editor:" << std::endl;	
+	
+	for(const auto& cStr : mHelpTextMap){
+		std::cout << cStr << std::endl;	
+	}
+
+	std::cout  << std::endl;	
+	std::cout << "Tile Editor:" << std::endl;	
+	
+	for(const auto& cStr : mHelpTextTile){
+		std::cout << cStr << std::endl;	
+	}
+		
+	std::cout  << std::endl;	
+	std::cout << "General:" << std::endl;	
+
 	for(const auto& cStr : mHelpText){
 		std::cout << cStr << std::endl;	
 	}
