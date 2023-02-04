@@ -37,6 +37,7 @@ class TEActionReplacePixel;
 class TEActionAddTile;
 class TEActionReplaceMany;
 class TEActionReplacePixels;
+class TEActionUndoStack;
 class Dialog;
 class SDialog;
 class SADialog;
@@ -100,6 +101,45 @@ class TSettings{
 };
 
 TSettings mGlobalSettings;
+
+enum {
+	EMODE_MAP,
+	EMODE_TILE
+} emodes;
+
+enum {
+	ACTION_EMPTY,
+	ACTION_TILE,
+	ACTION_PIXEL,
+	ACTION_TILENEW,
+	ACTION_PIXELS
+} actions;
+
+class TEAction{
+	public:
+		int TEActionType=ACTION_EMPTY;
+		virtual void undo();
+		virtual void redo();
+		bool operator==(const TEAction& rhs){ if(TEActionType == rhs.TEActionType){return this->doCompare(rhs);} else {return false;}}
+		virtual bool doCompare(const TEAction& rhs){return false;}
+};
+
+
+class TEActionUndoStack{
+	public:
+		TEActionUndoStack();
+		std::vector<TEActionGroup*> mUndoStack;
+		std::vector<TEActionGroup*> mRedoStack;
+		TEAction mEmptyAction;
+		TEAction *mLastAction;
+		void newActionGroup();
+		void addAction(TEAction *newAction);
+		void addSubActions(std::vector<TEAction*> &cSubActions);
+		void undoLastActionGroup();
+		void redoLastActionGroup();
+		void redoClearStack();
+};
+
 
 class TTFTexture{
 	public:
@@ -264,6 +304,7 @@ class Tile: public TTexture{
 		int loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal);	
 		int createNew(TPalette* tpal);	
 		bool bIsSelected = false;
+		TEActionUndoStack mActionStack;
 };	
 
 class TileSet{
@@ -313,22 +354,6 @@ class TileMap{
 		std::map<int,int> mTilemapSizesOut = {{32,0},{64,1},{128,2},{256,3}};
 };
 
-enum {
-	ACTION_EMPTY,
-	ACTION_TILE,
-	ACTION_PIXEL,
-	ACTION_TILENEW,
-	ACTION_PIXELS
-} actions;
-
-class TEAction{
-	public:
-		int TEActionType=ACTION_EMPTY;
-		virtual void undo();
-		virtual void redo();
-		bool operator==(const TEAction& rhs){ if(TEActionType == rhs.TEActionType){return this->doCompare(rhs);} else {return false;}}
-		virtual bool doCompare(const TEAction& rhs){return false;}
-};
 
 class Dialog{
 	public:
@@ -457,10 +482,6 @@ class MEDialog: public HDialog{
 		virtual SDL_Rect render(int xpos, int ypos);
 };
 
-enum {
-	EMODE_MAP,
-	EMODE_TILE
-} emodes;
 
 class TEditor{
 	public:
@@ -505,14 +526,19 @@ class TEditor{
 		int toggleSelectedTile();
 		std::vector<TEActionGroup*> mUndoStack;
 		std::vector<TEActionGroup*> mRedoStack;
+		TEActionUndoStack mActionStack;
+		/*
 		TEAction mEmptyAction;
 		TEAction *mLastAction;
 		void newActionGroup();
 		void addAction(TEAction *newAction);
 		void addSubActions(std::vector<TEAction*> &cSubActions);
+		
+		void redoClearStack();
+		*/
+
 		void undoLastActionGroup();
 		void redoLastActionGroup();
-		void redoClearStack();
 		Dialog *mActiveDialog = NULL;
 		SDialog mSaveDialog;
 		SADialog mSaveAsDialog;
@@ -532,6 +558,8 @@ class TEditor{
 		int activateSaveAsDialog();
 		int activateProjectInfo();
 };
+
+
 
 class TEActionGroup{
 	public:
@@ -2032,7 +2060,7 @@ void TEditor::initDialogs(){
 	mColorSelectedTile->bPixelSelected = true;
 	mColorSelected = 0;
 
-	mLastAction = &mEmptyAction;
+	//mActionStack.mLastAction = &mActionStack.mEmptyAction;
 	mSaveDialog.init();
 	mSaveAsDialog.mDialogTextInput = mGlobalSettings.ProjectPath;
 	mSaveAsDialog.init();
@@ -2175,25 +2203,29 @@ int TEditor::applyScroll(int mx,int my, int amount, int xamount){
 	return 0;
 }
 
-void TEditor::newActionGroup(){
+TEActionUndoStack::TEActionUndoStack(){
+	mLastAction = &mEmptyAction;
+}
+
+void TEActionUndoStack::newActionGroup(){
 	TEActionGroup *newGroup = new TEActionGroup();
 	mUndoStack.push_back(newGroup);
 }
 
-void TEditor::addAction(TEAction *newAction){
+void TEActionUndoStack::addAction(TEAction *newAction){
 	if(mUndoStack.size()){
 		TEActionGroup *mGroup = *(mUndoStack.end()-1);
 		mGroup->mActions.push_back(newAction);
 	}
 }
 
-void TEditor::addSubActions(std::vector<TEAction*> &cSubActions){
+void TEActionUndoStack::addSubActions(std::vector<TEAction*> &cSubActions){
 	for(auto *newAction: cSubActions){
 		addAction(newAction);
 	}
 }
 
-void TEditor::undoLastActionGroup(){
+void TEActionUndoStack::undoLastActionGroup(){
 	if(mUndoStack.size()){
 		TEActionGroup *mGroup = *(mUndoStack.end()-1);
 		mUndoStack.pop_back();
@@ -2203,7 +2235,7 @@ void TEditor::undoLastActionGroup(){
 	}
 }
 
-void TEditor::redoLastActionGroup(){
+void TEActionUndoStack::redoLastActionGroup(){
 	if(mRedoStack.size()){
 		TEActionGroup *mGroup = *(mRedoStack.end()-1);
 		mRedoStack.pop_back();
@@ -2212,10 +2244,28 @@ void TEditor::redoLastActionGroup(){
 	}
 }
 
-void TEditor::redoClearStack(){
+void TEActionUndoStack::redoClearStack(){
 	if(mRedoStack.size()){
 		mRedoStack.erase(mRedoStack.begin(), mRedoStack.end());
 	}	
+}
+
+void TEditor::undoLastActionGroup(){
+	if(mCurMode == EMODE_MAP){
+		mActionStack.undoLastActionGroup();
+	}
+	if(mCurMode == EMODE_TILE){
+		mTileSelectedTile->mActionStack.undoLastActionGroup();
+	}
+}
+
+void TEditor::redoLastActionGroup(){
+if(mCurMode == EMODE_MAP){
+		mActionStack.redoLastActionGroup();
+	}
+	if(mCurMode == EMODE_TILE){
+		mTileSelectedTile->mActionStack.redoLastActionGroup();
+	}
 }
 
 int TEditor::activateProjectInfo(){
@@ -2247,11 +2297,11 @@ Tile* TEditor::createNewTile(){
 				*/
 
 				newActionTile->doAction(newTile, mMapSelectedTile, mTileSet.TTiles.size(), &mTileSet);
-      			newActionGroup();	
-      			addAction(newActionTile);
+      			mActionStack.newActionGroup();	
+      			mActionStack.addAction(newActionTile);
       			
-				mLastAction = newActionTile;
-       			redoClearStack();
+				mActionStack.mLastAction = newActionTile;
+       			mActionStack.redoClearStack();
 				
 				return newTile;
 		}
@@ -2351,10 +2401,10 @@ int TEditor::replaceSelectedColor(int x, int y){
 					if(newSelection.size()){
 						TEActionReplacePixels* newAction = new TEActionReplacePixels();
 						newAction->doAction(mTileSelectedTile, newSelection, mOldColor, tSel, &mPalette);
-						if(!(newAction == mLastAction)){
-							mLastAction = newAction;
-							newActionGroup();
-							addSubActions(newAction->mSubActions);
+						if(!(newAction == mTileSelectedTile->mActionStack.mLastAction)){
+							mTileSelectedTile->mActionStack.mLastAction = newAction;
+							mTileSelectedTile->mActionStack.newActionGroup();
+							mTileSelectedTile->mActionStack.addSubActions(newAction->mSubActions);
 						}
 					}
 
@@ -2401,11 +2451,11 @@ int TEditor::findSelected(){
 	       		TEActionReplaceTile *mCurAction = new TEActionReplaceTile();
 	       		mCurAction->doAction(&mTileMap, tSel, mTileMap.getTile(tSel), mMapSelectedTile);
 	       			
-	       		if(!(*mCurAction == *mLastAction)){
-	       			newActionGroup();	
-	       			addAction(mCurAction);
-	       			mLastAction = mCurAction;
-	       			redoClearStack();
+	       		if(!(*mCurAction == *mActionStack.mLastAction)){
+	       			mActionStack.newActionGroup();	
+	       			mActionStack.addAction(mCurAction);
+	       			mActionStack.mLastAction = mCurAction;
+	       			mActionStack.redoClearStack();
 	       		}
 	       	}
 		}
@@ -2423,11 +2473,11 @@ int TEditor::findSelected(){
 	       		TEActionReplacePixel *mCurAction = new TEActionReplacePixel();
 				mCurAction->doAction(mTileSelectedTile, tSel, mTileSelectedTile->FileData[tSel], mColorSelected, &mPalette);
 				
-				if(!(*mCurAction == *mLastAction)){
-	       				newActionGroup();	
-	       				addAction(mCurAction);
-	       				mLastAction = mCurAction;
-	       				redoClearStack();
+				if(!(*mCurAction == * mTileSelectedTile->mActionStack.mLastAction)){
+	       				mTileSelectedTile->mActionStack.newActionGroup();	
+	       				mTileSelectedTile->mActionStack.addAction(mCurAction);
+	       				mTileSelectedTile->mActionStack.mLastAction = mCurAction;
+	       				mTileSelectedTile->mActionStack.redoClearStack();
 	       		}
 			}
 		}
@@ -2470,10 +2520,10 @@ int TEditor::handleEvents(){
 				if(newTile){
 					TEActionAddTile* newActionTile = new TEActionAddTile();
 					newActionTile->doAction(newTile, mTileSet.TTiles.size(), mTileSet.TTiles.size()+1, &mTileSet);
-	       			newActionGroup();	
-	       			addAction(newActionTile);
-	       			mLastAction = newActionTile;
-	       			redoClearStack();
+	       			mActionStack.newActionGroup();	
+	       			mActionStack.addAction(newActionTile);
+	       			mActionStack.mLastAction = newActionTile;
+	       			mActionStack.redoClearStack();
 
 					mGlobalSettings.mOpenTileState = 0;
 					cancelActiveDialog();
