@@ -651,10 +651,10 @@ class TEActionReplacePixels: public TEActionReplaceMany{
 class TEActionAddTile: public TEAction{
 	public:
 		Tile* mNewTile;
+		Tile* mOldTile;
 		TileSet *mTiles;
-		int mOldValue;
-		int mNewValue;
-		void doAction(Tile* cNewTile, int mOld, int mNew, TileSet *cTiles);	
+		TEditor *mEditor;		
+		void doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles);	
 		virtual void undo();
 		virtual void redo();
 		virtual bool doCompare(const TEAction& rhs){
@@ -726,20 +726,28 @@ void TEActionReplacePixels::doAction(Tile* mCurTile, std::vector<int> &newSel,in
 
 //void TEActionReplacePixels::doSubActions(){}
 
-void TEActionAddTile::doAction(Tile* cNewTile, int mOld, int mNew, TileSet *cTiles){
+void TEActionAddTile::doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles){
 	mTiles = cTiles;
 	mNewTile = cNewTile;
-	mOldValue = mOld;
-	mNewValue = mNew;
-	TEActionType=ACTION_TILENEW;
+	mEditor = cEditor;
+	mOldTile = mEditor->mTileSelectedTile;
+	mOldTile->bIsSelected = false;
+	mEditor->mTileSelectedTile = mNewTile;
+	mNewTile->bIsSelected = true;
+	TEActionType=ACTION_TILENEW;	
 }
 
 void TEActionAddTile::undo(){
 	mTiles->dropLastTile();
+	mEditor->mTileSelectedTile = mOldTile;
+	mOldTile->bIsSelected = true;
 }
 
 void TEActionAddTile::redo(){
 	mTiles->appendTile(mNewTile);
+	mEditor->mTileSelectedTile->bIsSelected = false;
+	mEditor->mTileSelectedTile = mNewTile;
+	mEditor->mTileSelectedTile->bIsSelected = true;
 }
 
 void TEActionGroup::undo(){
@@ -1093,6 +1101,7 @@ Tile* TileSet::createNew(TPalette* tpal){
 }
 
 void TileSet::dropLastTile(){
+	(*(TTiles.end()-1))->bIsSelected = false;
 	TTiles.pop_back();
 	TileAreas.pop_back();
 	reCalculateScale();
@@ -2285,7 +2294,7 @@ int TEditor::activateProjectInfo(){
 }
 
 Tile* TEditor::createNewTile(){
-
+	if(mCurMode == EMODE_MAP){
 	Tile* newTile = mTileSet.createNew(&mPalette);
 		if(newTile){
 				TEActionAddTile* newActionTile = new TEActionAddTile();
@@ -2296,7 +2305,7 @@ Tile* TEditor::createNewTile(){
    	 			mTileSelectedTile->bIsSelected = true;
 				*/
 
-				newActionTile->doAction(newTile, mMapSelectedTile, mTileSet.TTiles.size(), &mTileSet);
+				newActionTile->doAction(newTile, this, &mTileSet);
       			mActionStack.newActionGroup();	
       			mActionStack.addAction(newActionTile);
       			
@@ -2305,6 +2314,7 @@ Tile* TEditor::createNewTile(){
 				
 				return newTile;
 		}
+	}
 	return NULL;
 }
 
@@ -2349,9 +2359,11 @@ int TEditor::activateSaveAsDialog(){
 }
 
 int TEditor::activateOpenTileDialog(){
-	mActiveDialog = &mOpenTileDialog;
-	mActiveDialog->bDialogIsWatingForText = true;
-	SDL_StartTextInput();
+	if(mCurMode == EMODE_MAP){
+		mActiveDialog = &mOpenTileDialog;
+		mActiveDialog->bDialogIsWatingForText = true;
+		SDL_StartTextInput();
+	}
 	return 0;
 }
 
@@ -2519,7 +2531,7 @@ int TEditor::handleEvents(){
 				Tile* newTile = createNewTileFromFile(mGlobalSettings.mNewTilePath);
 				if(newTile){
 					TEActionAddTile* newActionTile = new TEActionAddTile();
-					newActionTile->doAction(newTile, mTileSet.TTiles.size(), mTileSet.TTiles.size()+1, &mTileSet);
+					newActionTile->doAction(newTile, this, &mTileSet);
 	       			mActionStack.newActionGroup();	
 	       			mActionStack.addAction(newActionTile);
 	       			mActionStack.mLastAction = newActionTile;
@@ -2830,6 +2842,8 @@ void TSettings::initHelpText(){
 
 	mHelpTextMap.push_back("Mouse Scroll Wheel: Scale TileMap and Scroll TileSet");
 	mHelpTextMap.push_back("LCTRL + Left Mouse Button: Move TileMap and Scroll TileSet");
+	mHelpTextMap.push_back("F3: Create Empty Tile");
+	mHelpTextMap.push_back("F4: Import Tile from file");	
 	mHelpTextMap.push_back("T: Toggle Show Selected Tile in TileMap Editor");									
 
 	mHelpTextMap.push_back("S: Toggle Show Selected Tile Type");
@@ -2838,8 +2852,7 @@ void TSettings::initHelpText(){
 	mHelpTextTile.push_back("P: Toggle Show Pixel Grid in Tile Editor");
 
 	mHelpText.push_back("Space: Switch between TileMap and Tile Editor");	
-	mHelpText.push_back("F3: Create Empty Tile");
-	mHelpText.push_back("F4: Import Tile from file");	
+	
 	mHelpText.push_back("U: Undo last Action");
 	mHelpText.push_back("R: Redo last Action");
 }
