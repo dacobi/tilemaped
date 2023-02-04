@@ -17,30 +17,17 @@ int main(int argc, char *argv[])
     outbuffer.push_back(42);
 
     unsigned char tmpChar;
-    int cCount=0;
 
     for(int i = 0; i < 256; i++){
-	for(int j = 0; j < 3; j++){
-	    if(cCount == 0){
-	    	tmpChar = (palette[i][j])/16;
-                outbuffer.push_back(tmpChar);
-		cCount++;
-		//continue;
-	    } else {
-		    if(cCount == 1){
-		    	tmpChar = (palette[i][j])/16;
-			tmpChar = tmpChar << 4;
-			cCount++;
-			//continue;
-	    	    } else {
-	    		if(cCount == 2){
-				tmpChar += (palette[i][j])/16;
-	        		outbuffer.push_back(tmpChar);
-				cCount = 0;
-	    		}		
-    		   }
-	    }	    
-	}
+    	tmpChar = (palette[i][1])/16;
+
+	tmpChar = tmpChar << 4;
+        tmpChar += (palette[i][2])/16;
+
+	outbuffer.push_back(tmpChar);
+
+	tmpChar = (palette[i][0])/16;
+        outbuffer.push_back(tmpChar);
     }
 
     output.write((char*)outbuffer.data(),outbuffer.size());

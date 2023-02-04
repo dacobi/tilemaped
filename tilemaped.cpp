@@ -908,9 +908,9 @@ int TPalette::loadFromFile(std::string filename){
 		for(int i = 0; i < 512; i+=2){
 			SDL_Color tmpcol;
 			//std::cout << "In Color: " << (int)(tbuffer[i]) << "," << (int)(tbuffer[i+1] >> 4) << "," << (int)(tbuffer[i+1] & 0xf) << std::endl;
-			tmpcol.r = mMapColorIn[tbuffer[i]];
-			tmpcol.g = mMapColorIn[tbuffer[i+1] >> 4];
-			tmpcol.b = mMapColorIn[tbuffer[i+1] & 0xf];
+			tmpcol.r = mMapColorIn[tbuffer[i+1]];
+			tmpcol.g = mMapColorIn[tbuffer[i] >> 4];
+			tmpcol.b = mMapColorIn[tbuffer[i] & 0xf];
 			tmpcol.a = 255;
 			TPalette.push_back(tmpcol);
 		}

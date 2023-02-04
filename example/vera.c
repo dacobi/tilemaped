@@ -36,8 +36,8 @@ void main(void) {
    	VERA.address_hi = 0x10 | (VRAM_palette >> 16);
 
    	for(i = 0; i < 512; i+=2){
-		VERA.data0 = loadptr[i+1];
-	   	VERA.data0 = loadptr[i];
+		VERA.data0 = loadptr[i];
+	   	VERA.data0 = loadptr[i+1];
    	}
     
    	VERA.display.video = 0;
