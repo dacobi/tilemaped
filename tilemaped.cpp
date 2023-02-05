@@ -3325,7 +3325,7 @@ void printUsage(){
 		std::cout << "Usage:" << std::endl;	
 		std::cout << "tilemaped -o <folder>" << std::endl;
 		std::cout << "Or" << std::endl;	
-		std::cout << "tilemaped -n <mapwidth> <mapheight> <tilesize> <folder>" << std::endl;
+		std::cout << "tilemaped -n <mapwidth> <mapheight> <tilesize> <folder> [ -p <palette file> ]" << std::endl;
 		std::cout << "Fx: tilemaped -n 128 128 16 newfolder" << std::endl;
 		std::cout << "tilemaped -h (For help on UI usage)" << std::endl;		
 }
