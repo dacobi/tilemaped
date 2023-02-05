@@ -35,6 +35,7 @@ class TEActionGroup;
 class TEActionReplaceTile;
 class TEActionReplacePixel;
 class TEActionAddTile;
+class TEActionDropTile;
 class TEActionReplaceMany;
 class TEActionReplacePixels;
 class TEActionReplaceTiles;
@@ -42,6 +43,7 @@ class TEActionUndoStack;
 class Dialog;
 class SDialog;
 class SADialog;
+class RTDialog;
 class ITDialog;
 class RNDialog;
 class BDialog;
@@ -68,6 +70,7 @@ class TSettings{
 		std::string ProjectPath;
 		int mProjectSaveState = 0;
 		int mOpenTileState = 0;
+		int mDeleteUnusedTilesState = 0;
 		std::string mNewTilePath = "";				
 		bool bShowTypeSelection = false;
 		bool bShowPixelGrip = true;
@@ -115,6 +118,7 @@ enum {
 	ACTION_TILE,
 	ACTION_PIXEL,
 	ACTION_TILENEW,
+	ACTION_TILEDROP,
 	ACTION_PIXELS,
 	ACTION_TILES
 } actions;
@@ -142,6 +146,7 @@ class TEActionUndoStack{
 		void undoLastActionGroup();
 		void redoLastActionGroup();
 		void redoClearStack();
+		void undoClearStack();
 };
 
 
@@ -329,6 +334,7 @@ class TileSet{
 		Tile* createNewFromBuffer(std::vector<unsigned char> &newBuf, TPalette* tpal);
 		Tile* createNewFromFile(std::string newPAth, TPalette* tpal);
 		void dropLastTile();
+		int removeTile(int cDropTile);
 		void appendTile(Tile* addTile);
 		int render(int ypos, int mScroll);
 };
@@ -351,6 +357,7 @@ class TileMap{
 		int setFlip(int cTile, int cTileFlip);
 		TileProperties getTileProp(int cTile);
 		std::vector<SDL_Rect> TileAreas;
+		int removeTile(int cDropTile);
 		int loadFromFile(std::string path, std::string filename);
 		int saveToFolder(std::string tpath);
 		int createNew();
@@ -406,6 +413,7 @@ class TIDialog: public BDialog{
 		virtual void recieveInput(std::string mTextInput);
 };
 
+
 class SDialog: public Dialog{
 	public:
 		virtual void init();
@@ -418,6 +426,12 @@ class SDialog: public Dialog{
 		virtual void recieveInput(int mKey);		
 		virtual int recieveInput(int mx, int my);
 		virtual SDL_Rect render(int xpos, int ypos);
+};
+
+class RTDialog: public SDialog{
+	public:
+		virtual void init();
+		virtual void recieveInput(int mKey);		
 };
 
 class SADialog: public SDialog{
@@ -542,8 +556,8 @@ class TEditor{
 		int selectTiles(std::vector<int> &cNewSelection, int cTileType);
 		int findSelected();
 		int toggleSelectedTile();
-		std::vector<TEActionGroup*> mUndoStack;
-		std::vector<TEActionGroup*> mRedoStack;
+		//std::vector<TEActionGroup*> mUndoStack;
+		//std::vector<TEActionGroup*> mRedoStack;
 		TEActionUndoStack mActionStack;
 		void undoLastActionGroup();
 		void redoLastActionGroup();
@@ -555,11 +569,14 @@ class TEditor{
 		HDialog mHelpDialogTile;
 		PIDialog mProjectInfo;
 		MEDialog mInfoMessage;
+		RTDialog mRemoveUnused;
 		MEDialog mErrorMessage;
 		RNDialog mInputNumber;
 		Tile* createNewTile();
 		Tile* createNewTileCopy(Tile* cCopyTile);
 		Tile* createNewTileFromFile(std::string newTilePath);
+		int dropUnusedTiles();
+		int dropUnusedTile(int cDropTile);
 		int showMessage(std::string cMessage, bool isError=false);
 		int activateSaveDialog();
 		int activateOpenTileDialog();
@@ -567,6 +584,7 @@ class TEditor{
 		int cancelActiveDialog();
 		int activateSaveAsDialog();
 		int activateProjectInfo();
+		int activateDropUnusedTiles();
 };
 
 
@@ -676,6 +694,8 @@ class TEActionReplaceTiles: public TEActionReplaceMany{
 		}
 };
 
+
+
 class TEActionAddTile: public TEAction{
 	public:
 		Tile* mNewTile;
@@ -689,6 +709,15 @@ class TEActionAddTile: public TEAction{
 		virtual bool doCompare(const TEAction& rhs){
 			 return false;
 		}
+};
+
+
+class TEActionDropTile: public TEActionAddTile{
+	public:
+		void doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles);	
+		virtual void undo();
+		virtual void redo();
+
 };
 
 void TEAction::undo(){
@@ -781,6 +810,42 @@ void TEActionAddTile::doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles
 	mEditor->mTileSelectedTile = mNewTile;
 	mNewTile->bIsSelected = true;
 	TEActionType=ACTION_TILENEW;	
+}
+
+void TEActionDropTile::doAction(Tile* cDroppedTile, TEditor* cEditor, TileSet *cTiles){
+	mTiles = cTiles;
+	mNewTile = cDroppedTile;
+	mEditor = cEditor;
+	
+	//mOldMapTile = mEditor->mMapSelectedTile;	
+	//mOldTile = mEditor->mTileSelectedTile;
+
+	mNewTile->bIsSelected = false;
+
+	mEditor->mMapSelectedTile = 0;
+	mEditor->mTileSelectedTile = mTiles->TTiles[0];
+	
+	TEActionType=ACTION_TILEDROP;	
+}
+
+void TEActionDropTile::redo(){
+	mTiles->dropLastTile();
+	mNewTile->bIsSelected = false;
+
+	mEditor->mMapSelectedTile = 0;
+	mEditor->mTileSelectedTile = mTiles->TTiles[0];
+	//mEditor->mTileSelectedTile->bIsSelected = false;
+	//mEditor->mTileSelectedTile = mOldTile;
+	//mEditor->mTileSelectedTile->bIsSelected = true;	
+	//mEditor->mMapSelectedTile = mOldMapTile;
+}
+
+void TEActionDropTile::undo(){
+	mTiles->appendTile(mNewTile);
+	//mEditor->mTileSelectedTile->bIsSelected = false;
+	//mEditor->mTileSelectedTile = mNewTile;
+	//mEditor->mTileSelectedTile->bIsSelected = true;
+	//mEditor->mMapSelectedTile = mTiles->TTiles.size()-1;
 }
 
 void TEActionAddTile::undo(){
@@ -1152,6 +1217,12 @@ Tile* TileSet::createNew(TPalette* tpal){
 	return createNewFromBuffer(tbuf, tpal);
 }
 
+int TileSet::removeTile(int cDropTile){
+	TTiles.erase(TTiles.begin() +  cDropTile);
+	TileAreas.erase(TileAreas.begin() + cDropTile);
+	return 0;
+}
+
 void TileSet::dropLastTile(){
 	(*(TTiles.end()-1))->bIsSelected = false;
 	TTiles.pop_back();
@@ -1396,6 +1467,16 @@ int TileMap::saveToFolder(std::string tpath){
 	return 0;
 }
 
+int TileMap::removeTile(int cDropTile){
+	for(int i = 0; i < (mGlobalSettings.TileMapHeight*mGlobalSettings.TileMapWidth); i++){
+		int cTile = getTile(i);
+		if(cTile >= cDropTile){
+			setTile(i, cTile-1);
+		}
+	}
+	return 0;
+}
+
 int TileMap::getTile(int cTile){
 	if((cTile > -1) && (cTile < TileAreas.size())){
 		int cTileVal = (FileData[(cTile*2)+1] & 0x3) << 8;
@@ -1506,6 +1587,36 @@ SDL_Rect TBDialog::render(int xpos, int ypos){
 	return tmpRect;
 }
 
+void RTDialog::init(){
+	mDialogTextMain = mTexDialogTextMain.mInfo +" Remove Unused Tiles. Undo will be cleared!";
+
+	mAcceptButton.mDialogTextMain = "Remove";
+	mCancelButton.mDialogTextMain = "Cancel";	
+	
+	mAcceptButton.init();	
+	mCancelButton.init();
+		
+	mTexDialogTextMain.loadTTFFromUTF8(mDialogTextMain, mTextColor);
+	
+	mDialogWidth = mTexDialogTextMain.mTexWidth > mTexDialogTextInput.mTexWidth ? mTexDialogTextMain.mTexWidth : mTexDialogTextInput.mTexWidth;
+	mDialogHeight = mTexDialogTextMain.mTexHeight > mTexDialogTextInput.mTexHeight ? mTexDialogTextMain.mTexHeight : mTexDialogTextInput.mTexHeight;
+	
+	mDialogHeight *=5;
+	
+	mDialogWidth += mDialogBorder * 4;
+}
+
+void RTDialog::recieveInput(int mKey){
+	
+	if(mKey == SDLK_y){
+		bInputIsAccept=true;
+		mGlobalSettings.mDeleteUnusedTilesState = 1;
+	}
+	if(mKey == SDLK_n){
+		bInputIsCancel=true;
+	}
+}
+
 void SDialog::init(){
 	mDialogTextMain = mTexDialogTextMain.mFloppy +" Overwrite Project On Disk?";
 
@@ -1551,8 +1662,8 @@ SDL_Rect SDialog::render(int xpos, int ypos){
 
 	mTexDialogTextMain.render(tmpBorder.x+mDialogBorder*2,tmpBorder.y+mDialogBorder*2);
 	
-	mAcceptButton.render(tmpBorder.x + ((tmpBorder.w / 4) - (mAcceptButton.mTexDialogTextMain.mTexWidth)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight+mDialogBorder*3);	
-	mCancelButton.render(tmpBorder.x + (((tmpBorder.w / 4)*3) - (mCancelButton.mTexDialogTextMain.mTexWidth)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight+mDialogBorder*3);	
+	mAcceptButton.render(tmpBorder.x + ((mDialogWidth / 4) - (mAcceptButton.mDialogWidth/2)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight+mDialogBorder*3);	
+	mCancelButton.render(tmpBorder.x + (((mDialogWidth / 4)*3) - (mAcceptButton.mDialogWidth/2)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight+mDialogBorder*3);	
 		
 	return tmpBorder;
 }
@@ -1612,9 +1723,16 @@ SDL_Rect SADialog::render(int xpos, int ypos){
 
 	mTexDialogTextMain.render(tmpBorder.x+mDialogBorder*2,tmpBorder.y+mDialogBorder*2);
 	
+/*
+((mDialogWidth/4)-(mAcceptButton.mDialogWidth/2))
+*/
+	mAcceptButton.render(tmpBorder.x + ((mDialogWidth / 4) - (mAcceptButton.mDialogWidth/2)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight * 2 + mDialogBorder*4);	
+	mCancelButton.render(tmpBorder.x + (((mDialogWidth / 4)*3) - (mAcceptButton.mDialogWidth/2)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight * 2+ mDialogBorder*4);	
+
+	/*
 	mAcceptButton.render(tmpBorder.x + ((tmpBorder.w / 4) - (mAcceptButton.mTexDialogTextMain.mTexWidth)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight * 2 + mDialogBorder*4);	
 	mCancelButton.render(tmpBorder.x + (((tmpBorder.w / 4)*3) - (mCancelButton.mTexDialogTextMain.mTexWidth)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight * 2+ mDialogBorder*4);	
-		
+	*/	
 	mTextInput.render(tmpBorder.x+((mDialogWidth/2)-(mTextInput.mDialogWidth/2)) ,tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight+mDialogBorder*2);
 	if(bSubDialogActive){
 		tmpBorder = mSubDialog->render(xpos + 50, ypos + 50);
@@ -2258,6 +2376,8 @@ void TEditor::initDialogs(){
 	mErrorMessage.setColorScheme(1);
 	mErrorMessage.init();
 
+	mRemoveUnused.init();
+
 	mInputNumber.init();
 }
 
@@ -2441,6 +2561,12 @@ void TEActionUndoStack::redoClearStack(){
 	}	
 }
 
+void TEActionUndoStack::undoClearStack(){
+	if(mUndoStack.size()){
+		mUndoStack.erase(mUndoStack.begin(), mUndoStack.end());
+	}	
+}
+
 void TEditor::undoLastActionGroup(){
 	if(mCurMode == EMODE_MAP){
 		mActionStack.undoLastActionGroup();
@@ -2463,6 +2589,49 @@ int TEditor::activateProjectInfo(){
 	if(mCurMode == EMODE_MAP){
 		mGlobalSettings.bShowProjectInfo = !mGlobalSettings.bShowProjectInfo;
 	}
+	return 0;
+}
+
+int TEditor::activateDropUnusedTiles(){
+	if(mCurMode == EMODE_MAP){
+		mActiveDialog = &mRemoveUnused;
+	}
+	return 0;
+}
+
+int TEditor::dropUnusedTiles(){	
+	std::vector<int> tmpTiles;
+	std::set<int> cUnused;
+
+	mActionStack.redoClearStack();	
+	mActionStack.undoClearStack();
+
+	mTileSelectedTile->bIsSelected = false;
+
+	mMapSelectedTile = 0;
+	mTileSelectedTile = mTileSet.TTiles[0];
+
+	for(int i = 0; i < mTileSet.TTiles.size(); i++){		
+		if(selectTiles(tmpTiles, i) == 0){
+			cUnused.insert(i);			
+		}
+		tmpTiles.erase(tmpTiles.begin(), tmpTiles.end());
+	}
+	
+	if(cUnused.size()){
+		std::set<int>::reverse_iterator rit;
+       	for (rit = cUnused.rbegin(); rit != cUnused.rend(); rit++){
+			dropUnusedTile(*rit);             
+		}
+	}
+	return 0;	
+}
+
+int TEditor::dropUnusedTile(int cDropTile){	
+			
+	mTileMap.removeTile(cDropTile);
+	mTileSet.removeTile(cDropTile);
+
 	return 0;
 }
 
@@ -2747,6 +2916,10 @@ int TEditor::handleEvents(){
 	
 	if(mActiveDialog){
 		if(mActiveDialog->bInputIsAccept){
+			if(mGlobalSettings.mDeleteUnusedTilesState){
+				dropUnusedTiles();
+				mGlobalSettings.mDeleteUnusedTilesState = 0;
+			}
 			if(mGlobalSettings.mProjectSaveState == 1){
 				saveToFolder(mGlobalSettings.ProjectPath);
 				mGlobalSettings.mProjectSaveState = 0;
@@ -2931,6 +3104,9 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F5){	  									
 					createNewTileCopy(mTileSelectedTile);
+	  			}
+				if(cEvent->key.keysym.sym == SDLK_F6){	  									
+					activateDropUnusedTiles();
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F12){	  				
 		  			activateSaveDialog();
