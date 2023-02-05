@@ -3369,7 +3369,7 @@ int main( int argc, char* args[] )
 
 		if(argc == 8){
 			if(args[6] == std::string("-p")){
-				if(fs::exists(fs::status(args[7]))){
+				if((fs::exists(fs::status(args[7]))) && !(fs::is_directory(fs::status(args[7])))){
 					std::cout << "Palette found" << std::endl;						
 					mGlobalSettings.bProjectHasPalette = true;
 					mGlobalSettings.ProjectPalettePath = std::string(args[7]);
