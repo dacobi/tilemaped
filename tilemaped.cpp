@@ -1931,11 +1931,11 @@ void HDialog::init(){
 		mNewText->loadTTFFromString(mStr, mTextColor);
 		mHelpText.push_back(mNewText);
 	}
-	/*
+	
 		mNewText = new TTFTexture();
 		mNewText->loadTTFFromString(" ", mTextColor);
 		mHelpText.push_back(mNewText);
-	*/
+	
 		mNewText = new TTFTexture();
 		mNewText->loadTTFFromString("General:", mTextColor);
 		mHelpText.push_back(mNewText);
@@ -1953,7 +1953,7 @@ void HDialog::init(){
 	}
 	
 	mDialogWidth = cMaxWidth;
-	mDialogHeight = mHelpText[1]->mTexHeight * mHelpText.size()*2 + mHelpText[1]->mTexHeight*4;
+	mDialogHeight = mHelpText[1]->mTexHeight * mHelpText.size()*1.5 + mHelpText[1]->mTexHeight*4;
 		
 	mDialogWidth += mDialogBorder * 10;	
 		
@@ -1986,7 +1986,7 @@ SDL_Rect HDialog::render(int xpos, int ypos){
 		} else {
 			hTex->render(cTextX, cTextY);
 		}
-		cTextY += (hTex->mTexHeight * 2);
+		cTextY += (hTex->mTexHeight * 1.5);
 	}
 	
 	mCloseButton.render(xpos + ((mDialogWidth/2)-(mCloseButton.mDialogWidth/2)), cTextY - (mDialogBorder*1.5));
