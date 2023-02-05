@@ -1931,11 +1931,11 @@ void HDialog::init(){
 		mNewText->loadTTFFromString(mStr, mTextColor);
 		mHelpText.push_back(mNewText);
 	}
-
+	/*
 		mNewText = new TTFTexture();
 		mNewText->loadTTFFromString(" ", mTextColor);
 		mHelpText.push_back(mNewText);
-
+	*/
 		mNewText = new TTFTexture();
 		mNewText->loadTTFFromString("General:", mTextColor);
 		mHelpText.push_back(mNewText);
