@@ -43,6 +43,7 @@ class Dialog;
 class SDialog;
 class SADialog;
 class ITDialog;
+class RNDialog;
 class BDialog;
 class HDialog;
 class PIDialog;
@@ -72,6 +73,7 @@ class TSettings{
 		bool bShowPixelGrip = true;
 		bool bShowPixelType = false;
 		bool bShowSelectedTile = true;
+		bool bShowProjectInfo = false;
 		int mSelectedTile = 0;
 		int mTileEdScale = 4;
 		TTF_Font *TFont;
@@ -323,6 +325,7 @@ class TileSet{
 		int loadFromFolder(std::string tpath, TPalette* tpal);
 		int saveToFolder(std::string tpath);
 		Tile* createNew(TPalette* tpal);
+		Tile* createNewCopy(Tile* cCopyTile, TPalette* tpal);
 		Tile* createNewFromBuffer(std::vector<unsigned char> &newBuf, TPalette* tpal);
 		Tile* createNewFromFile(std::string newPAth, TPalette* tpal);
 		void dropLastTile();
@@ -429,7 +432,7 @@ class SADialog: public SDialog{
 		bool bSubDialogActive = false;	
 		SDialog *mSubDialog;
 		TIDialog mTextInput;
-		void resize();
+		virtual void resize();
 };
 
 class ITDialog: public SADialog{
@@ -439,6 +442,18 @@ class ITDialog: public SADialog{
 		virtual SDL_Rect render(int xpos, int ypos);
 		virtual void recieveInput(int mKey);
 		virtual int recieveInput(int mx, int my);
+};
+
+class RNDialog: public ITDialog{
+	public:
+		int mNumber = 0;
+		virtual void init();
+		virtual void cancel();
+		virtual SDL_Rect render(int xpos, int ypos);
+		virtual void recieveInput(int mKey);
+		virtual void recieveInput(std::string mTextInput);
+		//virtual void resize();
+		//virtual int recieveInput(int mx, int my);
 };
 
 class HDialog: public SDialog{
@@ -456,6 +471,7 @@ class HDialog: public SDialog{
 
 class PIDialog: public HDialog{
 	public:
+		TEditor* mEditor;
 		virtual void init();
 		virtual void update();
 		int fliph,flipv,tilenum,curtile;
@@ -552,7 +568,9 @@ class TEditor{
 		PIDialog mProjectInfo;
 		MEDialog mInfoMessage;
 		MEDialog mErrorMessage;
+		RNDialog mInputNumber;
 		Tile* createNewTile();
+		Tile* createNewTileCopy(Tile* cCopyTile);
 		Tile* createNewTileFromFile(std::string newTilePath);
 		int showMessage(std::string cMessage, bool isError=false);
 		int activateSaveDialog();
@@ -675,7 +693,8 @@ class TEActionAddTile: public TEAction{
 		Tile* mNewTile;
 		Tile* mOldTile;
 		TileSet *mTiles;
-		TEditor *mEditor;		
+		TEditor *mEditor;
+		int mOldMapTile;
 		void doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles);	
 		virtual void undo();
 		virtual void redo();
@@ -767,6 +786,8 @@ void TEActionAddTile::doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles
 	mTiles = cTiles;
 	mNewTile = cNewTile;
 	mEditor = cEditor;
+	mOldMapTile = mEditor->mMapSelectedTile;
+	mEditor->mMapSelectedTile = mTiles->TTiles.size()-1;
 	mOldTile = mEditor->mTileSelectedTile;
 	mOldTile->bIsSelected = false;
 	mEditor->mTileSelectedTile = mNewTile;
@@ -776,8 +797,10 @@ void TEActionAddTile::doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles
 
 void TEActionAddTile::undo(){
 	mTiles->dropLastTile();
+	mEditor->mTileSelectedTile->bIsSelected = false;
 	mEditor->mTileSelectedTile = mOldTile;
-	mOldTile->bIsSelected = true;
+	mEditor->mTileSelectedTile->bIsSelected = true;	
+	mEditor->mMapSelectedTile = mOldMapTile;
 }
 
 void TEActionAddTile::redo(){
@@ -785,6 +808,7 @@ void TEActionAddTile::redo(){
 	mEditor->mTileSelectedTile->bIsSelected = false;
 	mEditor->mTileSelectedTile = mNewTile;
 	mEditor->mTileSelectedTile->bIsSelected = true;
+	mEditor->mMapSelectedTile = mTiles->TTiles.size()-1;
 }
 
 void TEActionGroup::undo(){
@@ -1129,6 +1153,10 @@ Tile* TileSet::createNewFromBuffer(std::vector<unsigned char> &newBuf, TPalette*
 	TTiles.push_back(newTile);
 	return newTile;
 
+}
+
+Tile* TileSet::createNewCopy(Tile* cCopyTile, TPalette* tpal){	
+	return createNewFromBuffer(cCopyTile->FileData, tpal);
 }
 
 Tile* TileSet::createNew(TPalette* tpal){	
@@ -1660,6 +1688,116 @@ void SADialog::dropLastInputChar(){
 	}
 }
 
+void RNDialog::recieveInput(std::string mStr){
+	if(mTextInput.mDialogTextMain.size() < 10){
+		for (int i = 0; i < mStr.size(); i++) {
+      		if(isdigit(mStr[i])){
+				mTextInput.mDialogTextMain += mStr[i];
+				mTextInput.mTextColor =  mGlobalSettings.DefaultTextColor;
+				mTextInput.init();
+				resize();
+	  		}
+		}
+	}
+}
+
+
+void RNDialog::recieveInput(int mKey){
+	if(mKey == SDLK_y){
+		std::stringstream convert;
+		int cNumber;
+
+		convert << mTextInput.mDialogTextMain  << std::endl;
+		convert >> cNumber;
+		
+	//	mTextInput.mTextColor =  mGlobalSettings.ErrorTextColor;
+	//	return;
+	
+
+		mNumber = cNumber;
+
+			bInputIsAccept=true;	
+			bDialogIsWatingForText = false;
+
+			//mGlobalSettings.mNewTilePath = mTextInput.mDialogTextMain;
+			SDL_StopTextInput();
+			return;
+
+//				mTextInput.mTextColor =  mGlobalSettings.ErrorTextColor;
+		}
+
+	if(mKey == SDLK_n){
+		bInputIsCancel=true;
+		SDL_StopTextInput();		
+	}		
+}
+/*
+void RNDialog::resize(){
+	//mDialogWidth = mTextInput.mDialogWidth > mDialogWidth ?  mTextInput.mDialogWidth : mDialogWidth;
+	//mDialogHeight = mTexDialogTextMain.mTexHeight;
+	
+	//mDialogHeight *=6;	
+	//mDialogWidth += mDialogBorder * 6;	
+
+	if(mTextInput.mTexDialogTextMain.mTexWidth > (mDialogWidth-(mDialogBorder * 6))){
+		mDialogWidth = mTextInput.mTexDialogTextMain.mTexWidth + (mDialogBorder * 6);
+	} else {
+		mDialogWidth = (mAcceptButton.mTexDialogTextMain.mTexWidth  + mCancelButton.mTexDialogTextMain.mTexWidth) * 2  + (mDialogBorder*6);
+	}
+}
+*/
+
+
+SDL_Rect RNDialog::render(int xpos, int ypos){	
+	SDL_Rect tmpBorder = Dialog::render(xpos, ypos);
+
+	mTexDialogTextMain.render(tmpBorder.x+mDialogBorder*2,tmpBorder.y+mDialogBorder*2);
+	
+	mAcceptButton.render(tmpBorder.x + ((mDialogWidth/4)-(mAcceptButton.mDialogWidth/2)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight * 2 + mDialogBorder*4);	
+	mCancelButton.render(tmpBorder.x + (((mDialogWidth / 4)*3) - (mCancelButton.mDialogWidth/2)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight * 2+ mDialogBorder*4);	
+		
+	mTextInput.render(tmpBorder.x+((mDialogWidth/2)-(mTextInput.mDialogWidth/2)) ,tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight+mDialogBorder*2);
+
+	return tmpBorder;
+}
+
+
+void RNDialog::cancel(){
+		//ITDialog::cancel();
+		//mTextInput.mTextColor =  mGlobalSettings.DefaultTextColor;
+		mTextInput.mDialogTextMain = "";
+		bInputIsAccept=false;	
+		bInputIsCancel=false;	
+		bDialogIsWatingForText = false;
+}
+
+/*
+//int RNDialog::recieveInput(int mx, int my){
+	//return ITDialog::recieveInput(mx, my);
+//}
+*/
+
+void RNDialog::init(){
+	mDialogTextMain = mTexDialogTextMain.mInfo + " Enter Number         ";
+
+	mAcceptButton.mDialogTextMain = "Accept";
+	mCancelButton.mDialogTextMain = "Cancel";	
+	
+	mAcceptButton.init();	
+	mCancelButton.init();
+
+	mTexDialogTextMain.loadTTFFromUTF8(mDialogTextMain, mTextColor);
+	
+	mTextInput.mDialogTextMain = "";
+	mTextInput.bIsInputActive = true;
+	mTextInput.init();
+
+	bSubDialogActive = false;
+
+	mDialogWidth = (mAcceptButton.mTexDialogTextMain.mTexWidth  + mCancelButton.mTexDialogTextMain.mTexWidth) * 2  + (mDialogBorder*6);
+	mDialogHeight = mTexDialogTextMain.mTexHeight * 6;
+}
+
 SDL_Rect ITDialog::render(int xpos, int ypos){	
 	SDL_Rect tmpBorder = Dialog::render(xpos, ypos);
 
@@ -1955,6 +2093,17 @@ void PIDialog::update(){
 	std::string cTileNum;
 	std::string cCurTile;
 	
+	curtile = mEditor->mMapSelectedTile;
+	tilenum = mEditor->mTileSet.TTiles.size();
+	
+	int cTileFlip = mEditor->mTileMap.getFlip(mGlobalSettings.mSelectedTile);
+
+	//		mProjectInfo.curtile = mMapSelectedTile;
+	//		mProjectInfo.tilenum = mTileSet.TTiles.size();
+	fliph = (cTileFlip & 0x1) ? 1 : 0;
+	flipv = (cTileFlip & 0x2) ? 1 : 0;
+	//		mProjectInfo.update();
+
 	convert << (curtile + 1) << std::endl;
 	convert >> cCurTile;
 
@@ -1996,16 +2145,30 @@ void PIDialog::update(){
 	tmpStr = "Tiles in TileSet: " + cTileNum;
 
 	mHelpText[mHelpText.size()-4]->loadTTFFromUTF8(tmpStr, mTextColor);
+
+	int cMaxWidth = mHelpText[0]->mTexWidth;
+
+	for(const auto* hTex : mHelpText){
+		if(hTex->mTexWidth > cMaxWidth){cMaxWidth = hTex->mTexWidth;}
+	}
+	
+	mDialogWidth = cMaxWidth + (mDialogBorder * 8);
 }
 
 void PIDialog::init(){
 	
 	
-	TTFTexture* mNewText = new TTFTexture();
-	std::string tmpStr = mNewText->mInfo + " Project: " + mGlobalSettings.ProjectPath;
-	mNewText->loadTTFFromUTF8(tmpStr, mTextColor);
-	mHelpText.push_back(mNewText);
+	//TTFTexture* mNewText = new TTFTexture();
+	//std::string tmpStr = mNewText->mInfo + " Project: " + mGlobalSettings.ProjectPath;
+	//mNewText->loadTTFFromUTF8(tmpStr, mTextColor);
+	//mHelpText.push_back(mNewText);
 
+	mDialogBorder=3;
+	mDialogColor = mGlobalSettings.DefaultDarkBGColor;
+	mDialogBorderColor=  mGlobalSettings.DefaultButtonBorderColor;
+
+	TTFTexture* mNewText;
+	std::string tmpStr;
 	std::stringstream convert;
 	
 	std::string cMapWidth;
@@ -2061,11 +2224,11 @@ void PIDialog::init(){
 	}
 	
 	mDialogWidth = cMaxWidth;
-	mDialogHeight = mHelpText.size()*mHelpText[0]->mTexHeight*2+mHelpText[0]->mTexHeight;
-	mDialogWidth += mDialogBorder * 10;	
+	mDialogHeight = mHelpText.size()*(mHelpText[0]->mTexHeight  + (mHelpText[0]->mTexHeight/2)) + (mDialogBorder * 4);//+mHelpText[0]->mTexHeight;
+	mDialogWidth += mDialogBorder * 8;	
 		
-	mCloseButton.mDialogTextMain = "Close";
-	mCloseButton.init();
+	//mCloseButton.mDialogTextMain = "Close";
+	//mCloseButton.init();
 }
 
 SDL_Rect PIDialog::render(int xpos, int ypos){
@@ -2079,7 +2242,7 @@ SDL_Rect PIDialog::render(int xpos, int ypos){
 		cTextY += (hTex->mTexHeight*1.5);
 	}
 	
-	mCloseButton.render(xpos + ((mDialogWidth/2)-(mCloseButton.mDialogWidth/2)), cTextY);
+	//mCloseButton.render(xpos + ((mDialogWidth/2)-(mCloseButton.mDialogWidth/2)), cTextY);
 	
 	return tmpBorder;
 }
@@ -2149,11 +2312,14 @@ void TEditor::initDialogs(){
 	
 	mTopBar.mEditor = this;
 	mTopBar.init();
+	mProjectInfo.mEditor = this;
 	mProjectInfo.init();
 	mOpenTileDialog.init();
 	mInfoMessage.init();
 	mErrorMessage.setColorScheme(1);
 	mErrorMessage.init();
+
+	mInputNumber.init();
 }
 
 int TEditor::loadFromFolder(std::string path){
@@ -2212,6 +2378,10 @@ int TEditor::render(){
 			mActiveDialog->render((mGlobalSettings.WindowWidth/2)-(mActiveDialog->mDialogWidth/2),(mGlobalSettings.WindowHeight/2)-(mActiveDialog->mDialogHeight/2));
 		}
 		mTopBar.render(0,0);
+		if(mGlobalSettings.bShowProjectInfo){
+			mProjectInfo.update();
+			mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
+		}
 	}
 	
 	if(mCurMode == EMODE_TILE){
@@ -2352,25 +2522,51 @@ if(mCurMode == EMODE_MAP){
 
 int TEditor::activateProjectInfo(){
 
-	if(mCurMode == EMODE_MAP){
-		if(mGlobalSettings.mSelectedTile > -1){
-			int cTileFlip = mTileMap.getFlip(mGlobalSettings.mSelectedTile);
+	mGlobalSettings.bShowProjectInfo = !mGlobalSettings.bShowProjectInfo;
+	//if(mCurMode == EMODE_MAP){
+		//if(mGlobalSettings.mSelectedTile > -1){
+		//	int cTileFlip = mTileMap.getFlip(mGlobalSettings.mSelectedTile);
 
-			mProjectInfo.curtile = mMapSelectedTile;
-			mProjectInfo.tilenum = mTileSet.TTiles.size();
-			mProjectInfo.fliph = (cTileFlip & 0x1) ? 1 : 0;
-			mProjectInfo.flipv = (cTileFlip & 0x2) ? 1 : 0;
-			mProjectInfo.update();
-			
-			mActiveDialog = &mProjectInfo;
-		}
-	}
+		//	mProjectInfo.curtile = mMapSelectedTile;
+		//	mProjectInfo.tilenum = mTileSet.TTiles.size();
+		//	mProjectInfo.fliph = (cTileFlip & 0x1) ? 1 : 0;
+		//	mProjectInfo.flipv = (cTileFlip & 0x2) ? 1 : 0;
+		//	mProjectInfo.update();
+		//	
+		//	mActiveDialog = &mProjectInfo;
+		//}
+	//}
 	return 0;
 }
 
 Tile* TEditor::createNewTile(){
 	if(mCurMode == EMODE_MAP){
 	Tile* newTile = mTileSet.createNew(&mPalette);
+		if(newTile){
+				TEActionAddTile* newActionTile = new TEActionAddTile();
+				/*
+				mMapSelectedTile = tSel;
+   	 			mTileSelectedTile->bIsSelected = false;
+   	 			mTileSelectedTile = mTileSet.TTiles[tSel];
+   	 			mTileSelectedTile->bIsSelected = true;
+				*/
+
+				newActionTile->doAction(newTile, this, &mTileSet);
+      			mActionStack.newActionGroup();	
+      			mActionStack.addAction(newActionTile);
+      			
+				mActionStack.mLastAction = newActionTile;
+       			mActionStack.redoClearStack();
+				
+				return newTile;
+		}
+	}
+	return NULL;
+}
+
+Tile* TEditor::createNewTileCopy(Tile* cCopyTile){
+	if(mCurMode == EMODE_MAP){
+	Tile* newTile = mTileSet.createNewCopy(mTileSelectedTile,  &mPalette);
 		if(newTile){
 				TEActionAddTile* newActionTile = new TEActionAddTile();
 				/*
@@ -2818,6 +3014,12 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 				if(cEvent->key.keysym.sym == SDLK_F4){	  				
 					activateOpenTileDialog();		  			
 	  			}
+				if(cEvent->key.keysym.sym == SDLK_F5){	  				
+					//SDL_StartTextInput();
+					//mInputNumber.bDialogIsWatingForText = true;
+					//mActiveDialog = &mInputNumber;		  			
+					createNewTileCopy(mTileSelectedTile);
+	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F12){	  				
 		  			activateSaveDialog();
 	  			}
@@ -2960,6 +3162,7 @@ void TSettings::initHelpText(){
 	mHelpTextMap.push_back("LCTRL + Left Mouse Button: Move TileMap and Scroll TileSet");
 	mHelpTextMap.push_back("F3: Create Empty Tile");
 	mHelpTextMap.push_back("F4: Import Tile from file");	
+	mHelpTextMap.push_back("F5: Copy Selected Tile");
 	
 
 	
