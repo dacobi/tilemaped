@@ -3253,6 +3253,7 @@ void TSettings::initHelpText(){
 	mHelpTextMap.push_back("F3: Create Empty Tile");
 	mHelpTextMap.push_back("F4: Import Tile from file");	
 	mHelpTextMap.push_back("F5: Copy Selected Tile");
+	mHelpTextMap.push_back("F6: Remove Unused Tiles. Undo stack will be cleared!");
 	
 
 	
