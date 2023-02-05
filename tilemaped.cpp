@@ -68,9 +68,9 @@ class TSettings{
 		int mProjectSaveState = 0;
 		int mOpenTileState = 0;
 		std::string mNewTilePath = "";				
-		bool bShowTypeSelection = true;
+		bool bShowTypeSelection = false;
 		bool bShowPixelGrip = true;
-		bool bShowPixelType = true;
+		bool bShowPixelType = false;
 		bool bShowSelectedTile = false;
 		int mSelectedTile = 0;
 		int mTileEdScale = 4;
@@ -113,7 +113,8 @@ enum {
 	ACTION_TILE,
 	ACTION_PIXEL,
 	ACTION_TILENEW,
-	ACTION_PIXELS
+	ACTION_PIXELS,
+	ACTION_TILES
 } actions;
 
 class TEAction{
@@ -521,8 +522,10 @@ class TEditor{
 		int flipSelectedTile();
 		int selectTile(int mx, int my);
 		int replaceSelectedColor(int x, int y);
+		int replaceSelectedTiles(int x, int y);
 		int searchRectsXY(std::vector<SDL_Rect> &sRects, int mx, int my);
 		int searchRects(std::vector<SDL_Rect> &sRects);
+		int selectTiles(std::vector<int> &cNewSelection, int cTileType);
 		int findSelected();
 		int toggleSelectedTile();
 		std::vector<TEActionGroup*> mUndoStack;
@@ -650,8 +653,7 @@ class TEActionReplacePixels: public TEActionReplaceMany{
 
 
 class TEActionReplaceTiles: public TEActionReplaceMany{
-	public:
-		Tile* mCurrentTile;		
+	public:		
 		int mOldValue;
 		int mNewValue;
 		TileMap *mTileMap;
@@ -660,7 +662,7 @@ class TEActionReplaceTiles: public TEActionReplaceMany{
 		virtual bool doCompare(const TEAction& rhs){
 			const TEActionReplaceTiles* mrhs =  dynamic_cast<const TEActionReplaceTiles*>(&rhs); 
 			if(mrhs){
-				if((mCurrentTile == mrhs->mCurrentTile) &&  (mNewValue == mrhs->mNewValue)){ // Not testing mOldValue
+				if((mNewValue == mrhs->mNewValue)){ // Not testing mOldValue
 					return compareSelection((TEActionReplaceMany*)mrhs);
 				}
 			}	
@@ -744,7 +746,22 @@ void TEActionReplacePixels::doAction(Tile* mCurTile, std::vector<int> &newSel,in
 
 }
 
-//void TEActionReplacePixels::doSubActions(){}
+void TEActionReplaceTiles::doAction(TileMap* cTileMap, std::vector<int> &newSel,int mOld, int mNew){
+	mTileMap = cTileMap;
+	mOldValue = mOld;
+	mNewValue = mNew;
+	mSelection = newSel;
+
+	TEActionType = ACTION_TILES;
+
+	for(auto &mSelElement : mSelection){
+		if(mSelElement > -1){ 	
+			TEActionReplaceTile* newAction = new TEActionReplaceTile();
+			newAction->doAction(mTileMap, mSelElement, mOldValue, mNewValue);
+			mSubActions.push_back(newAction);
+		} 
+	}
+}
 
 void TEActionAddTile::doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles){
 	mTiles = cTiles;
@@ -927,7 +944,7 @@ int TPalette::loadFromFile(std::string filename){
 	if((magic1 == 16) && (magic2 == 42) && (tbuffer.size() == 512)){
 		for(int i = 0; i < 512; i+=2){
 			SDL_Color tmpcol;
-			//std::cout << "In Color: " << (int)(tbuffer[i]) << "," << (int)(tbuffer[i+1] >> 4) << "," << (int)(tbuffer[i+1] & 0xf) << std::endl;
+			
 			tmpcol.r = mMapColorIn[tbuffer[i+1]];
 			tmpcol.g = mMapColorIn[tbuffer[i] >> 4];
 			tmpcol.b = mMapColorIn[tbuffer[i] & 0xf];
@@ -2194,6 +2211,15 @@ int TEditor::switchMode(){
 	return 0;
 }
 
+int TEditor::selectTiles(std::vector<int> &cNewSelection, int cTileType){
+	for(int i = 0; i < (mGlobalSettings.TileMapHeight*mGlobalSettings.TileMapWidth); i++){
+		if(mTileMap.getTile(i) == cTileType){
+			cNewSelection.push_back(i);
+		}
+	}
+	return cNewSelection.size();
+}
+
 int TEditor::searchRectsXY(std::vector<SDL_Rect> &sRects, int mx, int my){
 	for(int i = 0; i < sRects.size(); i++){
 		if( (mx >= sRects[i].x) && (mx <= (sRects[i].x + sRects[i].w)) && (my >= sRects[i].y) && (my <= (sRects[i].y + sRects[i].h)) ){
@@ -2445,10 +2471,41 @@ int TEditor::replaceSelectedColor(int x, int y){
 	return 0;
 }
 
+int TEditor::replaceSelectedTiles(int mx, int my){
+	if(mCurMode == EMODE_MAP){	
+		int tSel = -1;
+		if(mx > (mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth)){
+			
+			tSel = searchRectsXY(mTileSet.TileAreas, mx, my);
+			if(tSel != -1){ 
+				if(mMapSelectedTile == tSel) { return 0; }
+			
+				std::vector<int> newSelection;
+				if(selectTiles(newSelection, mMapSelectedTile)){
+			
+					TEActionReplaceTiles* newAction = new TEActionReplaceTiles();
+					newAction->doAction(&mTileMap, newSelection, mMapSelectedTile, tSel);
+					if(!(newAction == mActionStack.mLastAction)){
+						mActionStack.mLastAction = newAction;
+						mActionStack.newActionGroup();
+						mActionStack.addSubActions(newAction->mSubActions);
+					}
+				}
+			}		
+		}
+	}
+	return 0;
+}
+
+
 int TEditor::selectTile(int mx, int my){
 	if(mCurMode == EMODE_MAP){
 		int tSel = -1;
 		if(mx > (mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth)){
+			if(mGlobalSettings.bShowTypeSelection){
+				replaceSelectedTiles(mx,my);
+			} else {
+
 			tSel = searchRectsXY(mTileSet.TileAreas, mx, my);
 			if(tSel != -1){
    	 			mMapSelectedTile = tSel;
@@ -2456,6 +2513,7 @@ int TEditor::selectTile(int mx, int my){
    	 			mTileSelectedTile = mTileSet.TTiles[tSel];
    	 			mTileSelectedTile->bIsSelected = true;
 			}		
+			}
 		} else {
 			tSel = searchRectsXY(mTileMap.TileAreas, mx, my);
 	       		if(tSel != -1){
@@ -2592,7 +2650,7 @@ int TEditor::handleEvents(){
 	} else {
 		if(!waitRightMouseButton){
 			if(mCurMode == EMODE_MAP){
-				if(rightMouseButtonDown){
+				if(rightMouseButtonDown){										
 					selectTile(x,y);
 				}			
 			}
@@ -2863,16 +2921,19 @@ void TSettings::initHelpText(){
 	mHelpTextMap.push_back("Left Mouse Button: Select Tile and place in TileMap");
 	mHelpTextTile.push_back("Left Mouse Button: Select Color and place in Tile");
 
-	mHelpTextMap.push_back("Right Mouse Button: Select Tile in TileMap or TileSet");
+	mHelpTextMap.push_back("Right Mouse Button: Select Tile or Tile Type in TileMap/TileSet");
+	mHelpTextMap.push_back("                    Replace Selected Tile Type from TileSet");
 	mHelpTextTile.push_back("Right Mouse Button: Replace Selected Pixel Color with new Color");
+	mHelpTextMap.push_back("S: Toggle Show Selected Tile Type");
+	mHelpTextMap.push_back("T: Toggle Show Selected Tile in TileMap Editor");
 
 	mHelpTextMap.push_back("Mouse Scroll Wheel: Scale TileMap and Scroll TileSet");
 	mHelpTextMap.push_back("LCTRL + Left Mouse Button: Move TileMap and Scroll TileSet");
 	mHelpTextMap.push_back("F3: Create Empty Tile");
 	mHelpTextMap.push_back("F4: Import Tile from file");	
-	mHelpTextMap.push_back("T: Toggle Show Selected Tile in TileMap Editor");									
+	
 
-	mHelpTextMap.push_back("S: Toggle Show Selected Tile Type");
+	
 	mHelpTextTile.push_back("S: Toggle Show Selected Pixel Color");
 
 	mHelpTextTile.push_back("P: Toggle Show Pixel Grid in Tile Editor");
