@@ -451,9 +451,7 @@ class RNDialog: public ITDialog{
 		virtual void cancel();
 		virtual SDL_Rect render(int xpos, int ypos);
 		virtual void recieveInput(int mKey);
-		virtual void recieveInput(std::string mTextInput);
-		//virtual void resize();
-		//virtual int recieveInput(int mx, int my);
+		virtual void recieveInput(std::string mTextInput);		
 };
 
 class HDialog: public SDialog{
@@ -547,16 +545,6 @@ class TEditor{
 		std::vector<TEActionGroup*> mUndoStack;
 		std::vector<TEActionGroup*> mRedoStack;
 		TEActionUndoStack mActionStack;
-		/*
-		TEAction mEmptyAction;
-		TEAction *mLastAction;
-		void newActionGroup();
-		void addAction(TEAction *newAction);
-		void addSubActions(std::vector<TEAction*> &cSubActions);
-		
-		void redoClearStack();
-		*/
-
 		void undoLastActionGroup();
 		void redoLastActionGroup();
 		Dialog *mActiveDialog = NULL;
@@ -911,7 +899,7 @@ SDL_Rect TPixel::render(int xpos, int ypos, int tscale, bool updateRect ,bool dr
 	}
 
     if(bPixelSelected){
-		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.AltHighlightColor.r, mGlobalSettings.AltHighlightColor.g, mGlobalSettings.AltHighlightColor.b, 0xff); //(0xFF,0x00,0x00,0xff);
+		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.AltHighlightColor.r, mGlobalSettings.AltHighlightColor.g, mGlobalSettings.AltHighlightColor.b, 0xff); 
 		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &CurrentArea);
 		SDL_Rect sndRect = CurrentArea;
 		sndRect.x = sndRect.x-1;
@@ -1002,7 +990,6 @@ int TPalette::initTPixels(){
 	TPixel *tmptpix;
 	for(int i = 0; i < 256; i++){
 		tmptpix = new TPixel;
-		//tmptpix->initTexture();
 		tmptpix->setPixelColor(i, this);
 		TPixels.push_back(tmptpix);
 	}
@@ -1710,43 +1697,19 @@ void RNDialog::recieveInput(int mKey){
 		convert << mTextInput.mDialogTextMain  << std::endl;
 		convert >> cNumber;
 		
-	//	mTextInput.mTextColor =  mGlobalSettings.ErrorTextColor;
-	//	return;
-	
-
 		mNumber = cNumber;
+		bInputIsAccept=true;	
+		bDialogIsWatingForText = false;
 
-			bInputIsAccept=true;	
-			bDialogIsWatingForText = false;
-
-			//mGlobalSettings.mNewTilePath = mTextInput.mDialogTextMain;
-			SDL_StopTextInput();
-			return;
-
-//				mTextInput.mTextColor =  mGlobalSettings.ErrorTextColor;
-		}
+		SDL_StopTextInput();
+		return;
+	}
 
 	if(mKey == SDLK_n){
 		bInputIsCancel=true;
 		SDL_StopTextInput();		
 	}		
 }
-/*
-void RNDialog::resize(){
-	//mDialogWidth = mTextInput.mDialogWidth > mDialogWidth ?  mTextInput.mDialogWidth : mDialogWidth;
-	//mDialogHeight = mTexDialogTextMain.mTexHeight;
-	
-	//mDialogHeight *=6;	
-	//mDialogWidth += mDialogBorder * 6;	
-
-	if(mTextInput.mTexDialogTextMain.mTexWidth > (mDialogWidth-(mDialogBorder * 6))){
-		mDialogWidth = mTextInput.mTexDialogTextMain.mTexWidth + (mDialogBorder * 6);
-	} else {
-		mDialogWidth = (mAcceptButton.mTexDialogTextMain.mTexWidth  + mCancelButton.mTexDialogTextMain.mTexWidth) * 2  + (mDialogBorder*6);
-	}
-}
-*/
-
 
 SDL_Rect RNDialog::render(int xpos, int ypos){	
 	SDL_Rect tmpBorder = Dialog::render(xpos, ypos);
@@ -1763,19 +1726,11 @@ SDL_Rect RNDialog::render(int xpos, int ypos){
 
 
 void RNDialog::cancel(){
-		//ITDialog::cancel();
-		//mTextInput.mTextColor =  mGlobalSettings.DefaultTextColor;
 		mTextInput.mDialogTextMain = "";
 		bInputIsAccept=false;	
 		bInputIsCancel=false;	
 		bDialogIsWatingForText = false;
 }
-
-/*
-//int RNDialog::recieveInput(int mx, int my){
-	//return ITDialog::recieveInput(mx, my);
-//}
-*/
 
 void RNDialog::init(){
 	mDialogTextMain = mTexDialogTextMain.mInfo + " Enter Number         ";
@@ -2098,11 +2053,8 @@ void PIDialog::update(){
 	
 	int cTileFlip = mEditor->mTileMap.getFlip(mGlobalSettings.mSelectedTile);
 
-	//		mProjectInfo.curtile = mMapSelectedTile;
-	//		mProjectInfo.tilenum = mTileSet.TTiles.size();
 	fliph = (cTileFlip & 0x1) ? 1 : 0;
 	flipv = (cTileFlip & 0x2) ? 1 : 0;
-	//		mProjectInfo.update();
 
 	convert << (curtile + 1) << std::endl;
 	convert >> cCurTile;
@@ -2115,8 +2067,6 @@ void PIDialog::update(){
 
 	convert << flipv << std::endl;
 	convert >> cFlipV;
-
-
 
 	std::string tmpStr = "FlipH: "+cFlipH + " FlipV: " + cFlipV;
 	
@@ -2156,12 +2106,6 @@ void PIDialog::update(){
 }
 
 void PIDialog::init(){
-	
-	
-	//TTFTexture* mNewText = new TTFTexture();
-	//std::string tmpStr = mNewText->mInfo + " Project: " + mGlobalSettings.ProjectPath;
-	//mNewText->loadTTFFromUTF8(tmpStr, mTextColor);
-	//mHelpText.push_back(mNewText);
 
 	mDialogBorder=3;
 	mDialogColor = mGlobalSettings.DefaultDarkBGColor;
@@ -2224,11 +2168,9 @@ void PIDialog::init(){
 	}
 	
 	mDialogWidth = cMaxWidth;
-	mDialogHeight = mHelpText.size()*(mHelpText[0]->mTexHeight  + (mHelpText[0]->mTexHeight/2)) + (mDialogBorder * 4);//+mHelpText[0]->mTexHeight;
+	mDialogHeight = mHelpText.size()*(mHelpText[0]->mTexHeight  + (mHelpText[0]->mTexHeight/2)) + (mDialogBorder * 4);
 	mDialogWidth += mDialogBorder * 8;	
 		
-	//mCloseButton.mDialogTextMain = "Close";
-	//mCloseButton.init();
 }
 
 SDL_Rect PIDialog::render(int xpos, int ypos){
@@ -2241,9 +2183,7 @@ SDL_Rect PIDialog::render(int xpos, int ypos){
 		hTex->render(cTextX, cTextY);	
 		cTextY += (hTex->mTexHeight*1.5);
 	}
-	
-	//mCloseButton.render(xpos + ((mDialogWidth/2)-(mCloseButton.mDialogWidth/2)), cTextY);
-	
+		
 	return tmpBorder;
 }
 
@@ -2296,7 +2236,6 @@ void TEditor::initDialogs(){
 	mColorSelectedTile->bPixelSelected = true;
 	mColorSelected = 0;
 
-	//mActionStack.mLastAction = &mActionStack.mEmptyAction;
 	mSaveDialog.init();
 	mSaveAsDialog.mDialogTextInput = mGlobalSettings.ProjectPath;
 	mSaveAsDialog.init();
@@ -2521,21 +2460,9 @@ if(mCurMode == EMODE_MAP){
 }
 
 int TEditor::activateProjectInfo(){
-
-	mGlobalSettings.bShowProjectInfo = !mGlobalSettings.bShowProjectInfo;
-	//if(mCurMode == EMODE_MAP){
-		//if(mGlobalSettings.mSelectedTile > -1){
-		//	int cTileFlip = mTileMap.getFlip(mGlobalSettings.mSelectedTile);
-
-		//	mProjectInfo.curtile = mMapSelectedTile;
-		//	mProjectInfo.tilenum = mTileSet.TTiles.size();
-		//	mProjectInfo.fliph = (cTileFlip & 0x1) ? 1 : 0;
-		//	mProjectInfo.flipv = (cTileFlip & 0x2) ? 1 : 0;
-		//	mProjectInfo.update();
-		//	
-		//	mActiveDialog = &mProjectInfo;
-		//}
-	//}
+	if(mCurMode == EMODE_MAP){
+		mGlobalSettings.bShowProjectInfo = !mGlobalSettings.bShowProjectInfo;
+	}
 	return 0;
 }
 
@@ -2544,13 +2471,7 @@ Tile* TEditor::createNewTile(){
 	Tile* newTile = mTileSet.createNew(&mPalette);
 		if(newTile){
 				TEActionAddTile* newActionTile = new TEActionAddTile();
-				/*
-				mMapSelectedTile = tSel;
-   	 			mTileSelectedTile->bIsSelected = false;
-   	 			mTileSelectedTile = mTileSet.TTiles[tSel];
-   	 			mTileSelectedTile->bIsSelected = true;
-				*/
-
+				
 				newActionTile->doAction(newTile, this, &mTileSet);
       			mActionStack.newActionGroup();	
       			mActionStack.addAction(newActionTile);
@@ -2569,13 +2490,7 @@ Tile* TEditor::createNewTileCopy(Tile* cCopyTile){
 	Tile* newTile = mTileSet.createNewCopy(mTileSelectedTile,  &mPalette);
 		if(newTile){
 				TEActionAddTile* newActionTile = new TEActionAddTile();
-				/*
-				mMapSelectedTile = tSel;
-   	 			mTileSelectedTile->bIsSelected = false;
-   	 			mTileSelectedTile = mTileSet.TTiles[tSel];
-   	 			mTileSelectedTile->bIsSelected = true;
-				*/
-
+				
 				newActionTile->doAction(newTile, this, &mTileSet);
       			mActionStack.newActionGroup();	
       			mActionStack.addAction(newActionTile);
@@ -2910,7 +2825,7 @@ int TEditor::handleEvents(){
 				} else {
 				mouseSelX = x;
 				mouseSelY = y;
-	      			findSelected();
+	      		findSelected();
 	      		}
 			}
 		}
@@ -3014,10 +2929,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 				if(cEvent->key.keysym.sym == SDLK_F4){	  				
 					activateOpenTileDialog();		  			
 	  			}
-				if(cEvent->key.keysym.sym == SDLK_F5){	  				
-					//SDL_StartTextInput();
-					//mInputNumber.bDialogIsWatingForText = true;
-					//mActiveDialog = &mInputNumber;		  			
+				if(cEvent->key.keysym.sym == SDLK_F5){	  									
 					createNewTileCopy(mTileSelectedTile);
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F12){	  				
@@ -3146,6 +3058,8 @@ int TSettings::updateTicks(){
 int TSettings::getTicks(){
 	return mCurrentTick - mLastTick;
 }
+
+
 
 void TSettings::initHelpText(){
 
@@ -3307,7 +3221,7 @@ int main( int argc, char* args[] )
 
 		while( mEditor.bEditorRunning ){
 
-			SDL_SetRenderDrawColor(  mGlobalSettings.TRenderer, mGlobalSettings.DefaultBGColor.r,  mGlobalSettings.DefaultBGColor.g,  mGlobalSettings.DefaultBGColor.b, 0xff);//0xFF, 0xFF, 0xFF, 0xFF );
+			SDL_SetRenderDrawColor(  mGlobalSettings.TRenderer, mGlobalSettings.DefaultBGColor.r,  mGlobalSettings.DefaultBGColor.g,  mGlobalSettings.DefaultBGColor.b, 0xff); 
 			SDL_RenderClear( mGlobalSettings.TRenderer );
 
 			mEditor.render();
