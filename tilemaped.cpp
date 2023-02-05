@@ -71,7 +71,7 @@ class TSettings{
 		bool bShowTypeSelection = false;
 		bool bShowPixelGrip = true;
 		bool bShowPixelType = false;
-		bool bShowSelectedTile = false;
+		bool bShowSelectedTile = true;
 		int mSelectedTile = 0;
 		int mTileEdScale = 4;
 		TTF_Font *TFont;
@@ -458,7 +458,7 @@ class PIDialog: public HDialog{
 	public:
 		virtual void init();
 		virtual void update();
-		int fliph,flipv;
+		int fliph,flipv,tilenum,curtile;
 		virtual SDL_Rect render(int xpos, int ypos);
 };
 
@@ -1952,12 +1952,21 @@ void PIDialog::update(){
 	
 	std::string cFlipH;
 	std::string cFlipV;
+	std::string cTileNum;
+	std::string cCurTile;
 	
+	convert << (curtile + 1) << std::endl;
+	convert >> cCurTile;
+
+	convert << tilenum << std::endl;
+	convert >> cTileNum;
+
 	convert << fliph << std::endl;
 	convert >> cFlipH;
 
 	convert << flipv << std::endl;
 	convert >> cFlipV;
+
 
 
 	std::string tmpStr = "FlipH: "+cFlipH + " FlipV: " + cFlipV;
@@ -1970,15 +1979,23 @@ void PIDialog::update(){
 	cx = mGlobalSettings.mSelectedTile % mGlobalSettings.TileMapWidth;
 	cy = mGlobalSettings.mSelectedTile / mGlobalSettings.TileMapWidth;
 	
-	convert << cx << std::endl;
+	convert << (cx +1) << std::endl;
 	convert >> cTileX;
 	
-	convert << cy << std::endl;
+	convert << (cy+1) << std::endl;
 	convert >> cTileY;
 
 	tmpStr = "Current Tile: (" + cTileX + "," + cTileY + ")";
 	
 	mHelpText[mHelpText.size()-2]->loadTTFFromUTF8(tmpStr, mTextColor);
+
+	tmpStr = "Selected in TileSet: " + cCurTile;	
+
+	mHelpText[mHelpText.size()-3]->loadTTFFromUTF8(tmpStr, mTextColor);
+
+	tmpStr = "Tiles in TileSet: " + cTileNum;
+
+	mHelpText[mHelpText.size()-4]->loadTTFFromUTF8(tmpStr, mTextColor);
 }
 
 void PIDialog::init(){
@@ -2011,6 +2028,16 @@ void PIDialog::init(){
 
 	mNewText = new TTFTexture();
 	tmpStr = "TileSize: " + cTileSize;
+	mNewText->loadTTFFromUTF8(tmpStr, mTextColor);
+	mHelpText.push_back(mNewText);
+
+	mNewText = new TTFTexture();
+	tmpStr = "Tiles in TileSet: ";
+	mNewText->loadTTFFromUTF8(tmpStr, mTextColor);
+	mHelpText.push_back(mNewText);
+
+	mNewText = new TTFTexture();
+	tmpStr = "Selected in TileSet: ";
 	mNewText->loadTTFFromUTF8(tmpStr, mTextColor);
 	mHelpText.push_back(mNewText);
 
@@ -2329,6 +2356,8 @@ int TEditor::activateProjectInfo(){
 		if(mGlobalSettings.mSelectedTile > -1){
 			int cTileFlip = mTileMap.getFlip(mGlobalSettings.mSelectedTile);
 
+			mProjectInfo.curtile = mMapSelectedTile;
+			mProjectInfo.tilenum = mTileSet.TTiles.size();
 			mProjectInfo.fliph = (cTileFlip & 0x1) ? 1 : 0;
 			mProjectInfo.flipv = (cTileFlip & 0x2) ? 1 : 0;
 			mProjectInfo.update();
