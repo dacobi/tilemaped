@@ -68,6 +68,9 @@ class TSettings{
 		int TileSize=16;
 		int PaletteScale=2;
 		std::string ProjectPath;
+		std::string ProjectPalettePath = "";
+		std::vector<unsigned char> ProjectPalette;
+		bool bProjectHasPalette = false;
 		int mProjectSaveState = 0;
 		int mOpenTileState = 0;
 		int mDeleteUnusedTilesState = 0;
@@ -290,6 +293,7 @@ class TPalette{
 		std::vector<SDL_Color> TPalette;
 		int initPalette();
 		int loadFromFile(std::string palPath);
+		int saveToFolder(std::string palPath);
 		std::vector<TPixel*> TPixels;
 		std::vector<SDL_Rect> PixelAreas;
 		int initTPixels();
@@ -1005,10 +1009,29 @@ Uint32 TPalette::mapPaletteColor(int tcolor){
 	return tmpcol;
 }
 
+int TPalette::saveToFolder(std::string cpath){
+	if(mGlobalSettings.ProjectPalette.size() == 514){		
+		std::ofstream outfile(cpath + DIRDEL + "pal.bin", std::ios::binary );
+		outfile.write((const char*)mGlobalSettings.ProjectPalette.data(), mGlobalSettings.ProjectPalette.size());
+		outfile.close();
+		return 1;
+	}
+	return 0;
+}
+
 int TPalette::loadFromFile(std::string filename){
+
+	if(fs::exists(fs::status(filename))){
+		if(fs::is_directory(fs::status(filename))){
+			std::cout << "Palette path is directory: " << filename << std::endl;
+			return 1;
+		}
+	}
 
 	std::ifstream infile(filename, std::ios::binary );
     std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
+
+	mGlobalSettings.ProjectPalette = tbuffer;
 
 	int magic1,magic2;
 
@@ -1034,7 +1057,7 @@ int TPalette::loadFromFile(std::string filename){
 		std::cout << "Palette loaded from: " << filename << std::endl;
 		return 0;
 	}
-
+	std::cout << "Error Loading Palette: " << filename << std::endl;
 	return 1;
 }
 
@@ -2336,7 +2359,14 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 int TEditor::createNewProject(){
 	std::cout << "Creating Project: " << mGlobalSettings.ProjectPath << std::endl;
 	std::cout << "TileMapWidth: " << mGlobalSettings.TileMapWidth << " TileMapHeight: " << mGlobalSettings.TileMapHeight << " TileSize: " << mGlobalSettings.TileSize << std::endl;	
-	mPalette.initPalette();
+	if(mGlobalSettings.bProjectHasPalette){
+		if(mPalette.loadFromFile(mGlobalSettings.ProjectPalettePath)){
+			return 1;
+		}
+	} else {
+		mPalette.initPalette();
+	}
+
 	mPalette.initTPixels();
 	mTileMap.createNew();										
 	mTileSet.createNew(&mPalette);
@@ -2420,6 +2450,7 @@ int TEditor::saveToFolder(std::string path){
 	
 	mTileSet.saveToFolder(path);
 	mTileMap.saveToFolder(path);
+	mPalette.saveToFolder(path);
 
 	return 0;
 }
@@ -3308,7 +3339,7 @@ int main( int argc, char* args[] )
 	int nMapSizeY = 0;	
 	bool mCreateNewProject=false;
 	
-	if((argc < 3) || ((argc > 3) && (argc < 6)) || (argc > 6)){
+	if((argc < 3) || ((argc > 3) && (argc < 6)) || ((argc > 8)) || (argc == 7)){
 		if((argc == 2) && (std::string(args[1]) == "-h")){
 			mGlobalSettings.printHelpText();
 		} else {
@@ -3330,10 +3361,26 @@ int main( int argc, char* args[] )
 		}
 	}
 	
-	if(argc == 6){
+	if((argc == 6) || (argc == 8)){
 		if(std::string(args[1]) != "-n"){
 			printUsage();
 			return 1;
+		}
+
+		if(argc == 8){
+			if(args[6] == std::string("-p")){
+				if(fs::exists(fs::status(args[7]))){
+					std::cout << "Palette found" << std::endl;						
+					mGlobalSettings.bProjectHasPalette = true;
+					mGlobalSettings.ProjectPalettePath = std::string(args[7]);
+				} else {
+					std::cout << "Palette file not found!" << std::endl;						
+					return 1;
+				}		
+			} else {
+				printUsage();
+				return 1;
+			}
 		}
 		
 		mConvert << std::string(args[2]) << std::endl;
@@ -3375,6 +3422,8 @@ int main( int argc, char* args[] )
 		} else {
 			mGlobalSettings.ProjectPath = std::string(args[5]);						
 		}		
+
+
 
 		mCreateNewProject=true;		
 	}
