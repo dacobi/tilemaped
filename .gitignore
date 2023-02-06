@@ -15,3 +15,4 @@ example/x16emu
 tilemaped.cpp.bak
 testfile.bin
 testfile2.bin
+Makefile
