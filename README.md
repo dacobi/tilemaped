@@ -15,5 +15,5 @@ It should compile on any system with a working C++17 compiler and the required S
 
 A copy of Nerdfonts TTF fonts are included in the repo according to [LICENSE.nerdfonts](https://github.com/ryanoasis/nerd-fonts/blob/master/LICENSE)
 
-Run "cmake CMakeLists.txt" to configure and then "make" to build in \*nix.
+Run "cmake CMakeLists.txt" to configure and then "make" to build in \*nix.      
 In Windows in MSYS2 run "cmake --build . " to build.
