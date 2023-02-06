@@ -7,7 +7,7 @@ file(GLOB Tilemaped_SRC "*.cpp" ".h")
 add_executable(tilemaped ${Tilemaped_SRC})
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-	set(CMAKE_CXX_COMPILER "/mingw64/bin/g++")
+	set(CMAKE_CXX_COMPILER "g++")
 	set(CMAKE_CXX_FLAGS "-std=c++17 -mwindows")
 	target_include_directories(tilemaped PUBLIC C:/msys64/mingw64/include/SDL2)
 	target_link_directories(tilemaped PUBLIC C:/msys64/mingw64/lib)
