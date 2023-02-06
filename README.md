@@ -15,9 +15,5 @@ It should compile on any system with a working C++17 compiler and the required S
 
 A copy of Nerdfonts TTF fonts are included in the repo according to [LICENSE.nerdfonts](https://github.com/ryanoasis/nerd-fonts/blob/master/LICENSE)
 
-To compile in \*nix simply run make or:
-g++ -std=c++17 tilemaped.cpp -I/usr/include/SDL2/ -lSDL2 -lSDL2_image -lSDL2_ttf -o tilemaped
-
-I've added a Makefile.win64 that will work in MSYS2 when the required SDL2 libs are installed.
-I'm also working on a CMakeLists.txt that's currently working in MSYS2 ("cmake CMakeLists.txt && cmake --build . ")
-
+Run "cmake CMakeLists.txt" to configure and then "make" to build in \*nix.
+In Windows in MSYS2 run "cmake --build . " to build.
