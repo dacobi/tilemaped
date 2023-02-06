@@ -15,3 +15,21 @@ example/x16emu
 tilemaped.cpp.bak
 testfile.bin
 testfile2.bin
+
+*.o
+
+# vim stuff
+*.swp
+*.un~
+*.swo
+.vimrc
+
+# git stats
+stats/*
+
+# cmake
+Makefile
+build/*
+
+# ctags
+tags
