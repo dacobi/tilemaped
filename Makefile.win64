@@ -1,3 +1,0 @@
-all:
-	g++ -std=c++17 tilemaped.cpp -IC:/msys64/mingw64/include/SDL2 -Dmain=SDL_main -LC:/msys64/mingw64/lib -lmingw32 -mwindows -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -o tilemaped.exe
-
