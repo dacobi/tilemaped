@@ -19,7 +19,7 @@ namespace fs = std::filesystem;
 //#define DIRDEL "\"
 //#define DIRDEL "/"
 
-#define DIRDEL std::filesystem::path::preferred_separator
+#define DIRDEL (const char)(std::filesystem::path::preferred_separator)
 
 class TTexture;
 class TTFTexture;
@@ -2167,7 +2167,7 @@ void TIDialog::recieveInput(std::string cTextInput){
 		}
 
 		checkCurrentText();
-		
+
 	} else {
 		std::string tmpStr = mDialogTextMain + cTextInput;
 
