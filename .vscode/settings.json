@@ -71,5 +71,9 @@
         "ios": "cpp",
         "locale": "cpp",
         "target": "cpp"
-    }
+    },
+    "editor.autoClosingQuotes": "never",
+    "editor.autoSurround": "never",
+    "editor.autoClosingBrackets": "never"
+
 }
