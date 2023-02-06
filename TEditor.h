@@ -1,3 +1,6 @@
+#ifndef __TEDITOR__
+#define __TEDITOR__
+
 #include "TSettings.h"
 #include "TileMap.h"
 #include "TDialogs.h"
@@ -76,3 +79,4 @@ class TEditor{
 		int activateDropUnusedTiles();
 };
 
+#endif
