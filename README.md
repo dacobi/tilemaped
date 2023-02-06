@@ -9,3 +9,6 @@ A copy of Nerdfonts TTF fonts are included in the repo according to [LICENSE.ner
 
 Run "cmake CMakeLists.txt" to configure and then "make" to build in \*nix.      
 In Windows in MSYS2 run "cmake --build . " to build.
+
+To setup SDL2 in MSYS2 follow this guide [msys2-SDL2-Setup.md](https://gist.github.com/thales17/fb2e4cff60890a51d9dddd4c6e832ad2)
+
