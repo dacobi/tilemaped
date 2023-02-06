@@ -2099,7 +2099,7 @@ int TIDialog::checkCurrentText(){
 			int tmpNum=0;
 			convert >> tmpNum;
 			if((tmpNum < mMinRange) || (tmpNum > mMaxRange)){
-				//mTextColor = mGlobalSettings.ErrorTextColor;
+				
 				bInputIsAccepted=false;
 				return 1;
 			}		
@@ -2121,40 +2121,34 @@ int TIDialog::checkCurrentText(){
 		}
 
 		if(bMustExist){
-				if(!cExists){
-				//mTextColor = mGlobalSettings.ErrorTextColor;
+				if(!cExists){				
 				bInputIsAccepted=false;
 				return 1;
 			}
 		} 
 
 		if(bMustBeFolder){
-				if(!cIsFolder){
-					//mTextColor = mGlobalSettings.ErrorTextColor;
+				if(!cIsFolder){					
 					bInputIsAccepted=false;
 					return 1;
 				}
 		}
 		
 		if(bMustNotExist){
-			if(cExists){
-				//mTextColor = mGlobalSettings.ErrorTextColor;
+			if(cExists){				
 				bInputIsAccepted=false;
 				return 1;
 			}
 		}
 	}
 
-	bInputIsAccepted=true;
-	//mTextColor = mGlobalSettings.DefaultTextColor;
+	bInputIsAccepted=true;	
 	return 0;
 }
 
 void TIDialog::recieveInput(std::string cTextInput){
 	
-	if(bIsNumeric){
-		bInputIsAccepted=true;
-		//mTextColor = mGlobalSettings.DefaultTextColor;
+	if(bIsNumeric){		
 		std::string tmpStr, tmpStr2;
 		for (int i = 0; i < cTextInput.size(); i++) {
       		if(isdigit(cTextInput[i])){
@@ -2163,18 +2157,7 @@ void TIDialog::recieveInput(std::string cTextInput){
 		}
 
 		tmpStr2 = mDialogTextMain + tmpStr;
-		/*
-		if(mMaxRange){		
-			std::stringstream convert;
-			convert << tmpStr2 << std::endl;
-			int tmpNum=0;
-			convert >> tmpNum;
-			if((tmpNum < mMinRange) || (tmpNum > mMaxRange)){
-				bInputIsAccepted=false;
-				//mTextColor = mGlobalSettings.ErrorTextColor;
-			}
-		}
-		*/
+		
 		if(mMaxLength){
 			if(tmpStr2.size() < mMaxLength){
 				mDialogTextMain = tmpStr2;	
@@ -2182,7 +2165,9 @@ void TIDialog::recieveInput(std::string cTextInput){
 		} else {
 			mDialogTextMain = tmpStr2;
 		}
+
 		checkCurrentText();
+		
 	} else {
 		std::string tmpStr = mDialogTextMain + cTextInput;
 
@@ -2195,38 +2180,6 @@ void TIDialog::recieveInput(std::string cTextInput){
 		}
 
 		checkCurrentText();
-		/*
-		bool cExists=false;
-		bool cIsFolder=false;
-
-		if(bMustExist){			
-			if(fs::exists(fs::status(mDialogTextMain))){
-				cExists = true;			
-			}
-		}
-
-		if(bMustBeFolder){
-			if(fs::is_directory(fs::status(mDialogTextMain))){
-				cIsFolder = true;
-			}
-		}
-
-		if(bMustExist){
-			if(bMustBeFolder){
-				if(!cExists && !cIsFolder){
-					mTextColor = mGlobalSettings.ErrorTextColor;
-				}
-			} else {
-				if(!cExists){
-				mTextColor = mGlobalSettings.ErrorTextColor;
-			}	
-			}
-		} else if (bMustNotExist){
-			if(cExists){
-				mTextColor = mGlobalSettings.ErrorTextColor;
-			}
-		} */
-
 	}	
 }
 
@@ -3313,9 +3266,9 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					SDL_StartTextInput();
 					mActiveDialog = &mInputNumber;
 					mInputNumber.mTextInput.bIsNumeric = true;
-					mInputNumber.mTextInput.mMaxRange = 256;
-					//mInputNumber.mTextInput.mMaxLength = 6;
-					mInputNumber.mTextInput.mMinRange = 1;
+					//mInputNumber.mTextInput.mMaxRange = 256;
+					mInputNumber.mTextInput.mMaxLength = 9;
+					//mInputNumber.mTextInput.mMinRange = 1;
 					//mInputNumber.mTextInput.bMustNotExist = true;
 					//mInputNumber.mTextInput.bMustBeFolder = true;
 					mActiveDialog->bDialogIsWatingForText = true;
