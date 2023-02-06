@@ -2,8 +2,9 @@ cmake_minimum_required(VERSION 3.1)
 
 project(Tilemaped)
 
-add_executable(tilemaped tilemaped.cpp)
+file(GLOB Tilemaped_SRC "*.cpp" ".h")
 
+add_executable(tilemaped ${Tilemaped_SRC})
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	set(CMAKE_CPP_COMPILER "/mingw64/bin/g++")
