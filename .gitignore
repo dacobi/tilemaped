@@ -1,0 +1,17 @@
+tilemaped
+makeitso
+test
+example/MAP0.BIN 
+example/MAP1.BIN 
+example/PAL.BIN 
+example/TILES0.BIN 
+example/TILES1.BIN
+example/newpalette.h
+example/palgen
+example/testfile.png
+example/testfile.bin
+example/VERA.PRG
+example/x16emu
+tilemaped.cpp.bak
+testfile.bin
+testfile2.bin
