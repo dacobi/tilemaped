@@ -135,6 +135,7 @@ int TSettings::getTicks(){
 
 void TSettings::shutdown(){
 	SDL_DestroyRenderer(TRenderer);
+	std::cout << "SDL_DestroyRenderer(TSettings::TRenderer)" << std::endl;
 }
 
 void TSettings::initHelpText(){

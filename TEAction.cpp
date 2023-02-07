@@ -167,6 +167,7 @@ void TEActionGroup::redo(){
 
 TEActionUndoStack::~TEActionUndoStack(){
 	redoClearStack();
+	undoClearStack();
 }
 
 TEActionUndoStack::TEActionUndoStack(){
@@ -215,7 +216,9 @@ void TEActionUndoStack::redoClearStack(){
 		for(auto *dGroup : mRedoStack){
 			for(auto *dAction: dGroup->mActions){
 				TEActionAddTile* ddAction = dynamic_cast<TEActionAddTile*>(dAction);
-				if(ddAction){delete ddAction;} else {
+				if(ddAction){
+					delete ddAction;
+				} else {
 					delete dAction;
 				}
 			}		
@@ -226,6 +229,14 @@ void TEActionUndoStack::redoClearStack(){
 
 void TEActionUndoStack::undoClearStack(){
 	if(mUndoStack.size()){
+		for(auto *dGroup : mUndoStack){
+			for(auto *dAction: dGroup->mActions){
+				TEActionAddTile* ddAction = dynamic_cast<TEActionAddTile*>(dAction);
+				if(!ddAction){
+					delete dAction;
+				}
+			}		
+		}
 		mUndoStack.erase(mUndoStack.begin(), mUndoStack.end());
 	}	
 }

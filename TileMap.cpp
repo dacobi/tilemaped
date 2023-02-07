@@ -7,6 +7,7 @@ extern TSettings mGlobalSettings;
 TTexture::~TTexture(){
 	if(TileTex){
 		SDL_DestroyTexture(TileTex);
+		std::cout << "SDL_DestroyTexture(TTexture::TileTex)" << std::endl;
 		TileTex = NULL;
 	}
 }
@@ -257,12 +258,13 @@ return 0;
 }
 
 Tile::~Tile(){
-	//	FileData.erase(FileData.begin(), FileData.end());;
+	
 	if(TileTex){
 		SDL_DestroyTexture(TileTex);
+		std::cout << "SDL_DestroyTexture(Tile::TileTex)" << std::endl;
 		TileTex = NULL;
 	}
-	//TTexture::~TTexture();
+	
 }
 
 int Tile::createNew(TPalette* tpal){
@@ -413,8 +415,10 @@ Tile* TileSet::createNew(TPalette* tpal){
 }
 
 int TileSet::removeTile(int cDropTile){
+	Tile* dTile = *(TTiles.begin() +  cDropTile); 
 	TTiles.erase(TTiles.begin() +  cDropTile);
 	TileAreas.erase(TileAreas.begin() + cDropTile);
+	delete dTile;
 	return 0;
 }
 
