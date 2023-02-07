@@ -116,6 +116,33 @@ SDL_Rect TPixel::render(int xpos, int ypos, int tscale, bool updateRect ,bool dr
 }
 
 
+SDL_Rect TPixel::renderEd(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
+	CurrentArea = { xpos, ypos, mGlobalSettings.TileSizeX*tscale, mGlobalSettings.TileSizeY*tscale};
+
+	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, PixelColor.r,PixelColor.g,PixelColor.b,PixelColor.a);
+	
+	SDL_RenderFillRect(mGlobalSettings.TRenderer, &CurrentArea);
+    
+	if(drawGrid){
+		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.PixelGridColor.r ,mGlobalSettings.PixelGridColor.g ,mGlobalSettings.PixelGridColor.b ,0xff);
+		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &CurrentArea);
+	}
+
+    if(bPixelSelected){
+		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.AltHighlightColor.r, mGlobalSettings.AltHighlightColor.g, mGlobalSettings.AltHighlightColor.b, 0xff); 
+		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &CurrentArea);
+		SDL_Rect sndRect = CurrentArea;
+		sndRect.x = sndRect.x-1;
+		sndRect.y = sndRect.y-1;
+		sndRect.w = sndRect.w+2;
+		sndRect.h = sndRect.h+2;
+
+		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &sndRect);
+    }
+    return CurrentArea;
+}
+
+
 SDL_Rect TTexture::renderEx(int xpos, int ypos, int tscale, SDL_RendererFlip flip){
 	SDL_Rect renderQuad = { xpos, ypos, mGlobalSettings.TileSizeX*tscale, mGlobalSettings.TileSizeY*tscale};
         SDL_RenderCopyEx(mGlobalSettings.TRenderer, TileTex, NULL, &renderQuad, 0, NULL, flip);	
@@ -234,7 +261,7 @@ int TPalette::initTPixels(){
 
 SDL_Rect TPalette::renderTileEd(int xpos,int ypos, int tcolor){
 	SDL_SetRenderDrawBlendMode(mGlobalSettings.TRenderer, SDL_BLENDMODE_BLEND);
-	return TPixels[tcolor]->render(xpos, ypos, mGlobalSettings.mTileEdScale,false,mGlobalSettings.bShowPixelGrip);	
+	return TPixels[tcolor]->renderEd(xpos, ypos, mGlobalSettings.mTileEdScale,false,mGlobalSettings.bShowPixelGrip);	
 }
 
 int TPalette::render(int xpos,int ypos){

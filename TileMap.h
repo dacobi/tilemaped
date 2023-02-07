@@ -33,6 +33,7 @@ class TPixel{
 		SDL_Rect CurrentArea;
 		int setPixelColor(unsigned char tcolor, TPalette* tpal);
 		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
+		SDL_Rect renderEd(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		bool bPixelSelected = false;
 };
 

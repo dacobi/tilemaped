@@ -127,7 +127,7 @@ int TEditor::render(){
 	}
 	
 	if(mCurMode == EMODE_TILE){
-		mPalette.render(100+mGlobalSettings.mTileEdScale*mGlobalSettings.TileRenderSize*mGlobalSettings.TileRenderSize,50+mTopBar.mDialogHeight);	
+		mPalette.render(100+mGlobalSettings.mTileEdScale*mGlobalSettings.TileSizeX*mGlobalSettings.TileSizeX,50+mTopBar.mDialogHeight);	
 		if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
 		mTileSelectedTile->renderEd(50,50+mTopBar.mDialogHeight,&mPalette);
 		mColorSelectedTile->bPixelSelected = true;
@@ -739,8 +739,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					activateDropUnusedTiles();
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F7){	  									
-					
-					
+										
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F12){	  				
 		  			activateSaveDialog();
