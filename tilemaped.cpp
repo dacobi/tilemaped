@@ -225,6 +225,14 @@ void TSettings::initHelpText(){
 	mHelpText.push_back("R: Redo last Action");
 }
 
+void printUsage(){
+		std::cout << std::endl;	
+		std::cout << "Command Line Usage:" << std::endl;	
+		std::cout << "tilemaped -o <folder> OR" << std::endl;		
+		std::cout << "tilemaped -n <mapwidth> <mapheight> <tilesize> <folder> [ -p <palette file> ]" << std::endl;		
+}
+
+
 void TSettings::printHelpText(){
 	initHelpText();
 	std::cout << "TileMap Editor:" << std::endl;	
@@ -246,16 +254,10 @@ void TSettings::printHelpText(){
 	for(const auto& cStr : mHelpText){
 		std::cout << cStr << std::endl;	
 	}
+
+	printUsage();
 }
 
-void printUsage(){
-		std::cout << "Usage:" << std::endl;	
-		std::cout << "tilemaped -o <folder>" << std::endl;
-		std::cout << "Or" << std::endl;	
-		std::cout << "tilemaped -n <mapwidth> <mapheight> <tilesize> <folder> [ -p <palette file> ]" << std::endl;
-		std::cout << "Fx: tilemaped -n 128 128 16 newfolder" << std::endl;
-		std::cout << "tilemaped -h (For help on UI usage)" << std::endl;		
-}
 
 int main( int argc, char* args[] )
 {
