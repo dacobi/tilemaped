@@ -82,6 +82,12 @@ void TEActionReplaceTiles::doAction(TileMap* cTileMap, std::vector<int> &newSel,
 	}
 }
 
+TEActionAddTile::~TEActionAddTile(){	
+	delete mNewTile;
+}
+
+		
+
 void TEActionAddTile::doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles){
 	mTiles = cTiles;
 	mNewTile = cNewTile;
@@ -159,6 +165,9 @@ void TEActionGroup::redo(){
 	}
 }
 
+TEActionUndoStack::~TEActionUndoStack(){
+	redoClearStack();
+}
 
 TEActionUndoStack::TEActionUndoStack(){
 	mLastAction = &mEmptyAction;
@@ -201,8 +210,16 @@ void TEActionUndoStack::redoLastActionGroup(){
 	}
 }
 
-void TEActionUndoStack::redoClearStack(){
-	if(mRedoStack.size()){
+void TEActionUndoStack::redoClearStack(){	
+	if(mRedoStack.size()){		
+		for(auto *dGroup : mRedoStack){
+			for(auto *dAction: dGroup->mActions){
+				TEActionAddTile* ddAction = dynamic_cast<TEActionAddTile*>(dAction);
+				if(ddAction){delete ddAction;} else {
+					delete dAction;
+				}
+			}		
+		}
 		mRedoStack.erase(mRedoStack.begin(), mRedoStack.end());
 	}	
 }

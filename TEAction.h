@@ -5,6 +5,7 @@
 
 class TEAction{
 	public:
+		~TEAction(){};
 		int TEActionType=ACTION_EMPTY;
 		virtual void undo();
 		virtual void redo();
@@ -16,6 +17,7 @@ class TEAction{
 class TEActionUndoStack{
 	public:
 		TEActionUndoStack();
+		~TEActionUndoStack();		
 		std::vector<TEActionGroup*> mUndoStack;
 		std::vector<TEActionGroup*> mRedoStack;
 		TEAction mEmptyAction;
@@ -39,6 +41,7 @@ class TEActionGroup{
 
 class TEActionReplaceMany: public TEAction{
 	public:
+		~TEActionReplaceMany(){};
 		std::vector<int> mSelection;
 		std::vector<TEAction*> mSubActions;
 		
@@ -57,6 +60,7 @@ class TEActionReplaceMany: public TEAction{
 
 class TEActionReplaceTile: public TEAction{
 	public:
+		~TEActionReplaceTile(){};
 		int mCurrentTile;
 		int mOldValue;
 		int mNewValue;
@@ -77,6 +81,7 @@ class TEActionReplaceTile: public TEAction{
 
 class TEActionReplacePixel: public TEAction{
 	public:
+		~TEActionReplacePixel(){};
 		Tile* mCurrentTile;
 		int mCurrentPixel;
 		int mOldValue;
@@ -99,6 +104,7 @@ class TEActionReplacePixel: public TEAction{
 
 class TEActionReplacePixels: public TEActionReplaceMany{
 	public:
+		~TEActionReplacePixels(){};
 		Tile* mCurrentTile;		
 		int mOldValue;
 		int mNewValue;
@@ -118,7 +124,8 @@ class TEActionReplacePixels: public TEActionReplaceMany{
 
 
 class TEActionReplaceTiles: public TEActionReplaceMany{
-	public:		
+	public:	
+		~TEActionReplaceTiles(){};
 		int mOldValue;
 		int mNewValue;
 		TileMap *mTileMap;
@@ -139,6 +146,7 @@ class TEActionReplaceTiles: public TEActionReplaceMany{
 
 class TEActionAddTile: public TEAction{
 	public:
+		~TEActionAddTile();
 		Tile* mNewTile;
 		Tile* mOldTile;
 		TileSet *mTiles;
@@ -155,6 +163,7 @@ class TEActionAddTile: public TEAction{
 
 class TEActionDropTile: public TEActionAddTile{
 	public:
+		~TEActionDropTile(){}
 		void doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles);	
 		virtual void undo();
 		virtual void redo();
