@@ -326,6 +326,7 @@ void OCDialog::init(){
 	mOpenProject.init();
 	mOpenProject.mTextInput.bMustBeFolder = true;
 	
+	mCreateProject.init();
 
 	//mDialogHeight *=6;	
 	//mDialogWidth += mDialogBorder * 5;	
@@ -344,6 +345,10 @@ SDL_Rect OCDialog::render(int xpos, int ypos){
 		mOpenProject.render(xpos + 50, ypos + 50);
 	}
 
+	if(bSubDialogActive && bSubDialogIsCreate){
+		mCreateProject.render(xpos + 50, ypos + 50);
+	}
+
 	return tmpBorder;
 }
 
@@ -356,11 +361,27 @@ int OCDialog::recieveInput(int mx, int my){
 		if(mOpenProject.mCancelButton.recieveInput(mx, my)){
 			recieveInput(SDLK_n);
 			return 0;
-		}
+		}		
+	}
+	if(bSubDialogActive && bSubDialogIsCreate){
+		mCreateProject.recieveInput(mx, my);
+			//recieveInput(SDLK_y);
+			return 0;
+		//}
+		//if(mOpenProject.mCancelButton.recieveInput(mx, my)){
+		//	recieveInput(SDLK_n);
+		//	return 0;
+		//}		
 	}
 	if(mOpenButton.recieveInput(mx,my)){		
 		bSubDialogActive = true;
 		bSubDialogIsOpen = true;
+		bDialogIsWatingForText = true;
+		SDL_StartTextInput();
+	}
+	if(mCreateButton.recieveInput(mx,my)){
+		bSubDialogActive = true;
+		bSubDialogIsCreate = true;
 		bDialogIsWatingForText = true;
 		SDL_StartTextInput();
 	}
@@ -381,12 +402,18 @@ void OCDialog::recieveInput(std::string cStr){
 		mOpenProject.mTextInput.recieveInput(cStr);		
 		resize();
 	}
-
+	if(bSubDialogActive && bSubDialogIsCreate){
+		mCreateProject.recieveInput(cStr);		
+		//resize();
+	}
 }
 
 void OCDialog::dropLastInputChar(){
 	if(bSubDialogActive && bSubDialogIsOpen){
 		mOpenProject.mTextInput.dropLastInputChar();
+	}
+	if(bSubDialogActive && bSubDialogIsCreate){
+		mCreateProject.dropLastInputChar();
 	}
 }
 
@@ -417,6 +444,152 @@ void OCDialog::recieveInput(int mKey){
 	}
 }
 
+void CPDialog::init(){
+	mDialogTextMain = mTexDialogTextMain.mFile + " Create New Project";
+	mTexDialogTextMain.loadTTFFromUTF8(mDialogTextMain, mTextColor);
+
+	mDialogInputWidth = "Map Width";		
+	mTexDialogWidth.loadTTFFromUTF8(mDialogInputWidth, mTextColor);
+	mDialogInputHeight = "Map Height";		
+	mTexDialogHeight.loadTTFFromUTF8(mDialogInputHeight, mTextColor);
+	mDialogInputSizeX = "Tile Size X";		
+	mTexDialogSizeX.loadTTFFromUTF8(mDialogInputSizeX, mTextColor);
+	mDialogInputSizeY = "Tile Size Y";		
+	mTexDialogSizeY.loadTTFFromUTF8(mDialogInputSizeY, mTextColor);
+	mDialogInputPath = "New Folder";		
+	mTexDialogPath.loadTTFFromUTF8(mDialogInputPath, mTextColor);
+
+	mCreateButton.mDialogTextMain = "Create";
+	mCancelButton.mDialogTextMain = "Cancel";	
+	
+	mCreateButton.init();	
+	mCancelButton.init();
+
+	mReadWidth.mAllowedValues.push_back(32);
+	mReadWidth.mAllowedValues.push_back(64);
+	mReadWidth.mAllowedValues.push_back(128);
+	mReadWidth.mAllowedValues.push_back(256);
+
+	mReadHeight.mAllowedValues = mReadWidth.mAllowedValues;
+
+	mReadSizeX.mAllowedValues.push_back(8);
+	mReadSizeX.mAllowedValues.push_back(16);
+
+	mReadSizeY.mAllowedValues = mReadSizeX.mAllowedValues;
+
+	mReadWidth.mDialogTextMain = "32";
+	mReadHeight.mDialogTextMain = "32";
+	mReadSizeX.mDialogTextMain = "16";
+	mReadSizeY.mDialogTextMain = "16";
+	mReadPath.mDialogTextMain = "newfolder";
+
+	mReadWidth.bIsNumeric= true;
+	mReadHeight.bIsNumeric = true;
+	mReadSizeX.bIsNumeric = true;
+	mReadSizeY.bIsNumeric = true;
+	mReadPath.bMustNotExist = true;
+
+	mReadWidth.bInputIsAccepted = true;
+	mReadHeight.bInputIsAccepted = true;
+	mReadSizeX.bInputIsAccepted = true;
+	mReadSizeY.bInputIsAccepted = true;
+	mReadPath.bInputIsAccepted = true;
+
+	mReadWidth.init();
+	mReadHeight.init();
+	mReadSizeX.init();
+	mReadSizeY.init();
+	mReadPath.init();
+
+	mActiveInput = &mReadWidth;
+	mActiveInput->bIsInputActive = true;
+
+
+	mDialogWidth =  (mCreateButton.mDialogWidth * 4) + (mDialogBorder *2);
+	mDialogHeight = (mCreateButton.mDialogHeight * 8) + (mDialogBorder);
+}
+
+SDL_Rect CPDialog::render(int xpos, int ypos){
+	SDL_Rect tmpBorder = Dialog::render(xpos, ypos);
+
+	int offset = 8;
+
+	mTexDialogTextMain.render(tmpBorder.x+(mDialogWidth/2)-(mTexDialogTextMain.mTexWidth/2),tmpBorder.y+mDialogBorder*2);
+	mTexDialogWidth.render(tmpBorder.x+(mDialogBorder*2),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 1.2) + offset);
+	mReadWidth.render(tmpBorder.x+(mDialogBorder*2) + (mTexDialogWidth.mTexWidth*1.4),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 1.2)+ offset);
+
+	mTexDialogHeight.render(tmpBorder.x+(mDialogBorder*2),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 2.4)+ offset);
+	mReadHeight.render(tmpBorder.x+(mDialogBorder*2) + (mTexDialogWidth.mTexWidth*1.4),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 2.4)+ offset);
+
+	mTexDialogSizeX.render(tmpBorder.x+(mDialogBorder*2),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 3.6)+ offset);
+	mReadSizeX.render(tmpBorder.x+(mDialogBorder*2) + (mTexDialogWidth.mTexWidth*1.4),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 3.6)+ offset);
+
+	mTexDialogSizeY.render(tmpBorder.x+(mDialogBorder*2),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 4.8)+ offset);
+	mReadSizeY.render(tmpBorder.x+(mDialogBorder*2) + (mTexDialogWidth.mTexWidth*1.4),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 4.8)+ offset);
+
+	mTexDialogPath.render(tmpBorder.x+(mDialogBorder*2),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 6)+ offset);
+	mReadPath.render(tmpBorder.x+(mDialogBorder*2) + (mTexDialogWidth.mTexWidth*1.4),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 6)+ offset);
+
+	mCreateButton.render(tmpBorder.x + (((mDialogWidth / 4)) - (mCreateButton.mDialogWidth/2)), tmpBorder.y+(mTexDialogTextMain.mTexHeight * 8.4)+ offset);
+	mCancelButton.render(tmpBorder.x + (((mDialogWidth / 4)*3) - (mCancelButton.mDialogWidth/2)) + (mDialogBorder * 2), tmpBorder.y+(mTexDialogTextMain.mTexHeight * 8.4)+ offset);
+
+	return tmpBorder;
+}
+
+
+void CPDialog::dropLastInputChar(){
+	mActiveInput->dropLastInputChar();
+}
+
+void CPDialog::recieveInput(std::string cTextInput){
+	mActiveInput->recieveInput(cTextInput);
+}
+
+void CPDialog::recieveInput(int mKey){}	
+
+int CPDialog::recieveInput(int mx, int my){
+	if(mReadWidth.recieveInput(mx, my)){
+		mReadWidth.bIsInputActive = true;
+		mReadHeight.bIsInputActive = false;
+		mReadSizeX.bIsInputActive = false;
+		mReadSizeY.bIsInputActive = false;
+		mReadPath.bIsInputActive = false;
+		mActiveInput = &mReadWidth;
+	}
+	if(mReadHeight.recieveInput(mx, my)){
+		mReadWidth.bIsInputActive = false;
+		mReadHeight.bIsInputActive = true;
+		mReadSizeX.bIsInputActive = false;
+		mReadSizeY.bIsInputActive = false;
+		mReadPath.bIsInputActive = false;
+		mActiveInput = &mReadHeight;
+	}
+	if(mReadSizeX.recieveInput(mx, my)){
+		mReadWidth.bIsInputActive = false;
+		mReadHeight.bIsInputActive = false;
+		mReadSizeX.bIsInputActive = true;
+		mReadSizeY.bIsInputActive = false;
+		mReadPath.bIsInputActive = false;
+		mActiveInput = &mReadSizeX;
+	}
+	if(mReadSizeY.recieveInput(mx, my)){
+		mReadWidth.bIsInputActive = false;
+		mReadHeight.bIsInputActive = false;
+		mReadSizeX.bIsInputActive = false;
+		mReadSizeY.bIsInputActive = true;
+		mReadPath.bIsInputActive = false;
+		mActiveInput = &mReadSizeY;
+	}
+	if(mReadPath.recieveInput(mx, my)){
+		mReadWidth.bIsInputActive = false;
+		mReadHeight.bIsInputActive = false;
+		mReadSizeX.bIsInputActive = false;
+		mReadSizeY.bIsInputActive = false;
+		mReadPath.bIsInputActive = true;
+		mActiveInput = &mReadPath;
+	}
+	return 0;
+}
 
 void RNDialog::dropLastInputChar(){
 	mTextInput.dropLastInputChar();
@@ -679,11 +852,26 @@ int TIDialog::checkCurrentText(){
 			convert << mDialogTextMain << std::endl;
 			int tmpNum=0;
 			convert >> tmpNum;
-			if((tmpNum < mMinRange) || (tmpNum > mMaxRange)){
-				
+			if((tmpNum < mMinRange) || (tmpNum > mMaxRange)){				
 				bInputIsAccepted=false;
-				return 1;
+				return 1;			
 			}		
+		}
+		if(mAllowedValues.size()){
+			std::stringstream convert;
+			convert << mDialogTextMain << std::endl;
+			int tmpNum=0;
+			convert >> tmpNum;
+			bool bValIsFound = false;
+			for(auto &cVal : mAllowedValues){
+				if(cVal == tmpNum){
+					bValIsFound = true;				
+				}
+			}
+			if(!bValIsFound){
+				bInputIsAccepted=false;
+				return 1;			
+			}
 		}
 	} else {
 		bool cExists = false;

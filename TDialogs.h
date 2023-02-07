@@ -48,6 +48,7 @@ class TIDialog: public BDialog{
 		bool bIsInputActive=false;
 		bool bInputIsAccepted=true;
 		bool bIsNumeric=false;
+		std::vector<int> mAllowedValues;
 		int mMaxLength=0;
 		int mMaxRange=0;
 		int mMinRange=0;
@@ -123,19 +124,51 @@ class OPDialog: public ITDialog{
 		virtual void init();
 };
 
+class CPDialog: public Dialog{
+	public:
+		std::string mDialogTextMain;		
+		TTFTexture mTexDialogTextMain;
+		std::string mDialogInputWidth;		
+		TTFTexture mTexDialogWidth;
+		std::string mDialogInputHeight;		
+		TTFTexture mTexDialogHeight;
+		std::string mDialogInputSizeX;		
+		TTFTexture mTexDialogSizeX;
+		std::string mDialogInputSizeY;		
+		TTFTexture mTexDialogSizeY;
+		std::string mDialogInputPath;		
+		TTFTexture mTexDialogPath;
+		TIDialog mReadWidth;
+		TIDialog mReadHeight;
+		TIDialog mReadSizeX;
+		TIDialog mReadSizeY;
+		TIDialog mReadPath;
+		BDialog mCreateButton;
+		BDialog mCancelButton;
+		TIDialog *mActiveInput;
+		virtual void init();		
+		virtual void dropLastInputChar();
+		virtual void recieveInput(std::string cTextInput);		
+		virtual void recieveInput(int mKey);		
+		virtual int recieveInput(int mx, int my);
+		virtual SDL_Rect render(int xpos, int ypos);
+};
+
+
 class OCDialog: public Dialog{
 	public:
 		virtual void init();
 		virtual void resize();
 		bool bSubDialogActive = false;
 		bool bSubDialogIsOpen = false;	
-		bool bSubDialogCreate = false;	
+		bool bSubDialogIsCreate = false;	
 		std::string mDialogTextMain;		
 		TTFTexture mTexDialogTextMain;		
 		BDialog mOpenButton;
 		BDialog mCreateButton;
 		BDialog mQuitButton;
 		OPDialog mOpenProject;
+		CPDialog mCreateProject;
 		virtual void dropLastInputChar();
 		virtual void recieveInput(std::string cTextInput);		
 		virtual void recieveInput(int mKey);		
