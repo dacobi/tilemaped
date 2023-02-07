@@ -216,7 +216,10 @@ int TPalette::render(int xpos,int ypos){
 
 	for(int i = 0; i < 16; i++){
 		for(int j = 0; j < 16; j++){
-			PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->render(xpos + ((mGlobalSettings.TileSize*mGlobalSettings.PaletteScale+2)*i), ypos + ((mGlobalSettings.TileSize*mGlobalSettings.PaletteScale+2)*j), mGlobalSettings.PaletteScale,true,true);
+			PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->render(
+					xpos + ((mGlobalSettings.TileSize*mGlobalSettings.PaletteScale+2)*j),
+					ypos + ((mGlobalSettings.TileSize*mGlobalSettings.PaletteScale+2)*i),
+					mGlobalSettings.PaletteScale,true,true);
 		}
 	}
 
