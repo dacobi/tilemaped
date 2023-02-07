@@ -92,15 +92,9 @@ int TPixel::setPixelColor(unsigned char tcolor, TPalette* tpal){
 SDL_Rect TPixel::render(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
 	CurrentArea = { xpos, ypos, mGlobalSettings.TileSize*tscale, mGlobalSettings.TileSize*tscale};
 
-	if((PixelColor.r == 0) &&(PixelColor.g == 0) &&(PixelColor.b == 0) ){
-		SDL_SetRenderDrawBlendMode(mGlobalSettings.TRenderer, SDL_BLENDMODE_BLEND);
-		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, PixelColor.r,PixelColor.g,PixelColor.b,0x0);	
-	} else {
-		SDL_SetRenderDrawBlendMode(mGlobalSettings.TRenderer, SDL_BLENDMODE_NONE);
-		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, PixelColor.r,PixelColor.g,PixelColor.b,0xff);
-	}
-
+	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, PixelColor.r,PixelColor.g,PixelColor.b,PixelColor.a);
 	//SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, PixelColor.r,PixelColor.g,PixelColor.b,0xff);
+
 	SDL_RenderFillRect(mGlobalSettings.TRenderer, &CurrentArea);
     
 	if(drawGrid){
@@ -145,7 +139,7 @@ Uint32 TPalette::mapPaletteColor(int tcolor){
 	tmpcol = tmpcol << 8;
 	tmpcol += TPalette[tcolor].b;
 	tmpcol = tmpcol << 8;
-	if((TPalette[tcolor].r == 0) &&(TPalette[tcolor].g == 0) &&(TPalette[tcolor].b == 0) ){
+	if(tcolor == 0){		
 		tmpcol += 0;
  	} else {
 		tmpcol += 255;
@@ -194,7 +188,7 @@ int TPalette::loadFromFile(std::string filename){
 			tmpcol.r = mMapColorIn[tbuffer[i+1]];
 			tmpcol.g = mMapColorIn[tbuffer[i] >> 4];
 			tmpcol.b = mMapColorIn[tbuffer[i] & 0xf];
-			if((tbuffer[i] == 0) && (tbuffer[i+1] == 0) ) {
+			if((i  == 0) ) {				
 				tmpcol.a = 0;
 			} else {
 				tmpcol.a = 255;
@@ -218,11 +212,11 @@ int TPalette::initPalette(){
 		tmpcol.r = palette[i][0];
 		tmpcol.g = palette[i][1];
 		tmpcol.b = palette[i][2];
-		if((palette[i][0] == 0) &&(palette[i][1] == 0) &&(palette[i][2] == 0)  ) {
-				tmpcol.a = 0;
-			} else {
-				tmpcol.a = 255;
-			}		
+		if(i == 0) {			
+			tmpcol.a = 0;
+		} else {
+			tmpcol.a = 255;
+		}		
 		TPalette.push_back(tmpcol);
 	}
 	PixelAreas.resize(256);
@@ -240,11 +234,12 @@ int TPalette::initTPixels(){
 }
 
 SDL_Rect TPalette::renderTileEd(int xpos,int ypos, int tcolor){
-	return TPixels[tcolor]->render(xpos, ypos, mGlobalSettings.mTileEdScale,false,mGlobalSettings.bShowPixelGrip);
+	SDL_SetRenderDrawBlendMode(mGlobalSettings.TRenderer, SDL_BLENDMODE_BLEND);
+	return TPixels[tcolor]->render(xpos, ypos, mGlobalSettings.mTileEdScale,false,mGlobalSettings.bShowPixelGrip);	
 }
 
 int TPalette::render(int xpos,int ypos){
-
+	SDL_SetRenderDrawBlendMode(mGlobalSettings.TRenderer, SDL_BLENDMODE_NONE);
 	for(int i = 0; i < 16; i++){
 		for(int j = 0; j < 16; j++){
 			PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->render(
@@ -736,7 +731,7 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 			}
 		}
 	}
-	
+
 	SDL_Rect mBorder;
 
 	mBorder.x = TileAreas[0].x;
