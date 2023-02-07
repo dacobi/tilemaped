@@ -381,11 +381,11 @@ int main( int argc, char* args[] )
 
 			if(mCreateNewProject){
 				if(mEditor.createNewProject()){
-					return 1;
+					mEditor.bEditorRunning = false;
 				}		
 			} else {
 				if(mEditor.loadFromFolder(args[2])){
-					return 1;
+					mEditor.bEditorRunning = false;
 				}		
 			}
 		
