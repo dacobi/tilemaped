@@ -33,6 +33,7 @@ int TTexture::setAllPixels(unsigned char tcolor, TPalette* tpal){
 
 int TTexture::initTexture(){
 	TileTex = SDL_CreateTexture(mGlobalSettings.TRenderer,SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, mGlobalSettings.TileSize,mGlobalSettings.TileSize);
+	SDL_SetTextureBlendMode(TileTex, SDL_BLENDMODE_BLEND);
 	return 0;
 }
 
@@ -128,7 +129,12 @@ Uint32 TPalette::mapPaletteColor(int tcolor){
 	tmpcol = tmpcol << 8;
 	tmpcol += TPalette[tcolor].b;
 	tmpcol = tmpcol << 8;
-	tmpcol += 255;
+	if((TPalette[tcolor].r == 0) &&(TPalette[tcolor].g == 0) &&(TPalette[tcolor].b == 0) ){
+		tmpcol += 0;
+ 	} else {
+		tmpcol += 255;
+	}
+	
 
 	return tmpcol;
 }
@@ -172,7 +178,12 @@ int TPalette::loadFromFile(std::string filename){
 			tmpcol.r = mMapColorIn[tbuffer[i+1]];
 			tmpcol.g = mMapColorIn[tbuffer[i] >> 4];
 			tmpcol.b = mMapColorIn[tbuffer[i] & 0xf];
-			tmpcol.a = 255;
+			if((tbuffer[i] == 0) && (tbuffer[i+1] == 0) ) {
+				tmpcol.a = 0;
+			} else {
+				tmpcol.a = 255;
+			}
+			
 			TPalette.push_back(tmpcol);
 		}
 		
@@ -191,7 +202,11 @@ int TPalette::initPalette(){
 		tmpcol.r = palette[i][0];
 		tmpcol.g = palette[i][1];
 		tmpcol.b = palette[i][2];
-		tmpcol.a = 255;
+		if((palette[i][0] == 0) &&(palette[i][1] == 0) &&(palette[i][2] == 0)  ) {
+				tmpcol.a = 0;
+			} else {
+				tmpcol.a = 255;
+			}		
 		TPalette.push_back(tmpcol);
 	}
 	PixelAreas.resize(256);
