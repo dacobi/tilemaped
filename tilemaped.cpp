@@ -138,6 +138,63 @@ void TSettings::shutdown(){
 	std::cout << "SDL_DestroyRenderer(TSettings::TRenderer)" << std::endl;
 }
 
+int TSettings::runOCD(){
+
+	OCDialog mOpenCreate;
+	mOpenCreate.init();
+
+	while( bRunningOCD ){
+
+		if( mProjectOpenState == 1){
+			bRunningOCD = false;
+		}
+
+		if(mOpenCreate.bInputIsCancel){
+			bRunningOCD = false;
+		}
+
+		SDL_SetRenderDrawColor( TRenderer, DefaultBGColor.r,  DefaultBGColor.g,  DefaultBGColor.b, 0xff); 
+		SDL_RenderClear( TRenderer );
+
+		mOpenCreate.render((WindowWidth/2) - (mOpenCreate.mDialogWidth/2),  (WindowHeight/2)- (mOpenCreate.mDialogHeight/2));
+ 
+		SDL_RenderPresent( TRenderer );
+
+		SDL_Event e;
+
+		while( SDL_PollEvent( &e ) != 0 ){
+			switch (e.type){
+				case SDL_TEXTINPUT:
+					if(mOpenCreate.bDialogIsWatingForText){
+						mOpenCreate.recieveInput(std::string(e.text.text));
+					}
+				break;
+				case SDL_KEYDOWN:							
+					if(e.key.keysym.sym == SDLK_BACKSPACE){
+ 						if(mOpenCreate.bDialogIsWatingForText){				
+							mOpenCreate.dropLastInputChar();
+  						}
+					}
+					if(e.key.keysym.sym == SDLK_RETURN){
+						mOpenCreate.recieveInput(SDLK_y);
+					}
+					if(e.key.keysym.sym == SDLK_ESCAPE){
+						mOpenCreate.recieveInput(SDLK_n);
+					}
+				break;
+				case SDL_MOUSEBUTTONDOWN:
+	   				if (e.button.button == SDL_BUTTON_LEFT){	  		
+	    				mOpenCreate.recieveInput(e.motion.x, e.motion.y);							
+					}
+				break;				
+			}
+		}			
+	}
+	return 0;
+}
+
+
+
 void TSettings::initHelpText(){
 
 	mHelpTextMap.push_back("Left Mouse Button: Select Tile and place in TileMap");
@@ -209,13 +266,17 @@ int main( int argc, char* args[] )
 	int nMapSizeY = 0;	
 	bool mCreateNewProject=false;
 	
-	if((argc < 3) || ((argc > 3) && (argc < 6)) || ((argc > 8)) || (argc == 7)){
+	if(((argc < 3) && (argc > 1)) || ((argc > 3) && (argc < 6)) || ((argc > 8)) || (argc == 7)){
 		if((argc == 2) && (std::string(args[1]) == "-h")){
 			mGlobalSettings.printHelpText();
 		} else {
 			printUsage();
 		}
 		return 0;
+	}
+
+	if(argc == 1){
+		mGlobalSettings.bRunningOCD = true;
 	}
 	
 	if(argc == 3){
@@ -302,17 +363,31 @@ int main( int argc, char* args[] )
 		std::cout << "SDL Init Failed!" << std::endl;
 	}
 	else
-	{			
-		if(mCreateNewProject){
-			if(mEditor.createNewProject()){
+	{	
+		if(mGlobalSettings.bRunningOCD){			
+			mGlobalSettings.runOCD();
+			if(mGlobalSettings.mProjectOpenState == 1){
+				if(mEditor.loadFromFolder(mGlobalSettings.ProjectPath)){
+					return 1;
+				}
+			} else { 
 				return 1;
-			}		
+			}
+
 		} else {
-			if(mEditor.loadFromFolder(args[2])){
-				return 1;
-			}		
-		}
+
+			if(mCreateNewProject){
+				if(mEditor.createNewProject()){
+					return 1;
+				}		
+			} else {
+				if(mEditor.loadFromFolder(args[2])){
+					return 1;
+				}		
+			}
 		
+		}
+
 		SDL_Event e;
 
 		while( mEditor.bEditorRunning ){

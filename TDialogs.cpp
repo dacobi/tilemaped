@@ -284,22 +284,146 @@ void SADialog::dropLastInputChar(){
 	}
 }
 
+void OPDialog::init(){
+	mDialogTextMain = mTexDialogTextMain.mFile + " Open Project From Folder";
+
+	mAcceptButton.mDialogTextMain = "Open";
+	mCancelButton.mDialogTextMain = "Cancel";	
+	
+	mAcceptButton.init();	
+	mCancelButton.init();
+
+		
+	mTexDialogTextMain.loadTTFFromUTF8(mDialogTextMain, mTextColor);
+	
+	mTextInput.mDialogTextMain = "";
+	mTextInput.bIsInputActive = true;
+	mTextInput.init();
+
+	bSubDialogActive = false;
+	mTextInput.bInputIsAccepted = false;
+
+	mDialogWidth = mTexDialogTextMain.mTexWidth + (mDialogBorder*6);
+	mDialogHeight = mTexDialogTextMain.mTexHeight * 6;
+}
+
+
+void OCDialog::init(){
+	mDialogTextMain = mTexDialogTextMain.mInfo + " Open or Create New Project";
+	mTexDialogTextMain.loadTTFFromUTF8(mDialogTextMain, mTextColor);
+	mOpenButton.mDialogTextMain = "Open";
+	mCreateButton.mDialogTextMain = "Create";
+	mQuitButton.mDialogTextMain = "Quit";
+
+	mOpenButton.init();
+	mCreateButton.init();
+	mQuitButton.init();
+
+	mDialogWidth =  (mCreateButton.mDialogWidth * 4) + (mDialogBorder *2);
+	mDialogHeight = (mCreateButton.mDialogHeight * 3) + (mDialogBorder *2);
+	
+	
+	mOpenProject.init();
+	mOpenProject.mTextInput.bMustBeFolder = true;
+	
+
+	//mDialogHeight *=6;	
+	//mDialogWidth += mDialogBorder * 5;	
+}
+
+SDL_Rect OCDialog::render(int xpos, int ypos){
+	SDL_Rect tmpBorder = Dialog::render(xpos, ypos);
+
+	mTexDialogTextMain.render(tmpBorder.x+(mDialogWidth/2)-(mTexDialogTextMain.mTexWidth/2),tmpBorder.y+mDialogBorder*2);
+
+	mOpenButton.render(tmpBorder.x + (((mDialogWidth / 4))  - (mOpenButton.mDialogWidth/2)) - (mDialogBorder * 2), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight + mDialogBorder*3);	
+	mCreateButton.render(tmpBorder.x + (((mDialogWidth / 4)*2) - (mCreateButton.mDialogWidth/2)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight + mDialogBorder*3);
+	mQuitButton.render(tmpBorder.x + (((mDialogWidth / 4)*3) - (mQuitButton.mDialogWidth/2)) + (mDialogBorder * 2), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight + mDialogBorder*3);		
+
+	if(bSubDialogActive && bSubDialogIsOpen){
+		mOpenProject.render(xpos + 50, ypos + 50);
+	}
+
+	return tmpBorder;
+}
+
+int OCDialog::recieveInput(int mx, int my){
+	if(bSubDialogActive && bSubDialogIsOpen){
+		if(mOpenProject.mAcceptButton.recieveInput(mx, my)){
+			recieveInput(SDLK_y);
+			return 0;
+		}
+		if(mOpenProject.mCancelButton.recieveInput(mx, my)){
+			recieveInput(SDLK_n);
+			return 0;
+		}
+	}
+	if(mOpenButton.recieveInput(mx,my)){		
+		bSubDialogActive = true;
+		bSubDialogIsOpen = true;
+		bDialogIsWatingForText = true;
+		SDL_StartTextInput();
+	}
+	if(mQuitButton.recieveInput(mx,my)){
+		recieveInput(SDLK_n);		
+	}
+	return 0;
+}
+
+void OCDialog::resize(){
+	mOpenProject.mDialogWidth = mOpenProject.mTexDialogTextMain.mTexWidth > mOpenProject.mTextInput.mTexDialogTextMain.mTexWidth ? mOpenProject.mTexDialogTextMain.mTexWidth : mOpenProject.mTextInput.mTexDialogTextMain.mTexWidth;
+	mOpenProject.mDialogWidth += mDialogBorder * 5;
+}
+
+
+void OCDialog::recieveInput(std::string cStr){
+	if(bSubDialogActive && bSubDialogIsOpen){
+		mOpenProject.mTextInput.recieveInput(cStr);		
+		resize();
+	}
+
+}
+
+void OCDialog::dropLastInputChar(){
+	if(bSubDialogActive && bSubDialogIsOpen){
+		mOpenProject.mTextInput.dropLastInputChar();
+	}
+}
+
+
+void OCDialog::recieveInput(int mKey){
+	
+	if(mKey == SDLK_y){
+		if(bSubDialogActive && bSubDialogIsOpen){
+			if(mOpenProject.mTextInput.bInputIsAccepted){
+				mGlobalSettings.ProjectPath = mOpenProject.mTextInput.mDialogTextMain;
+				mGlobalSettings.mProjectOpenState = 1;
+				SDL_StopTextInput();
+				bInputIsAccept=true;
+				bDialogIsWatingForText = false;
+			}
+		}
+	}
+	if(mKey == SDLK_n){
+		if(bSubDialogActive && bSubDialogIsOpen){
+			bSubDialogActive = false;
+			bSubDialogIsOpen = false;
+			bDialogIsWatingForText = false;
+			SDL_StopTextInput();
+			return;
+		}
+
+		bInputIsCancel=true;
+	}
+}
+
+
 void RNDialog::dropLastInputChar(){
 	mTextInput.dropLastInputChar();
 }
 
 
-void RNDialog::recieveInput(std::string mStr){
-	/*if(mTextInput.mDialogTextMain.size() < 10){
-		for (int i = 0; i < mStr.size(); i++) {
-      		if(isdigit(mStr[i])){
-				mTextInput.mDialogTextMain += mStr[i];
-				mTextInput.mTextColor =  mGlobalSettings.DefaultTextColor;
-				mTextInput.init();
-				resize();
-	  		}
-		}
-	} */
+void RNDialog::recieveInput(std::string mStr){	
 	mTextInput.recieveInput(mStr);
 	resize();
 }

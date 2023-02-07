@@ -48,9 +48,7 @@ class TEditor{
 		int searchRects(std::vector<SDL_Rect> &sRects);
 		int selectTiles(std::vector<int> &cNewSelection, int cTileType);
 		int findSelected();
-		int toggleSelectedTile();
-		//std::vector<TEActionGroup*> mUndoStack;
-		//std::vector<TEActionGroup*> mRedoStack;
+		int toggleSelectedTile();		
 		TEActionUndoStack mActionStack;
 		void undoLastActionGroup();
 		void redoLastActionGroup();
@@ -65,6 +63,7 @@ class TEditor{
 		RTDialog mRemoveUnused;
 		MEDialog mErrorMessage;
 		RNDialog mInputNumber;
+		//OCDialog mOCDtest;
 		Tile* createNewTile();
 		Tile* createNewTileCopy(Tile* cCopyTile);
 		Tile* createNewTileFromFile(std::string newTilePath);

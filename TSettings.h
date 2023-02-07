@@ -75,6 +75,8 @@ class TSettings{
 		std::vector<unsigned char> ProjectPalette;
 		bool bProjectHasPalette = false;
 		int mProjectSaveState = 0;
+		int mProjectOpenState = 0;
+		bool bRunningOCD = false;
 		int mOpenTileState = 0;
 		int mDeleteUnusedTilesState = 0;
 		std::string mNewTilePath = "";				
@@ -110,6 +112,7 @@ class TSettings{
 		int initTicks();
 		int updateTicks();
 		int getTicks();
+		int runOCD();
 };
 
 enum {

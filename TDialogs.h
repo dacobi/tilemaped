@@ -118,6 +118,31 @@ class RNDialog: public ITDialog{
 		virtual void recieveInput(std::string mTextInput);		
 };
 
+class OPDialog: public ITDialog{
+	public:
+		virtual void init();
+};
+
+class OCDialog: public Dialog{
+	public:
+		virtual void init();
+		virtual void resize();
+		bool bSubDialogActive = false;
+		bool bSubDialogIsOpen = false;	
+		bool bSubDialogCreate = false;	
+		std::string mDialogTextMain;		
+		TTFTexture mTexDialogTextMain;		
+		BDialog mOpenButton;
+		BDialog mCreateButton;
+		BDialog mQuitButton;
+		OPDialog mOpenProject;
+		virtual void dropLastInputChar();
+		virtual void recieveInput(std::string cTextInput);		
+		virtual void recieveInput(int mKey);		
+		virtual int recieveInput(int mx, int my);
+		virtual SDL_Rect render(int xpos, int ypos);
+};
+
 class HDialog: public SDialog{
 	public:
 

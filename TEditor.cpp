@@ -60,6 +60,7 @@ void TEditor::initDialogs(){
 	mRemoveUnused.init();
 
 	mInputNumber.init();
+	//mOCDtest.init();
 }
 
 int TEditor::loadFromFolder(std::string path){
@@ -738,7 +739,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					activateDropUnusedTiles();
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F7){	  									
-
+					
 					//SDL_StartTextInput();
 					//mActiveDialog = &mInputNumber;
 					//mInputNumber.mTextInput.bIsNumeric = true;
