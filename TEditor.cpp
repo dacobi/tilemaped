@@ -3,7 +3,9 @@
 
 extern TSettings mGlobalSettings;
 
-
+void TEditor::shutdown(){
+	mTileSet.shutdown();
+}
 
 int TEditor::createNewProject(){
 	std::cout << "Creating Project: " << mGlobalSettings.ProjectPath << std::endl;

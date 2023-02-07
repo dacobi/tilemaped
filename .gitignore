@@ -33,3 +33,7 @@ build/*
 
 # ctags
 tags
+CMakeCache.txt
+cmake_install.cmake
+t1
+t2

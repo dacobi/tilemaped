@@ -57,6 +57,7 @@ namespace fs = std::filesystem;
 
 class TSettings{
 	public:
+		void shutdown();
 		SDL_Renderer *TRenderer;
 		SDL_Window *TWindow;			
 		int WindowWidth=1900;

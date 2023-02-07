@@ -4,6 +4,13 @@
 
 extern TSettings mGlobalSettings;
 
+TTexture::~TTexture(){
+	if(TileTex){
+		SDL_DestroyTexture(TileTex);
+		TileTex = NULL;
+	}
+}
+
 int TTexture::loadFromFile(std::string filename,TPalette* tpal){
     initTexture();
     std::ifstream infile(filename, std::ios::binary );
@@ -249,6 +256,15 @@ int TPalette::render(int xpos,int ypos){
 return 0;
 }
 
+Tile::~Tile(){
+	//	FileData.erase(FileData.begin(), FileData.end());;
+	if(TileTex){
+		SDL_DestroyTexture(TileTex);
+		TileTex = NULL;
+	}
+	//TTexture::~TTexture();
+}
+
 int Tile::createNew(TPalette* tpal){
 	std::cout << "initTile" << std::endl;
 	initTile();
@@ -330,6 +346,12 @@ int Tile::loadFromFile(std::string filename,TPalette* tpal){
 int Tile::loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal){ 
 	initTile();	
 	return TTexture::loadFromBuffer(cTileBuf,tpal);
+}
+
+void TileSet::shutdown(){
+	for(auto *dTile: TTiles){
+		delete dTile;
+	}
 }
 
 Tile* TileSet::createNewFromFile(std::string newPath, TPalette* tpal){

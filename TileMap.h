@@ -7,7 +7,8 @@
 
 class TTexture{
 	public:
-		SDL_Texture *TileTex;
+		~TTexture();
+		SDL_Texture *TileTex = NULL;
 		std::vector<unsigned char> FileData;
 		std::vector<Uint32> PixelData;
 		SDL_Rect CurrentArea;
@@ -57,6 +58,7 @@ class TPalette{
 
 class Tile: public TTexture{
 	public:		
+		~Tile();
 		std::vector<SDL_Rect> PixelAreas;
 		int initTile();
 		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
@@ -71,6 +73,7 @@ class Tile: public TTexture{
 
 class TileSet{
 	public:
+		void shutdown();
 		std::string DataPath;
 		std::vector<Tile*> TTiles;
 		std::vector<SDL_Rect> TileAreas;

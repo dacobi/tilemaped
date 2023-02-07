@@ -133,7 +133,9 @@ int TSettings::getTicks(){
 	return mCurrentTick - mLastTick;
 }
 
-
+void TSettings::shutdown(){
+	SDL_DestroyRenderer(TRenderer);
+}
 
 void TSettings::initHelpText(){
 
@@ -325,7 +327,10 @@ int main( int argc, char* args[] )
 				mEditor.handleEvents(&e);
 			}
 			mEditor.handleEvents();
-		}		
+		}
+
+		mEditor.shutdown();
+		mGlobalSettings.shutdown();		
 	}
 	return 0;
 }

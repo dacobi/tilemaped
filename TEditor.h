@@ -7,6 +7,7 @@
 
 class TEditor{
 	public:
+		void shutdown();
 		TPalette mPalette;
 		TileSet mTileSet;
 		TileMap mTileMap;
