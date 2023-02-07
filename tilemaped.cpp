@@ -342,8 +342,10 @@ int main( int argc, char* args[] )
 		mConvert << std::string(args[4]) << std::endl;		
 		mConvert >> nTileSize;
 	
+		// TODO: this will have to be fixed to allow separate sizes for width and height
 		if((nTileSize == 16) || (nTileSize == 8)){	
-			mGlobalSettings.TileSize = nTileSize;
+			mGlobalSettings.TileSizeX = nTileSize;
+			mGlobalSettings.TileSizeY = nTileSize;
 		} else {
 			std::cout << "Wrong TileSize!" << std::endl;
 			std::cout << "Valid Values are: 8, 16" << std::endl;						

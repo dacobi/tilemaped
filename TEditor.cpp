@@ -9,7 +9,7 @@ void TEditor::shutdown(){
 
 int TEditor::createNewProject(){
 	std::cout << "Creating Project: " << mGlobalSettings.ProjectPath << std::endl;
-	std::cout << "TileMapWidth: " << mGlobalSettings.TileMapWidth << " TileMapHeight: " << mGlobalSettings.TileMapHeight << " TileSize: " << mGlobalSettings.TileSize << std::endl;	
+	std::cout << "TileMapWidth: " << mGlobalSettings.TileMapWidth << " TileMapHeight: " << mGlobalSettings.TileMapHeight << " TileSizeX: " << mGlobalSettings.TileSizeX << " TileSizeY: " << mGlobalSettings.TileSizeY << std::endl;	
 	if(mGlobalSettings.bProjectHasPalette){
 		if(mPalette.loadFromFile(mGlobalSettings.ProjectPalettePath)){
 			return 1;
@@ -127,7 +127,7 @@ int TEditor::render(){
 	}
 	
 	if(mCurMode == EMODE_TILE){
-		mPalette.render(100+mGlobalSettings.mTileEdScale*mGlobalSettings.TileSize*mGlobalSettings.TileSize,50+mTopBar.mDialogHeight);	
+		mPalette.render(100+mGlobalSettings.mTileEdScale*mGlobalSettings.TileSizeX*mGlobalSettings.TileSizeY,50+mTopBar.mDialogHeight);	
 		if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
 		mTileSelectedTile->renderEd(50,50+mTopBar.mDialogHeight,&mPalette);
 		mColorSelectedTile->bPixelSelected = true;
@@ -525,8 +525,8 @@ int TEditor::handleEvents(){
 	int x,y;
 	SDL_GetRelativeMouseState(&rx, &ry);
 	int mButtonState = SDL_GetMouseState(&x, &y);
-	int mapWidthX = mGlobalSettings.TileMapWidth*mGlobalSettings.TileSize*mGlobalSettings.TileMapScale;					
-	int mapWidthY = mGlobalSettings.TileMapHeight*mGlobalSettings.TileSize*mGlobalSettings.TileMapScale;
+	int mapWidthX = mGlobalSettings.TileMapWidth*mGlobalSettings.TileSizeX*mGlobalSettings.TileMapScale;					
+	int mapWidthY = mGlobalSettings.TileMapHeight*mGlobalSettings.TileSizeY*mGlobalSettings.TileMapScale;
 	
 	if(mButtonState & SDL_BUTTON(SDL_BUTTON_LEFT)){
 		leftMouseButtonDown = true;

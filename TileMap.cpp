@@ -16,7 +16,7 @@ int TTexture::loadFromFile(std::string filename,TPalette* tpal){
     initTexture();
     std::ifstream infile(filename, std::ios::binary );
 
-    FileData.resize(mGlobalSettings.TileSize * mGlobalSettings.TileSize);
+    FileData.resize(mGlobalSettings.TileSizeX * mGlobalSettings.TileSizeY);
 
     std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
     FileData = tbuffer;
@@ -27,20 +27,20 @@ int TTexture::loadFromFile(std::string filename,TPalette* tpal){
 
 int TTexture::loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal){
 	initTexture();
-    FileData.resize(mGlobalSettings.TileSize * mGlobalSettings.TileSize);
+    FileData.resize(mGlobalSettings.TileSizeX * mGlobalSettings.TileSizeY);
 	FileData = cTileBuf;
 	updateTexture(tpal);
 	return 0;
 }
 
 int TTexture::setAllPixels(unsigned char tcolor, TPalette* tpal){
-	FileData.resize(mGlobalSettings.TileSize * mGlobalSettings.TileSize, tcolor);
+	FileData.resize(mGlobalSettings.TileSizeX * mGlobalSettings.TileSizeY, tcolor);
 	updateTexture(tpal);
 	return 0;
 }
 
 int TTexture::initTexture(){
-	TileTex = SDL_CreateTexture(mGlobalSettings.TRenderer,SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, mGlobalSettings.TileSize,mGlobalSettings.TileSize);
+	TileTex = SDL_CreateTexture(mGlobalSettings.TRenderer,SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, mGlobalSettings.TileSizeX,mGlobalSettings.TileSizeY);
 	SDL_SetTextureBlendMode(TileTex, SDL_BLENDMODE_BLEND);
 	return 0;
 }
@@ -50,16 +50,16 @@ int TTexture::updateTexture(TPalette* tpal){
 		PixelData.erase(PixelData.begin(),PixelData.end());
 	}
 
-	for(int i = 0; i < (mGlobalSettings.TileSize * mGlobalSettings.TileSize); i++){
+	for(int i = 0; i < (mGlobalSettings.TileSizeX * mGlobalSettings.TileSizeY); i++){
     		PixelData.push_back(tpal->mapPaletteColor(FileData[i]));
 	}
 
-    SDL_UpdateTexture(TileTex, NULL, PixelData.data(), mGlobalSettings.TileSize * sizeof(Uint32));
+    SDL_UpdateTexture(TileTex, NULL, PixelData.data(), mGlobalSettings.TileSizeX * sizeof(Uint32));
 	return 0;
 }
 
 SDL_Rect TTexture::render(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
-	SDL_Rect renderQuad = { xpos, ypos, mGlobalSettings.TileSize*tscale, mGlobalSettings.TileSize*tscale};
+	SDL_Rect renderQuad = { xpos, ypos, mGlobalSettings.TileSizeX*tscale, mGlobalSettings.TileSizeY*tscale};
     SDL_RenderCopy(mGlobalSettings.TRenderer, TileTex, NULL, &renderQuad);	
     if(drawGrid){
 		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.PixelGridColor.r ,mGlobalSettings.PixelGridColor.b ,mGlobalSettings.PixelGridColor.b ,0xff);
@@ -90,7 +90,7 @@ int TPixel::setPixelColor(unsigned char tcolor, TPalette* tpal){
 
 
 SDL_Rect TPixel::render(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
-	CurrentArea = { xpos, ypos, mGlobalSettings.TileSize*tscale, mGlobalSettings.TileSize*tscale};
+	CurrentArea = { xpos, ypos, mGlobalSettings.TileSizeX*tscale, mGlobalSettings.TileSizeY*tscale};
 
 	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, PixelColor.r,PixelColor.g,PixelColor.b,PixelColor.a);
 	//SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, PixelColor.r,PixelColor.g,PixelColor.b,0xff);
@@ -118,15 +118,15 @@ SDL_Rect TPixel::render(int xpos, int ypos, int tscale, bool updateRect ,bool dr
 
 
 SDL_Rect TTexture::renderEx(int xpos, int ypos, int tscale, SDL_RendererFlip flip){
-	SDL_Rect renderQuad = { xpos, ypos, mGlobalSettings.TileSize*tscale, mGlobalSettings.TileSize*tscale};
+	SDL_Rect renderQuad = { xpos, ypos, mGlobalSettings.TileSizeX*tscale, mGlobalSettings.TileSizeY*tscale};
         SDL_RenderCopyEx(mGlobalSettings.TRenderer, TileTex, NULL, &renderQuad, 0, NULL, flip);	
         return renderQuad;
 }
 
 void TTexture::renderEd(int xpos, int ypos, TPalette* tpal){
-	for(int i=0; i < mGlobalSettings.TileSize; i++){
-		for(int j=0; j < mGlobalSettings.TileSize; j++){
-			tpal->renderTileEd(xpos + mGlobalSettings.TileSize*j, ypos + mGlobalSettings.TileSize*i, FileData[j+(i*mGlobalSettings.TileSize)]);			
+	for(int i=0; i < mGlobalSettings.TileSizeY; i++){
+		for(int j=0; j < mGlobalSettings.TileSizeX; j++){
+			tpal->renderTileEd(xpos + mGlobalSettings.TileSizeX*j, ypos + mGlobalSettings.TileSizeY*i, FileData[j+(i*mGlobalSettings.TileSizeX)]);			
 		}
 	}
 
@@ -243,8 +243,8 @@ int TPalette::render(int xpos,int ypos){
 	for(int i = 0; i < 16; i++){
 		for(int j = 0; j < 16; j++){
 			PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->render(
-					xpos + ((mGlobalSettings.TileSize*mGlobalSettings.PaletteScale+2)*j),
-					ypos + ((mGlobalSettings.TileSize*mGlobalSettings.PaletteScale+2)*i),
+					xpos + ((mGlobalSettings.TileSizeX*mGlobalSettings.PaletteScale+2)*j),
+					ypos + ((mGlobalSettings.TileSizeY*mGlobalSettings.PaletteScale+2)*i),
 					mGlobalSettings.PaletteScale,true,true);
 		}
 	}
@@ -268,7 +268,7 @@ int Tile::createNew(TPalette* tpal){
 	std::cout << "initTexture" << std::endl;
 	initTexture();
 
-    FileData.resize(mGlobalSettings.TileSize * mGlobalSettings.TileSize, 0);
+    FileData.resize(mGlobalSettings.TileSizeX * mGlobalSettings.TileSizeY, 0);
 	std::cout << "setAllPixels" << std::endl;
 	setAllPixels(0, tpal);
 	
@@ -277,7 +277,7 @@ int Tile::createNew(TPalette* tpal){
 
 int Tile::initTile(){
 	SDL_Rect eRect = {0,0,1,1};
-	PixelAreas.resize(mGlobalSettings.TileSize*mGlobalSettings.TileSize,eRect);
+	PixelAreas.resize(mGlobalSettings.TileSizeX*mGlobalSettings.TileSizeY,eRect);
 	return 0;
 }
 
@@ -328,9 +328,9 @@ SDL_Rect Tile::render(int xpos, int ypos, int tscale,TileProperties tProps){
 }
 
 void Tile::renderEd(int xpos, int ypos, TPalette* tpal){
-	for(int i=0; i < mGlobalSettings.TileSize; i++){
-		for(int j=0; j < mGlobalSettings.TileSize; j++){
-			PixelAreas[j+(mGlobalSettings.TileSize*i)] = tpal->renderTileEd(xpos + (mGlobalSettings.TileSize * mGlobalSettings.mTileEdScale)*j, ypos + (mGlobalSettings.TileSize * mGlobalSettings.mTileEdScale)*i, FileData[j+(i*mGlobalSettings.TileSize)]);
+	for(int i=0; i < mGlobalSettings.TileSizeY; i++){
+		for(int j=0; j < mGlobalSettings.TileSizeX; j++){
+			PixelAreas[j+(mGlobalSettings.TileSizeX*i)] = tpal->renderTileEd(xpos + (mGlobalSettings.TileSizeX * mGlobalSettings.mTileEdScale)*j, ypos + (mGlobalSettings.TileSizeY * mGlobalSettings.mTileEdScale)*i, FileData[j+(i*mGlobalSettings.TileSizeX)]);
 		}
 	}
 }
@@ -360,9 +360,9 @@ Tile* TileSet::createNewFromFile(std::string newPath, TPalette* tpal){
 		SDL_Surface *newSurf = IMG_Load(newPath.c_str());
 		if(newSurf){
 			if(newSurf->format->BitsPerPixel == 8){
-				if((newSurf->w == mGlobalSettings.TileSize) && (newSurf->h == mGlobalSettings.TileSize)){
+				if((newSurf->w == mGlobalSettings.TileSizeX) && (newSurf->h == mGlobalSettings.TileSizeY)){
 					std::vector<unsigned char> tbuffer;
-					for(int i = 0; i < (mGlobalSettings.TileSize*mGlobalSettings.TileSize); i++){
+					for(int i = 0; i < (mGlobalSettings.TileSizeX*mGlobalSettings.TileSizeY); i++){
 						tbuffer.push_back(((unsigned char*)(newSurf->pixels))[i]);
 					}
 					SDL_FreeSurface(newSurf);
@@ -377,7 +377,7 @@ Tile* TileSet::createNewFromFile(std::string newPath, TPalette* tpal){
 
 			std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
 
-			if(tbuffer.size() == (mGlobalSettings.TileSize * mGlobalSettings.TileSize)){
+			if(tbuffer.size() == (mGlobalSettings.TileSizeX * mGlobalSettings.TileSizeY)){
 				return createNewFromBuffer(tbuffer, tpal);
 			} else {
 				return NULL;				
@@ -405,7 +405,7 @@ Tile* TileSet::createNewCopy(Tile* cCopyTile, TPalette* tpal){
 
 Tile* TileSet::createNew(TPalette* tpal){	
 	std::vector<unsigned char> tbuf;
-	tbuf.resize(mGlobalSettings.TileSize * mGlobalSettings.TileSize,0);
+	tbuf.resize(mGlobalSettings.TileSizeX * mGlobalSettings.TileSizeY,0);
 	return createNewFromBuffer(tbuf, tpal);
 }
 
@@ -453,16 +453,17 @@ int TileSet::loadFromFolder(std::string path, TPalette* tpal){
 	std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
 
 	int twidth = tbuffer[0];
-    int theigth = tbuffer[1];
+    int theight = tbuffer[1];
 
-	if((twidth == theigth) && ((twidth == 8) || (twidth == 16))){
-		mGlobalSettings.TileSize = twidth;
+	if((twidth == 8) || (twidth == 16)){
+		mGlobalSettings.TileSizeX = twidth;
+		mGlobalSettings.TileSizeY = theight;
 	} else {
 		std::cout << "Error in Tile File: " << cTileFile << std::endl;
 		return 1;		
 	}
 
-	int tmpTileSize = twidth*twidth;
+	int tmpTileSize = twidth*theight;
 
 	tbuffer.erase(tbuffer.begin());
 	tbuffer.erase(tbuffer.begin());
@@ -494,8 +495,8 @@ int TileSet::saveToFolder(std::string tpath){
 
 	std::vector<unsigned char> obuffer;
 
-	obuffer.push_back(mGlobalSettings.TileSize);
-	obuffer.push_back(mGlobalSettings.TileSize);
+	obuffer.push_back(mGlobalSettings.TileSizeX);
+	obuffer.push_back(mGlobalSettings.TileSizeY);
 
 	for(auto &mTile : TTiles){		
 		obuffer.insert(obuffer.end(), mTile->FileData.begin(), mTile->FileData.end());
@@ -510,7 +511,7 @@ int TileSet::saveToFolder(std::string tpath){
 int TileSet::reCalculateScale(){
 	if(mCurColumns > 1){
 		mTileSetBackGround.h = mGlobalSettings.WindowHeight-mGlobalSettings.TopBarHeight;
-		if( (int)( (float)( ( ( ((mCurTileScale+1)*mGlobalSettings.TileSize )+ mColSpace ) * TTiles.size() )  / ( mCurColumns - 1 ) ) ) < mTileSetBackGround.h ){
+		if( (int)( (float)( ( ( ((mCurTileScale+1)*mGlobalSettings.TileSizeX )+ mColSpace ) * TTiles.size() )  / ( mCurColumns - 1 ) ) ) < mTileSetBackGround.h ){
 			mCurTileScale++;
 			mCurColumns--;
 			return 1;		
@@ -524,7 +525,7 @@ int TileSet::render(int ypos, int mScroll){
 	mTileSetBackGround.h = mGlobalSettings.WindowHeight- mGlobalSettings.TopBarHeight;
 	
 	if(mCurColumns < 4){
-		if( (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.TileSize ) +mColSpace ) * TTiles.size() )  / mCurColumns ) ) > mTileSetBackGround.h ){	
+		if( (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.TileSizeX ) +mColSpace ) * TTiles.size() )  / mCurColumns ) ) > mTileSetBackGround.h ){	
 			mCurTileScale--;
 		
 			if(mCurTileScale < 5){
@@ -533,7 +534,7 @@ int TileSet::render(int ypos, int mScroll){
 		}
 	}
 
-	mGlobalSettings.TileSetWidth = (((mCurTileScale*mGlobalSettings.TileSize)+mColSpace)*mCurColumns)+(mColSpace*3);
+	mGlobalSettings.TileSetWidth = (((mCurTileScale*mGlobalSettings.TileSizeX)+mColSpace)*mCurColumns)+(mColSpace*3);
 
 	int isOdd = TTiles.size() % mCurColumns;
 	int cRowNum = TTiles.size() / mCurColumns;
@@ -548,18 +549,18 @@ int TileSet::render(int ypos, int mScroll){
 	if(mCurColumns > 0){
 		for(int i = 0; i < mCurColumns; i++){
 			for(int j = 0; j < cRowNum; j++){
-				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->render((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSize)+mColSpace)*i),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSize*mCurTileScale)+mColSpace)*j), mCurTileScale,true,true);
+				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->render((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSizeX)+mColSpace)*i),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSizeY*mCurTileScale)+mColSpace)*j), mCurTileScale,true,true);
 			}								
 		}	
 		if(isOdd){			
 			int i = mCurColumns;
 			for(int j = 0; j < isOdd; j++){
-				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->render((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSize)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSize*mCurTileScale)+mColSpace)*cRowNum), mCurTileScale,true,true);
+				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->render((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSizeY*mCurTileScale)+mColSpace)*cRowNum), mCurTileScale,true,true);
 			}
 		}
 	}
 	
-	int cMax = (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.TileSize ) +mColSpace ) * TTiles.size() )  / mCurColumns )) + (4 * mGlobalSettings.TileSize);
+	int cMax = (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.TileSizeY ) +mColSpace ) * TTiles.size() )  / mCurColumns )) + (4 * mGlobalSettings.TileSizeY);
 	if((cMax - mTileSetBackGround.h) > 0 ){
 		mMaxScrollY = -(cMax - mTileSetBackGround.h);
 	} else {
@@ -609,7 +610,7 @@ int TileMap::loadFromFile(std::string path, std::string filename){
     	std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
 
     	int twidth = tbuffer[0];
-    	int theigth = tbuffer[1];
+    	int theight = tbuffer[1];
         
 		if((twidth >= 0) && (twidth <= 3)){
 			twidth = mTilemapSizesIn[twidth];
@@ -619,8 +620,8 @@ int TileMap::loadFromFile(std::string path, std::string filename){
 		}
 
 
-		if((theigth >= 0) && (theigth <= 3)){
-			theigth = mTilemapSizesIn[theigth];
+		if((theight >= 0) && (theight <= 3)){
+			theight = mTilemapSizesIn[theight];
 		} else {
 			std::cout << "TileMap File Error!" << std::endl;
 			return 1;
@@ -630,12 +631,12 @@ int TileMap::loadFromFile(std::string path, std::string filename){
 	tbuffer.erase(tbuffer.begin());
 	tbuffer.erase(tbuffer.begin());
 
-	if((twidth * theigth * 2) == tbuffer.size()){
-		FileData.resize(twidth * theigth * 2);
+	if((twidth * theight * 2) == tbuffer.size()){
+		FileData.resize(twidth * theight * 2);
 		FileData = tbuffer;
-		mGlobalSettings.TileMapHeight = theigth;
+		mGlobalSettings.TileMapHeight = theight;
 		mGlobalSettings.TileMapWidth = twidth;
-		TileAreas.resize(twidth * theigth);
+		TileAreas.resize(twidth * theight);
 		
 	} else {
 		std::cout << "TileMap File Error!" << std::endl;
@@ -722,7 +723,7 @@ TileProperties TileMap::getTileProp(int cTile){
 int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 	for(int i=0; i < mGlobalSettings.TileMapHeight; i++){
 		for(int j=0; j < mGlobalSettings.TileMapWidth; j++){
-			TileAreas[j+(i*mGlobalSettings.TileMapWidth)] = mTiles->TTiles[getTile(j+(i*mGlobalSettings.TileMapWidth))]->render(xpos + (mGlobalSettings.TileSize * j * mGlobalSettings.TileMapScale), ypos + (mGlobalSettings.TileSize * i * mGlobalSettings.TileMapScale), mGlobalSettings.TileMapScale, getTileProp(j+(i*mGlobalSettings.TileMapWidth)));
+			TileAreas[j+(i*mGlobalSettings.TileMapWidth)] = mTiles->TTiles[getTile(j+(i*mGlobalSettings.TileMapWidth))]->render(xpos + (mGlobalSettings.TileSizeX * j * mGlobalSettings.TileMapScale), ypos + (mGlobalSettings.TileSizeY * i * mGlobalSettings.TileMapScale), mGlobalSettings.TileMapScale, getTileProp(j+(i*mGlobalSettings.TileMapWidth)));
 			if(mGlobalSettings.bShowSelectedTile){
 				if(mGlobalSettings.mSelectedTile == (j+(i*mGlobalSettings.TileMapWidth))){
 					SDL_SetRenderDrawColor(mGlobalSettings.TRenderer,mGlobalSettings.DefaultHighlightColor.r,mGlobalSettings.DefaultHighlightColor.g,mGlobalSettings.DefaultHighlightColor.b, 0xff);
@@ -736,8 +737,8 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 
 	mBorder.x = TileAreas[0].x;
 	mBorder.y = TileAreas[0].y;
-	mBorder.w = mGlobalSettings.TileMapWidth * mGlobalSettings.TileSize * mGlobalSettings.TileMapScale;
-	mBorder.h = mGlobalSettings.TileMapHeight * mGlobalSettings.TileSize * mGlobalSettings.TileMapScale;
+	mBorder.w = mGlobalSettings.TileMapWidth * mGlobalSettings.TileSizeX * mGlobalSettings.TileMapScale;
+	mBorder.h = mGlobalSettings.TileMapHeight * mGlobalSettings.TileSizeY * mGlobalSettings.TileMapScale;
 
 	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer,mGlobalSettings.DefaultGUIBorderColor.r,mGlobalSettings.DefaultGUIBorderColor.g,mGlobalSettings.DefaultGUIBorderColor.b, 0xff);
 	SDL_RenderDrawRect(mGlobalSettings.TRenderer, &mBorder);

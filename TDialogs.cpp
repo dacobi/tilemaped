@@ -974,12 +974,21 @@ void PIDialog::init(){
 	mNewText->loadTTFFromUTF8(tmpStr, mTextColor);
 	mHelpText.push_back(mNewText);
 
-	std::string cTileSize;
-	convert << mGlobalSettings.TileSize << std::endl;
-	convert >> cTileSize;
+	std::string cTileSizeX;
+	convert << mGlobalSettings.TileSizeX << std::endl;
+	convert >> cTileSizeX;
+
+	std::string cTileSizeY;
+	convert << mGlobalSettings.TileSizeY << std::endl;
+	convert >> cTileSizeY;
 
 	mNewText = new TTFTexture();
-	tmpStr = "TileSize: " + cTileSize;
+	tmpStr = "TileSizeX: " + cTileSizeX;
+	mNewText->loadTTFFromUTF8(tmpStr, mTextColor);
+	mHelpText.push_back(mNewText);
+
+	mNewText = new TTFTexture();
+	tmpStr = "TileSizeY: " + cTileSizeY;
 	mNewText->loadTTFFromUTF8(tmpStr, mTextColor);
 	mHelpText.push_back(mNewText);
 
