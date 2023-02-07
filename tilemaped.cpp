@@ -188,7 +188,8 @@ int TSettings::runOCD(){
 					}
 				break;				
 			}
-		}			
+		}
+		updateTicks();			
 	}
 	return 0;
 }
@@ -373,7 +374,7 @@ int main( int argc, char* args[] )
 					return 1;
 				}
 			} else { 
-				return 1;
+				mEditor.bEditorRunning = false;
 			}
 
 		} else {
