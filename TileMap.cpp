@@ -736,6 +736,16 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 			}
 		}
 	}
+	
+	SDL_Rect mBorder;
+
+	mBorder.x = TileAreas[0].x;
+	mBorder.y = TileAreas[0].y;
+	mBorder.w = mGlobalSettings.TileMapWidth * mGlobalSettings.TileSize * mGlobalSettings.TileMapScale;
+	mBorder.h = mGlobalSettings.TileMapHeight * mGlobalSettings.TileSize * mGlobalSettings.TileMapScale;
+
+	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer,mGlobalSettings.DefaultGUIBorderColor.r,mGlobalSettings.DefaultGUIBorderColor.g,mGlobalSettings.DefaultGUIBorderColor.b, 0xff);
+	SDL_RenderDrawRect(mGlobalSettings.TRenderer, &mBorder);
 
 	return 0;
 }
