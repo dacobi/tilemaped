@@ -327,9 +327,7 @@ void OCDialog::init(){
 	mOpenProject.mTextInput.bMustBeFolder = true;
 	
 	mCreateProject.init();
-
-	//mDialogHeight *=6;	
-	//mDialogWidth += mDialogBorder * 5;	
+	
 }
 
 SDL_Rect OCDialog::render(int xpos, int ypos){
@@ -365,13 +363,13 @@ int OCDialog::recieveInput(int mx, int my){
 	}
 	if(bSubDialogActive && bSubDialogIsCreate){
 		mCreateProject.recieveInput(mx, my);
-			//recieveInput(SDLK_y);
-			return 0;
-		//}
-		//if(mOpenProject.mCancelButton.recieveInput(mx, my)){
-		//	recieveInput(SDLK_n);
-		//	return 0;
-		//}		
+		if(mCreateProject.mCreateButton.bInputIsAccept &&  mCreateProject.bInputIsAccepted){		
+			recieveInput(SDLK_y);
+		}
+		if(mCreateProject.bInputIsCancel){
+			recieveInput(SDLK_n);
+		}			
+		return 0;				
 	}
 	if(mOpenButton.recieveInput(mx,my)){		
 		bSubDialogActive = true;
@@ -430,6 +428,36 @@ void OCDialog::recieveInput(int mKey){
 				bDialogIsWatingForText = false;
 			}
 		}
+		if(bSubDialogActive && bSubDialogIsCreate){
+			mCreateProject.recieveInput(mKey);
+			if(mCreateProject.bInputIsAccepted){				
+				std::stringstream convert;
+				int mapx, mapy, tilex, tiley;
+				
+				convert << mCreateProject.mReadWidth.mDialogTextMain << std::endl;
+				convert >> mapx;
+				
+				convert << mCreateProject.mReadHeight.mDialogTextMain << std::endl;
+				convert >> mapy;
+
+				convert << mCreateProject.mReadSizeX.mDialogTextMain << std::endl;
+				convert >> tilex;
+
+				convert << mCreateProject.mReadSizeY.mDialogTextMain << std::endl;
+				convert >> tiley;
+				
+				mGlobalSettings.TileMapWidth = mapx;
+				mGlobalSettings.TileMapHeight = mapy;
+				mGlobalSettings.TileSizeX = tilex;
+				mGlobalSettings.TileSizeY = tiley;
+				mGlobalSettings.ProjectPath = mCreateProject.mReadPath.mDialogTextMain;
+
+				mGlobalSettings.mProjectOpenState = 2;
+				SDL_StopTextInput();
+				bInputIsAccept=true;
+				bDialogIsWatingForText = false;				
+			}
+		}
 	}
 	if(mKey == SDLK_n){
 		if(bSubDialogActive && bSubDialogIsOpen){
@@ -438,6 +466,13 @@ void OCDialog::recieveInput(int mKey){
 			bDialogIsWatingForText = false;
 			SDL_StopTextInput();
 			return;
+		}
+	if(bSubDialogActive && bSubDialogIsCreate){
+			bSubDialogActive = false;
+			bSubDialogIsCreate = false;
+			bDialogIsWatingForText = false;
+			SDL_StopTextInput();
+	 		return;
 		}
 
 		bInputIsCancel=true;
@@ -456,7 +491,7 @@ void CPDialog::init(){
 	mTexDialogSizeX.loadTTFFromUTF8(mDialogInputSizeX, mTextColor);
 	mDialogInputSizeY = "Tile Size Y";		
 	mTexDialogSizeY.loadTTFFromUTF8(mDialogInputSizeY, mTextColor);
-	mDialogInputPath = "New Folder";		
+	mDialogInputPath = "Folder";		
 	mTexDialogPath.loadTTFFromUTF8(mDialogInputPath, mTextColor);
 
 	mCreateButton.mDialogTextMain = "Create";
@@ -530,8 +565,8 @@ SDL_Rect CPDialog::render(int xpos, int ypos){
 	mTexDialogPath.render(tmpBorder.x+(mDialogBorder*2),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 6)+ offset);
 	mReadPath.render(tmpBorder.x+(mDialogBorder*2) + (mTexDialogWidth.mTexWidth*1.4),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 6)+ offset);
 
-	mCreateButton.render(tmpBorder.x + (((mDialogWidth / 4)) - (mCreateButton.mDialogWidth/2)), tmpBorder.y+(mTexDialogTextMain.mTexHeight * 8.4)+ offset);
-	mCancelButton.render(tmpBorder.x + (((mDialogWidth / 4)*3) - (mCancelButton.mDialogWidth/2)) + (mDialogBorder * 2), tmpBorder.y+(mTexDialogTextMain.mTexHeight * 8.4)+ offset);
+	mCreateButton.render(tmpBorder.x + (((mDialogWidth / 4)) - (mCreateButton.mDialogWidth/2)), tmpBorder.y+(mTexDialogTextMain.mTexHeight * 8.6)+ offset);
+	mCancelButton.render(tmpBorder.x + (((mDialogWidth / 4)*3) - (mCancelButton.mDialogWidth/2)) + (mDialogBorder * 2), tmpBorder.y+(mTexDialogTextMain.mTexHeight * 8.6)+ offset);
 
 	return tmpBorder;
 }
@@ -545,7 +580,20 @@ void CPDialog::recieveInput(std::string cTextInput){
 	mActiveInput->recieveInput(cTextInput);
 }
 
-void CPDialog::recieveInput(int mKey){}	
+void CPDialog::recieveInput(int mKey){
+	if(mKey == SDLK_n){
+		bInputIsCancel = true;
+	}
+	if(mKey == SDLK_y){
+		if((mReadHeight.bInputIsAccepted) &&(mReadWidth.bInputIsAccepted) &&(mReadSizeX.bInputIsAccepted) &&(mReadSizeY.bInputIsAccepted) && (mReadPath.bInputIsAccepted) ){
+			bInputIsAccept=true;
+			bInputIsAccepted = true;
+		} else {
+			bInputIsAccepted = false;
+		}
+
+	}
+}	
 
 int CPDialog::recieveInput(int mx, int my){
 	if(mReadWidth.recieveInput(mx, my)){
@@ -587,6 +635,13 @@ int CPDialog::recieveInput(int mx, int my){
 		mReadSizeY.bIsInputActive = false;
 		mReadPath.bIsInputActive = true;
 		mActiveInput = &mReadPath;
+	}
+	if(mCreateButton.recieveInput(mx, my)){
+		mCreateButton.bInputIsAccept = true;
+		recieveInput(SDLK_y);
+	}
+	if(mCancelButton.recieveInput(mx, my)){
+		recieveInput(SDLK_n);
 	}
 	return 0;
 }

@@ -145,7 +145,7 @@ int TSettings::runOCD(){
 
 	while( bRunningOCD ){
 
-		if( mProjectOpenState == 1){
+		if((mProjectOpenState == 1) || ( mProjectOpenState == 2)){
 			bRunningOCD = false;
 		}
 
@@ -230,7 +230,7 @@ void printUsage(){
 		std::cout << std::endl;	
 		std::cout << "Command Line Usage:" << std::endl;	
 		std::cout << "tilemaped -o <folder> OR" << std::endl;		
-		std::cout << "tilemaped -n <mapwidth> <mapheight> <tilesize> <folder> [ -p <palette file> ]" << std::endl;		
+		std::cout << "tilemaped -n <mapwidth> <mapheight> <tilewidth> <tileheight> <folder> [ -p <palette file> ]" << std::endl;		
 }
 
 
@@ -269,7 +269,7 @@ int main( int argc, char* args[] )
 	int nMapSizeY = 0;	
 	bool mCreateNewProject=false;
 	
-	if(((argc < 3) && (argc > 1)) || ((argc > 3) && (argc < 6)) || ((argc > 8)) || (argc == 7)){
+	if(((argc < 3) && (argc > 1)) || ((argc > 3) && (argc < 7)) || ((argc > 9)) || (argc == 8)){
 		if((argc == 2) && (std::string(args[1]) == "-h")){
 			mGlobalSettings.printHelpText();
 		} else {
@@ -295,18 +295,18 @@ int main( int argc, char* args[] )
 		}
 	}
 	
-	if((argc == 6) || (argc == 8)){
+	if((argc == 7) || (argc == 9)){
 		if(std::string(args[1]) != "-n"){
 			printUsage();
 			return 1;
 		}
 
-		if(argc == 8){
-			if(args[6] == std::string("-p")){
-				if((fs::exists(fs::status(args[7]))) && !(fs::is_directory(fs::status(args[7])))){
+		if(argc == 9){
+			if(args[7] == std::string("-p")){
+				if((fs::exists(fs::status(args[8]))) && !(fs::is_directory(fs::status(args[8])))){
 					std::cout << "Palette found" << std::endl;						
 					mGlobalSettings.bProjectHasPalette = true;
-					mGlobalSettings.ProjectPalettePath = std::string(args[7]);
+					mGlobalSettings.ProjectPalettePath = std::string(args[8]);
 				} else {
 					std::cout << "Palette file not found!" << std::endl;						
 					return 1;
@@ -341,11 +341,20 @@ int main( int argc, char* args[] )
 
 		mConvert << std::string(args[4]) << std::endl;		
 		mConvert >> nTileSize;
-	
-		// TODO: this will have to be fixed to allow separate sizes for width and height
+			
 		if((nTileSize == 16) || (nTileSize == 8)){	
-			mGlobalSettings.TileSizeX = nTileSize;
-			mGlobalSettings.TileSizeY = nTileSize;
+			mGlobalSettings.TileSizeX = nTileSize;	
+		} else {
+			std::cout << "Wrong TileSize!" << std::endl;
+			std::cout << "Valid Values are: 8, 16" << std::endl;						
+			return 1;
+		}
+
+		mConvert << std::string(args[5]) << std::endl;		
+		mConvert >> nTileSize;
+			
+		if((nTileSize == 16) || (nTileSize == 8)){	
+			mGlobalSettings.TileSizeY = nTileSize;	
 		} else {
 			std::cout << "Wrong TileSize!" << std::endl;
 			std::cout << "Valid Values are: 8, 16" << std::endl;						
@@ -371,11 +380,17 @@ int main( int argc, char* args[] )
 	{	
 		if(mGlobalSettings.bRunningOCD){			
 			mGlobalSettings.runOCD();
+			
 			if(mGlobalSettings.mProjectOpenState == 1){
 				if(mEditor.loadFromFolder(mGlobalSettings.ProjectPath)){
 					return 1;
 				}
-			} else { 
+
+			} else if(mGlobalSettings.mProjectOpenState == 2){
+				if(mEditor.createNewProject()){
+					mEditor.bEditorRunning = false;
+				}
+			} else {
 				mEditor.bEditorRunning = false;
 			}
 

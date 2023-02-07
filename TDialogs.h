@@ -146,6 +146,7 @@ class CPDialog: public Dialog{
 		BDialog mCreateButton;
 		BDialog mCancelButton;
 		TIDialog *mActiveInput;
+		bool bInputIsAccepted = false;
 		virtual void init();		
 		virtual void dropLastInputChar();
 		virtual void recieveInput(std::string cTextInput);		

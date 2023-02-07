@@ -90,11 +90,10 @@ int TPixel::setPixelColor(unsigned char tcolor, TPalette* tpal){
 
 
 SDL_Rect TPixel::render(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
-	CurrentArea = { xpos, ypos, mGlobalSettings.TileSizeX*tscale, mGlobalSettings.TileSizeY*tscale};
+	CurrentArea = { xpos, ypos, mGlobalSettings.TileRenderSize*tscale, mGlobalSettings.TileRenderSize*tscale};
 
 	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, PixelColor.r,PixelColor.g,PixelColor.b,PixelColor.a);
-	//SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, PixelColor.r,PixelColor.g,PixelColor.b,0xff);
-
+	
 	SDL_RenderFillRect(mGlobalSettings.TRenderer, &CurrentArea);
     
 	if(drawGrid){
@@ -243,8 +242,8 @@ int TPalette::render(int xpos,int ypos){
 	for(int i = 0; i < 16; i++){
 		for(int j = 0; j < 16; j++){
 			PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->render(
-					xpos + ((mGlobalSettings.TileSizeX*mGlobalSettings.PaletteScale+2)*j),
-					ypos + ((mGlobalSettings.TileSizeY*mGlobalSettings.PaletteScale+2)*i),
+					xpos + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+2)*j),
+					ypos + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+2)*i),
 					mGlobalSettings.PaletteScale,true,true);
 		}
 	}

@@ -127,7 +127,7 @@ int TEditor::render(){
 	}
 	
 	if(mCurMode == EMODE_TILE){
-		mPalette.render(100+mGlobalSettings.mTileEdScale*mGlobalSettings.TileSizeX*mGlobalSettings.TileSizeY,50+mTopBar.mDialogHeight);	
+		mPalette.render(100+mGlobalSettings.mTileEdScale*mGlobalSettings.TileRenderSize*mGlobalSettings.TileRenderSize,50+mTopBar.mDialogHeight);	
 		if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
 		mTileSelectedTile->renderEd(50,50+mTopBar.mDialogHeight,&mPalette);
 		mColorSelectedTile->bPixelSelected = true;
@@ -740,15 +740,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F7){	  									
 					
-					//SDL_StartTextInput();
-					//mActiveDialog = &mInputNumber;
-					//mInputNumber.mTextInput.bIsNumeric = true;
-					//mInputNumber.mTextInput.mMaxRange = 256;
-					//mInputNumber.mTextInput.mMaxLength = 9;
-					//mInputNumber.mTextInput.mMinRange = 1;
-					//mInputNumber.mTextInput.bMustNotExist = true;
-					//mInputNumber.mTextInput.bMustBeFolder = true;
-					//mActiveDialog->bDialogIsWatingForText = true;
+					
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F12){	  				
 		  			activateSaveDialog();
