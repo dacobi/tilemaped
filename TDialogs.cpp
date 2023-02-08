@@ -452,6 +452,11 @@ void OCDialog::recieveInput(int mKey){
 				mGlobalSettings.TileSizeY = tiley;
 				mGlobalSettings.ProjectPath = mCreateProject.mReadPath.mDialogTextMain;
 
+				if(mCreateProject.mReadPal.bInputIsAccepted){
+					mGlobalSettings.bProjectHasPalette = true;
+					mGlobalSettings.ProjectPalettePath = mCreateProject.mReadPal.mDialogTextMain;
+				}
+
 				mGlobalSettings.mProjectOpenState = 2;
 				SDL_StopTextInput();
 				bInputIsAccept=true;
@@ -493,6 +498,8 @@ void CPDialog::init(){
 	mTexDialogSizeY.loadTTFFromUTF8(mDialogInputSizeY, mTextColor);
 	mDialogInputPath = "Folder";		
 	mTexDialogPath.loadTTFFromUTF8(mDialogInputPath, mTextColor);
+	mDialogInputPal = "Palette";		
+	mTexDialogPal.loadTTFFromUTF8(mDialogInputPal, mTextColor);
 
 	mCreateButton.mDialogTextMain = "Create";
 	mCancelButton.mDialogTextMain = "Cancel";	
@@ -517,56 +524,88 @@ void CPDialog::init(){
 	mReadSizeX.mDialogTextMain = "16";
 	mReadSizeY.mDialogTextMain = "16";
 	mReadPath.mDialogTextMain = "newfolder";
+	mReadPal.mDialogTextMain = "";
 
 	mReadWidth.bIsNumeric= true;
 	mReadHeight.bIsNumeric = true;
 	mReadSizeX.bIsNumeric = true;
 	mReadSizeY.bIsNumeric = true;
 	mReadPath.bMustNotExist = true;
+	mReadPal.bMustExist = true;
 
 	mReadWidth.bInputIsAccepted = true;
 	mReadHeight.bInputIsAccepted = true;
 	mReadSizeX.bInputIsAccepted = true;
 	mReadSizeY.bInputIsAccepted = true;
 	mReadPath.bInputIsAccepted = true;
+	mReadPal.bInputIsAccepted = true;
 
 	mReadWidth.init();
 	mReadHeight.init();
 	mReadSizeX.init();
 	mReadSizeY.init();
 	mReadPath.init();
+	mReadPal.init();
 
 	mActiveInput = &mReadWidth;
 	mActiveInput->bIsInputActive = true;
 
 
 	mDialogWidth =  (mCreateButton.mDialogWidth * 4) + (mDialogBorder *2);
-	mDialogHeight = (mCreateButton.mDialogHeight * 8) + (mDialogBorder);
+	mDialogHeight = (mCreateButton.mDialogHeight * 9) + (mDialogBorder * 2);
 }
+
+void CPDialog::resize(){
+
+	int mPalWidth,mPathWidth, mTestWidth;
+
+	mPalWidth = (mReadPal.mDialogWidth + (mDialogBorder*4) + (mTexDialogWidth.mTexWidth*1.4));
+	mPathWidth = (mReadPath.mDialogWidth + (mDialogBorder*4) + (mTexDialogWidth.mTexWidth*1.4));
+
+	mTestWidth = mPalWidth < mPathWidth ? mPathWidth : mPalWidth;
+
+	int mNewWidth = mTestWidth + (mDialogBorder * 2);
+
+
+	if(mDialogWidth < mTestWidth){
+		mDialogWidth = mTestWidth;
+	}
+
+	if(mDialogWidth > mTestWidth){
+		mDialogWidth = mNewWidth  < (mCreateButton.mDialogWidth * 4) + (mDialogBorder *2) ? (mCreateButton.mDialogWidth * 4) + (mDialogBorder *2) : mNewWidth;
+	}
+
+}
+
 
 SDL_Rect CPDialog::render(int xpos, int ypos){
 	SDL_Rect tmpBorder = Dialog::render(xpos, ypos);
 
 	int offset = 8;
+	float multip = 1.3;
+
 
 	mTexDialogTextMain.render(tmpBorder.x+(mDialogWidth/2)-(mTexDialogTextMain.mTexWidth/2),tmpBorder.y+mDialogBorder*2);
-	mTexDialogWidth.render(tmpBorder.x+(mDialogBorder*2),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 1.2) + offset);
-	mReadWidth.render(tmpBorder.x+(mDialogBorder*2) + (mTexDialogWidth.mTexWidth*1.4),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 1.2)+ offset);
+	mTexDialogWidth.render(tmpBorder.x+(mDialogBorder*2),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * multip) + offset);
+	mReadWidth.render(tmpBorder.x+(mDialogBorder*2) + (mTexDialogWidth.mTexWidth*1.4),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * multip)+ offset);
 
-	mTexDialogHeight.render(tmpBorder.x+(mDialogBorder*2),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 2.4)+ offset);
-	mReadHeight.render(tmpBorder.x+(mDialogBorder*2) + (mTexDialogWidth.mTexWidth*1.4),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 2.4)+ offset);
+	mTexDialogHeight.render(tmpBorder.x+(mDialogBorder*2),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 2 * multip)+ offset);
+	mReadHeight.render(tmpBorder.x+(mDialogBorder*2) + (mTexDialogWidth.mTexWidth*1.4),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 2 * multip)+ offset);
 
-	mTexDialogSizeX.render(tmpBorder.x+(mDialogBorder*2),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 3.6)+ offset);
-	mReadSizeX.render(tmpBorder.x+(mDialogBorder*2) + (mTexDialogWidth.mTexWidth*1.4),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 3.6)+ offset);
+	mTexDialogSizeX.render(tmpBorder.x+(mDialogBorder*2),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 3 * multip)+ offset);
+	mReadSizeX.render(tmpBorder.x+(mDialogBorder*2) + (mTexDialogWidth.mTexWidth*1.4),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 3 * multip)+ offset);
 
-	mTexDialogSizeY.render(tmpBorder.x+(mDialogBorder*2),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 4.8)+ offset);
-	mReadSizeY.render(tmpBorder.x+(mDialogBorder*2) + (mTexDialogWidth.mTexWidth*1.4),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 4.8)+ offset);
+	mTexDialogSizeY.render(tmpBorder.x+(mDialogBorder*2),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 4 * multip)+ offset);
+	mReadSizeY.render(tmpBorder.x+(mDialogBorder*2) + (mTexDialogWidth.mTexWidth*1.4),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 4 * multip)+ offset);
 
-	mTexDialogPath.render(tmpBorder.x+(mDialogBorder*2),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 6)+ offset);
-	mReadPath.render(tmpBorder.x+(mDialogBorder*2) + (mTexDialogWidth.mTexWidth*1.4),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 6)+ offset);
+	mTexDialogPath.render(tmpBorder.x+(mDialogBorder*2),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 5 * multip)+ offset);
+	mReadPath.render(tmpBorder.x+(mDialogBorder*2) + (mTexDialogWidth.mTexWidth*1.4),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 5 * multip)+ offset);
 
-	mCreateButton.render(tmpBorder.x + (((mDialogWidth / 4)) - (mCreateButton.mDialogWidth/2)), tmpBorder.y+(mTexDialogTextMain.mTexHeight * 8.6)+ offset);
-	mCancelButton.render(tmpBorder.x + (((mDialogWidth / 4)*3) - (mCancelButton.mDialogWidth/2)) + (mDialogBorder * 2), tmpBorder.y+(mTexDialogTextMain.mTexHeight * 8.6)+ offset);
+	mTexDialogPal.render(tmpBorder.x+(mDialogBorder*2),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 6 * multip)+ offset);
+	mReadPal.render(tmpBorder.x+(mDialogBorder*2) + (mTexDialogWidth.mTexWidth*1.4),tmpBorder.y+ (mDialogBorder*2) + (mTexDialogTextMain.mTexHeight * 6 * multip)+ offset);
+
+	mCreateButton.render(tmpBorder.x + (((mDialogWidth / 4)) - (mCreateButton.mDialogWidth/2)), tmpBorder.y+(mTexDialogTextMain.mTexHeight * 8 * multip)+ offset);
+	mCancelButton.render(tmpBorder.x + (((mDialogWidth / 4)*3) - (mCancelButton.mDialogWidth/2)) + (mDialogBorder * 2), tmpBorder.y+(mTexDialogTextMain.mTexHeight * 8 * multip)+ offset);
 
 	return tmpBorder;
 }
@@ -574,10 +613,12 @@ SDL_Rect CPDialog::render(int xpos, int ypos){
 
 void CPDialog::dropLastInputChar(){
 	mActiveInput->dropLastInputChar();
+	resize();
 }
 
 void CPDialog::recieveInput(std::string cTextInput){
 	mActiveInput->recieveInput(cTextInput);
+	resize();
 }
 
 void CPDialog::recieveInput(int mKey){
@@ -586,6 +627,7 @@ void CPDialog::recieveInput(int mKey){
 	}
 	if(mKey == SDLK_y){
 		if((mReadHeight.bInputIsAccepted) &&(mReadWidth.bInputIsAccepted) &&(mReadSizeX.bInputIsAccepted) &&(mReadSizeY.bInputIsAccepted) && (mReadPath.bInputIsAccepted) ){
+			
 			bInputIsAccept=true;
 			bInputIsAccepted = true;
 		} else {
@@ -602,6 +644,7 @@ int CPDialog::recieveInput(int mx, int my){
 		mReadSizeX.bIsInputActive = false;
 		mReadSizeY.bIsInputActive = false;
 		mReadPath.bIsInputActive = false;
+		mReadPal.bIsInputActive = false;
 		mActiveInput = &mReadWidth;
 	}
 	if(mReadHeight.recieveInput(mx, my)){
@@ -610,6 +653,7 @@ int CPDialog::recieveInput(int mx, int my){
 		mReadSizeX.bIsInputActive = false;
 		mReadSizeY.bIsInputActive = false;
 		mReadPath.bIsInputActive = false;
+		mReadPal.bIsInputActive = false;
 		mActiveInput = &mReadHeight;
 	}
 	if(mReadSizeX.recieveInput(mx, my)){
@@ -618,6 +662,7 @@ int CPDialog::recieveInput(int mx, int my){
 		mReadSizeX.bIsInputActive = true;
 		mReadSizeY.bIsInputActive = false;
 		mReadPath.bIsInputActive = false;
+		mReadPal.bIsInputActive = false;
 		mActiveInput = &mReadSizeX;
 	}
 	if(mReadSizeY.recieveInput(mx, my)){
@@ -626,6 +671,7 @@ int CPDialog::recieveInput(int mx, int my){
 		mReadSizeX.bIsInputActive = false;
 		mReadSizeY.bIsInputActive = true;
 		mReadPath.bIsInputActive = false;
+		mReadPal.bIsInputActive = false;
 		mActiveInput = &mReadSizeY;
 	}
 	if(mReadPath.recieveInput(mx, my)){
@@ -634,8 +680,19 @@ int CPDialog::recieveInput(int mx, int my){
 		mReadSizeX.bIsInputActive = false;
 		mReadSizeY.bIsInputActive = false;
 		mReadPath.bIsInputActive = true;
+		mReadPal.bIsInputActive = false;
 		mActiveInput = &mReadPath;
 	}
+	if(mReadPal.recieveInput(mx, my)){
+		mReadWidth.bIsInputActive = false;
+		mReadHeight.bIsInputActive = false;
+		mReadSizeX.bIsInputActive = false;
+		mReadSizeY.bIsInputActive = false;
+		mReadPath.bIsInputActive = false;
+		mReadPal.bIsInputActive = true;
+		mActiveInput = &mReadPal;
+	}
+
 	if(mCreateButton.recieveInput(mx, my)){
 		mCreateButton.bInputIsAccept = true;
 		recieveInput(SDLK_y);

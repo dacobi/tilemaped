@@ -177,6 +177,7 @@ Uint32 TPalette::mapPaletteColor(int tcolor){
 
 int TPalette::importGimpPalette(std::string palPath){
 	if(testPaletteFile(palPath) == 2){
+		std::cout << "Importing Gimp Palette: " << palPath << std::endl;
 		std::ifstream input( palPath, std::ios::in );
 		unsigned char tpalette[256][3];
 
