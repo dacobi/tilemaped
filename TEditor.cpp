@@ -11,8 +11,14 @@ int TEditor::createNewProject(){
 	std::cout << "Creating Project: " << mGlobalSettings.ProjectPath << std::endl;
 	std::cout << "TileMapWidth: " << mGlobalSettings.TileMapWidth << " TileMapHeight: " << mGlobalSettings.TileMapHeight << " TileSizeX: " << mGlobalSettings.TileSizeX << " TileSizeY: " << mGlobalSettings.TileSizeY << std::endl;	
 	if(mGlobalSettings.bProjectHasPalette){
-		if(mPalette.loadFromFile(mGlobalSettings.ProjectPalettePath)){
-			return 1;
+		if(mPalette.testPaletteFile(mGlobalSettings.ProjectPalettePath) == 2){
+			if(mPalette.importGimpPalette(mGlobalSettings.ProjectPalettePath)){				
+				return 1;	
+			}
+		} else {
+			if(mPalette.loadFromFile(mGlobalSettings.ProjectPalettePath)){
+				return 1;
+			}
 		}
 	} else {
 		mPalette.initPalette();

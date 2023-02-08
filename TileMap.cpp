@@ -175,6 +175,114 @@ Uint32 TPalette::mapPaletteColor(int tcolor){
 	return tmpcol;
 }
 
+int TPalette::importGimpPalette(std::string palPath){
+	if(testPaletteFile(palPath) == 2){
+		std::ifstream input( palPath, std::ios::in );
+		unsigned char tpalette[256][3];
+
+		std::string nline;
+    	std::string ntmp;    
+    
+    	std::getline(input, nline);
+    	std::getline(input, nline);
+    	std::getline(input, nline);
+    	std::getline(input, nline);            
+        
+    	std::stringstream convert;
+    	int mr, mg, mb;
+    
+    	for(int i = 0; i < 256; i++){
+ 			std::getline(input, nline);       	
+    		
+			convert << nline << std::endl;
+    		convert >> mr >> mg >> mb >> ntmp;
+    	
+	    	tpalette[i][0] = mr;
+    		tpalette[i][1] = mg;
+    		tpalette[i][2] = mb;    	
+    	}
+
+		if(TPalette.size()){
+			TPalette.erase(TPalette.begin(), TPalette.end());
+		}
+
+		if(PixelAreas.size()){
+			PixelAreas.erase(PixelAreas.begin(), PixelAreas.end());
+		}
+
+		for(int i = 0; i < 256; i++){
+			SDL_Color tmpcol;
+			
+			tmpcol.r = tpalette[i][0];
+			tmpcol.g = tpalette[i][1];
+			tmpcol.b = tpalette[i][2];
+			
+			//std::cout << "Color: R: " << (int)tmpcol.r << " G: " << (int)tmpcol.g << " B: " << (int)tmpcol.b << std::endl;
+ 
+			if((i  == 0) ) {				
+				tmpcol.a = 0;
+			} else {
+				tmpcol.a = 255;
+			}
+			
+			TPalette.push_back(tmpcol);
+		}
+
+		PixelAreas.resize(256);	
+
+		std::vector<unsigned char> tbuffer;
+		tbuffer.push_back(16);
+		tbuffer.push_back(42);
+		unsigned char tmpChar;
+		
+		for(int i = 0; i < 256; i++){
+    		tmpChar = (tpalette[i][1])/16;
+			tmpChar = tmpChar << 4;
+        	tmpChar += (tpalette[i][2])/16;
+
+			tbuffer.push_back(tmpChar);
+
+			tmpChar = (tpalette[i][0])/16;
+        	tbuffer.push_back(tmpChar);
+    	}
+		
+		mGlobalSettings.ProjectPalette = tbuffer;
+
+		return 0;
+	}
+	std::cout << "Not Gimp palette!" << std::endl;
+	return 1;
+}
+
+int TPalette::testPaletteFile(std::string palPath){
+
+	fs::path tPath = palPath;
+
+	if((fs::exists(fs::status(tPath)))  && !(fs::is_directory(fs::status(tPath)))){
+		if(tPath.extension() == ".gpl"){
+			std::cout << "Gimp palette found" << std::endl;
+			return 2;
+		} else {
+			std::ifstream infile(tPath, std::ios::binary );
+    		std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
+
+			int magic1,magic2;
+
+			magic1 = tbuffer[0];
+			magic2 = tbuffer[1];
+
+			tbuffer.erase(tbuffer.begin());
+			tbuffer.erase(tbuffer.begin());
+	
+			if((magic1 == 16) && (magic2 == 42) && (tbuffer.size() == 512)){
+				std::cout << "X16 palette found" << std::endl;
+				return 1;
+			}
+		}	
+	}
+	return 0;
+}
+
 int TPalette::saveToFolder(std::string cpath){
 	if(mGlobalSettings.ProjectPalette.size() == 514){		
 		std::ofstream outfile(cpath + DIRDEL + "pal.bin", std::ios::binary );
