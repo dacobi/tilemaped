@@ -45,6 +45,7 @@ class TPalette{
 		int initPalette();
 		int loadFromFile(std::string palPath);
 		int saveToFolder(std::string palPath);
+		int saveToFile(std::string palPath);
 		int importGimpPalette(std::string palPath);
 		int testPaletteFile(std::string palPath);
 		std::vector<TPixel*> TPixels;

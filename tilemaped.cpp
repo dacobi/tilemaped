@@ -229,8 +229,9 @@ void TSettings::initHelpText(){
 void printUsage(){
 		std::cout << std::endl;	
 		std::cout << "Command Line Usage:" << std::endl;	
-		std::cout << "tilemaped -o <folder> OR" << std::endl;		
-		std::cout << "tilemaped -n <mapwidth> <mapheight> <tilewidth> <tileheight> <folder> [ -p <palette file> ]" << std::endl;		
+		std::cout << "tilemaped -o <folder>" << std::endl;		
+		std::cout << "tilemaped -n <mapwidth> <mapheight> <tilewidth> <tileheight> <folder> [ -p <palette file> ]" << std::endl;
+		std::cout << "tilemaped -c <Gimp Palette> <palfile.bin>" << std::endl;		
 }
 
 
@@ -269,7 +270,7 @@ int main( int argc, char* args[] )
 	int nMapSizeY = 0;	
 	bool mCreateNewProject=false;
 	
-	if(((argc < 3) && (argc > 1)) || ((argc > 3) && (argc < 7)) || ((argc > 9)) || (argc == 8)){
+	if(((argc < 3) && (argc > 1)) || ((argc > 4) && (argc < 7)) || ((argc > 9)) || (argc == 8)){
 		if((argc == 2) && (std::string(args[1]) == "-h")){
 			mGlobalSettings.printHelpText();
 		} else {
@@ -282,6 +283,23 @@ int main( int argc, char* args[] )
 		mGlobalSettings.bRunningOCD = true;
 	}
 	
+	if(argc == 4){
+		if(std::string(args[1]) != "-c"){
+			printUsage();
+			return 1;
+		}
+
+		if(mEditor.mPalette.testPaletteFile(args[2]) == 2){
+				mEditor.mPalette.importGimpPalette(args[2]);
+				mEditor.mPalette.saveToFile(args[3]);
+				std::cout << "Gimp Palette converted and saved to: " << args[3] << std::endl;	
+				return 0;
+		} else {
+			std::cout << "Gimp Palette not found" << std::endl;	
+			return 1;
+		}
+	}
+
 	if(argc == 3){
 		if(std::string(args[1]) != "-o"){
 			printUsage();

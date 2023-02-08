@@ -283,6 +283,16 @@ int TPalette::testPaletteFile(std::string palPath){
 	return 0;
 }
 
+int TPalette::saveToFile(std::string cpath){
+	if(mGlobalSettings.ProjectPalette.size() == 514){		
+		std::ofstream outfile(cpath, std::ios::binary );
+		outfile.write((const char*)mGlobalSettings.ProjectPalette.data(), mGlobalSettings.ProjectPalette.size());
+		outfile.close();
+		return 1;
+	}
+	return 0;
+}
+
 int TPalette::saveToFolder(std::string cpath){
 	if(mGlobalSettings.ProjectPalette.size() == 514){		
 		std::ofstream outfile(cpath + DIRDEL + "pal.bin", std::ios::binary );
