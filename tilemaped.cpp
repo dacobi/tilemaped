@@ -133,6 +133,7 @@ int TSettings::initSettings(){
 	}
 	
 	TTF_SetFontStyle(LFont, TTF_STYLE_UNDERLINE);
+	TTF_SetFontStyle(UFont, TTF_STYLE_UNDERLINE);
 	
 	SDL_SetWindowResizable(TWindow, SDL_TRUE);
 

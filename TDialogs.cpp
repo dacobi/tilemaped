@@ -541,7 +541,7 @@ void CPDialog::init(){
 	mReadPath.bMustNotExist = true;
 	mReadPath.bAutoComplete = true;
 
-	mReadPal.bMustExist = true;
+	mReadPal.bMustBeFile = true;
 	mReadPal.bAutoComplete = true;
 
 	mReadWidth.bInputIsAccepted = true;
@@ -550,6 +550,9 @@ void CPDialog::init(){
 	mReadSizeY.bInputIsAccepted = true;
 	mReadPath.bInputIsAccepted = true;
 	mReadPal.bInputIsAccepted = true;
+
+	mReadPath.mMinDialogWidth = 200;
+	mReadPal.mMinDialogWidth = 200;
 
 	mReadWidth.init();
 	mReadHeight.init();
@@ -562,7 +565,7 @@ void CPDialog::init(){
 	mActiveInput->bIsInputActive = true;
 
 
-	mDialogWidth =  (mCreateButton.mDialogWidth * 4) + (mDialogBorder *2);
+	mDialogWidth =  (mCreateButton.mDialogWidth * 6) + (mDialogBorder *2);
 	mDialogHeight = (mCreateButton.mDialogHeight * 9) + (mDialogBorder * 2);
 }
 
@@ -583,7 +586,7 @@ void CPDialog::resize(){
 	}
 
 	if(mDialogWidth > mTestWidth){
-		mDialogWidth = mNewWidth  < (mCreateButton.mDialogWidth * 4) + (mDialogBorder *2) ? (mCreateButton.mDialogWidth * 4) + (mDialogBorder *2) : mNewWidth;
+		mDialogWidth = mNewWidth  < (mCreateButton.mDialogWidth * 6) + (mDialogBorder *2) ? (mCreateButton.mDialogWidth * 6) + (mDialogBorder *2) : mNewWidth;
 	}
 
 }
@@ -933,8 +936,25 @@ void TIDialog::init(){
 	}
 	
 	if(bAutoComplete){
+		if(mCompleteText.length()){
+			mCompleteCursor = mCompleteText.substr(0,1);
+			mCompleteAfter = mCompleteText.substr(1,mCompleteText.length()-1);
+		} else {
+			mCompleteCursor = " ";
+			mCompleteAfter = "";
+		}
+		
 		mTexDialogTextMain.loadTTFFromUTF8(mTexDialogTextMain.mPrompt + " " + mDialogTextMain, mTextColor,mGlobalSettings.TFont);
-		mTexCompleteText.loadTTFFromUTF8(mCompleteText, mGlobalSettings.AltTextColor,mGlobalSettings.TFont);
+
+		if(bShowCursor){
+			mTexCompleteCursor.loadTTFFromUTF8(mCompleteCursor, mGlobalSettings.AltTextColor,mGlobalSettings.UFont);
+		} else {
+			mTexCompleteCursor.loadTTFFromUTF8(mCompleteCursor, mGlobalSettings.AltTextColor,mGlobalSettings.TFont);
+		}
+
+		mTexCompleteAfter.loadTTFFromUTF8(mCompleteAfter, mGlobalSettings.AltTextColor,mGlobalSettings.TFont);
+
+		//mTexCompleteText.loadTTFFromUTF8(mCompleteText, mGlobalSettings.AltTextColor,mGlobalSettings.TFont);
 	} else {
 		if(bShowCursor){
 			mTexDialogTextMain.loadTTFFromUTF8(mTexDialogTextMain.mPrompt + " " + mDialogTextMain +"_", mTextColor,mGlobalSettings.TFont);
@@ -942,10 +962,13 @@ void TIDialog::init(){
 			mTexDialogTextMain.loadTTFFromUTF8(mTexDialogTextMain.mPrompt + " " + mDialogTextMain + " ", mTextColor,mGlobalSettings.TFont);
 		}
 	}
-	if(bAutoComplete){
-		mDialogWidth = mTexDialogTextMain.mTexWidth + mTexCompleteText.mTexWidth;
+	if(bAutoComplete && mCompleteText.length()){
+		mDialogWidth = mTexDialogTextMain.mTexWidth + mTexCompleteCursor.mTexWidth +  (mDialogBorder * 2);
+		if(mCompleteAfter.length()){
+			mDialogWidth += mTexCompleteAfter.mTexWidth;
+		}
 	} else {
-		mDialogWidth = mTexDialogTextMain.mTexWidth;
+		mDialogWidth = mTexDialogTextMain.mTexWidth + (mDialogBorder * 2);
 	}
 	
 	mDialogHeight = mTexDialogTextMain.mTexHeight;
@@ -977,7 +1000,8 @@ SDL_Rect TIDialog::render(int xpos, int ypos){
 	int cTextY = ypos + (mDialogBorder + (mDialogBorder/3));
 	mTexDialogTextMain.render(cTextX, cTextY);
 	if(bAutoComplete){
-		mTexCompleteText.render(cTextX+mTexDialogTextMain.mTexWidth, cTextY);
+		mTexCompleteCursor.render(cTextX+mTexDialogTextMain.mTexWidth, cTextY);
+		mTexCompleteAfter.render(cTextX+mTexDialogTextMain.mTexWidth+mTexCompleteCursor.mTexWidth, cTextY);
 	}
 	
 	return mButtonRect;
@@ -986,7 +1010,7 @@ SDL_Rect TIDialog::render(int xpos, int ypos){
 void TIDialog::autoComplete(){
 	if(bAutoComplete){
 		mDialogTextMain += mCompleteText;
-		mCompleteText = "";		
+		mCompleteText = "";			
 		checkCurrentText();
 	}
 }
@@ -1024,13 +1048,13 @@ int TIDialog::checkCurrentText(){
 		bool cExists = false;
 		bool cIsFolder = false;
 
-		if(bMustExist || bMustNotExist){			
+		if(bMustExist || bMustNotExist || bMustBeFile){			
 			if(fs::exists(fs::status(mDialogTextMain))){
 				cExists = true;			
 			}
 		}
 
-		if(bMustBeFolder){
+		if(bMustBeFolder || bMustBeFile){
 			if(fs::is_directory(fs::status(mDialogTextMain))){
 				cIsFolder = true;
 			}
@@ -1063,6 +1087,17 @@ int TIDialog::checkCurrentText(){
 			}
 			init();        		
 		}
+
+		if(bMustBeFile){
+			if(cIsFolder){					
+				bInputIsAccepted=false;
+				return 1;
+			}
+			if(!cExists){								
+				bInputIsAccepted=false;
+				return 1;
+			} 			
+		} 
 
 		if(bMustExist){
 				if(!cExists){				
@@ -1122,7 +1157,7 @@ void TIDialog::recieveInput(std::string cTextInput){
 		} else {
 			mDialogTextMain += cTextInput;
 		}
-
+		mCompleteText = "";
 		checkCurrentText();
 	}	
 }

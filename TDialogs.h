@@ -50,12 +50,17 @@ class TIDialog: public BDialog{
 		bool bIsNumeric=false;
 		bool bAutoComplete=false;
 		std::string mCompleteText;
-		TTFTexture mTexCompleteText;
+		//TTFTexture mTexCompleteText;
+		std::string mCompleteCursor;
+		std::string mCompleteAfter;
+		TTFTexture mTexCompleteCursor;
+		TTFTexture mTexCompleteAfter;
 		std::vector<int> mAllowedValues;
 		int mMaxLength=0;
 		int mMaxRange=0;
 		int mMinRange=0;
 		bool bMustExist=false;
+		bool bMustBeFile=false;
 		bool bMustBeFolder=false;
 		bool bMustNotExist=false;
 		int checkCurrentText();

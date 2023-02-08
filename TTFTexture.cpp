@@ -28,6 +28,7 @@ int TTFTexture::loadTTFFromUTF8(std::string cTexText, SDL_Color textColor, TTF_F
 		} else {
 			mTexWidth = textSurf->w;
 			mTexHeight = textSurf->h;
+			//std::cout << "(" << mTexWidth << "," << mTexHeight << ")" << std::endl;
 		}
 		SDL_FreeSurface(textSurf);
 	}
