@@ -56,6 +56,36 @@ class MEDialog;
 
 TSettings mGlobalSettings;
 
+int TSettings::testPaletteFile(std::string palPath){
+
+	fs::path tPath = palPath;
+
+	if((fs::exists(fs::status(tPath)))  && !(fs::is_directory(fs::status(tPath)))){
+		if(tPath.extension() == ".gpl"){
+			std::cout << "Gimp palette found" << std::endl;
+			return 2;
+		} else {
+			std::ifstream infile(tPath, std::ios::binary );
+    		std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
+
+			int magic1,magic2;
+
+			magic1 = tbuffer[0];
+			magic2 = tbuffer[1];
+
+			tbuffer.erase(tbuffer.begin());
+			tbuffer.erase(tbuffer.begin());
+	
+			if((magic1 == 16) && (magic2 == 42) && (tbuffer.size() == 512)){
+				std::cout << "X16 palette found" << std::endl;
+				return 1;
+			}
+		}	
+	}
+	return 0;
+}
+
+
 int TSettings::initSettings(){
 
 	if( SDL_Init( SDL_INIT_VIDEO ) < 0 ){
@@ -93,6 +123,11 @@ int TSettings::initSettings(){
 
 	LFont =  TTF_OpenFont("nerdfont.ttf",30);	
 	if(LFont == NULL){
+		std::cout << "SDL_TTF Error: " << TTF_GetError() << std::endl;
+		return 1;
+	}
+	UFont =  TTF_OpenFont("nerdfont.ttf",20);	
+	if(UFont == NULL){
 		std::cout << "SDL_TTF Error: " << TTF_GetError() << std::endl;
 		return 1;
 	}
@@ -180,6 +215,9 @@ int TSettings::runOCD(){
 					}
 					if(e.key.keysym.sym == SDLK_ESCAPE){
 						mOpenCreate.recieveInput(SDLK_n);
+					}
+					if(e.key.keysym.sym == SDLK_TAB){
+						mOpenCreate.recieveInput(SDLK_TAB);
 					}
 				break;
 				case SDL_MOUSEBUTTONDOWN:
@@ -289,7 +327,7 @@ int main( int argc, char* args[] )
 			return 1;
 		}
 
-		if(mEditor.mPalette.testPaletteFile(args[2]) == 2){
+		if(mGlobalSettings.testPaletteFile(args[2]) == 2){
 				mEditor.mPalette.importGimpPalette(args[2]);
 				mEditor.mPalette.saveToFile(args[3]);
 				std::cout << "Gimp Palette converted and saved to: " << args[3] << std::endl;	

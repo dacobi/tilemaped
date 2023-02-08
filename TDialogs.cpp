@@ -453,8 +453,10 @@ void OCDialog::recieveInput(int mKey){
 				mGlobalSettings.ProjectPath = mCreateProject.mReadPath.mDialogTextMain;
 
 				if(mCreateProject.mReadPal.bInputIsAccepted){
-					mGlobalSettings.bProjectHasPalette = true;
-					mGlobalSettings.ProjectPalettePath = mCreateProject.mReadPal.mDialogTextMain;
+					if(mGlobalSettings.testPaletteFile(mCreateProject.mReadPal.mDialogTextMain)){
+						mGlobalSettings.bProjectHasPalette = true;
+						mGlobalSettings.ProjectPalettePath = mCreateProject.mReadPal.mDialogTextMain;
+					}
 				}
 
 				mGlobalSettings.mProjectOpenState = 2;
@@ -481,6 +483,11 @@ void OCDialog::recieveInput(int mKey){
 		}
 
 		bInputIsCancel=true;
+	}
+	if(mKey == SDLK_TAB){
+		if(bSubDialogActive && bSubDialogIsCreate){
+			mCreateProject.recieveInput(SDLK_TAB);
+		}
 	}
 }
 
@@ -530,8 +537,12 @@ void CPDialog::init(){
 	mReadHeight.bIsNumeric = true;
 	mReadSizeX.bIsNumeric = true;
 	mReadSizeY.bIsNumeric = true;
+
 	mReadPath.bMustNotExist = true;
+	mReadPath.bAutoComplete = true;
+
 	mReadPal.bMustExist = true;
+	mReadPal.bAutoComplete = true;
 
 	mReadWidth.bInputIsAccepted = true;
 	mReadHeight.bInputIsAccepted = true;
@@ -634,6 +645,10 @@ void CPDialog::recieveInput(int mKey){
 			bInputIsAccepted = false;
 		}
 
+	}
+	if(mKey == SDLK_TAB){
+		mActiveInput->autoComplete();
+		resize();
 	}
 }	
 
@@ -917,13 +932,22 @@ void TIDialog::init(){
 		}
 	}
 	
-	if(bShowCursor){
-		mTexDialogTextMain.loadTTFFromUTF8(mTexDialogTextMain.mPrompt + " " + mDialogTextMain +"_", mTextColor,mGlobalSettings.TFont);
+	if(bAutoComplete){
+		mTexDialogTextMain.loadTTFFromUTF8(mTexDialogTextMain.mPrompt + " " + mDialogTextMain, mTextColor,mGlobalSettings.TFont);
+		mTexCompleteText.loadTTFFromUTF8(mCompleteText, mGlobalSettings.AltTextColor,mGlobalSettings.TFont);
 	} else {
-		mTexDialogTextMain.loadTTFFromUTF8(mTexDialogTextMain.mPrompt + " " + mDialogTextMain + " ", mTextColor,mGlobalSettings.TFont);
+		if(bShowCursor){
+			mTexDialogTextMain.loadTTFFromUTF8(mTexDialogTextMain.mPrompt + " " + mDialogTextMain +"_", mTextColor,mGlobalSettings.TFont);
+		} else {	
+			mTexDialogTextMain.loadTTFFromUTF8(mTexDialogTextMain.mPrompt + " " + mDialogTextMain + " ", mTextColor,mGlobalSettings.TFont);
+		}
+	}
+	if(bAutoComplete){
+		mDialogWidth = mTexDialogTextMain.mTexWidth + mTexCompleteText.mTexWidth;
+	} else {
+		mDialogWidth = mTexDialogTextMain.mTexWidth;
 	}
 	
-	mDialogWidth = mTexDialogTextMain.mTexWidth;
 	mDialogHeight = mTexDialogTextMain.mTexHeight;
 
 	if(mMinDialogWidth > mDialogWidth) {
@@ -952,8 +976,19 @@ SDL_Rect TIDialog::render(int xpos, int ypos){
 	int cTextX = xpos + (mDialogBorder *2);
 	int cTextY = ypos + (mDialogBorder + (mDialogBorder/3));
 	mTexDialogTextMain.render(cTextX, cTextY);
+	if(bAutoComplete){
+		mTexCompleteText.render(cTextX+mTexDialogTextMain.mTexWidth, cTextY);
+	}
 	
 	return mButtonRect;
+}
+
+void TIDialog::autoComplete(){
+	if(bAutoComplete){
+		mDialogTextMain += mCompleteText;
+		mCompleteText = "";		
+		checkCurrentText();
+	}
 }
 
 int TIDialog::checkCurrentText(){
@@ -999,6 +1034,34 @@ int TIDialog::checkCurrentText(){
 			if(fs::is_directory(fs::status(mDialogTextMain))){
 				cIsFolder = true;
 			}
+		}
+
+		if(bAutoComplete){
+			fs::path cPath = mDialogTextMain;
+			std::string mDir,mFile;
+
+			if(cPath.parent_path() == ""){
+				mDir = ".";
+			} else {
+				mDir = cPath.parent_path();
+			}
+
+			mCompleteText = "";
+			mFile = cPath.filename();
+
+			if(fs::is_directory(fs::status(mDir))){
+				for (const auto & entry : fs::directory_iterator(mDir)){
+					std::string tStr = (entry.path()).filename();
+					if(mFile.length()){
+						std::size_t subpos = tStr.find(mFile);						
+						if((subpos != std::string::npos) && (subpos == 0)){					
+							mCompleteText = tStr.substr(mFile.length());							
+							break;
+						} 				
+					}
+				}
+			}
+			init();        		
 		}
 
 		if(bMustExist){

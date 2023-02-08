@@ -48,6 +48,9 @@ class TIDialog: public BDialog{
 		bool bIsInputActive=false;
 		bool bInputIsAccepted=true;
 		bool bIsNumeric=false;
+		bool bAutoComplete=false;
+		std::string mCompleteText;
+		TTFTexture mTexCompleteText;
 		std::vector<int> mAllowedValues;
 		int mMaxLength=0;
 		int mMaxRange=0;
@@ -56,6 +59,7 @@ class TIDialog: public BDialog{
 		bool bMustBeFolder=false;
 		bool bMustNotExist=false;
 		int checkCurrentText();
+		void autoComplete();
 		virtual void dropLastInputChar();
 		virtual void init();
 		virtual int recieveInput(int mx, int my);		

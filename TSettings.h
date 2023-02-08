@@ -90,10 +90,12 @@ class TSettings{
 		int mSelectedTile = 0;
 		int mTileEdScale = 4;
 		TTF_Font *TFont;
+		TTF_Font *UFont;
 		TTF_Font *LFont;
 		SDL_Color DefaultBGColor = {0xc0,0xc0,0xc0,0xff};
 		SDL_Color DefaultDarkBGColor = {0xb0,0xb0,0xb0,0xff};
 		SDL_Color DefaultTextColor = {0x20,0x20,0x20,0xff};
+		SDL_Color AltTextColor = {0x0,0x0,0xff,0xff};
 		SDL_Color DefaultBorderColor = {0x00,0x00,0xff,0xff};
 		SDL_Color DefaultButtonColor = {0x90,0x90,0x90,0xff};
 		SDL_Color DefaultButtonBorderColor = {0x20,0x20,0x20,0xff};
@@ -110,6 +112,7 @@ class TSettings{
 		int mCurrentTick = 0;
 		int initSettings();
 		void initHelpText();
+		int testPaletteFile(std::string palPath);
 		void printHelpText();		
 		int initTicks();
 		int updateTicks();
