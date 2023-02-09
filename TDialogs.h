@@ -62,6 +62,7 @@ class TIDialog: public BDialog{
 		bool bMustExist=false;
 		bool bMustBeFile=false;
 		bool bMustBeFolder=false;
+		bool bMustNotBeFile=false;
 		bool bMustNotExist=false;
 		int checkCurrentText();
 		void autoComplete();

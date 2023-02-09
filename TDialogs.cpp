@@ -177,9 +177,17 @@ int SADialog::recieveInput(int mx, int my){
 }
 
 void SADialog::resize(){
-	mDialogWidth = mTexDialogTextMain.mTexWidth > mTextInput.mTexDialogTextMain.mTexWidth ? mTexDialogTextMain.mTexWidth : mTextInput.mTexDialogTextMain.mTexWidth;
+
+
+	int mMinDia = 400;
+
+	//mDialogWidth = mTexDialogTextMain.mTexWidth > mTextInput.mTexDialogTextMain.mTexWidth ? mTexDialogTextMain.mTexWidth : mTextInput.mTexDialogTextMain.mTexWidth;
+	mDialogWidth = mDialogWidth < mTextInput.mDialogWidth  ? mDialogWidth + (mDialogBorder *2) : mTextInput.mDialogWidth  + (mDialogBorder *8);
+	//mDialogWidth = mPathWidth > mDialogWidth ? mPathWidth + (mDialogBorder * 2) : mDialogWidth; 
 	mDialogHeight = mTexDialogTextMain.mTexHeight;
 	
+	mDialogWidth = mDialogWidth <  mMinDia ? mMinDia : mDialogWidth; 
+
 	mDialogHeight *=6;	
 	mDialogWidth += mDialogBorder * 5;	
 }
@@ -204,6 +212,8 @@ void SADialog::init(){
 	
 	mTextInput.mDialogTextMain = mDialogTextInput;
 	mTextInput.bIsInputActive = true;
+	mTextInput.bMustNotBeFile = true;
+	mTextInput.bAutoComplete = true;
 	mTextInput.init();
 	
 	resize();
@@ -214,16 +224,10 @@ SDL_Rect SADialog::render(int xpos, int ypos){
 
 	mTexDialogTextMain.render(tmpBorder.x+mDialogBorder*2,tmpBorder.y+mDialogBorder*2);
 	
-/*
-((mDialogWidth/4)-(mAcceptButton.mDialogWidth/2))
-*/
 	mAcceptButton.render(tmpBorder.x + ((mDialogWidth / 4) - (mAcceptButton.mDialogWidth/2)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight * 2 + mDialogBorder*4);	
 	mCancelButton.render(tmpBorder.x + (((mDialogWidth / 4)*3) - (mAcceptButton.mDialogWidth/2)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight * 2+ mDialogBorder*4);	
 
-	/*
-	mAcceptButton.render(tmpBorder.x + ((tmpBorder.w / 4) - (mAcceptButton.mTexDialogTextMain.mTexWidth)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight * 2 + mDialogBorder*4);	
-	mCancelButton.render(tmpBorder.x + (((tmpBorder.w / 4)*3) - (mCancelButton.mTexDialogTextMain.mTexWidth)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight * 2+ mDialogBorder*4);	
-	*/	
+	
 	mTextInput.render(tmpBorder.x+((mDialogWidth/2)-(mTextInput.mDialogWidth/2)) ,tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight+mDialogBorder*2);
 	if(bSubDialogActive){
 		tmpBorder = mSubDialog->render(xpos + 50, ypos + 50);
@@ -232,9 +236,10 @@ SDL_Rect SADialog::render(int xpos, int ypos){
 }
 
 void SADialog::recieveInput(std::string mText){		
-	mTextInput.mDialogTextMain += mText;
-	mTextInput.mTextColor =  mGlobalSettings.DefaultTextColor;
-	mTextInput.init();
+	mTextInput.recieveInput(mText);
+	//mTextInput.mDialogTextMain += mText;
+	//mTextInput.mTextColor =  mGlobalSettings.DefaultTextColor;
+	//mTextInput.init();
 	resize();	
 }
 
@@ -258,30 +263,40 @@ void SADialog::recieveInput(int mKey){
 				bSubDialogActive = true;
 				bDialogIsWatingForText = false;
 			} else {
-				if(fs::exists(fs::status(mTextInput.mDialogTextMain))){
-					mTextInput.mTextColor = mGlobalSettings.ErrorTextColor;
-					return;
-				}
-				mGlobalSettings.mProjectSaveState = 1;
-				mGlobalSettings.ProjectPath = mTextInput.mDialogTextMain;
-				bInputIsAccept=true;				
+				//if(fs::exists(fs::status(mTextInput.mDialogTextMain))){
+				//	mTextInput.mTextColor = mGlobalSettings.ErrorTextColor;
+				//	return;
+				//}
+				if(mTextInput.bInputIsAccepted){
+					mGlobalSettings.mProjectSaveState = 1;
+					mGlobalSettings.ProjectPath = mTextInput.mDialogTextMain;
+					bInputIsAccept=true;
+				}	
 			}
 			SDL_StopTextInput();
 		}
 		if(mKey == SDLK_n){
 			bInputIsCancel=true;
 			SDL_StopTextInput();			
-		}		
+		}
+		if(mKey == SDLK_TAB){		
+			mTextInput.autoComplete();
+			resize();
+		}
 	}
 }
 
 void SADialog::dropLastInputChar(){
+	
+	/*
 	if(mTextInput.mDialogTextMain.size()){
 		mTextInput.mDialogTextMain.pop_back();
 		mTextInput.mTextColor = mGlobalSettings.DefaultTextColor;
 		mTextInput.init();
 		resize();
-	}
+	}*/
+	mTextInput.dropLastInputChar();
+	resize();
 }
 
 void OPDialog::init(){
@@ -824,6 +839,8 @@ void ITDialog::init(){
 	
 	mTextInput.mDialogTextMain = "";
 	mTextInput.bIsInputActive = true;
+	mTextInput.bAutoComplete = true;
+	mTextInput.bMustBeFile = true;
 	mTextInput.init();
 
 	bSubDialogActive = false;
@@ -840,7 +857,14 @@ void ITDialog::cancel(){
 
 void ITDialog::recieveInput(int mKey){
 	if(mKey == SDLK_y){
-		if(fs::exists(fs::status(mTextInput.mDialogTextMain))){
+		if(mTextInput.bInputIsAccepted){
+			bInputIsAccept=true;	
+			bDialogIsWatingForText = false;
+			mGlobalSettings.mOpenTileState = 1;
+			mGlobalSettings.mNewTilePath = mTextInput.mDialogTextMain;
+			SDL_StopTextInput();
+		}
+		/*if(fs::exists(fs::status(mTextInput.mDialogTextMain))){
 			if(fs::is_directory(fs::status(mTextInput.mDialogTextMain))){
 				mTextInput.mTextColor = mGlobalSettings.ErrorTextColor;
 				return;
@@ -854,13 +878,17 @@ void ITDialog::recieveInput(int mKey){
 		} else {
 				mTextInput.mTextColor =  mGlobalSettings.ErrorTextColor;
 				return;
-			}
-		}
+			} */
+	}
 
 	if(mKey == SDLK_n){
 		bInputIsCancel=true;
 		SDL_StopTextInput();		
 	}		
+	if(mKey == SDLK_TAB){
+		mTextInput.autoComplete();
+		resize();
+	}
 }
 
 
@@ -964,8 +992,10 @@ void TIDialog::init(){
 	}
 	if(bAutoComplete && mCompleteText.length()){
 		mDialogWidth = mTexDialogTextMain.mTexWidth + mTexCompleteCursor.mTexWidth +  (mDialogBorder * 2);
+		std::cout << "CompleteCursor: " <<  mTexCompleteCursor.mTexWidth << std::endl;
 		if(mCompleteAfter.length()){
-			mDialogWidth += mTexCompleteAfter.mTexWidth;
+			std::cout << "CompleteAfter: " << mTexCompleteAfter.mTexWidth << std::endl;
+			mDialogWidth += mTexCompleteAfter.mTexWidth + (mDialogBorder * 2);
 		}
 	} else {
 		mDialogWidth = mTexDialogTextMain.mTexWidth + (mDialogBorder * 2);
@@ -1048,17 +1078,17 @@ int TIDialog::checkCurrentText(){
 		bool cExists = false;
 		bool cIsFolder = false;
 
-		if(bMustExist || bMustNotExist || bMustBeFile){			
+		//if(bMustExist || bMustNotExist || bMustBeFile || bMustNotBeFile){			
 			if(fs::exists(fs::status(mDialogTextMain))){
 				cExists = true;			
 			}
-		}
+		//}
 
-		if(bMustBeFolder || bMustBeFile){
+		//if(bMustBeFolder || bMustBeFile || bMustNotBeFile){
 			if(fs::is_directory(fs::status(mDialogTextMain))){
 				cIsFolder = true;
 			}
-		}
+		//}
 
 		if(bAutoComplete){
 			fs::path cPath = mDialogTextMain;
@@ -1098,6 +1128,15 @@ int TIDialog::checkCurrentText(){
 				return 1;
 			} 			
 		} 
+
+		if(bMustNotBeFile){			
+			if(cExists){
+				if(!cIsFolder){					
+					bInputIsAccepted=false;
+					return 1;
+				} 
+			}
+		}
 
 		if(bMustExist){
 				if(!cExists){				

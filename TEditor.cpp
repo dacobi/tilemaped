@@ -695,6 +695,9 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_ESCAPE){
 					mActiveDialog->recieveInput(SDLK_n);
+	  			}
+				if(cEvent->key.keysym.sym == SDLK_TAB){
+					mActiveDialog->recieveInput(SDLK_TAB);
 	  			}		  			
 	  		} else {
 	  			if(cEvent->key.keysym.sym == SDLK_ESCAPE){
