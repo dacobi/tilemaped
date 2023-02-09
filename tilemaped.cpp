@@ -88,11 +88,12 @@ int TSettings::testPaletteFile(std::string palPath){
 
 int TSettings::initSettings(){
 
-	if( SDL_Init( SDL_INIT_VIDEO ) < 0 ){
+	if( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER ) < 0 ){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
 		return 1;
 	}
-	TWindow = SDL_CreateWindow( "Simple Tilemap Editor", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WindowWidth, WindowHeight, SDL_WINDOW_SHOWN );
+	    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN );
+	TWindow = SDL_CreateWindow( "Tilemaped", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WindowWidth, WindowHeight, window_flags);
 	if( TWindow == NULL ){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
 		return 1;
@@ -151,6 +152,40 @@ int TSettings::initSettings(){
 
 	srand(time(0));
 
+	IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO(); (void)io;
+	mio = &io;
+
+	ImVector<ImWchar> ranges;
+	ImFontGlyphRangesBuilder builder;
+	
+	builder.AddChar(0xf2d0);
+	builder.AddChar(0xe240); 
+	builder.AddChar(0xf120); 
+	builder.AddChar(0xf15c); 
+	builder.AddChar(0xf405); 
+	builder.AddChar(0xf449); 
+	builder.AddChar(0xf71e);
+	builder.AddChar(0xf705);
+
+	builder.AddRanges(io.Fonts->GetGlyphRangesDefault()); // Add one of the default ranges
+	builder.BuildRanges(&ranges);       
+
+	mio->Fonts->AddFontFromFileTTF("nerdfont.ttf", 25.0,  NULL, ranges.Data);
+	mio->Fonts->Build();
+	
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+    //ImGui::StyleColorsLight();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplSDL2_InitForSDLRenderer(mGlobalSettings.TWindow, mGlobalSettings.TRenderer);
+    ImGui_ImplSDLRenderer_Init(mGlobalSettings.TRenderer);
+
 	return 0;	
 }
 
@@ -199,6 +234,7 @@ int TSettings::runOCD(){
 		SDL_Event e;
 
 		while( SDL_PollEvent( &e ) != 0 ){
+
 			switch (e.type){
 				case SDL_TEXTINPUT:
 					if(mOpenCreate.bDialogIsWatingForText){
@@ -435,6 +471,7 @@ int main( int argc, char* args[] )
 	}
 	else
 	{	
+		mGlobalSettings.CurrentEditor = &mEditor;
 		if(mGlobalSettings.bRunningOCD){			
 			mGlobalSettings.runOCD();
 			
@@ -469,15 +506,25 @@ int main( int argc, char* args[] )
 
 		while( mEditor.bEditorRunning ){
 
+				
 			SDL_SetRenderDrawColor(  mGlobalSettings.TRenderer, mGlobalSettings.DefaultBGColor.r,  mGlobalSettings.DefaultBGColor.g,  mGlobalSettings.DefaultBGColor.b, 0xff); 
 			SDL_RenderClear( mGlobalSettings.TRenderer );
 
+        	ImGui_ImplSDLRenderer_NewFrame();
+        	ImGui_ImplSDL2_NewFrame();
+        	ImGui::NewFrame();
+
 			mEditor.render();
+			ImGui::Render();                
+						
+        	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
  
 			SDL_RenderPresent( mGlobalSettings.TRenderer );
 
 			while( SDL_PollEvent( &e ) != 0 ){
+				ImGui_ImplSDL2_ProcessEvent(&e);
 				mEditor.handleEvents(&e);
+				
 			}
 			mEditor.handleEvents();
 		}

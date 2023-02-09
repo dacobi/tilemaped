@@ -49,6 +49,10 @@ class TIDialog: public BDialog{
 		bool bInputIsAccepted=true;
 		bool bIsNumeric=false;
 		bool bAutoComplete=false;
+		int mCompleteIndex=0;
+		//char tmpbuf[1000];
+		//char newbuf[1000];
+		static int MyCallback(ImGuiInputTextCallbackData* data);
 		std::string mCompleteText;
 		//TTFTexture mTexCompleteText;
 		std::string mCompleteCursor;
@@ -121,11 +125,17 @@ class ITDialog: public SADialog{
 class RNDialog: public ITDialog{
 	public:
 		int mNumber = 0;
+		bool show_another_window = false;
+		bool show_demo_window = false;
+		float f = 0;
+    	int counter = 0;
+		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 		virtual void init();
 		virtual void cancel();
 		virtual void dropLastInputChar();
 		virtual SDL_Rect render(int xpos, int ypos);
 		virtual void recieveInput(int mKey);
+		virtual int recieveInput(int mx, int my);
 		virtual void recieveInput(std::string mTextInput);		
 };
 
@@ -204,12 +214,23 @@ class HDialog: public SDialog{
 		virtual SDL_Rect render(int xpos, int ypos);
 };
 
-class PIDialog: public HDialog{
+class PIDialog {
 	public:
 		TEditor* mEditor;
 		virtual void init();
 		virtual void update();
 		int fliph,flipv,tilenum,curtile;
+		std::string TileMap;
+		std::string cMapWidth;
+		std::string cMapHeight;
+		std::string TileSizeX;
+		std::string TileSizeY;
+		std::string Flip;		
+		std::string CurrentTile;
+		std::string TilesInSet;
+		std::string SelectedTile;
+		std::string cTileSizeX;
+		std::string cTileSizeY;
 		virtual SDL_Rect render(int xpos, int ypos);
 };
 

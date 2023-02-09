@@ -116,11 +116,13 @@ int TEditor::saveToFolder(std::string path){
 int TEditor::render(){
 	mGlobalSettings.updateTicks();
 
+	
+
 	if(mCurMode == EMODE_MAP){
  		if(!mGlobalSettings.bShowTypeSelection) mTileSelectedTile->bIsSelected = false;		
 		mTileMap.render(mTileMapScrollX,mGlobalSettings.TopBarHeight+mTileMapScrollY,&mTileSet);
 		mTileSelectedTile->bIsSelected = true;
-		
+
 		mTileSet.render(mGlobalSettings.TopBarHeight, mTileSetScrollY);
 		if(mActiveDialog){
 			mActiveDialog->render((mGlobalSettings.WindowWidth/2)-(mActiveDialog->mDialogWidth/2),(mGlobalSettings.WindowHeight/2)-(mActiveDialog->mDialogHeight/2));
@@ -130,6 +132,9 @@ int TEditor::render(){
 			mProjectInfo.update();
 			mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
 		}
+
+	    
+
 	}
 	
 	if(mCurMode == EMODE_TILE){
@@ -610,7 +615,7 @@ int TEditor::handleEvents(){
 			}
 		}
 		if(!waitLeftMouseButton){		
-			if(leftMouseButtonDown){
+			if(leftMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
 				if(bLCTRLisDown){
 					if(mCurMode == EMODE_MAP){
 						if(bTileSetGrapped){
@@ -730,7 +735,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 		  			toggleSelectedTile();
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F1){	  				
-		  			activateHelpDialog();
+		  			//activateHelpDialog();
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F2){	  				
 		  			activateProjectInfo();
@@ -748,7 +753,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					activateDropUnusedTiles();
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F7){	  									
-										
+					//mActiveDialog = &mInputNumber;									
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F12){	  				
 		  			activateSaveDialog();

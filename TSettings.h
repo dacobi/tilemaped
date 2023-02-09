@@ -1,6 +1,12 @@
 #ifndef __TSETTINGS__
 #define __TSETTINGS__
 
+#include "imgui.h"
+#include "imgui_impl_sdl2.h"
+#include "imgui_impl_sdlrenderer.h"
+//#include "misc/cpp/imgui_stdlib.h"
+//
+#include <stdio.h>
 #include <SDL.h> 
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -57,7 +63,9 @@ namespace fs = std::filesystem;
 
 class TSettings{
 	public:
+		ImGuiIO *mio;
 		void shutdown();
+		TEditor* CurrentEditor;
 		SDL_Renderer *TRenderer;
 		SDL_Window *TWindow;			
 		int WindowWidth=1900;
@@ -94,7 +102,7 @@ class TSettings{
 		TTF_Font *LFont;
 		SDL_Color DefaultBGColor = {0xc0,0xc0,0xc0,0xff};
 		SDL_Color DefaultDarkBGColor = {0xb0,0xb0,0xb0,0xff};
-		SDL_Color DefaultTextColor = {0x20,0x20,0x20,0xff};
+		SDL_Color DefaultTextColor = {0xff,0xff,0xff,0xff};
 		SDL_Color AltTextColor = {0x0,0x0,0xff,0xff};
 		SDL_Color DefaultBorderColor = {0x00,0x00,0xff,0xff};
 		SDL_Color DefaultButtonColor = {0x90,0x90,0x90,0xff};
@@ -118,6 +126,15 @@ class TSettings{
 		int updateTicks();
 		int getTicks();
 		int runOCD();
+		std::string mWindow = "\uf2d0";
+		std::string mFloppy = "\ue240"; //Floppy disk		
+		std::string mPrompt = "\uf120"; //Prompt
+		std::string mFile = "\uf15c"; // File Icon
+		std::string mBook = "\uf405"; //Open Book SEL		
+		std::string mInfo = "\uf449"; // Info circle		
+		std::string mImage = "\uf71e"; // Info circle	
+		std::string mExit = "\uf705";
+		
 };
 
 enum {

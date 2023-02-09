@@ -16,7 +16,7 @@ endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 	set(CMAKE_CXX_COMPILER "g++")
-	target_include_directories(tilemaped PUBLIC /usr/include/SDL2)	
+	target_include_directories(tilemaped PUBLIC /usr/include/SDL2 ./backends .)	
 endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")

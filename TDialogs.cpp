@@ -1,6 +1,7 @@
 #include "TSettings.h"
 #include "TDialogs.h"
 #include "TEditor.h"
+#include "imgui_stdlib.h"
 
 void Dialog::setColorScheme(int nScheme){}
 
@@ -69,12 +70,77 @@ void TBDialog::init(){
 
 SDL_Rect TBDialog::render(int xpos, int ypos){
 	mDialogWidth = mGlobalSettings.WindowWidth;
-	SDL_Rect tmpRect = Dialog::render(xpos, ypos);
-	mDialogTextWindow = mEditor->mCurMode == EMODE_MAP ? mTexDialogTextActions.mWindow + " TileMap Editor" : mTexDialogTextActions.mWindow + " Tile Editor";
-	mTexDialogTextWindow.loadTTFFromUTF8(mDialogTextWindow, mTextColor);
+	//SDL_Rect tmpRect = Dialog::render(xpos, ypos);
+	
+	mDialogTextWindow = mEditor->mCurMode == EMODE_MAP ? mGlobalSettings.mWindow+ " Tilemap Editor" : mGlobalSettings.mWindow + " Tile Editor";
+	/*mTexDialogTextWindow.loadTTFFromUTF8(mDialogTextWindow, mTextColor);
 	mTexDialogTextActions.render(mDialogBorder*4,(mDialogHeight-mTexDialogTextActions.mTexHeight)/2);
 	mTexDialogTextWindow.render((mGlobalSettings.WindowWidth/2)-(mTexDialogTextWindow.mTexWidth/2),(mDialogHeight-mTexDialogTextActions.mTexHeight)/2);
 	mTexDialogTextProject.render(mGlobalSettings.WindowWidth -  mTexDialogTextProject.mTexWidth - mDialogBorder*4, (mDialogHeight-mTexDialogTextActions.mTexHeight)/2);
+	*/
+	ImGui::BeginMainMenuBar();
+		if (ImGui::BeginMenu("File"))
+		{
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Save (F12)")).c_str())){
+				mGlobalSettings.CurrentEditor->activateSaveDialog();
+			}
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Save As (F11)")).c_str())){
+				mGlobalSettings.CurrentEditor->activateSaveAsDialog();
+			}
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mExit + " Quit")).c_str())){
+				mGlobalSettings.CurrentEditor->bEditorRunning = false;
+			}
+
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("View"))
+		{
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Tilemap")).c_str())){
+				mGlobalSettings.CurrentEditor->mCurMode = EMODE_MAP;
+			}
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Tile")).c_str())){
+				mGlobalSettings.CurrentEditor->mCurMode = EMODE_TILE;
+			}
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Project Info (F2)")).c_str())){
+				mGlobalSettings.CurrentEditor->activateProjectInfo();
+			}
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Edit"))
+		{
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Empty Tile (F3)")).c_str())){
+				mGlobalSettings.CurrentEditor->createNewTile();
+			}
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Tile (F4)")).c_str())){
+				mGlobalSettings.CurrentEditor->activateOpenTileDialog();		  			
+			}
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Tile (F5)")).c_str())){
+				mGlobalSettings.CurrentEditor->createNewTileCopy(mGlobalSettings.CurrentEditor->mTileSelectedTile);
+			}
+			if(ImGui::MenuItem("Undo (U)")){
+				mGlobalSettings.CurrentEditor->undoLastActionGroup();	  		
+			}
+			if(ImGui::MenuItem("Redo (R)")){
+				mGlobalSettings.CurrentEditor->redoLastActionGroup();	  		
+			}
+			
+
+
+			
+			ImGui::EndMenu();
+		}
+
+    auto textWidth   = ImGui::CalcTextSize(mDialogTextWindow.c_str()).x;
+	ImGui::SetCursorPosX((mGlobalSettings.WindowWidth - textWidth) * 0.5f);
+	ImGui::Text(mDialogTextWindow.c_str());               // Display some text (you can use a format strings too)
+
+	mGlobalSettings.TopBarHeight = ImGui::GetWindowHeight();
+
+	ImGui::EndMainMenuBar();
+	
+	SDL_Rect tmpRect;
 	return tmpRect;
 }
 
@@ -149,17 +215,34 @@ void SDialog::recieveInput(int mKey){
 }
 
 SDL_Rect SDialog::render(int xpos, int ypos){
-	SDL_Rect tmpBorder = Dialog::render(xpos, ypos);
+        	
+	ImGui::Begin("Save Project");                         
+    		
+			ImGui::Text("Replace Project On Disk?");
 
-	mTexDialogTextMain.render(tmpBorder.x+mDialogBorder*2,tmpBorder.y+mDialogBorder*2);
+            if (ImGui::Button("Save")){
+				bInputIsAccept=true;
+				mGlobalSettings.mProjectSaveState = 1;
+			}
+
+			if (ImGui::Button("Cancel")){
+				bInputIsCancel=true;
+			}
+            
+        ImGui::End();
+
+	//SDL_Rect tmpBorder = Dialog::render(xpos, ypos);
+	SDL_Rect tmpBorder;	
+	//mTexDialogTextMain.render(tmpBorder.x+mDialogBorder*2,tmpBorder.y+mDialogBorder*2);
 	
-	mAcceptButton.render(tmpBorder.x + ((mDialogWidth / 4) - (mAcceptButton.mDialogWidth/2)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight+mDialogBorder*3);	
-	mCancelButton.render(tmpBorder.x + (((mDialogWidth / 4)*3) - (mAcceptButton.mDialogWidth/2)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight+mDialogBorder*3);	
+	//mAcceptButton.render(tmpBorder.x + ((mDialogWidth / 4) - (mAcceptButton.mDialogWidth/2)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight+mDialogBorder*3);	
+	//mCancelButton.render(tmpBorder.x + (((mDialogWidth / 4)*3) - (mAcceptButton.mDialogWidth/2)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight+mDialogBorder*3);	
 		
 	return tmpBorder;
 }
 
 int SADialog::recieveInput(int mx, int my){
+	/*
 	if(bSubDialogActive){
 		mSubDialog->recieveInput(mx, my);
 		if(mSubDialog->bInputIsAccept){
@@ -172,7 +255,7 @@ int SADialog::recieveInput(int mx, int my){
 		}				
 	} else {
 		return SDialog::recieveInput(mx, my);
-	}
+	}*/
 	return 0;
 }
 
@@ -220,8 +303,27 @@ void SADialog::init(){
 }
 
 SDL_Rect SADialog::render(int xpos, int ypos){
-	SDL_Rect tmpBorder = Dialog::render(xpos, ypos);
 
+ImGui::Begin("Save Project As");                         
+    		
+			ImGui::Text("Save Project As Folder");
+
+			mTextInput.render(xpos ,  ypos);
+
+            if (ImGui::Button("Save")){
+				if(mTextInput.bInputIsAccepted){
+					recieveInput(SDLK_y);					
+				}				
+			}
+
+			if (ImGui::Button("Cancel")){
+				bInputIsCancel=true;
+			}
+            
+        ImGui::End();
+
+	SDL_Rect tmpBorder;// = Dialog::render(xpos, ypos);
+/*
 	mTexDialogTextMain.render(tmpBorder.x+mDialogBorder*2,tmpBorder.y+mDialogBorder*2);
 	
 	mAcceptButton.render(tmpBorder.x + ((mDialogWidth / 4) - (mAcceptButton.mDialogWidth/2)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight * 2 + mDialogBorder*4);	
@@ -229,18 +331,27 @@ SDL_Rect SADialog::render(int xpos, int ypos){
 
 	
 	mTextInput.render(tmpBorder.x+((mDialogWidth/2)-(mTextInput.mDialogWidth/2)) ,tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight+mDialogBorder*2);
+	*/
 	if(bSubDialogActive){
 		tmpBorder = mSubDialog->render(xpos + 50, ypos + 50);
+		if(mSubDialog->bInputIsAccept){
+			recieveInput(SDLK_y);
+		}
+		if(mSubDialog->bInputIsCancel){
+			recieveInput(SDLK_n);
+			mSubDialog->bInputIsCancel = false;
+		}
 	}
+	
 	return tmpBorder;
 }
 
 void SADialog::recieveInput(std::string mText){		
-	mTextInput.recieveInput(mText);
+	//mTextInput.recieveInput(mText);
 	//mTextInput.mDialogTextMain += mText;
 	//mTextInput.mTextColor =  mGlobalSettings.DefaultTextColor;
 	//mTextInput.init();
-	resize();	
+	//resize();	
 }
 
 void SADialog::recieveInput(int mKey){
@@ -296,7 +407,7 @@ void SADialog::dropLastInputChar(){
 		resize();
 	}*/
 	mTextInput.dropLastInputChar();
-	resize();
+	//resize();
 }
 
 void OPDialog::init(){
@@ -741,6 +852,10 @@ void RNDialog::dropLastInputChar(){
 }
 
 
+int RNDialog::recieveInput(int mx, int my){
+	return 1;
+}
+
 void RNDialog::recieveInput(std::string mStr){	
 	mTextInput.recieveInput(mStr);
 	resize();
@@ -770,7 +885,44 @@ void RNDialog::recieveInput(int mKey){
 }
 
 SDL_Rect RNDialog::render(int xpos, int ypos){	
-	SDL_Rect tmpBorder = Dialog::render(xpos, ypos);
+	
+	
+	 
+		
+			
+			
+		/*
+        ImGui_ImplSDLRenderer_NewFrame();
+        ImGui_ImplSDL2_NewFrame();
+        ImGui::NewFrame();
+		*/
+		
+
+    		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+
+    		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+    		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+    		ImGui::Checkbox("Another Window", &show_another_window);
+
+            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+            ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+
+            if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+                counter++;
+            //ImGui::SameLine();
+            ImGui::Text("counter = %d", counter);
+
+            //ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            ImGui::End();
+
+    
+
+	/*
+	ImGui::Begin("Another Window", &show_another_window);  
+            ImGui::Text("Hello from another window!");
+    ImGui::End();*/
+	
+	/*SDL_Rect tmpBorder = Dialog::render(xpos, ypos);
 
 	mTexDialogTextMain.render(tmpBorder.x+mDialogBorder*2,tmpBorder.y+mDialogBorder*2);
 	
@@ -778,7 +930,8 @@ SDL_Rect RNDialog::render(int xpos, int ypos){
 	mCancelButton.render(tmpBorder.x + (((mDialogWidth / 4)*3) - (mCancelButton.mDialogWidth/2)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight * 2+ mDialogBorder*4);	
 		
 	mTextInput.render(tmpBorder.x+((mDialogWidth/2)-(mTextInput.mDialogWidth/2)) ,tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight+mDialogBorder*2);
-
+*/
+	SDL_Rect tmpBorder;
 	return tmpBorder;
 }
 
@@ -812,18 +965,40 @@ void RNDialog::init(){
 	mDialogHeight = mTexDialogTextMain.mTexHeight * 6;
 }
 
-SDL_Rect ITDialog::render(int xpos, int ypos){	
-	SDL_Rect tmpBorder = Dialog::render(xpos, ypos);
 
-	mTexDialogTextMain.render(tmpBorder.x+mDialogBorder*2,tmpBorder.y+mDialogBorder*2);
+SDL_Rect ITDialog::render(int xpos, int ypos){	
+	SDL_Rect tmpBorder; // = Dialog::render(xpos, ypos);
+
+	//mTexDialogTextMain.render(tmpBorder.x+mDialogBorder*2,tmpBorder.y+mDialogBorder*2);
 	
-	mAcceptButton.render(tmpBorder.x + ((tmpBorder.w / 4) - (mAcceptButton.mTexDialogTextMain.mTexWidth)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight * 2 + mDialogBorder*4);	
-	mCancelButton.render(tmpBorder.x + (((tmpBorder.w / 4)*3) - (mCancelButton.mTexDialogTextMain.mTexWidth)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight * 2+ mDialogBorder*4);	
-		
-	mTextInput.render(tmpBorder.x+((mDialogWidth/2)-(mTextInput.mDialogWidth/2)) ,tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight+mDialogBorder*2);
+	//mAcceptButton.render(tmpBorder.x + ((tmpBorder.w / 4) - (mAcceptButton.mTexDialogTextMain.mTexWidth)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight * 2 + mDialogBorder*4);	
+	//mCancelButton.render(tmpBorder.x + (((tmpBorder.w / 4)*3) - (mCancelButton.mTexDialogTextMain.mTexWidth)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight * 2+ mDialogBorder*4);	
+
+
+ImGui::Begin("Import Tile");                         
+    		
+			ImGui::Text("Import Tile from bitmap or RAW");
+
+			mTextInput.render(xpos ,  ypos);
+
+            if (ImGui::Button("Import")){
+				if(mTextInput.bInputIsAccepted){
+					recieveInput(SDLK_y);					
+				}				
+			}
+
+			if (ImGui::Button("Cancel")){
+				bInputIsCancel=true;
+			}		
+            
+        ImGui::End();
+
+
+	//mTextInput.render(tmpBorder.x+((mDialogWidth/2)-(mTextInput.mDialogWidth/2)) ,tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight+mDialogBorder*2);
 	
 	return tmpBorder;
 }
+
 
 void ITDialog::init(){
 	mDialogTextMain = mTexDialogTextMain.mFile + " Import Tile from file";
@@ -992,9 +1167,9 @@ void TIDialog::init(){
 	}
 	if(bAutoComplete && mCompleteText.length()){
 		mDialogWidth = mTexDialogTextMain.mTexWidth + mTexCompleteCursor.mTexWidth +  (mDialogBorder * 2);
-		std::cout << "CompleteCursor: " <<  mTexCompleteCursor.mTexWidth << std::endl;
+		//std::cout << "CompleteCursor: " <<  mTexCompleteCursor.mTexWidth << std::endl;
 		if(mCompleteAfter.length()){
-			std::cout << "CompleteAfter: " << mTexCompleteAfter.mTexWidth << std::endl;
+			//std::cout << "CompleteAfter: " << mTexCompleteAfter.mTexWidth << std::endl;
 			mDialogWidth += mTexCompleteAfter.mTexWidth + (mDialogBorder * 2);
 		}
 	} else {
@@ -1015,7 +1190,7 @@ void TIDialog::dropLastInputChar(){
 	if(mDialogTextMain.size()){
 		mDialogTextMain.pop_back();
 		checkCurrentText();
-		init();
+		//init();
 	}
 }
 
@@ -1024,8 +1199,30 @@ int TIDialog::recieveInput(int mx, int my){
 }
 
 SDL_Rect TIDialog::render(int xpos, int ypos){
-	init();
-	mButtonRect = Dialog::render(xpos, ypos);
+	//ImGui::InputText("FileName", &mDialogTextMain);
+	//strcpy((char*)mDialogTextMain.c_str(), tmpbuf);
+	checkCurrentText();
+
+	if(bInputIsAccepted){
+		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(mGlobalSettings.DefaultTextColor.r,mGlobalSettings.DefaultTextColor.g,mGlobalSettings.DefaultTextColor.b ,255));
+	} else {
+		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(mGlobalSettings.ErrorTextColor.r,mGlobalSettings.ErrorTextColor.g,mGlobalSettings.ErrorTextColor.b ,255));
+	}
+
+	//ImGui::InputText("##text1", txt_green, sizeof(txt_green));
+	
+
+	if(bAutoComplete){
+		ImGui::InputText("FileName", &mDialogTextMain, ImGuiInputTextFlags_CallbackCompletion, MyCallback, &mCompleteText);
+	} else {
+		ImGui::InputText("FileName", &mDialogTextMain);
+	}
+
+	ImGui::PopStyleColor();
+
+	//init();
+	/*mButtonRect = Dialog::render(xpos, ypos);
+	
 	int cTextX = xpos + (mDialogBorder *2);
 	int cTextY = ypos + (mDialogBorder + (mDialogBorder/3));
 	mTexDialogTextMain.render(cTextX, cTextY);
@@ -1033,15 +1230,67 @@ SDL_Rect TIDialog::render(int xpos, int ypos){
 		mTexCompleteCursor.render(cTextX+mTexDialogTextMain.mTexWidth, cTextY);
 		mTexCompleteAfter.render(cTextX+mTexDialogTextMain.mTexWidth+mTexCompleteCursor.mTexWidth, cTextY);
 	}
-	
+	*/
+	//mButtonRect = Dialog;
 	return mButtonRect;
+
+
 }
+
+
+ int TIDialog::MyCallback(ImGuiInputTextCallbackData* data)
+                {
+                    if (data->EventFlag == ImGuiInputTextFlags_CallbackCompletion)
+                    {
+						
+						//strcpy(mDialogTextMain.c_str(), newbuf);
+						
+						const char* tmp = ((std::string*)(data->UserData))->c_str();
+
+                        data->InsertChars(data->CursorPos, tmp);
+                   }
+			}
+
 
 void TIDialog::autoComplete(){
 	if(bAutoComplete){
+		/*
 		mDialogTextMain += mCompleteText;
 		mCompleteText = "";			
-		checkCurrentText();
+		checkCurrentText();*/
+		fs::path cPath = mDialogTextMain;
+			std::string mDir,mFile;
+
+			if(cPath.parent_path() == ""){
+				mDir = ".";
+			} else {
+				mDir = cPath.parent_path();
+			}
+
+			mCompleteText = "";
+			mFile = cPath.filename();
+
+			std::cout << "Complete Before" << std::endl;
+
+			if(fs::is_directory(fs::status(mDir))){
+				for (const auto & entry : fs::directory_iterator(mDir)){
+					std::string tStr = (entry.path()).filename();
+					std::cout << "Complete:" << mFile << std::endl;
+					if(mFile.length()){
+						std::size_t subpos = tStr.find(mFile);						
+						if((subpos != std::string::npos) && (subpos == 0)){												
+							mCompleteText = tStr.substr(mFile.length());
+							std::cout << "Complete Subpos:" << mCompleteText << std::endl;
+							//mDialogTextMain += mCompleteText;
+							//std::cout << mDialogTextMain << std::endl;
+							//strcpy((char*)mDialogTextMain.c_str(), tmpbuf);
+							//mCompleteText = "";
+							break;
+						} 				
+					}
+				}
+		}
+		
 	}
 }
 
@@ -1090,6 +1339,7 @@ int TIDialog::checkCurrentText(){
 			}
 		//}
 
+		/*
 		if(bAutoComplete){
 			fs::path cPath = mDialogTextMain;
 			std::string mDir,mFile;
@@ -1115,8 +1365,8 @@ int TIDialog::checkCurrentText(){
 					}
 				}
 			}
-			init();        		
-		}
+			init();        	
+		}*/
 
 		if(bMustBeFile){
 			if(cIsFolder){					
@@ -1309,15 +1559,29 @@ void MEDialog::update(){
 
 SDL_Rect MEDialog::render(int xpos, int ypos){
 
-	SDL_Rect tmpBorder = Dialog::render(xpos, ypos);
+	SDL_Rect tmpBorder; // = Dialog::render(xpos, ypos);
 
-	int cTextX = xpos + (3 * mDialogBorder);
-	int cTextY = ypos + (3 * mDialogBorder);
+
+ImGui::Begin("Message");                         
+    		
+
+			ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(mTextColor.r, mTextColor.g, mTextColor.b, 255));
+			ImGui::Text(mDialogTextMain.c_str());
+			ImGui::PopStyleColor();
+			//mTextInput.render(xpos ,  ypos);
+            
+			if (ImGui::Button("Close")){
+				bInputIsCancel=true;
+			}
+            
+        ImGui::End();
+	//int cTextX = xpos + (3 * mDialogBorder);
+	//int cTextY = ypos + (3 * mDialogBorder);
 		
-	mHelpText[0]->render(cTextX, cTextY);	
-	cTextY += (mHelpText[0]->mTexHeight * 2);
+	//mHelpText[0]->render(cTextX, cTextY);	
+	//cTextY += (mHelpText[0]->mTexHeight * 2);
 	
-	mCloseButton.render(xpos + ((mDialogWidth/2)-(mCloseButton.mDialogWidth/2)), cTextY - (mDialogBorder*1.5));
+	//mCloseButton.render(xpos + ((mDialogWidth/2)-(mCloseButton.mDialogWidth/2)), cTextY - (mDialogBorder*1.5));
 	
 	return tmpBorder;
 }
@@ -1350,9 +1614,11 @@ void PIDialog::update(){
 	convert << flipv << std::endl;
 	convert >> cFlipV;
 
-	std::string tmpStr = "FlipH: "+cFlipH + " FlipV: " + cFlipV;
 	
-	mHelpText[mHelpText.size()-1]->loadTTFFromUTF8(tmpStr, mTextColor);
+	TileSizeX = "TileSizeX " + cTileSizeX;
+	TileSizeY = "TileSizeY " + cTileSizeY;
+
+	Flip = "FlipH: "+cFlipH + " FlipV: " + cFlipV;
 	
 	std::string cTileX,cTileY;
 	int cx,cy;
@@ -1366,114 +1632,61 @@ void PIDialog::update(){
 	convert << (cy+1) << std::endl;
 	convert >> cTileY;
 
-	tmpStr = "Current Tile: (" + cTileX + "," + cTileY + ")";
+	TileMap = "TileMap " + cMapWidth + "x" + cMapHeight;
+
+	CurrentTile = "Current Tile: (" + cTileX + "," + cTileY + ")";
 	
-	mHelpText[mHelpText.size()-2]->loadTTFFromUTF8(tmpStr, mTextColor);
-
-	tmpStr = "Selected in TileSet: " + cCurTile;	
-
-	mHelpText[mHelpText.size()-3]->loadTTFFromUTF8(tmpStr, mTextColor);
-
-	tmpStr = "Tiles in TileSet: " + cTileNum;
-
-	mHelpText[mHelpText.size()-4]->loadTTFFromUTF8(tmpStr, mTextColor);
-
-	int cMaxWidth = mHelpText[0]->mTexWidth;
-
-	for(const auto* hTex : mHelpText){
-		if(hTex->mTexWidth > cMaxWidth){cMaxWidth = hTex->mTexWidth;}
-	}
 	
-	mDialogWidth = cMaxWidth + (mDialogBorder * 8);
+	SelectedTile = "Selected in TileSet: " + cCurTile;	
+
+
+	TilesInSet = "Tiles in TileSet: " + cTileNum;
 }
 
 void PIDialog::init(){
 
-	mDialogBorder=3;
-	mDialogColor = mGlobalSettings.DefaultDarkBGColor;
-	mDialogBorderColor=  mGlobalSettings.DefaultButtonBorderColor;
-
-	TTFTexture* mNewText;
-	std::string tmpStr;
+	
 	std::stringstream convert;
 	
-	std::string cMapWidth;
-	std::string cMapHeight;
-	
+		
 	convert << mGlobalSettings.TileMapWidth << std::endl;
 	convert >> cMapWidth;
 
 	convert << mGlobalSettings.TileMapHeight << std::endl;
 	convert >> cMapHeight;
 
-	mNewText = new TTFTexture();
-	tmpStr = "TileMap: " + cMapWidth + "x" + cMapHeight;
-	mNewText->loadTTFFromUTF8(tmpStr, mTextColor);
-	mHelpText.push_back(mNewText);
 
-	std::string cTileSizeX;
 	convert << mGlobalSettings.TileSizeX << std::endl;
 	convert >> cTileSizeX;
 
-	std::string cTileSizeY;
 	convert << mGlobalSettings.TileSizeY << std::endl;
 	convert >> cTileSizeY;
-
-	mNewText = new TTFTexture();
-	tmpStr = "TileSizeX: " + cTileSizeX;
-	mNewText->loadTTFFromUTF8(tmpStr, mTextColor);
-	mHelpText.push_back(mNewText);
-
-	mNewText = new TTFTexture();
-	tmpStr = "TileSizeY: " + cTileSizeY;
-	mNewText->loadTTFFromUTF8(tmpStr, mTextColor);
-	mHelpText.push_back(mNewText);
-
-	mNewText = new TTFTexture();
-	tmpStr = "Tiles in TileSet: ";
-	mNewText->loadTTFFromUTF8(tmpStr, mTextColor);
-	mHelpText.push_back(mNewText);
-
-	mNewText = new TTFTexture();
-	tmpStr = "Selected in TileSet: ";
-	mNewText->loadTTFFromUTF8(tmpStr, mTextColor);
-	mHelpText.push_back(mNewText);
-
-
-	mNewText = new TTFTexture();
-	tmpStr = "Current Tile: (0,0)";
-	mNewText->loadTTFFromUTF8(tmpStr, mTextColor);
-	mHelpText.push_back(mNewText);
 
 	fliph=0;
 	flipv=0;	
 
-	mNewText = new TTFTexture();
-	mHelpText.push_back(mNewText);
 	update();
-	
-	int cMaxWidth = mHelpText[0]->mTexWidth;
-
-	for(const auto* hTex : mHelpText){
-		if(hTex->mTexWidth > cMaxWidth){cMaxWidth = hTex->mTexWidth;}
-	}
-	
-	mDialogWidth = cMaxWidth;
-	mDialogHeight = mHelpText.size()*(mHelpText[0]->mTexHeight  + (mHelpText[0]->mTexHeight/2)) + (mDialogBorder * 4);
-	mDialogWidth += mDialogBorder * 8;	
+		
 		
 }
 
 SDL_Rect PIDialog::render(int xpos, int ypos){
-	SDL_Rect tmpBorder = Dialog::render(xpos, ypos);
+	SDL_Rect tmpBorder; // = Dialog::render(xpos, ypos);
 
-	int cTextX = xpos + (3 * mDialogBorder);
-	int cTextY = ypos + (3 * mDialogBorder);
-		
-	for(auto* hTex : mHelpText){
-		hTex->render(cTextX, cTextY);	
-		cTextY += (hTex->mTexHeight*1.5);
-	}
+	
+	ImGui::Begin("\uf449 Project Info", &mGlobalSettings.bShowProjectInfo);
+
+	ImGui::Text(TileMap.c_str());
+	ImGui::Text(TileSizeX.c_str());
+	ImGui::Text(TileSizeY.c_str());
+
+	ImGui::Text(TilesInSet.c_str());
+	ImGui::Text(SelectedTile.c_str());
+
+	ImGui::Text(CurrentTile.c_str());
+	ImGui::Text(Flip.c_str());
+	
+	ImGui::End();
 		
 	return tmpBorder;
 }
