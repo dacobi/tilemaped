@@ -410,6 +410,31 @@ void SADialog::dropLastInputChar(){
 	//resize();
 }
 
+SDL_Rect OPDialog::render(int xpos, int ypos){
+
+ImGui::Begin("Open Project");                         
+    		
+			ImGui::Text("Open Project from Folder");
+
+			mTextInput.render(xpos ,  ypos);
+
+            if (ImGui::Button("Open")){
+				if(mTextInput.bInputIsAccepted){
+					recieveInput(SDLK_y);					
+				}				
+			}
+
+			if (ImGui::Button("Cancel")){
+				bInputIsCancel=true;
+			}		
+            
+        ImGui::End();
+
+	SDL_Rect tmpRect;
+	return tmpRect;
+
+}
+
 void OPDialog::init(){
 	mDialogTextMain = mTexDialogTextMain.mFile + " Open Project From Folder";
 
@@ -424,6 +449,7 @@ void OPDialog::init(){
 	
 	mTextInput.mDialogTextMain = "";
 	mTextInput.bIsInputActive = true;
+	mTextInput.bAutoComplete = true;
 	mTextInput.init();
 
 	bSubDialogActive = false;
@@ -457,26 +483,76 @@ void OCDialog::init(){
 }
 
 SDL_Rect OCDialog::render(int xpos, int ypos){
-	SDL_Rect tmpBorder = Dialog::render(xpos, ypos);
+	SDL_Rect tmpBorder;// = Dialog::render(xpos, ypos);
 
+
+	ImGui::BeginMainMenuBar();
+		if (ImGui::BeginMenu("File"))
+		{
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Open Project")).c_str())){
+				bSubDialogActive = true;
+				bSubDialogIsOpen = true;
+				bDialogIsWatingForText = true;				
+			}
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Create Project")).c_str())){
+				bSubDialogActive = true;
+				bSubDialogIsCreate = true;
+				bDialogIsWatingForText = true;				
+			}
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mExit + " Quit")).c_str())){
+				mGlobalSettings.bRunningOCD = false;
+			}
+
+			ImGui::EndMenu();
+		}
+
+		std::string mDialogTextWindow = "Tilemaped";
+
+		auto textWidth   = ImGui::CalcTextSize(mDialogTextWindow.c_str()).x;
+		ImGui::SetCursorPosX((mGlobalSettings.WindowWidth - textWidth) * 0.5f);
+		ImGui::Text(mDialogTextWindow.c_str());
+
+		ImGui::EndMainMenuBar();
+
+
+	/*
 	mTexDialogTextMain.render(tmpBorder.x+(mDialogWidth/2)-(mTexDialogTextMain.mTexWidth/2),tmpBorder.y+mDialogBorder*2);
 
 	mOpenButton.render(tmpBorder.x + (((mDialogWidth / 4))  - (mOpenButton.mDialogWidth/2)) - (mDialogBorder * 2), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight + mDialogBorder*3);	
 	mCreateButton.render(tmpBorder.x + (((mDialogWidth / 4)*2) - (mCreateButton.mDialogWidth/2)), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight + mDialogBorder*3);
 	mQuitButton.render(tmpBorder.x + (((mDialogWidth / 4)*3) - (mQuitButton.mDialogWidth/2)) + (mDialogBorder * 2), tmpBorder.y+mDialogBorder+mTexDialogTextMain.mTexHeight + mDialogBorder*3);		
 
+
+	*/
 	if(bSubDialogActive && bSubDialogIsOpen){
 		mOpenProject.render(xpos + 50, ypos + 50);
+		if(mOpenProject.bInputIsCancel){
+			bSubDialogActive = false;
+			bSubDialogIsOpen = false;
+			mOpenProject.bInputIsCancel = false;
+		}
+		if(mOpenProject.bInputIsAccept){
+			recieveInput(SDLK_y);
+		}
 	}
 
 	if(bSubDialogActive && bSubDialogIsCreate){
 		mCreateProject.render(xpos + 50, ypos + 50);
+		if(mCreateProject.bInputIsCancel){
+			bSubDialogActive = false;
+			bSubDialogIsCreate = false;
+			mCreateProject.bInputIsCancel = false;
+		}
+		if(mCreateProject.bInputIsAccept){
+			recieveInput(SDLK_y);
+		}
 	}
 
 	return tmpBorder;
 }
 
 int OCDialog::recieveInput(int mx, int my){
+	return 0;
 	if(bSubDialogActive && bSubDialogIsOpen){
 		if(mOpenProject.mAcceptButton.recieveInput(mx, my)){
 			recieveInput(SDLK_y);
@@ -522,6 +598,7 @@ void OCDialog::resize(){
 
 
 void OCDialog::recieveInput(std::string cStr){
+	return;
 	if(bSubDialogActive && bSubDialogIsOpen){
 		mOpenProject.mTextInput.recieveInput(cStr);		
 		resize();
@@ -572,16 +649,18 @@ void OCDialog::recieveInput(int mKey){
 				convert << mCreateProject.mReadSizeY.mDialogTextMain << std::endl;
 				convert >> tiley;
 				
-				mGlobalSettings.TileMapWidth = mapx;
-				mGlobalSettings.TileMapHeight = mapy;
-				mGlobalSettings.TileSizeX = tilex;
-				mGlobalSettings.TileSizeY = tiley;
+				mGlobalSettings.TileMapWidth = mCreateProject.tmapx;
+				mGlobalSettings.TileMapHeight = mCreateProject.tmapy;
+				mGlobalSettings.TileSizeX = mCreateProject.tilex;
+				mGlobalSettings.TileSizeY = mCreateProject.tiley;
 				mGlobalSettings.ProjectPath = mCreateProject.mReadPath.mDialogTextMain;
 
-				if(mCreateProject.mReadPal.bInputIsAccepted){
-					if(mGlobalSettings.testPaletteFile(mCreateProject.mReadPal.mDialogTextMain)){
-						mGlobalSettings.bProjectHasPalette = true;
-						mGlobalSettings.ProjectPalettePath = mCreateProject.mReadPal.mDialogTextMain;
+				if(mCreateProject.bHasPalette){
+					if(mCreateProject.mReadPal.bInputIsAccepted){
+						if(mGlobalSettings.testPaletteFile(mCreateProject.mReadPal.mDialogTextMain)){
+							mGlobalSettings.bProjectHasPalette = true;
+							mGlobalSettings.ProjectPalettePath = mCreateProject.mReadPal.mDialogTextMain;
+						}
 					}
 				}
 
@@ -613,6 +692,9 @@ void OCDialog::recieveInput(int mKey){
 	if(mKey == SDLK_TAB){
 		if(bSubDialogActive && bSubDialogIsCreate){
 			mCreateProject.recieveInput(SDLK_TAB);
+		}
+		if(bSubDialogActive && bSubDialogIsOpen){
+			mOpenProject.mTextInput.autoComplete();
 		}
 	}
 }
@@ -656,8 +738,12 @@ void CPDialog::init(){
 	mReadHeight.mDialogTextMain = "32";
 	mReadSizeX.mDialogTextMain = "16";
 	mReadSizeY.mDialogTextMain = "16";
+	
 	mReadPath.mDialogTextMain = "newfolder";
 	mReadPal.mDialogTextMain = "";
+
+	mReadPath.mInputLabel = "Project Folder";
+	mReadPal.mInputLabel = "Palette File";
 
 	mReadWidth.bIsNumeric= true;
 	mReadHeight.bIsNumeric = true;
@@ -719,8 +805,71 @@ void CPDialog::resize(){
 
 
 SDL_Rect CPDialog::render(int xpos, int ypos){
-	SDL_Rect tmpBorder = Dialog::render(xpos, ypos);
+	SDL_Rect tmpBorder;// = Dialog::render(xpos, ypos);
 
+	
+
+	ImGui::Begin("Create New Project");                         
+    		
+			ImGui::Text("TileMap Width & Height");  
+			
+			ImGui::RadioButton("W: 32", &tmapx, 32);
+			ImGui::SameLine();
+			ImGui::RadioButton("W: 64", &tmapx, 64);
+			ImGui::SameLine();
+			ImGui::RadioButton("W: 128", &tmapx, 128);
+			ImGui::SameLine();
+			ImGui::RadioButton("W: 256", &tmapx, 256);
+
+			ImGui::RadioButton("H: 32", &tmapy, 32);
+			ImGui::SameLine();
+			ImGui::RadioButton("H: 64", &tmapy, 64);
+			ImGui::SameLine();
+			ImGui::RadioButton("H: 128", &tmapy, 128);
+			ImGui::SameLine();
+			ImGui::RadioButton("H: 256", &tmapy, 256);
+
+
+			ImGui::Text("TileSize X/Y");  
+			
+			ImGui::RadioButton("X: 8", &tilex, 8);
+			ImGui::SameLine();
+			ImGui::RadioButton("X: 16", &tilex, 16);
+			ImGui::SameLine();
+			ImGui::RadioButton("Y: 8", &tiley, 8);
+			ImGui::SameLine();
+			ImGui::RadioButton("Y: 16", &tiley, 16);
+
+			mReadPath.render(0,0);
+			if(mReadPath.bIsActive){
+				mActiveInput = &mReadPath;
+			}
+
+			ImGui::Checkbox("Use Palette", &bHasPalette);
+
+			if(bHasPalette){
+				mReadPal.render(0,0);	
+				if(mReadPal.bIsActive){
+				mActiveInput = &mReadPal;
+			}
+			}
+
+			
+
+            if (ImGui::Button("Create")){
+				recieveInput(SDLK_y);
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Cancel")){
+				recieveInput(SDLK_n);
+			}		
+            
+     ImGui::End();
+
+
+/*
 	int offset = 8;
 	float multip = 1.3;
 
@@ -746,7 +895,7 @@ SDL_Rect CPDialog::render(int xpos, int ypos){
 
 	mCreateButton.render(tmpBorder.x + (((mDialogWidth / 4)) - (mCreateButton.mDialogWidth/2)), tmpBorder.y+(mTexDialogTextMain.mTexHeight * 8 * multip)+ offset);
 	mCancelButton.render(tmpBorder.x + (((mDialogWidth / 4)*3) - (mCancelButton.mDialogWidth/2)) + (mDialogBorder * 2), tmpBorder.y+(mTexDialogTextMain.mTexHeight * 8 * multip)+ offset);
-
+*/
 	return tmpBorder;
 }
 
@@ -766,8 +915,7 @@ void CPDialog::recieveInput(int mKey){
 		bInputIsCancel = true;
 	}
 	if(mKey == SDLK_y){
-		if((mReadHeight.bInputIsAccepted) &&(mReadWidth.bInputIsAccepted) &&(mReadSizeX.bInputIsAccepted) &&(mReadSizeY.bInputIsAccepted) && (mReadPath.bInputIsAccepted) ){
-			
+		if( (mReadPath.bInputIsAccepted) ){
 			bInputIsAccept=true;
 			bInputIsAccepted = true;
 		} else {
@@ -782,6 +930,7 @@ void CPDialog::recieveInput(int mKey){
 }	
 
 int CPDialog::recieveInput(int mx, int my){
+	return 0;
 	if(mReadWidth.recieveInput(mx, my)){
 		mReadWidth.bIsInputActive = true;
 		mReadHeight.bIsInputActive = false;
@@ -1213,9 +1362,11 @@ SDL_Rect TIDialog::render(int xpos, int ypos){
 	
 
 	if(bAutoComplete){
-		ImGui::InputText("FileName", &mDialogTextMain, ImGuiInputTextFlags_CallbackCompletion, MyCallback, &mCompleteText);
+		ImGui::InputText(mInputLabel.c_str(), &mDialogTextMain, ImGuiInputTextFlags_CallbackCompletion, MyCallback, &mCompleteText);
+		bIsActive = ImGui::IsItemActive();
 	} else {
-		ImGui::InputText("FileName", &mDialogTextMain);
+		ImGui::InputText(mInputLabel.c_str(), &mDialogTextMain);
+		bIsActive = ImGui::IsItemActive();
 	}
 
 	ImGui::PopStyleColor();

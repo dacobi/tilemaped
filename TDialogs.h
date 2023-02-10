@@ -75,6 +75,8 @@ class TIDialog: public BDialog{
 		virtual int recieveInput(int mx, int my);		
 		virtual SDL_Rect render(int xpos, int ypos);
 		virtual void recieveInput(std::string mTextInput);
+		std::string mInputLabel = "Filename";
+		bool bIsActive=false;
 };
 
 
@@ -142,6 +144,7 @@ class RNDialog: public ITDialog{
 class OPDialog: public ITDialog{
 	public:
 		virtual void init();
+		virtual SDL_Rect render(int xpos, int ypos);
 };
 
 class CPDialog: public Dialog{
@@ -177,6 +180,11 @@ class CPDialog: public Dialog{
 		virtual void recieveInput(int mKey);		
 		virtual int recieveInput(int mx, int my);
 		virtual SDL_Rect render(int xpos, int ypos);
+		int tmapx=32;
+		int tmapy=32;
+		int tilex=16;
+		int tiley=16;
+		bool bHasPalette = false;
 };
 
 

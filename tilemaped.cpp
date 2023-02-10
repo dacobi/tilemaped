@@ -227,15 +227,25 @@ int TSettings::runOCD(){
 		SDL_SetRenderDrawColor( TRenderer, DefaultBGColor.r,  DefaultBGColor.g,  DefaultBGColor.b, 0xff); 
 		SDL_RenderClear( TRenderer );
 
+       	ImGui_ImplSDLRenderer_NewFrame();
+       	ImGui_ImplSDL2_NewFrame();
+       	ImGui::NewFrame();
+
 		mOpenCreate.render((WindowWidth/2) - (mOpenCreate.mDialogWidth/2),  (WindowHeight/2)- (mOpenCreate.mDialogHeight/2));
+		ImGui::Render();                						
+
+       	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
  
 		SDL_RenderPresent( TRenderer );
 
 		SDL_Event e;
 
 		while( SDL_PollEvent( &e ) != 0 ){
-
+			ImGui_ImplSDL2_ProcessEvent(&e);
 			switch (e.type){
+				case SDL_QUIT:
+						bRunningOCD = false;
+					break;
 				case SDL_TEXTINPUT:
 					if(mOpenCreate.bDialogIsWatingForText){
 						mOpenCreate.recieveInput(std::string(e.text.text));
