@@ -42,7 +42,7 @@ void TEditor::initDialogs(){
 	mColorSelected = 0;
 
 	mSaveDialog.init();
-	mSaveAsDialog.mDialogTextInput = mGlobalSettings.ProjectPath;
+	mSaveAsDialog.mTextInput.mDialogTextMain = mGlobalSettings.ProjectPath;
 	mSaveAsDialog.init();
 	mSaveAsDialog.mSubDialog = &mSaveDialog;
 	
@@ -597,7 +597,7 @@ int TEditor::handleEvents(){
 			return 0;
 		}
 		if(leftMouseButtonDown){
-			mActiveDialog->recieveInput(x,y);
+			//mActiveDialog->recieveInput(x,y);
 			waitLeftMouseButton=true;
 		}
 		return 0;
@@ -673,9 +673,9 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 			break;
 		case SDL_TEXTINPUT:
 	  		if(mActiveDialog){
-				if(mActiveDialog->bDialogIsWatingForText){
-					mActiveDialog->recieveInput(std::string(cEvent->text.text));
-				}
+				//if(mActiveDialog->bDialogIsWatingForText){
+				//	mActiveDialog->recieveInput(std::string(cEvent->text.text));
+				//}
 			}
 			break;
 		case SDL_TEXTEDITING:

@@ -247,9 +247,9 @@ int TSettings::runOCD(){
 						bRunningOCD = false;
 					break;
 				case SDL_TEXTINPUT:
-					if(mOpenCreate.bDialogIsWatingForText){
-						mOpenCreate.recieveInput(std::string(e.text.text));
-					}
+					//if(mOpenCreate.bDialogIsWatingForText){
+					//	mOpenCreate.recieveInput(std::string(e.text.text));
+					//}
 				break;
 				case SDL_KEYDOWN:							
 					if(e.key.keysym.sym == SDLK_BACKSPACE){
@@ -268,9 +268,9 @@ int TSettings::runOCD(){
 					}
 				break;
 				case SDL_MOUSEBUTTONDOWN:
-	   				if (e.button.button == SDL_BUTTON_LEFT){	  		
+	   				/*if (e.button.button == SDL_BUTTON_LEFT){	  		
 	    				mOpenCreate.recieveInput(e.motion.x, e.motion.y);							
-					}
+					}*/
 				break;				
 			}
 		}
