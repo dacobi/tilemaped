@@ -66,6 +66,7 @@ class Tile: public TTexture{
 		std::vector<SDL_Rect> PixelAreas;
 		int initTile();
 		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
+		SDL_Rect renderIm(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect render(int xpos, int ypos, int tscale, TileProperties tProps);
 		void renderEd(int xpos, int ypos, TPalette* tpal);
 		int loadFromFile(std::string filename,TPalette* tpal);
@@ -97,6 +98,8 @@ class TileSet{
 		int removeTile(int cDropTile);
 		void appendTile(Tile* addTile);
 		int render(int ypos, int mScroll);
+		int renderIm(int ypos, int mScroll);		
+		bool updateWinPos=false;
 };
 
 class TileProperties{

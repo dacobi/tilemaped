@@ -5,6 +5,51 @@
 #include "TileMap.h"
 #include "TDialogs.h"
 
+class ImWinMouseButton{
+	public:
+		TVec2<int> mMousePos = {0,0};
+		int ImMouseButton;
+		bool bButtonIsDown = false;
+		
+		bool checkImWindow(){
+			int mx = mGlobalSettings.mio->MousePos.x;
+			int my = mGlobalSettings.mio->MousePos.y;
+
+			ImVec2 mWinPos = ImGui::GetWindowPos();
+			ImVec2 mWinSize = ImGui::GetWindowSize();
+
+			if( ((mx >= mWinPos.x) && (mx <= mWinPos.x + mWinSize.x)) &&  ((my >= mWinPos.y) && (my <= mWinPos.y + mWinSize.y))){
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		void updateButtonState(){
+			if( ImGui::IsMouseClicked(ImMouseButton) && checkImWindow() ){ 
+				bButtonIsDown = true;
+				mMousePos.x = mGlobalSettings.mio->MousePos.x;
+				mMousePos.y = mGlobalSettings.mio->MousePos.y;
+			} else {
+				bButtonIsDown = false;
+			}
+		} 
+};
+
+class ImWinMouseState{
+	public:
+		ImWinMouseButton mLeft;
+		ImWinMouseButton mRight;
+		ImWinMouseState(){
+			mLeft.ImMouseButton = ImGuiMouseButton_Left;
+			mRight.ImMouseButton = ImGuiMouseButton_Right;
+		}
+		void updateButtonStates(){
+			mLeft.updateButtonState();
+			mRight.updateButtonState();
+		}
+};
+
 class TEditor{
 	public:
 		void shutdown();
@@ -19,6 +64,13 @@ class TEditor{
 		bool bEditorRunning=true;
 		int handleEvents(SDL_Event* cEvent);
 		int handleEvents();
+		int handleEMMAp();
+		int handleTileSet();
+		int handleTileMap();
+		int handleEMTile();
+		int findSelected();
+		int findSelMap();
+		int findSelTile();
 		int resizeWindowEvent(SDL_Event* event);
 		void initDialogs();
 		int loadFromFolder(std::string path);
@@ -33,10 +85,14 @@ class TEditor{
 		int mTileMapScrollY = 0;
 		int mTileSetScrollY = 0;
 		int applyScroll(int mx,int my, int amount, int xamount);
+		ImWinMouseState ImButtonsTileSet;
+		//bool ImleftButtonDown = false;
+		//bool ImRightButtonDown = false;
+		//TVec2<int> ImMousePos;
 		bool leftMouseButtonDown = false;
-		bool waitLeftMouseButton = false;
+		//bool waitLeftMouseButton = false;
 		bool rightMouseButtonDown = false;
-		bool waitRightMouseButton = false;
+		//bool waitRightMouseButton = false;
 		bool bLCTRLisDown = false;
 		bool bTileMapGrapped = false;
 		bool bTileSetGrapped = false;
@@ -47,7 +103,7 @@ class TEditor{
 		int searchRectsXY(std::vector<SDL_Rect> &sRects, int mx, int my);
 		int searchRects(std::vector<SDL_Rect> &sRects);
 		int selectTiles(std::vector<int> &cNewSelection, int cTileType);
-		int findSelected();
+		
 		int toggleSelectedTile();		
 		TEActionUndoStack mActionStack;
 		void undoLastActionGroup();
@@ -77,6 +133,10 @@ class TEditor{
 		int activateSaveAsDialog();
 		int activateProjectInfo();
 		int activateDropUnusedTiles();
+		int rx,ry;
+		int cx,cy;
+		int mButtonState;
+	
 };
 
 #endif

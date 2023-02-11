@@ -123,11 +123,11 @@ int TEditor::render(){
 		mTileMap.render(mTileMapScrollX,mGlobalSettings.TopBarHeight+mTileMapScrollY,&mTileSet);
 		mTileSelectedTile->bIsSelected = true;
 
-		mTileSet.render(mGlobalSettings.TopBarHeight, mTileSetScrollY);
 		if(mActiveDialog){
 			mActiveDialog->render((mGlobalSettings.WindowWidth/2)-(mActiveDialog->mDialogWidth/2),(mGlobalSettings.WindowHeight/2)-(mActiveDialog->mDialogHeight/2));
 		}
 		mTopBar.render(0,0);
+		mTileSet.renderIm(mGlobalSettings.TopBarHeight, mTileSetScrollY);
 		if(mGlobalSettings.bShowProjectInfo){
 			mProjectInfo.update();
 			mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
@@ -193,11 +193,12 @@ int TEditor::applyScroll(int mx,int my, int amount, int xamount){
 	mouseSelX = mx;
 	mouseSelY = my;
 	if(mCurMode == EMODE_MAP){ 
-		if( mx > (mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth)){
-			mTileSetScrollY += amount*20;
-			if(mTileSetScrollY > 0){mTileSetScrollY = 0;}
-			if(mTileSetScrollY < mTileSet.mMaxScrollY){mTileSetScrollY = mTileSet.mMaxScrollY;}	
-		} else {
+		//if( mx > (mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth)){
+		//	mTileSetScrollY += amount*20;
+		//	if(mTileSetScrollY > 0){mTileSetScrollY = 0;}
+		//	if(mTileSetScrollY < mTileSet.mMaxScrollY){mTileSetScrollY = mTileSet.mMaxScrollY;}	
+		//} else {
+		if(!mGlobalSettings.mio->WantCaptureMouse){
 				if(amount > 0){mGlobalSettings.TileMapScale++; if(mGlobalSettings.TileMapScale > 10){mGlobalSettings.TileMapScale=10; }}	
 				if(amount < 0){mGlobalSettings.TileMapScale--; if(mGlobalSettings.TileMapScale < 1){mGlobalSettings.TileMapScale=1; }}
 		}
@@ -416,6 +417,16 @@ int TEditor::replaceSelectedColor(int x, int y){
 						}
 					}
 
+				} else {
+					tSel = searchRectsXY(mTileSelectedTile->PixelAreas, x, y);
+					if(tSel >-1){
+						std::cout << "Select Pixel Color " << tSel  << std::endl;
+
+						mColorSelectedTile->bPixelSelected = false;
+						mColorSelected = mTileSelectedTile->FileData[tSel];
+						mColorSelectedTile = mPalette.TPixels[mColorSelected];
+						mColorSelectedTile->bPixelSelected = true;
+					}
 				}
 	}
 	return 0;
@@ -424,7 +435,8 @@ int TEditor::replaceSelectedColor(int x, int y){
 int TEditor::replaceSelectedTiles(int mx, int my){
 	if(mCurMode == EMODE_MAP){	
 		int tSel = -1;
-		if(mx > (mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth)){
+		//if(mx > (mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth)){
+			//if(ImRightButtonDown){
 			
 			tSel = searchRectsXY(mTileSet.TileAreas, mx, my);
 			if(tSel != -1){ 
@@ -442,7 +454,7 @@ int TEditor::replaceSelectedTiles(int mx, int my){
 					}
 				}
 			}		
-		}
+		//}
 	}
 	return 0;
 }
@@ -451,20 +463,23 @@ int TEditor::replaceSelectedTiles(int mx, int my){
 int TEditor::selectTile(int mx, int my){
 	if(mCurMode == EMODE_MAP){
 		int tSel = -1;
-		if(mx > (mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth)){
-			if(mGlobalSettings.bShowTypeSelection){
-				replaceSelectedTiles(mx,my);
-			} else {
-
-			tSel = searchRectsXY(mTileSet.TileAreas, mx, my);
-			if(tSel != -1){
-   	 			mMapSelectedTile = tSel;
-   	 			mTileSelectedTile->bIsSelected = false;
-   	 			mTileSelectedTile = mTileSet.TTiles[tSel];
-   	 			mTileSelectedTile->bIsSelected = true;
-			}		
+		//if(mx > (mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth)){
+			if(ImButtonsTileSet.mRight.bButtonIsDown ){
+				if(mGlobalSettings.bShowTypeSelection){
+					//std::cout << "replace" <<std::endl;							
+					replaceSelectedTiles(mx,my);
+				} else {
+					//std::cout << "Select" <<std::endl;							
+					tSel = searchRectsXY(mTileSet.TileAreas, mx, my);
+					if(tSel != -1){
+   	 				mMapSelectedTile = tSel;
+   	 				mTileSelectedTile->bIsSelected = false;
+   	 				mTileSelectedTile = mTileSet.TTiles[tSel];
+   	 				mTileSelectedTile->bIsSelected = true;
+				}		
 			}
 		} else {
+			//std::cout << "Select Map" <<std::endl;							
 			tSel = searchRectsXY(mTileMap.TileAreas, mx, my);
 	       		if(tSel != -1){
 	       			mGlobalSettings.mSelectedTile = tSel;
@@ -484,8 +499,10 @@ int TEditor::selectTile(int mx, int my){
 int TEditor::findSelected(){
 	int tSel = -1;
 	if(mCurMode == EMODE_MAP){
+		return 0;
 		tSel = searchRects(mTileSet.TileAreas);
 		if(tSel != -1){
+			std::cout << "Select Tile" <<std::endl;							
    	 		mMapSelectedTile = tSel;
    	 		mTileSelectedTile->bIsSelected = false;
    	 		mTileSelectedTile = mTileSet.TTiles[tSel];
@@ -531,20 +548,195 @@ int TEditor::findSelected(){
 	return 0;
 }
 
+int TEditor::findSelMap(){
+
+	int tSel = -1;
+/*
+	tSel = searchRects(mTileSet.TileAreas);
+		if(tSel != -1){
+			std::cout << "Select Tile" <<std::endl;							
+   	 		mMapSelectedTile = tSel;
+   	 		mTileSelectedTile->bIsSelected = false;
+   	 		mTileSelectedTile = mTileSet.TTiles[tSel];
+   	 		mTileSelectedTile->bIsSelected = true;
+			*/
+		//} else {
+		if(leftMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
+			
+			if(bLCTRLisDown){
+					//if(mCurMode == EMODE_MAP){
+						/*if(bTileSetGrapped){
+							mTileSetScrollY += ry * 2;
+							if(mTileSetScrollY > 0){mTileSetScrollY = 0;}
+							if(mTileSetScrollY < mTileSet.mMaxScrollY){mTileSetScrollY = mTileSet.mMaxScrollY;}
+							
+						} else 
+						*/
+						if(bTileMapGrapped){
+							mTileMapScrollX += rx;
+							mTileMapScrollY += ry;;
+						} else {
+							//mouseSelX = cx;
+							//mouseSelY = cy;
+							//if(x > (mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth)){
+							//if(!mGlobalSettings.mio->WantCaptureMouse){
+								//bTileSetGrapped = true;
+							//} else {
+							bTileMapGrapped = true;
+							//}
+						}
+					//}
+				} else {
+					tSel = searchRectsXY(mTileMap.TileAreas,cx,cy);
+	       			if(tSel != -1){
+	       				mGlobalSettings.mSelectedTile = tSel;		  	
+	       				TEActionReplaceTile *mCurAction = new TEActionReplaceTile();
+	       				mCurAction->doAction(&mTileMap, tSel, mTileMap.getTile(tSel), mMapSelectedTile);
+	       			
+	       				if(!(*mCurAction == *mActionStack.mLastAction)){
+	       					mActionStack.newActionGroup();	
+	       					mActionStack.addAction(mCurAction);
+	       					mActionStack.mLastAction = mCurAction;
+	       					mActionStack.redoClearStack();
+	       				}
+	       			}
+	      		}
+		    
+		}
+
+	return 0;
+}
+
+int TEditor::findSelTile(){
+
+	if(leftMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
+		int tSel = -1;
+
+		tSel = searchRectsXY(mPalette.PixelAreas, cx, cy);
+		if(tSel != -1){
+			mColorSelectedTile->bPixelSelected = false;
+			mColorSelected = tSel;
+			mColorSelectedTile = mPalette.TPixels[tSel];
+			mColorSelectedTile->bPixelSelected = true;
+		} else {
+			tSel = searchRectsXY(mTileSelectedTile->PixelAreas, cx, cy);
+			if(tSel != -1){
+
+	       		TEActionReplacePixel *mCurAction = new TEActionReplacePixel();
+				mCurAction->doAction(mTileSelectedTile, tSel, mTileSelectedTile->FileData[tSel], mColorSelected, &mPalette);
+				
+				if(!(*mCurAction == * mTileSelectedTile->mActionStack.mLastAction)){
+	       				mTileSelectedTile->mActionStack.newActionGroup();	
+	       				mTileSelectedTile->mActionStack.addAction(mCurAction);
+	       				mTileSelectedTile->mActionStack.mLastAction = mCurAction;
+	       				mTileSelectedTile->mActionStack.redoClearStack();
+	       		}
+			}
+		}
+
+		//mouseSelX = cx;
+		//mouseSelY = cy;
+	    //findSelected();
+	}
+	return 0;
+}
+
+
+int TEditor::handleEMTile(){
+
+	if(rightMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
+		replaceSelectedColor(cx,cy);
+	}	
+
+	findSelTile();
+
+	return 0;
+}
+
+int TEditor::handleEMMAp(){
+
+	/*
+	if(ImButtonsTileSet.mRight.bButtonIsDown  || rightMouseButtonDown){
+		if(ImButtonsTileSet.mRight.bButtonIsDown ){
+			//std::cout << "Select Tile"  << std::endl;
+			selectTile(ImButtonsTileSet.mRight.mMousePos.x, ImButtonsTileSet.mRight.mMousePos.y);
+			//ImButtonsTileSet.mRight.bButtonIsDown  = false;
+		}
+		if(rightMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){	
+			//std::cout << "findSel" <<std::endl;							
+			selectTile(cx,cy);
+		}
+	}*/
+
+	handleTileSet();
+	handleTileMap();
+
+	return 0;
+}
+
+int TEditor::handleTileSet(){
+
+	if(ImButtonsTileSet.mLeft.bButtonIsDown){ //  || rightMouseButtonDown){
+		//if(ImButtonsTileSet.mRight.bButtonIsDown ){
+			//std::cout << "Select Tile"  << std::endl;
+			//selectTile(ImButtonsTileSet.mRight.mMousePos.x, ImButtonsTileSet.mRight.mMousePos.y);
+			//ImButtonsTileSet.mRight.bButtonIsDown  = false;
+
+			int tSel = -1;
+			tSel = searchRectsXY(mTileSet.TileAreas, ImButtonsTileSet.mLeft.mMousePos.x, ImButtonsTileSet.mLeft.mMousePos.y);
+					if(tSel != -1){
+   	 				mMapSelectedTile = tSel;
+   	 				mTileSelectedTile->bIsSelected = false;
+   	 				mTileSelectedTile = mTileSet.TTiles[tSel];
+   	 				mTileSelectedTile->bIsSelected = true;
+			}		
+
+	}
+	if(ImButtonsTileSet.mRight.bButtonIsDown && mGlobalSettings.bShowTypeSelection){
+		replaceSelectedTiles(ImButtonsTileSet.mRight.mMousePos.x ,ImButtonsTileSet.mRight.mMousePos.y);
+	}
+
+
+	return 0;
+}
+
+
+int TEditor::handleTileMap(){
+
+	int tSel = -1;
+
+	if(rightMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
+		tSel = searchRectsXY(mTileMap.TileAreas, cx, cy);
+	    if(tSel != -1){
+	    	mGlobalSettings.mSelectedTile = tSel;
+			mGlobalSettings.bShowSelectedTile = true;
+			if(mGlobalSettings.bShowTypeSelection){
+				mMapSelectedTile = mTileMap.getTile(tSel);
+   	 			mTileSelectedTile->bIsSelected = false;
+   	 			mTileSelectedTile = mTileSet.TTiles[mMapSelectedTile];
+   	 			mTileSelectedTile->bIsSelected = true;
+			}
+		}
+	}
+
+	findSelMap();
+
+	return 0;
+}
+
 int TEditor::handleEvents(){
-	int rx,ry;
-	int x,y;
+	//int rx,ry;
+	//int x,y;
 	SDL_GetRelativeMouseState(&rx, &ry);
-	int mButtonState = SDL_GetMouseState(&x, &y);
+	mButtonState = SDL_GetMouseState(&cx, &cy);
 	int mapWidthX = mGlobalSettings.TileMapWidth*mGlobalSettings.TileSizeX*mGlobalSettings.TileMapScale;					
 	int mapWidthY = mGlobalSettings.TileMapHeight*mGlobalSettings.TileSizeY*mGlobalSettings.TileMapScale;
 	
 	if(mButtonState & SDL_BUTTON(SDL_BUTTON_LEFT)){
 		leftMouseButtonDown = true;
 	} else {
-		waitLeftMouseButton=false;
-		leftMouseButtonDown = false;
-		bTileSetGrapped = false;
+		//waitLeftMouseButton=false;
+		leftMouseButtonDown = false;		
 		bTileMapGrapped = false;
 	}
 
@@ -552,7 +744,7 @@ int TEditor::handleEvents(){
 		rightMouseButtonDown = true;
 	} else {
 		rightMouseButtonDown = false;
-		waitRightMouseButton = false;		
+		//waitRightMouseButton = false;		
 	}
 	
 	if(mActiveDialog){
@@ -596,53 +788,51 @@ int TEditor::handleEvents(){
 			cancelActiveDialog();
 			return 0;
 		}
-		if(leftMouseButtonDown){
-			//mActiveDialog->recieveInput(x,y);
-			waitLeftMouseButton=true;
-		}
+		
 		return 0;
 	} else {
-		if(!waitRightMouseButton){
+		//if(!waitRightMouseButton){
 			if(mCurMode == EMODE_MAP){
-				if(rightMouseButtonDown){										
-					selectTile(x,y);
-				}			
+				handleEMMAp();
+		//		if(rightMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){										
+		//			selectTile(x,y);
+		//		}			
 			}
 			if(mCurMode == EMODE_TILE){
-				if(rightMouseButtonDown){
-					replaceSelectedColor(x,y);
-				}			
+				handleEMTile();
 			}
-		}
-		if(!waitLeftMouseButton){		
-			if(leftMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
-				if(bLCTRLisDown){
-					if(mCurMode == EMODE_MAP){
-						if(bTileSetGrapped){
+		//}
+		//if(!waitLeftMouseButton){		
+			//if(leftMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
+				//if(bLCTRLisDown){
+				//	if(mCurMode == EMODE_MAP){
+						/*if(bTileSetGrapped){
 							mTileSetScrollY += ry * 2;
 							if(mTileSetScrollY > 0){mTileSetScrollY = 0;}
 							if(mTileSetScrollY < mTileSet.mMaxScrollY){mTileSetScrollY = mTileSet.mMaxScrollY;}
 							
-						} else if(bTileMapGrapped){
+						} else 
+						
+						if(bTileMapGrapped){
 							mTileMapScrollX += rx;
 							mTileMapScrollY += ry;;
 						} else {
-							mouseSelX = x;
-							mouseSelY = y;
-							if(x > (mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth)){
-								bTileSetGrapped = true;
-							} else {
+							mouseSelX = cx;
+							mouseSelY = cy;
+							//if(x > (mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth)){
+							if(!mGlobalSettings.mio->WantCaptureMouse){
+								//bTileSetGrapped = true;
+							//} else {
 								bTileMapGrapped = true;
 							}
 						}
 					}
-				} else {
-				mouseSelX = x;
-				mouseSelY = y;
-	      		findSelected();
-	      		}
-			}
-		}
+				} else {*/
+
+				
+	      	///	}
+			//}
+		//}
 	}
 
 
@@ -753,7 +943,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					activateDropUnusedTiles();
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F7){	  									
-					//mActiveDialog = &mInputNumber;									
+					mActiveDialog = &mInputNumber;									
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F12){	  				
 		  			activateSaveDialog();
@@ -800,6 +990,8 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
  	mGlobalSettings.WindowWidth = newWidth;
  	mGlobalSettings.WindowHeight = newHeight; 
 	
+	
+	mTileSet.updateWinPos = true;
 	mTileSet.reCalculateScale();
 
 	return 0;

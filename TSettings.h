@@ -61,6 +61,11 @@ namespace fs = std::filesystem;
 
 #define DIRDEL (const char)(std::filesystem::path::preferred_separator)
 
+template <class T> class TVec2 {
+public:
+	T x, y;
+};
+
 class TSettings{
 	public:
 		ImGuiIO *mio;
@@ -113,6 +118,8 @@ class TSettings{
 		SDL_Color ErrorTextColor = {0xff,0x00,0x00,0xff};
 		SDL_Color ErrorBorderColor = {0xc0,0x00,0x00,0xff};
 		SDL_Color PixelGridColor = {0x20,0x20,0x20,0xff};
+		ImU32 ImAltHighLightColor = 0xFFFFFF00;
+		ImU32 ImHighLightColor = 0xFFFFFFFF;
 		std::vector<std::string> mHelpText;
 		std::vector<std::string> mHelpTextMap;
 		std::vector<std::string> mHelpTextTile;

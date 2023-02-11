@@ -1,6 +1,7 @@
 #include "TSettings.h"
 #include "TileMap.h"
 #include "cx16_palette.h"
+#include "TEditor.h"
 
 extern TSettings mGlobalSettings;
 
@@ -443,6 +444,41 @@ SDL_Rect Tile::render(int xpos, int ypos, int tscale, bool updateRect ,bool draw
 	return tmpRect;
 }
 
+SDL_Rect Tile::renderIm(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
+	SDL_Rect tmpRect;// = TTexture::render(xpos, ypos, tscale, updateRect, drawGrid);
+
+	ImGui::Image((ImTextureID)(intptr_t)TileTex, ImVec2(mGlobalSettings.TileSizeX * tscale, mGlobalSettings.TileSizeY * tscale));
+
+	ImVec2 elmin = ImGui::GetItemRectMin();
+	ImVec2 elmax = ImGui::GetItemRectMax();
+
+	tmpRect.x = elmin.x;
+	tmpRect.y = elmin.y;
+	tmpRect.w = elmax.x - elmin.x;
+	tmpRect.h = elmax.y - elmin.y;
+	
+	ImDrawList *tList = ImGui::GetWindowDrawList();
+
+	if(bIsSelected){		
+		tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor);
+	} else {
+		tList->AddRect(elmin, elmax, mGlobalSettings.ImHighLightColor);
+	}
+
+	/*
+	if(bIsSelected){
+		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.AltHighlightColor.r, mGlobalSettings.AltHighlightColor.g, mGlobalSettings.AltHighlightColor.b, 0xff); 
+		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &tmpRect);
+		SDL_Rect sndRect = tmpRect;
+		sndRect.x = sndRect.x-1;
+		sndRect.y = sndRect.y-1;
+		sndRect.w = sndRect.w+2;
+		sndRect.h = sndRect.h+2;
+		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &sndRect);
+	} */
+	return tmpRect;
+}
+
 SDL_Rect Tile::render(int xpos, int ypos, int tscale,TileProperties tProps){
 	SDL_RendererFlip flip = SDL_FLIP_NONE;
 
@@ -734,6 +770,89 @@ int TileSet::render(int ypos, int mScroll){
 
 return 0;
 }
+
+int TileSet::renderIm(int ypos, int mScroll){
+	
+	mTileSetBackGround.h = mGlobalSettings.WindowHeight- mGlobalSettings.TopBarHeight;
+	
+	if(mCurColumns < 4){
+		if( (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.TileSizeX ) +mColSpace ) * TTiles.size() )  / mCurColumns ) ) > mTileSetBackGround.h ){	
+			mCurTileScale--;
+		
+			if(mCurTileScale < 5){
+				mCurColumns++;
+				updateWinPos = true;
+			}			
+		}
+	}
+
+	mGlobalSettings.TileSetWidth = (((mCurTileScale*mGlobalSettings.TileSizeX)+mColSpace)*mCurColumns)+(mColSpace*3);
+
+	int isOdd = TTiles.size() % mCurColumns;
+	int cRowNum = TTiles.size() / mCurColumns;
+
+	mTileSetBackGround.x = mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth;
+	mTileSetBackGround.y = ypos;
+	mTileSetBackGround.w = mGlobalSettings.TileSetWidth; 
+
+	ImVec2 cWinPos;
+	cWinPos.x = mTileSetBackGround.x;
+	cWinPos.y = mTileSetBackGround.y;
+	
+
+	ImVec2 cWinSize;
+	cWinSize.x = mTileSetBackGround.w;
+	cWinSize.y = mTileSetBackGround.h;
+
+	if(updateWinPos){
+		ImGui::SetNextWindowPos(cWinPos, ImGuiCond_Always);
+		ImGui::SetNextWindowSize(cWinSize, ImGuiCond_Always);
+		updateWinPos = false;
+	} else {
+		ImGui::SetNextWindowPos(cWinPos, ImGuiCond_Once);
+		ImGui::SetNextWindowSize(cWinSize, ImGuiCond_Once);
+	}
+
+	ImGui::Begin("TileSet");                         
+
+	if(mCurColumns > 0){
+		for(int i = 0; i < cRowNum; i++){
+			for(int j = 0; j < mCurColumns; j++){
+				TileAreas[(i * mCurColumns) + j] = TTiles[(i*mCurColumns) + j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSizeY*mCurTileScale)+mColSpace)*i), mCurTileScale,true,true);				
+				if((mCurColumns > 1) && (j < (mCurColumns-1))){
+					ImGui::SameLine();
+				} 
+			}										
+		}	
+		
+		if(isOdd){			
+			int i = mCurColumns;
+			for(int j = 0; j < isOdd; j++){
+				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSizeY*mCurTileScale)+mColSpace)*cRowNum), mCurTileScale,true,true);
+				if((j < (isOdd-1))){
+					ImGui::SameLine();
+				}
+			}
+
+		}
+		
+	}
+
+	mGlobalSettings.CurrentEditor->ImButtonsTileSet.updateButtonStates();
+	
+    ImGui::End();
+
+
+	int cMax = (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.TileSizeY ) +mColSpace ) * TTiles.size() )  / mCurColumns )) + (4 * mGlobalSettings.TileSizeY);
+	if((cMax - mTileSetBackGround.h) > 0 ){
+		mMaxScrollY = -(cMax - mTileSetBackGround.h);
+	} else {
+		mMaxScrollY = 0;
+	}
+
+return 0;
+}
+
 
 int TileMap::createNew(){
 

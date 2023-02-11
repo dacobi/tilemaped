@@ -115,7 +115,7 @@ SDL_Rect TBDialog::render(int xpos, int ypos){
 
     auto textWidth   = ImGui::CalcTextSize(mDialogTextWindow.c_str()).x;
 	ImGui::SetCursorPosX((mGlobalSettings.WindowWidth - textWidth) * 0.5f);
-	ImGui::Text(mDialogTextWindow.c_str());               // Display some text (you can use a format strings too)
+	ImGui::Text("%s", mDialogTextWindow.c_str());               // Display some text (you can use a format strings too)
 
 	mGlobalSettings.TopBarHeight = ImGui::GetWindowHeight();
 
@@ -195,7 +195,7 @@ SDL_Rect SDialog::render(int xpos, int ypos){
         	
 	ImGui::Begin("Save Project");                         
     		
-			ImGui::Text(mDialogTextMain.c_str());
+			ImGui::Text("%s", mDialogTextMain.c_str()); //mDialogTextMain.c_str());
 
             if (ImGui::Button("Save")){
 				bInputIsAccept=true;
@@ -407,7 +407,7 @@ SDL_Rect OCDialog::render(int xpos, int ypos){
 
 		auto textWidth   = ImGui::CalcTextSize(mDialogTextWindow.c_str()).x;
 		ImGui::SetCursorPosX((mGlobalSettings.WindowWidth - textWidth) * 0.5f);
-		ImGui::Text(mDialogTextWindow.c_str());
+		ImGui::Text("%s", mDialogTextWindow.c_str());
 
 		ImGui::EndMainMenuBar();
 	
@@ -814,10 +814,10 @@ void RNDialog::recieveInput(int mKey){
 }
 
 SDL_Rect RNDialog::render(int xpos, int ypos){	
-	ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+	ImGui::Begin("Hello, world!", &isShown);                          // Create a window called "Hello, world!" and append into it.
 
    		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-   		ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+   		/*ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
    		ImGui::Checkbox("Another Window", &show_another_window);
 
         ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
@@ -826,7 +826,36 @@ SDL_Rect RNDialog::render(int xpos, int ypos){
         if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
             counter++;
             //ImGui::SameLine();
-	    ImGui::Text("counter = %d", counter);
+	    ImGui::Text("counter = %d", counter);*/
+		
+		ImGui::Image((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[1]->TileTex, ImVec2(160,160));
+		if(ImGui::IsMouseClicked(1)){
+				int x = mGlobalSettings.mio->MousePos.x;
+				int y = mGlobalSettings.mio->MousePos.y;
+				wpos = ImGui::GetWindowPos();
+				wsize = ImGui::GetWindowSize();
+				elmin = ImGui::GetItemRectMin();
+				elmax = ImGui::GetItemRectMax();
+				esize = ImGui::GetItemRectSize();
+				wx = ImGui::GetWindowContentRegionMin().x;
+				wy = ImGui::GetWindowContentRegionMin().y;				
+				float wxm = ImGui::GetWindowContentRegionMax().x;
+				float wym = ImGui::GetWindowContentRegionMax().y;	
+				
+				ImGui::Text("%d", x); ImGui::SameLine(); ImGui::Text("%d", y);
+				ImGui::Text("%f", wpos.x); ImGui::SameLine(); ImGui::Text("%f", wpos.y);
+				ImGui::Text("%f", wsize.x); ImGui::SameLine(); ImGui::Text("%f", wsize.y);
+				ImGui::Text("%f", elmin.x); ImGui::SameLine(); ImGui::Text("%f", elmin.y);
+				ImGui::Text("%f", elmax.x); ImGui::SameLine(); ImGui::Text("%f", elmax.y);
+
+
+				if( (x >= (elmin.x)) &&  (x <= (elmax.x)) &&  (y >= (elmin.y))  &&  (y <= (elmax.y))){
+					isShown = false;
+					mGlobalSettings.CurrentEditor->mActiveDialog = NULL;
+				}
+		}
+		
+		
     ImGui::End();
 
 	SDL_Rect tmpBorder;
@@ -1072,6 +1101,8 @@ SDL_Rect TIDialog::render(int xpos, int ypos){
 		const char* tmp = ((std::string*)(data->UserData))->c_str();
     	data->InsertChars(data->CursorPos, tmp);
     }
+
+	return 0;
 }
 
 
@@ -1281,7 +1312,7 @@ SDL_Rect MEDialog::render(int xpos, int ypos){
 
 	ImGui::Begin("Message");                         
 		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(mTextColor.r, mTextColor.g, mTextColor.b, 255));
-		ImGui::Text(mDialogTextMain.c_str());
+		ImGui::Text("%s", mDialogTextMain.c_str());
 		ImGui::PopStyleColor();
 		    
 		if (ImGui::Button("Close")){
@@ -1383,15 +1414,15 @@ SDL_Rect PIDialog::render(int xpos, int ypos){
 	
 	ImGui::Begin("\uf449 Project Info", &mGlobalSettings.bShowProjectInfo);
 
-	ImGui::Text(TileMap.c_str());
-	ImGui::Text(TileSizeX.c_str());
-	ImGui::Text(TileSizeY.c_str());
+	ImGui::Text("%s", TileMap.c_str());
+	ImGui::Text("%s", TileSizeX.c_str());
+	ImGui::Text("%s", TileSizeY.c_str());
 
-	ImGui::Text(TilesInSet.c_str());
-	ImGui::Text(SelectedTile.c_str());
+	ImGui::Text("%s", TilesInSet.c_str());
+	ImGui::Text("%s", SelectedTile.c_str());
 
-	ImGui::Text(CurrentTile.c_str());
-	ImGui::Text(Flip.c_str());
+	ImGui::Text("%s", CurrentTile.c_str());
+	ImGui::Text("%s", Flip.c_str());
 	
 	ImGui::End();
 		

@@ -136,7 +136,14 @@ class RNDialog: public ITDialog{
 		virtual void cancel();
 		virtual void dropLastInputChar();
 		virtual SDL_Rect render(int xpos, int ypos);
-		virtual void recieveInput(int mKey);		
+		virtual void recieveInput(int mKey);
+		bool isShown = true;
+		float wx,wy;
+		ImVec2 wpos;
+		ImVec2 wsize;
+		ImVec2 elmin;
+		ImVec2 elmax;
+		ImVec2 esize;
 		//virtual void recieveInput(std::string mTextInput);		
 };
 
