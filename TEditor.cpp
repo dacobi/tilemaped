@@ -103,7 +103,13 @@ int TEditor::saveToFolder(std::string path){
 
 	fs::path cpath = path;
 	if(!fs::is_directory(fs::status(cpath))){
-		fs::create_directory(cpath);
+		std::cout << "Creating Folder" << std::endl;
+		try{
+			fs::create_directory(cpath);			
+		} catch(...){
+			std::cout << "Error Creating Folder!" << std::endl;
+			return 1;
+		}
 	}
 	
 	mTileSet.saveToFolder(path);
@@ -125,6 +131,9 @@ int TEditor::render(){
 
 		if(mActiveDialog){
 			mActiveDialog->render((mGlobalSettings.WindowWidth/2)-(mActiveDialog->mDialogWidth/2),(mGlobalSettings.WindowHeight/2)-(mActiveDialog->mDialogHeight/2));
+		}
+		if(mActiveMessage){
+			mActiveMessage->render((mGlobalSettings.WindowWidth/2)-(mActiveMessage->mDialogWidth/2),(mGlobalSettings.WindowHeight/2)-(mActiveMessage->mDialogHeight/2));
 		}
 		mTopBar.render(0,0);
 		mTileSet.renderIm(mGlobalSettings.TopBarHeight, mTileSetScrollY);
@@ -318,11 +327,11 @@ int TEditor::showMessage(std::string cMessage, bool isError){
 	if(isError){
 		mErrorMessage.mDialogTextMain = cMessage;
 		mErrorMessage.update();
-		mActiveDialog = &mErrorMessage;
+		mActiveMessage = &mErrorMessage;
 	} else {
 		mInfoMessage.mDialogTextMain = cMessage;
 		mInfoMessage.update();
-		mActiveDialog = &mInfoMessage;
+		mActiveMessage = &mInfoMessage;
 	}
 	return 0;
 }
@@ -600,6 +609,13 @@ int TEditor::handleEvents(){
 		rightMouseButtonDown = false;		
 	}
 	
+	if(mActiveMessage){
+		if(mActiveMessage->bInputIsCancel){
+			mActiveMessage->cancel();
+			mActiveMessage = NULL;
+		}
+	}
+
 	if(mActiveDialog){
 		if(mActiveDialog->bInputIsAccept){
 			if(mGlobalSettings.mDeleteUnusedTilesState){
@@ -607,7 +623,10 @@ int TEditor::handleEvents(){
 				mGlobalSettings.mDeleteUnusedTilesState = 0;
 			}
 			if(mGlobalSettings.mProjectSaveState == 1){
-				saveToFolder(mGlobalSettings.ProjectPath);
+				if(saveToFolder(mGlobalSettings.ProjectPath)){
+					std::cout << "hello" << std::endl;
+					showMessage("Error Creating Project Folder!", true);
+				} 
 				mGlobalSettings.mProjectSaveState = 0;
 			}
 			if(mGlobalSettings.mOpenTileState == 1){
@@ -694,6 +713,10 @@ int TEditor::handleEvents(SDL_Event* cEvent){
   			break;
 			
 	  	case SDL_KEYDOWN:
+			if(mActiveMessage){
+				mActiveMessage->recieveInput(SDLK_n);
+				break;
+			}
 	  		if(mActiveDialog){
 	  			if(cEvent->key.keysym.sym == SDLK_BACKSPACE){
 	  				if(mActiveDialog->bDialogIsWatingForText){				

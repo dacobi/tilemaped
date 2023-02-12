@@ -101,6 +101,7 @@ class TEditor{
 		void undoLastActionGroup();
 		void redoLastActionGroup();
 		Dialog *mActiveDialog = NULL;
+		Dialog *mActiveMessage = NULL;
 		SDialog mSaveDialog;
 		SADialog mSaveAsDialog;
 		ITDialog mOpenTileDialog;
