@@ -12,12 +12,13 @@ class Dialog{
 		SDL_Color mDialogColor = mGlobalSettings.DefaultDarkBGColor;
 		SDL_Color mDialogBorderColor = mGlobalSettings.DefaultBorderColor;
 		SDL_Color mTextColor = mGlobalSettings.DefaultTextColor;
+		bool bDialogCenter = true;
 		void setColorScheme(int nScheme);
-		int mDialogWidth=400;
-		int mDialogHeight=200;		
-		bool bDialogIsWatingForText=false;
-		bool bInputIsAccept=false;
-		bool bInputIsCancel=false;
+		int mDialogWidth = 400;
+		int mDialogHeight = 200;		
+		bool bDialogIsWatingForText = false;
+		bool bInputIsAccept = false;
+		bool bInputIsCancel = false;
 		virtual void recieveInput(int mKey);		
 		virtual void dropLastInputChar();
 		virtual SDL_Rect render(int xpos, int ypos);		
@@ -214,6 +215,12 @@ class MEDialog: public HDialog{
 		virtual void setColorScheme(int nScheme);
 		virtual void update();		
 		virtual SDL_Rect render(int xpos, int ypos);
+};
+
+class QDialog: public Dialog{
+	public:
+		virtual SDL_Rect render(int xpos, int ypos);
+		virtual void recieveInput(int mKey);
 };
 
 

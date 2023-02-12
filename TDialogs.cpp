@@ -29,22 +29,32 @@ void Dialog::dropLastInputChar(){
 
 SDL_Rect Dialog::render(int xpos, int ypos){
 
+	
+
+	SDL_Rect tmpBorder;
+	
+	
+	ImVec2 mWinSize = ImGui::GetWindowSize();
+	tmpBorder.w = mWinSize.x;
+	tmpBorder.h = mWinSize.y;
+
 	ImVec2 cWinPos;
 
 	cWinPos.x = xpos;
 	cWinPos.y = ypos;
 
+	if(bDialogCenter){
+		cWinPos.x -=  mWinSize.x/2;
+		cWinPos.y -=  mWinSize.y/2;
+	}
+
 	ImGui::SetWindowPos(cWinPos, ImGuiCond_Once);
 
-	SDL_Rect tmpBorder;
-	
 	ImVec2 mWinPos = ImGui::GetWindowPos();
-	ImVec2 mWinSize = ImGui::GetWindowSize();
 
 	tmpBorder.x = mWinPos.x;
 	tmpBorder.y = mWinPos.y;
-	tmpBorder.w = mWinSize.x;
-	tmpBorder.h = mWinSize.y;
+	
 
 	mDialogWidth = tmpBorder.w;
 	mDialogHeight = tmpBorder.h;
@@ -116,17 +126,20 @@ SDL_Rect TBDialog::render(int xpos, int ypos){
 
 		if (ImGui::BeginMenu("Edit"))
 		{
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " New Tile (F3)")).c_str())){
-				mGlobalSettings.CurrentEditor->createNewTile();
-			}
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Tile (F4)")).c_str())){
-				mGlobalSettings.CurrentEditor->activateOpenTileDialog();		  			
-			}
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Tile (F5)")).c_str())){
-				mGlobalSettings.CurrentEditor->createNewTileCopy(mGlobalSettings.CurrentEditor->mTileSelectedTile);
-			}
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Unused Tiles (F6)")).c_str())){
-				mGlobalSettings.CurrentEditor->activateDropUnusedTiles();
+			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
+
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " New Tile (F3)")).c_str())){
+					mGlobalSettings.CurrentEditor->createNewTile();
+				}
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Tile (F4)")).c_str())){
+					mGlobalSettings.CurrentEditor->activateOpenTileDialog();		  			
+				}
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Tile (F5)")).c_str())){
+					mGlobalSettings.CurrentEditor->createNewTileCopy(mGlobalSettings.CurrentEditor->mTileSelectedTile);
+				}
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Unused Tiles (F6)")).c_str())){
+					mGlobalSettings.CurrentEditor->activateDropUnusedTiles();
+				}
 			}
 			if(ImGui::MenuItem("Undo (U)")){
 				mGlobalSettings.CurrentEditor->undoLastActionGroup();	  		
@@ -134,10 +147,7 @@ SDL_Rect TBDialog::render(int xpos, int ypos){
 			if(ImGui::MenuItem("Redo (R)")){
 				mGlobalSettings.CurrentEditor->redoLastActionGroup();	  		
 			}
-			
-
-
-			
+						
 			ImGui::EndMenu();
 		}
 
@@ -259,6 +269,7 @@ void SADialog::init(){
 	mTextInput.bIsInputActive = true;
 	mTextInput.bMustNotBeFile = true;
 	mTextInput.bAutoComplete = true;
+	mTextInput.mDialogTextMain = mGlobalSettings.ProjectPath;
 	mTextInput.init();	
 }
 
@@ -901,17 +912,19 @@ void TIDialog::autoComplete(){
 		mCompleteText = "";
 		mFile = cPath.filename().string();			 //cPath.filename();
 
-		std::cout << "Complete Before: " << mDir << ", "  << mFile << std::endl;
+		//std::cout << "Complete Before: " << mDir << ", "  << mFile << std::endl;
 
 		if(fs::is_directory(fs::status(mDir))){
 			for (const auto & entry : fs::directory_iterator(mDir)){
 				std::string tStr =   (entry.path()).filename().string(); // (entry.path()).filename();
-				std::cout << "Complete:" << mFile << std::endl;
+
+				//std::cout << "Complete:" << mFile << std::endl;
+
 				if(mFile.length()){
 					std::size_t subpos = tStr.find(mFile);						
 					if((subpos != std::string::npos) && (subpos == 0)){												
 						mCompleteText = tStr.substr(mFile.length());
-						std::cout << "Complete Subpos:" << mCompleteText << std::endl;						
+						//std::cout << "Complete Subpos:" << mCompleteText << std::endl;						
 						break;
 					} 				
 				}
@@ -1125,6 +1138,7 @@ void PIDialog::init(){
 	
 	std::stringstream convert;
 	
+	bDialogCenter = false;
 		
 	convert << mGlobalSettings.TileMapWidth << std::endl;
 	convert >> cMapWidth;
@@ -1170,5 +1184,44 @@ SDL_Rect PIDialog::render(int xpos, int ypos){
 		
 	
 
+	return tmpBorder;
+}
+
+
+void QDialog::recieveInput(int mKey){
+	
+	if(mKey == SDLK_y){
+		std::cout << "Shutting Down..." << std::endl;
+		bInputIsAccept=true;
+		mGlobalSettings.CurrentEditor->bEditorRunning = false;
+	}
+	if(mKey == SDLK_n){
+		bInputIsCancel=true;
+	}
+}
+
+SDL_Rect QDialog::render(int xpos, int ypos){
+    SDL_Rect tmpBorder;			
+
+	ImGui::Begin("Quit Program?");                         
+    		
+			ImGui::Text("Any unsaved progress will be lost   "); 
+
+            if (ImGui::Button("Quit")){
+				recieveInput(SDLK_y);
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Cancel")){
+				recieveInput(SDLK_n);
+			}
+
+			tmpBorder = Dialog::render(xpos, ypos);
+            
+        ImGui::End();
+
+	
+	
 	return tmpBorder;
 }

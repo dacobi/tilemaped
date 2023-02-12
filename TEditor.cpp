@@ -130,10 +130,12 @@ int TEditor::render(){
 		mTileSelectedTile->bIsSelected = true;
 
 		if(mActiveDialog){
-			mActiveDialog->render((mGlobalSettings.WindowWidth/2)-(mActiveDialog->mDialogWidth/2),(mGlobalSettings.WindowHeight/2)-(mActiveDialog->mDialogHeight/2));
+			//mActiveDialog->render((mGlobalSettings.WindowWidth/2)-(mActiveDialog->mDialogWidth/2),(mGlobalSettings.WindowHeight/2)-(mActiveDialog->mDialogHeight/2));
+			mActiveDialog->render((mGlobalSettings.WindowWidth/2),(mGlobalSettings.WindowHeight/2));
 		}
 		if(mActiveMessage){
-			mActiveMessage->render((mGlobalSettings.WindowWidth/2)-(mActiveMessage->mDialogWidth/2),(mGlobalSettings.WindowHeight/2)-(mActiveMessage->mDialogHeight/2));
+			//mActiveMessage->render((mGlobalSettings.WindowWidth/2)-(mActiveMessage->mDialogWidth/2),(mGlobalSettings.WindowHeight/2)-(mActiveMessage->mDialogHeight/2));
+			mActiveMessage->render((mGlobalSettings.WindowWidth/2),(mGlobalSettings.WindowHeight/2));
 		}
 		mTopBar.render(0,0);
 		mTileSet.renderIm(mGlobalSettings.TopBarHeight, mTileSetScrollY);
@@ -154,7 +156,17 @@ int TEditor::render(){
 		if(mActiveDialog){
 			mActiveDialog->render((mGlobalSettings.WindowWidth/2)-(mActiveDialog->mDialogWidth/2),(mGlobalSettings.WindowHeight/2)-(mActiveDialog->mDialogHeight/2));
 		}
+		if(mActiveMessage){
+			mActiveMessage->render((mGlobalSettings.WindowWidth/2)-(mActiveMessage->mDialogWidth/2),(mGlobalSettings.WindowHeight/2)-(mActiveMessage->mDialogHeight/2));
+		}
+		
 		mTopBar.render(0,0);
+
+		if(mGlobalSettings.bShowProjectInfo){
+			mProjectInfo.update();
+			mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
+		}
+
 	}
 
 	return 0;
@@ -232,9 +244,9 @@ if(mCurMode == EMODE_MAP){
 }
 
 int TEditor::activateProjectInfo(){
-	if(mCurMode == EMODE_MAP){
+	//if(mCurMode == EMODE_MAP){
 		mGlobalSettings.bShowProjectInfo = !mGlobalSettings.bShowProjectInfo;
-	}
+	//}
 	return 0;
 }
 
@@ -335,6 +347,12 @@ int TEditor::showMessage(std::string cMessage, bool isError){
 	}
 	return 0;
 }
+
+int TEditor::activateQuitDialog(){
+	mActiveDialog = &mQuitDialog;
+	return 0;
+}
+
 
 int TEditor::activateHelpDialog(){
 	if(mCurMode == EMODE_MAP){
@@ -734,8 +752,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			}		  			
 	  		} else {
 	  			if(cEvent->key.keysym.sym == SDLK_ESCAPE){
-  		  			bEditorRunning = false;
-	  				std::cout << "Shutting Down..." << std::endl;
+					activateQuitDialog();
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_SPACE){
 	  				switchMode();

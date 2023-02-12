@@ -112,6 +112,7 @@ class TEditor{
 		RTDialog mRemoveUnused;
 		MEDialog mErrorMessage;
 		RNDialog mInputNumber;
+		QDialog mQuitDialog;
 		Tile* createNewTile();
 		Tile* createNewTileCopy(Tile* cCopyTile);
 		Tile* createNewTileFromFile(std::string newTilePath);
@@ -121,6 +122,7 @@ class TEditor{
 		int activateSaveDialog();
 		int activateOpenTileDialog();
 		int activateHelpDialog();
+		int activateQuitDialog();
 		int cancelActiveDialog();
 		int activateSaveAsDialog();
 		int activateProjectInfo();
