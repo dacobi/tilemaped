@@ -895,7 +895,7 @@ void TIDialog::autoComplete(){
 		if(cPath.parent_path() == ""){
 			mDir = ".";
 		} else {
-			mDir = cPath.parent_path();
+			mDir = std::string(cPath.parent_path());
 		}
 
 		mCompleteText = "";
