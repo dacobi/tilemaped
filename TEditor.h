@@ -67,8 +67,7 @@ class TEditor{
 		int handleEMMAp();
 		int handleTileSet();
 		int handleTileMap();
-		int handleEMTile();
-		int findSelected();
+		int handleEMTile();		
 		int findSelMap();
 		int findSelTile();
 		int resizeWindowEvent(SDL_Event* event);
@@ -85,25 +84,18 @@ class TEditor{
 		int mTileMapScrollY = 0;
 		int mTileSetScrollY = 0;
 		int applyScroll(int mx,int my, int amount, int xamount);
-		ImWinMouseState ImButtonsTileSet;
-		//bool ImleftButtonDown = false;
-		//bool ImRightButtonDown = false;
-		//TVec2<int> ImMousePos;
-		bool leftMouseButtonDown = false;
-		//bool waitLeftMouseButton = false;
-		bool rightMouseButtonDown = false;
-		//bool waitRightMouseButton = false;
+		ImWinMouseState ImButtonsTileSet;		
+		bool leftMouseButtonDown = false;		
+		bool rightMouseButtonDown = false;		
 		bool bLCTRLisDown = false;
 		bool bTileMapGrapped = false;
 		bool bTileSetGrapped = false;
-		int flipSelectedTile();
-		int selectTile(int mx, int my);
+		int flipSelectedTile();		
 		int replaceSelectedColor(int x, int y);
 		int replaceSelectedTiles(int x, int y);
 		int searchRectsXY(std::vector<SDL_Rect> &sRects, int mx, int my);
 		int searchRects(std::vector<SDL_Rect> &sRects);
 		int selectTiles(std::vector<int> &cNewSelection, int cTileType);
-		
 		int toggleSelectedTile();		
 		TEActionUndoStack mActionStack;
 		void undoLastActionGroup();
@@ -119,7 +111,6 @@ class TEditor{
 		RTDialog mRemoveUnused;
 		MEDialog mErrorMessage;
 		RNDialog mInputNumber;
-		//OCDialog mOCDtest;
 		Tile* createNewTile();
 		Tile* createNewTileCopy(Tile* cCopyTile);
 		Tile* createNewTileFromFile(std::string newTilePath);

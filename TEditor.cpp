@@ -66,7 +66,7 @@ void TEditor::initDialogs(){
 	mRemoveUnused.init();
 
 	mInputNumber.init();
-	//mOCDtest.init();
+	
 }
 
 int TEditor::loadFromFolder(std::string path){
@@ -192,12 +192,7 @@ int TEditor::applyScroll(int mx,int my, int amount, int xamount){
 	int tSel = -1;
 	mouseSelX = mx;
 	mouseSelY = my;
-	if(mCurMode == EMODE_MAP){ 
-		//if( mx > (mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth)){
-		//	mTileSetScrollY += amount*20;
-		//	if(mTileSetScrollY > 0){mTileSetScrollY = 0;}
-		//	if(mTileSetScrollY < mTileSet.mMaxScrollY){mTileSetScrollY = mTileSet.mMaxScrollY;}	
-		//} else {
+	if(mCurMode == EMODE_MAP){ 		
 		if(!mGlobalSettings.mio->WantCaptureMouse){
 				if(amount > 0){mGlobalSettings.TileMapScale++; if(mGlobalSettings.TileMapScale > 10){mGlobalSettings.TileMapScale=10; }}	
 				if(amount < 0){mGlobalSettings.TileMapScale--; if(mGlobalSettings.TileMapScale < 1){mGlobalSettings.TileMapScale=1; }}
@@ -420,8 +415,6 @@ int TEditor::replaceSelectedColor(int x, int y){
 				} else {
 					tSel = searchRectsXY(mTileSelectedTile->PixelAreas, x, y);
 					if(tSel >-1){
-						std::cout << "Select Pixel Color " << tSel  << std::endl;
-
 						mColorSelectedTile->bPixelSelected = false;
 						mColorSelected = mTileSelectedTile->FileData[tSel];
 						mColorSelectedTile = mPalette.TPixels[mColorSelected];
@@ -435,8 +428,6 @@ int TEditor::replaceSelectedColor(int x, int y){
 int TEditor::replaceSelectedTiles(int mx, int my){
 	if(mCurMode == EMODE_MAP){	
 		int tSel = -1;
-		//if(mx > (mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth)){
-			//if(ImRightButtonDown){
 			
 			tSel = searchRectsXY(mTileSet.TileAreas, mx, my);
 			if(tSel != -1){ 
@@ -454,138 +445,25 @@ int TEditor::replaceSelectedTiles(int mx, int my){
 					}
 				}
 			}		
-		//}
+		
 	}
 	return 0;
 }
 
-
-int TEditor::selectTile(int mx, int my){
-	if(mCurMode == EMODE_MAP){
-		int tSel = -1;
-		//if(mx > (mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth)){
-			if(ImButtonsTileSet.mRight.bButtonIsDown ){
-				if(mGlobalSettings.bShowTypeSelection){
-					//std::cout << "replace" <<std::endl;							
-					replaceSelectedTiles(mx,my);
-				} else {
-					//std::cout << "Select" <<std::endl;							
-					tSel = searchRectsXY(mTileSet.TileAreas, mx, my);
-					if(tSel != -1){
-   	 				mMapSelectedTile = tSel;
-   	 				mTileSelectedTile->bIsSelected = false;
-   	 				mTileSelectedTile = mTileSet.TTiles[tSel];
-   	 				mTileSelectedTile->bIsSelected = true;
-				}		
-			}
-		} else {
-			//std::cout << "Select Map" <<std::endl;							
-			tSel = searchRectsXY(mTileMap.TileAreas, mx, my);
-	       		if(tSel != -1){
-	       			mGlobalSettings.mSelectedTile = tSel;
-					mGlobalSettings.bShowSelectedTile = true;
-					if(mGlobalSettings.bShowTypeSelection){
-						mMapSelectedTile = mTileMap.getTile(tSel);
-   	 					mTileSelectedTile->bIsSelected = false;
-   	 					mTileSelectedTile = mTileSet.TTiles[mMapSelectedTile];
-   	 					mTileSelectedTile->bIsSelected = true;
-					}
-				}
-		}
-	}
-	return 0;
-}
-
-int TEditor::findSelected(){
-	int tSel = -1;
-	if(mCurMode == EMODE_MAP){
-		return 0;
-		tSel = searchRects(mTileSet.TileAreas);
-		if(tSel != -1){
-			std::cout << "Select Tile" <<std::endl;							
-   	 		mMapSelectedTile = tSel;
-   	 		mTileSelectedTile->bIsSelected = false;
-   	 		mTileSelectedTile = mTileSet.TTiles[tSel];
-   	 		mTileSelectedTile->bIsSelected = true;
-		} else {
-		    tSel = searchRects(mTileMap.TileAreas);
-	       	if(tSel != -1){
-	       		mGlobalSettings.mSelectedTile = tSel;		  	
-	       		TEActionReplaceTile *mCurAction = new TEActionReplaceTile();
-	       		mCurAction->doAction(&mTileMap, tSel, mTileMap.getTile(tSel), mMapSelectedTile);
-	       			
-	       		if(!(*mCurAction == *mActionStack.mLastAction)){
-	       			mActionStack.newActionGroup();	
-	       			mActionStack.addAction(mCurAction);
-	       			mActionStack.mLastAction = mCurAction;
-	       			mActionStack.redoClearStack();
-	       		}
-	       	}
-		}
-	} else {
-		tSel = searchRects(mPalette.PixelAreas);
-		if(tSel != -1){
-			mColorSelectedTile->bPixelSelected = false;
-			mColorSelected = tSel;
-			mColorSelectedTile = mPalette.TPixels[tSel];
-			mColorSelectedTile->bPixelSelected = true;
-		} else {
-			tSel = searchRects(mTileSelectedTile->PixelAreas);
-			if(tSel != -1){
-
-	       		TEActionReplacePixel *mCurAction = new TEActionReplacePixel();
-				mCurAction->doAction(mTileSelectedTile, tSel, mTileSelectedTile->FileData[tSel], mColorSelected, &mPalette);
-				
-				if(!(*mCurAction == * mTileSelectedTile->mActionStack.mLastAction)){
-	       				mTileSelectedTile->mActionStack.newActionGroup();	
-	       				mTileSelectedTile->mActionStack.addAction(mCurAction);
-	       				mTileSelectedTile->mActionStack.mLastAction = mCurAction;
-	       				mTileSelectedTile->mActionStack.redoClearStack();
-	       		}
-			}
-		}
-	}
-	return 0;
-}
 
 int TEditor::findSelMap(){
 
 	int tSel = -1;
-/*
-	tSel = searchRects(mTileSet.TileAreas);
-		if(tSel != -1){
-			std::cout << "Select Tile" <<std::endl;							
-   	 		mMapSelectedTile = tSel;
-   	 		mTileSelectedTile->bIsSelected = false;
-   	 		mTileSelectedTile = mTileSet.TTiles[tSel];
-   	 		mTileSelectedTile->bIsSelected = true;
-			*/
-		//} else {
+
 		if(leftMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
 			
 			if(bLCTRLisDown){
-					//if(mCurMode == EMODE_MAP){
-						/*if(bTileSetGrapped){
-							mTileSetScrollY += ry * 2;
-							if(mTileSetScrollY > 0){mTileSetScrollY = 0;}
-							if(mTileSetScrollY < mTileSet.mMaxScrollY){mTileSetScrollY = mTileSet.mMaxScrollY;}
-							
-						} else 
-						*/
 						if(bTileMapGrapped){
 							mTileMapScrollX += rx;
 							mTileMapScrollY += ry;;
 						} else {
-							//mouseSelX = cx;
-							//mouseSelY = cy;
-							//if(x > (mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth)){
-							//if(!mGlobalSettings.mio->WantCaptureMouse){
-								//bTileSetGrapped = true;
-							//} else {
-							bTileMapGrapped = true;
-							//}
-						}
-					//}
+							bTileMapGrapped = true;						
+						}				
 				} else {
 					tSel = searchRectsXY(mTileMap.TileAreas,cx,cy);
 	       			if(tSel != -1){
@@ -633,10 +511,6 @@ int TEditor::findSelTile(){
 	       		}
 			}
 		}
-
-		//mouseSelX = cx;
-		//mouseSelY = cy;
-	    //findSelected();
 	}
 	return 0;
 }
@@ -655,19 +529,6 @@ int TEditor::handleEMTile(){
 
 int TEditor::handleEMMAp(){
 
-	/*
-	if(ImButtonsTileSet.mRight.bButtonIsDown  || rightMouseButtonDown){
-		if(ImButtonsTileSet.mRight.bButtonIsDown ){
-			//std::cout << "Select Tile"  << std::endl;
-			selectTile(ImButtonsTileSet.mRight.mMousePos.x, ImButtonsTileSet.mRight.mMousePos.y);
-			//ImButtonsTileSet.mRight.bButtonIsDown  = false;
-		}
-		if(rightMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){	
-			//std::cout << "findSel" <<std::endl;							
-			selectTile(cx,cy);
-		}
-	}*/
-
 	handleTileSet();
 	handleTileMap();
 
@@ -676,12 +537,7 @@ int TEditor::handleEMMAp(){
 
 int TEditor::handleTileSet(){
 
-	if(ImButtonsTileSet.mLeft.bButtonIsDown){ //  || rightMouseButtonDown){
-		//if(ImButtonsTileSet.mRight.bButtonIsDown ){
-			//std::cout << "Select Tile"  << std::endl;
-			//selectTile(ImButtonsTileSet.mRight.mMousePos.x, ImButtonsTileSet.mRight.mMousePos.y);
-			//ImButtonsTileSet.mRight.bButtonIsDown  = false;
-
+	if(ImButtonsTileSet.mLeft.bButtonIsDown){ 
 			int tSel = -1;
 			tSel = searchRectsXY(mTileSet.TileAreas, ImButtonsTileSet.mLeft.mMousePos.x, ImButtonsTileSet.mLeft.mMousePos.y);
 					if(tSel != -1){
@@ -725,8 +581,7 @@ int TEditor::handleTileMap(){
 }
 
 int TEditor::handleEvents(){
-	//int rx,ry;
-	//int x,y;
+	
 	SDL_GetRelativeMouseState(&rx, &ry);
 	mButtonState = SDL_GetMouseState(&cx, &cy);
 	int mapWidthX = mGlobalSettings.TileMapWidth*mGlobalSettings.TileSizeX*mGlobalSettings.TileMapScale;					
@@ -734,8 +589,7 @@ int TEditor::handleEvents(){
 	
 	if(mButtonState & SDL_BUTTON(SDL_BUTTON_LEFT)){
 		leftMouseButtonDown = true;
-	} else {
-		//waitLeftMouseButton=false;
+	} else {		
 		leftMouseButtonDown = false;		
 		bTileMapGrapped = false;
 	}
@@ -743,8 +597,7 @@ int TEditor::handleEvents(){
 	if(mButtonState & SDL_BUTTON(SDL_BUTTON_RIGHT)){
 		rightMouseButtonDown = true;
 	} else {
-		rightMouseButtonDown = false;
-		//waitRightMouseButton = false;		
+		rightMouseButtonDown = false;		
 	}
 	
 	if(mActiveDialog){
@@ -790,49 +643,13 @@ int TEditor::handleEvents(){
 		}
 		
 		return 0;
-	} else {
-		//if(!waitRightMouseButton){
+	} else {		
 			if(mCurMode == EMODE_MAP){
 				handleEMMAp();
-		//		if(rightMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){										
-		//			selectTile(x,y);
-		//		}			
 			}
 			if(mCurMode == EMODE_TILE){
 				handleEMTile();
-			}
-		//}
-		//if(!waitLeftMouseButton){		
-			//if(leftMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
-				//if(bLCTRLisDown){
-				//	if(mCurMode == EMODE_MAP){
-						/*if(bTileSetGrapped){
-							mTileSetScrollY += ry * 2;
-							if(mTileSetScrollY > 0){mTileSetScrollY = 0;}
-							if(mTileSetScrollY < mTileSet.mMaxScrollY){mTileSetScrollY = mTileSet.mMaxScrollY;}
-							
-						} else 
-						
-						if(bTileMapGrapped){
-							mTileMapScrollX += rx;
-							mTileMapScrollY += ry;;
-						} else {
-							mouseSelX = cx;
-							mouseSelY = cy;
-							//if(x > (mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth)){
-							if(!mGlobalSettings.mio->WantCaptureMouse){
-								//bTileSetGrapped = true;
-							//} else {
-								bTileMapGrapped = true;
-							}
-						}
-					}
-				} else {*/
-
-				
-	      	///	}
-			//}
-		//}
+			}		
 	}
 
 
@@ -863,9 +680,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 			break;
 		case SDL_TEXTINPUT:
 	  		if(mActiveDialog){
-				//if(mActiveDialog->bDialogIsWatingForText){
-				//	mActiveDialog->recieveInput(std::string(cEvent->text.text));
-				//}
+				
 			}
 			break;
 		case SDL_TEXTEDITING:
@@ -943,7 +758,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					activateDropUnusedTiles();
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F7){	  									
-					mActiveDialog = &mInputNumber;									
+					//mActiveDialog = &mInputNumber;									
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F12){	  				
 		  			activateSaveDialog();

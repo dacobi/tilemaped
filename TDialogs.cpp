@@ -23,8 +23,6 @@ void Dialog::recieveInput(int mKey){
 
 }
 
-//void Dialog::recieveInput(std::string mTextInput){}
-
 void Dialog::dropLastInputChar(){
 
 }
@@ -35,10 +33,8 @@ SDL_Rect Dialog::render(int xpos, int ypos){
 	return tmpBorder;
 }
 
-//int Dialog::recieveInput(int mx, int my){return 0;}
 
 void TBDialog::init(){
-	//mDialogBorder=3;
 	mDialogColor = mGlobalSettings.DefaultDarkBGColor;
 	mDialogBorderColor=  mGlobalSettings.DefaultButtonBorderColor;
 	mDialogWidth = mGlobalSettings.WindowWidth;
@@ -115,7 +111,7 @@ SDL_Rect TBDialog::render(int xpos, int ypos){
 
     auto textWidth   = ImGui::CalcTextSize(mDialogTextWindow.c_str()).x;
 	ImGui::SetCursorPosX((mGlobalSettings.WindowWidth - textWidth) * 0.5f);
-	ImGui::Text("%s", mDialogTextWindow.c_str());               // Display some text (you can use a format strings too)
+	ImGui::Text("%s", mDialogTextWindow.c_str());               
 
 	mGlobalSettings.TopBarHeight = ImGui::GetWindowHeight();
 
@@ -165,20 +161,6 @@ void SDialog::init(){
 	mDialogTextMain = mGlobalSettings.mFloppy +" Overwrite Project On Disk?";
 }
 
-/*
-int SDialog::recieveInput(int mx, int my){
-	return 0;
-	//DELETE
-	
-	if(mAcceptButton.recieveInput(mx,my)){
-		recieveInput(SDLK_y);
-	}
-	if(mCancelButton.recieveInput(mx,my)){
-		recieveInput(SDLK_n);		
-	}
-	return 0;
-}
-*/
 
 void SDialog::recieveInput(int mKey){
 	
@@ -212,24 +194,7 @@ SDL_Rect SDialog::render(int xpos, int ypos){
 	SDL_Rect tmpBorder;			
 	return tmpBorder;
 }
-/*
-int SADialog::recieveInput(int mx, int my){
-	
-	if(bSubDialogActive){
-		mSubDialog->recieveInput(mx, my);
-		if(mSubDialog->bInputIsAccept){
-			mSubDialog->bInputIsAccept = false;
-			recieveInput(SDLK_y);
-		}
-		if(mSubDialog->bInputIsCancel){
-			mSubDialog->bInputIsCancel = false;
-			recieveInput(SDLK_n);
-		}				
-	} else {
-		return SDialog::recieveInput(mx, my);
-	}
-	return 0;
-}*/
+
 
 void SADialog::cancel(){
 	Dialog::cancel();
@@ -240,7 +205,6 @@ void SADialog::cancel(){
 void SADialog::init(){
 	mDialogTextMain = mGlobalSettings.mFloppy + " Save Project As Folder";
 	
-	//mTextInput.mDialogTextMain = mDialogTextInput;
 	mTextInput.bIsInputActive = true;
 	mTextInput.bMustNotBeFile = true;
 	mTextInput.bAutoComplete = true;
@@ -282,14 +246,6 @@ ImGui::Begin("Save Project As");
 	
 	return tmpBorder;
 }
-
-//void SADialog::recieveInput(std::string mText){		
-	//mTextInput.recieveInput(mText);
-	//mTextInput.mDialogTextMain += mText;
-	//mTextInput.mTextColor =  mGlobalSettings.DefaultTextColor;
-	//mTextInput.init();
-	//resize();	
-//}
 
 void SADialog::recieveInput(int mKey){
 	
@@ -438,72 +394,6 @@ SDL_Rect OCDialog::render(int xpos, int ypos){
 	return tmpBorder;
 }
 
-/*
-int OCDialog::recieveInput(int mx, int my){
-	return 0;
-	if(bSubDialogActive && bSubDialogIsOpen){
-		if(mOpenProject.mAcceptButton.recieveInput(mx, my)){
-			recieveInput(SDLK_y);
-			return 0;
-		}
-		if(mOpenProject.mCancelButton.recieveInput(mx, my)){
-			recieveInput(SDLK_n);
-			return 0;
-		}		
-	}
-	if(bSubDialogActive && bSubDialogIsCreate){
-		mCreateProject.recieveInput(mx, my);
-		if(mCreateProject.mCreateButton.bInputIsAccept &&  mCreateProject.bInputIsAccepted){		
-			recieveInput(SDLK_y);
-		}
-		if(mCreateProject.bInputIsCancel){
-			recieveInput(SDLK_n);
-		}			
-		return 0;				
-	}
-	if(mOpenButton.recieveInput(mx,my)){		
-		bSubDialogActive = true;
-		bSubDialogIsOpen = true;
-		bDialogIsWatingForText = true;
-		SDL_StartTextInput();
-	}
-	if(mCreateButton.recieveInput(mx,my)){
-		bSubDialogActive = true;
-		bSubDialogIsCreate = true;
-		bDialogIsWatingForText = true;
-		SDL_StartTextInput();
-	}
-	if(mQuitButton.recieveInput(mx,my)){
-		recieveInput(SDLK_n);		
-	}
-	return 0;
-}
-*/
-/*
-void OCDialog::resize(){
-	mOpenProject.mDialogWidth = mOpenProject.mTexDialogTextMain.mTexWidth > mOpenProject.mTextInput.mTexDialogTextMain.mTexWidth ? mOpenProject.mTexDialogTextMain.mTexWidth : mOpenProject.mTextInput.mTexDialogTextMain.mTexWidth;
-	mOpenProject.mDialogWidth += mDialogBorder * 5;
-}
-*/
-
-/*
-void OCDialog::recieveInput(std::string cStr){
-	return;
-
-
-	if(bSubDialogActive && bSubDialogIsOpen){
-		mOpenProject.mTextInput.recieveInput(cStr);		
-	
-	}
-	if(bSubDialogActive && bSubDialogIsCreate){
-		mCreateProject.recieveInput(cStr);		
-	
-	}
-	
-}
-*/
-
-
 void OCDialog::dropLastInputChar(){
 	if(bSubDialogActive && bSubDialogIsOpen){
 		mOpenProject.mTextInput.dropLastInputChar();
@@ -581,21 +471,7 @@ void OCDialog::recieveInput(int mKey){
 }
 
 void CPDialog::init(){
-	mDialogTextMain = mGlobalSettings.mFile + " Create New Project";
-	
-	/*
-	mDialogInputWidth = "Map Width";		
-	
-	mDialogInputHeight = "Map Height";		
-	
-	mDialogInputSizeX = "Tile Size X";		
-	
-	mDialogInputSizeY = "Tile Size Y";		
-	
-	mDialogInputPath = "Folder";		
-	
-	mDialogInputPal = "Palette";		
-	*/
+	mDialogTextMain = mGlobalSettings.mFile + " Create New Project";	
 		
 	mReadPath.mDialogTextMain = "newfolder";
 	mReadPal.mDialogTextMain = "";
@@ -689,13 +565,8 @@ SDL_Rect CPDialog::render(int xpos, int ypos){
 
 void CPDialog::dropLastInputChar(){
 	mActiveInput->dropLastInputChar();
-	//resize();
-}
 
-//void CPDialog::recieveInput(std::string cTextInput){
-//	mActiveInput->recieveInput(cTextInput);
-	//resize();
-//}
+}
 
 void CPDialog::recieveInput(int mKey){
 	if(mKey == SDLK_n){
@@ -712,83 +583,12 @@ void CPDialog::recieveInput(int mKey){
 	}
 	if(mKey == SDLK_TAB){
 		mActiveInput->autoComplete();
-		//resize();
 	}
 }	
 
-/*
-int CPDialog::recieveInput(int mx, int my){
-	return 0;
-	if(mReadWidth.recieveInput(mx, my)){
-		mReadWidth.bIsInputActive = true;
-		mReadHeight.bIsInputActive = false;
-		mReadSizeX.bIsInputActive = false;
-		mReadSizeY.bIsInputActive = false;
-		mReadPath.bIsInputActive = false;
-		mReadPal.bIsInputActive = false;
-		mActiveInput = &mReadWidth;
-	}
-	if(mReadHeight.recieveInput(mx, my)){
-		mReadWidth.bIsInputActive = false;
-		mReadHeight.bIsInputActive = true;
-		mReadSizeX.bIsInputActive = false;
-		mReadSizeY.bIsInputActive = false;
-		mReadPath.bIsInputActive = false;
-		mReadPal.bIsInputActive = false;
-		mActiveInput = &mReadHeight;
-	}
-	if(mReadSizeX.recieveInput(mx, my)){
-		mReadWidth.bIsInputActive = false;
-		mReadHeight.bIsInputActive = false;
-		mReadSizeX.bIsInputActive = true;
-		mReadSizeY.bIsInputActive = false;
-		mReadPath.bIsInputActive = false;
-		mReadPal.bIsInputActive = false;
-		mActiveInput = &mReadSizeX;
-	}
-	if(mReadSizeY.recieveInput(mx, my)){
-		mReadWidth.bIsInputActive = false;
-		mReadHeight.bIsInputActive = false;
-		mReadSizeX.bIsInputActive = false;
-		mReadSizeY.bIsInputActive = true;
-		mReadPath.bIsInputActive = false;
-		mReadPal.bIsInputActive = false;
-		mActiveInput = &mReadSizeY;
-	}
-	if(mReadPath.recieveInput(mx, my)){
-		mReadWidth.bIsInputActive = false;
-		mReadHeight.bIsInputActive = false;
-		mReadSizeX.bIsInputActive = false;
-		mReadSizeY.bIsInputActive = false;
-		mReadPath.bIsInputActive = true;
-		mReadPal.bIsInputActive = false;
-		mActiveInput = &mReadPath;
-	}
-	if(mReadPal.recieveInput(mx, my)){
-		mReadWidth.bIsInputActive = false;
-		mReadHeight.bIsInputActive = false;
-		mReadSizeX.bIsInputActive = false;
-		mReadSizeY.bIsInputActive = false;
-		mReadPath.bIsInputActive = false;
-		mReadPal.bIsInputActive = true;
-		mActiveInput = &mReadPal;
-	}
-
-	if(mCreateButton.recieveInput(mx, my)){
-		mCreateButton.bInputIsAccept = true;
-		recieveInput(SDLK_y);
-	}
-	if(mCancelButton.recieveInput(mx, my)){
-		recieveInput(SDLK_n);
-	}
-	return 0;
-}
-*/
 void RNDialog::dropLastInputChar(){
 	mTextInput.dropLastInputChar();
 }
-
-//void RNDialog::recieveInput(std::string mStr){	}
 
 
 void RNDialog::recieveInput(int mKey){
@@ -904,32 +704,7 @@ SDL_Rect ITDialog::render(int xpos, int ypos){
 void ITDialog::init(){
 	mTextInput.bIsInputActive = true;
 	mTextInput.bAutoComplete = true;
-	mTextInput.bMustBeFile = true;
-	return;
-	//DELETE
-	/*
-	mDialogTextMain = mTexDialogTextMain.mFile + " Import Tile from file";
-
-	mAcceptButton.mDialogTextMain = "Open";
-	mCancelButton.mDialogTextMain = "Cancel";	
-	
-	mAcceptButton.init();	
-	mCancelButton.init();
-
-		
-	mTexDialogTextMain.loadTTFFromUTF8(mDialogTextMain, mTextColor);
-	
-	mTextInput.mDialogTextMain = "";
-	mTextInput.bIsInputActive = true;
-	mTextInput.bAutoComplete = true;
-	mTextInput.bMustBeFile = true;
-	mTextInput.init();
-
-	bSubDialogActive = false;
-
-	mDialogWidth = mTexDialogTextMain.mTexWidth + (mDialogBorder*6);
-	mDialogHeight = mTexDialogTextMain.mTexHeight * 6;
-	*/
+	mTextInput.bMustBeFile = true;	
 }
 
 void ITDialog::cancel(){
@@ -959,20 +734,9 @@ void ITDialog::recieveInput(int mKey){
 }
 
 
-//int ITDialog::recieveInput(int mx, int my){
-//	return SDialog::recieveInput(mx, my);
-//}
-
 void BDialog::init(){
 		
 }
-
-//int BDialog::recieveInput(int mx, int my){
-//	if( (mx >= mButtonRect.x) && (mx <= (mButtonRect.x + mButtonRect.w)) && (my >= mButtonRect.y) && (my <= (mButtonRect.y + mButtonRect.h)) ){
-//		return 1;
-//	}
-//	return 0;
-//}
 
 SDL_Rect BDialog::render(int xpos, int ypos){
 	
@@ -994,8 +758,7 @@ void BDialog::setColorScheme(int nScheme){
 
 
 void TIDialog::init(){
-
-	//mDialogBorder=3;
+	
 	mDialogBorderColor= mGlobalSettings.DefaultTextColor;
 	mCursorTime += mGlobalSettings.getTicks();
 
@@ -1011,55 +774,7 @@ void TIDialog::init(){
 			bShowCursor = !bShowCursor;
 		}
 	}
-	//DELETE
-	/*
-	if(bAutoComplete){
-		if(mCompleteText.length()){
-			mCompleteCursor = mCompleteText.substr(0,1);
-			mCompleteAfter = mCompleteText.substr(1,mCompleteText.length()-1);
-		} else {
-			mCompleteCursor = " ";
-			mCompleteAfter = "";
-		}
-		
-		mTexDialogTextMain.loadTTFFromUTF8(mTexDialogTextMain.mPrompt + " " + mDialogTextMain, mTextColor,mGlobalSettings.TFont);
-
-		if(bShowCursor){
-			mTexCompleteCursor.loadTTFFromUTF8(mCompleteCursor, mGlobalSettings.AltTextColor,mGlobalSettings.UFont);
-		} else {
-			mTexCompleteCursor.loadTTFFromUTF8(mCompleteCursor, mGlobalSettings.AltTextColor,mGlobalSettings.TFont);
-		}
-
-		mTexCompleteAfter.loadTTFFromUTF8(mCompleteAfter, mGlobalSettings.AltTextColor,mGlobalSettings.TFont);
-
-		//mTexCompleteText.loadTTFFromUTF8(mCompleteText, mGlobalSettings.AltTextColor,mGlobalSettings.TFont);
-	} else {
-		if(bShowCursor){
-			mTexDialogTextMain.loadTTFFromUTF8(mTexDialogTextMain.mPrompt + " " + mDialogTextMain +"_", mTextColor,mGlobalSettings.TFont);
-		} else {	
-			mTexDialogTextMain.loadTTFFromUTF8(mTexDialogTextMain.mPrompt + " " + mDialogTextMain + " ", mTextColor,mGlobalSettings.TFont);
-		}
-	}
-	if(bAutoComplete && mCompleteText.length()){
-		mDialogWidth = mTexDialogTextMain.mTexWidth + mTexCompleteCursor.mTexWidth +  (mDialogBorder * 2);
-		//std::cout << "CompleteCursor: " <<  mTexCompleteCursor.mTexWidth << std::endl;
-		if(mCompleteAfter.length()){
-			//std::cout << "CompleteAfter: " << mTexCompleteAfter.mTexWidth << std::endl;
-			mDialogWidth += mTexCompleteAfter.mTexWidth + (mDialogBorder * 2);
-		}
-	} else {
-		mDialogWidth = mTexDialogTextMain.mTexWidth + (mDialogBorder * 2);
-	}
 	
-	mDialogHeight = mTexDialogTextMain.mTexHeight;
-
-	if(mMinDialogWidth > mDialogWidth) {
-		mDialogWidth = mMinDialogWidth;
-	}
-	
-	mDialogHeight += mDialogBorder * 3;	
-	mDialogWidth += mDialogBorder * 4;	
-	*/
 }
 
 void TIDialog::dropLastInputChar(){
@@ -1068,10 +783,6 @@ void TIDialog::dropLastInputChar(){
 		checkCurrentText();		
 	}
 }
-
-//int TIDialog::recieveInput(int mx, int my){
-//	return BDialog::recieveInput(mx, my);
-//}
 
 SDL_Rect TIDialog::render(int xpos, int ypos){
 	checkCurrentText();
@@ -1130,11 +841,7 @@ void TIDialog::autoComplete(){
 					std::size_t subpos = tStr.find(mFile);						
 					if((subpos != std::string::npos) && (subpos == 0)){												
 						mCompleteText = tStr.substr(mFile.length());
-						std::cout << "Complete Subpos:" << mCompleteText << std::endl;
-						//mDialogTextMain += mCompleteText;
-						//std::cout << mDialogTextMain << std::endl;
-						//strcpy((char*)mDialogTextMain.c_str(), tmpbuf);
-						//mCompleteText = "";
+						std::cout << "Complete Subpos:" << mCompleteText << std::endl;						
 						break;
 					} 				
 				}
@@ -1230,47 +937,6 @@ int TIDialog::checkCurrentText(){
 	bInputIsAccepted=true;	
 	return 0;
 }
-
-/*
-void TIDialog::recieveInput(std::string cTextInput){
-	return;
-
-
-	if(bIsNumeric){		
-		std::string tmpStr, tmpStr2;
-		for (int i = 0; i < cTextInput.size(); i++) {
-      		if(isdigit(cTextInput[i])){
-				tmpStr += cTextInput[i];				
-	  		}
-		}
-
-		tmpStr2 = mDialogTextMain + tmpStr;
-		
-		if(mMaxLength){
-			if(tmpStr2.size() < mMaxLength){
-				mDialogTextMain = tmpStr2;	
-			}
-		} else {
-			mDialogTextMain = tmpStr2;
-		}
-
-		checkCurrentText();
-
-	} else {
-		std::string tmpStr = mDialogTextMain + cTextInput;
-
-		if(mMaxLength){
-			if(tmpStr.size() < mMaxLength){
-				mDialogTextMain += cTextInput;
-			}
-		} else {
-			mDialogTextMain += cTextInput;
-		}
-		mCompleteText = "";
-		checkCurrentText();
-	}	
-}
-*/
 
 void HDialog::init(){
 	
