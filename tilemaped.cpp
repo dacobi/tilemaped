@@ -231,7 +231,7 @@ int TSettings::runOCD(){
        	ImGui_ImplSDL2_NewFrame();
        	ImGui::NewFrame();
 
-		mOpenCreate.render((WindowWidth/2) - (mOpenCreate.mDialogWidth/2),  (WindowHeight/2)- (mOpenCreate.mDialogHeight/2));
+		mOpenCreate.render();
 		ImGui::Render();                						
 
        	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
@@ -247,9 +247,7 @@ int TSettings::runOCD(){
 						bRunningOCD = false;
 					break;
 				case SDL_TEXTINPUT:
-					//if(mOpenCreate.bDialogIsWatingForText){
-					//	mOpenCreate.recieveInput(std::string(e.text.text));
-					//}
+					
 				break;
 				case SDL_KEYDOWN:							
 					if(e.key.keysym.sym == SDLK_BACKSPACE){
@@ -268,9 +266,7 @@ int TSettings::runOCD(){
 					}
 				break;
 				case SDL_MOUSEBUTTONDOWN:
-	   				/*if (e.button.button == SDL_BUTTON_LEFT){	  		
-	    				mOpenCreate.recieveInput(e.motion.x, e.motion.y);							
-					}*/
+	   				
 				break;				
 			}
 		}

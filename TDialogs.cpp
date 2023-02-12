@@ -27,39 +27,18 @@ void Dialog::dropLastInputChar(){
 
 }
 
-void Dialog::setCenter(){
+int Dialog::render(){
 	ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Once, ImVec2(0.5f, 0.5f));
+	return 0;
 }
 
-SDL_Rect Dialog::render(int xpos, int ypos){
-
-	SDL_Rect tmpBorder;
-	
-	ImVec2 mWinSize = ImGui::GetWindowSize();
-	
-	tmpBorder.w = mWinSize.x;
-	tmpBorder.h = mWinSize.y;
-
-	ImVec2 cWinPos;
-
-	cWinPos.x = xpos;
-	cWinPos.y = ypos;
-
-	ImGui::SetWindowPos(cWinPos, ImGuiCond_Once); 
-	
-	tmpBorder.x = cWinPos.x;
-	tmpBorder.y = cWinPos.y;
-	
-	mDialogWidth = tmpBorder.w;
-	mDialogHeight = tmpBorder.h;
-
-	return tmpBorder;
+int Dialog::render(int xpos, int ypos){
+	ImGui::SetNextWindowPos(ImVec2(xpos, ypos), ImGuiCond_Once);
+	return 0;
 }
 
 
 void TBDialog::init(){
-	mDialogColor = mGlobalSettings.DefaultDarkBGColor;
-	mDialogBorderColor=  mGlobalSettings.DefaultButtonBorderColor;
 	mDialogWidth = mGlobalSettings.WindowWidth;
 	mDialogHeight =  mGlobalSettings.TopBarHeight;
 	mDialogTextActions = mGlobalSettings.mFloppy +" Save/Save As: F12/F11    " + mGlobalSettings.mBook + " Help: F1";	
@@ -70,7 +49,7 @@ void TBDialog::init(){
 	
 }
 
-SDL_Rect TBDialog::render(int xpos, int ypos){
+int TBDialog::render(){
 	mDialogWidth = mGlobalSettings.WindowWidth;
 		
 	mDialogTextWindow = mEditor->mCurMode == EMODE_MAP ? mGlobalSettings.mWindow+ " Tilemap Editor" : mGlobalSettings.mWindow + " Tile Editor";
@@ -160,43 +139,15 @@ SDL_Rect TBDialog::render(int xpos, int ypos){
 
 	ImGui::EndMainMenuBar();
 	
-	SDL_Rect tmpRect;
-	return tmpRect;
+	
+	return 0;
 }
 
 void RTDialog::init(){
-	mDialogTextMain = mGlobalSettings.mInfo +" Remove Unused Tiles";	
-}
-
-SDL_Rect RTDialog::render(int xpos, int ypos){
-
-	SDL_Rect tmpBorder;
-
-	Dialog::setCenter();
-
-
-	ImGui::Begin(mDialogTextMain.c_str());                         
-    		
-			ImGui::Text("Remove Unused Tiles? Undo Stack will be cleared!");
-
-            if (ImGui::Button("Remove")){
-				recieveInput(SDLK_y);
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::Button("Cancel")){
-				recieveInput(SDLK_n);
-			}
-
-			//tmpBorder = Dialog::render(xpos, ypos);
-
-            
-        ImGui::End();
-
-	
-	
-	return tmpBorder;
+	mDialogTextMain = mGlobalSettings.mInfo +" Remove Unused Tiles? Undo Stack will be cleared";
+	mDialogTextTitle = "Remove Unused Tiles";
+	mDialogButtonAccept = "Remove";
+	mDialogButtonCancel = "Cancel";
 }
 
 void RTDialog::recieveInput(int mKey){
@@ -212,6 +163,9 @@ void RTDialog::recieveInput(int mKey){
 
 void SDialog::init(){
 	mDialogTextMain = mGlobalSettings.mFloppy +" Overwrite Project On Disk?";
+	mDialogTextTitle = "Save Project";
+	mDialogButtonAccept = "Save";
+	mDialogButtonCancel = "Cancel";
 }
 
 
@@ -226,34 +180,27 @@ void SDialog::recieveInput(int mKey){
 	}
 }
 
-SDL_Rect SDialog::render(int xpos, int ypos){
-    SDL_Rect tmpBorder;// = Dialog::render(xpos, ypos);;			
+int SDialog::render(){
+    
+	Dialog::render();
 
-	Dialog::setCenter();
-
-
-	ImGui::Begin("Save Project");                         
+	ImGui::Begin(mDialogTextTitle.c_str());                         
     		
-			ImGui::Text("%s", mDialogTextMain.c_str()); //mDialogTextMain.c_str());
+		ImGui::Text("%s", mDialogTextMain.c_str()); 
 
-            if (ImGui::Button("Save")){
-				bInputIsAccept=true;
-				mGlobalSettings.mProjectSaveState = 1;
-			}
+        if ( ImGui::Button(mDialogButtonAccept.c_str() )){ 
+			recieveInput(SDLK_y);				
+		}
 
-			ImGui::SameLine();
+		ImGui::SameLine();
 
-			if (ImGui::Button("Cancel")){
-				bInputIsCancel=true;
-			}
+		if (ImGui::Button(mDialogButtonCancel.c_str() )){ 
+			recieveInput(SDLK_n);				
+		}
+			            
+    ImGui::End();
 
-			//tmpBorder = Dialog::render(xpos, ypos);
-            
-        ImGui::End();
-
-	
-	
-	return tmpBorder;
+	return 0;
 }
 
 
@@ -264,8 +211,11 @@ void SADialog::cancel(){
 }
 
 void SADialog::init(){
-	mDialogTextMain = mGlobalSettings.mFloppy + " Save Project As Folder";
-	
+	mDialogTextMain = mGlobalSettings.mFloppy + " Save Project As Folder         ";
+	mDialogTextTitle = "Save Project As";
+	mDialogButtonAccept = "Save";
+	mDialogButtonCancel = "Cancel";
+
 	mTextInput.bIsInputActive = true;
 	mTextInput.bMustNotBeFile = true;
 	mTextInput.bAutoComplete = true;
@@ -273,20 +223,19 @@ void SADialog::init(){
 	mTextInput.init();	
 }
 
-SDL_Rect SADialog::render(int xpos, int ypos){
-
-	SDL_Rect tmpBorder; // = Dialog::render(xpos, ypos);
-
-	Dialog::setCenter();
+int SADialog::render(){
 
 
-	ImGui::Begin("Save Project As");                         
+	Dialog::render();
+
+
+	ImGui::Begin(mDialogTextTitle.c_str());                         
     		
-			ImGui::Text("Save Project As Folder             ");
+			ImGui::Text("%s", mDialogTextMain.c_str());
 
-			mTextInput.render(xpos ,  ypos);
+			mTextInput.render();
 
-            if (ImGui::Button("Save")){
+            if (ImGui::Button(mDialogButtonAccept.c_str())){
 				if(mTextInput.bInputIsAccepted){
 					recieveInput(SDLK_y);					
 				}				
@@ -294,17 +243,16 @@ SDL_Rect SADialog::render(int xpos, int ypos){
 
 			ImGui::SameLine();
 
-			if (ImGui::Button("Cancel")){
+			if (ImGui::Button(mDialogButtonCancel.c_str())){
 				bInputIsCancel=true;
 			}
             
-			//tmpBorder = Dialog::render(xpos, ypos);
 
         ImGui::End();
 
 
 	if(bSubDialogActive){
-		tmpBorder = mSubDialog->render(xpos + 50, ypos + 50);
+		mSubDialog->render();
 		if(mSubDialog->bInputIsAccept){
 			recieveInput(SDLK_y);
 		}
@@ -314,7 +262,7 @@ SDL_Rect SADialog::render(int xpos, int ypos){
 		}
 	}
 	
-	return tmpBorder;
+	return 0;
 }
 
 void SADialog::recieveInput(int mKey){
@@ -329,7 +277,7 @@ void SADialog::recieveInput(int mKey){
 			if(mKey == SDLK_n){
 				bSubDialogActive=false;
 				bDialogIsWatingForText = true;
-				SDL_StartTextInput();				
+				//SDL_StartTextInput();				
 			}		
 	} else {
 		if(mKey == SDLK_y){
@@ -343,11 +291,11 @@ void SADialog::recieveInput(int mKey){
 					bInputIsAccept=true;
 				}	
 			}
-			SDL_StopTextInput();
+			//SDL_StopTextInput();
 		}
 		if(mKey == SDLK_n){
 			bInputIsCancel=true;
-			SDL_StopTextInput();			
+			//SDL_StopTextInput();			
 		}
 		if(mKey == SDLK_TAB){		
 			mTextInput.autoComplete();			
@@ -359,18 +307,17 @@ void SADialog::dropLastInputChar(){
 	mTextInput.dropLastInputChar();	
 }
 
-SDL_Rect OPDialog::render(int xpos, int ypos){
-
-SDL_Rect tmpRect;
-
-	Dialog::setCenter();
+int OPDialog::render(){
 
 
-ImGui::Begin("Open Project");                         
+	Dialog::render();
+
+
+	ImGui::Begin("Open Project");                         
     		
 			ImGui::Text("Open Project from Folder");
 
-			mTextInput.render(xpos ,  ypos);
+			mTextInput.render();
 
             if (ImGui::Button("Open")){
 				if(mTextInput.bInputIsAccepted){
@@ -384,12 +331,11 @@ ImGui::Begin("Open Project");
 				bInputIsCancel=true;
 			}		
 
-			//tmpRect = Dialog::render(xpos, ypos);
             
         ImGui::End();
 
 	
-	return tmpRect;
+	return 0;
 
 }
 
@@ -415,10 +361,8 @@ void OCDialog::init(){
 	
 }
 
-SDL_Rect OCDialog::render(int xpos, int ypos){
-	SDL_Rect tmpBorder;
-
-
+int OCDialog::render(){
+	
 	ImGui::BeginMainMenuBar();
 		if (ImGui::BeginMenu("File"))
 		{
@@ -448,7 +392,7 @@ SDL_Rect OCDialog::render(int xpos, int ypos){
 		ImGui::EndMainMenuBar();
 	
 	if(bSubDialogActive && bSubDialogIsOpen){
-		mOpenProject.render(xpos + 50, ypos + 50);
+		mOpenProject.render();
 		if(mOpenProject.bInputIsCancel){
 			bSubDialogActive = false;
 			bSubDialogIsOpen = false;
@@ -460,7 +404,7 @@ SDL_Rect OCDialog::render(int xpos, int ypos){
 	}
 
 	if(bSubDialogActive && bSubDialogIsCreate){
-		mCreateProject.render(xpos + 50, ypos + 50);
+		mCreateProject.render();
 		if(mCreateProject.bInputIsCancel){
 			bSubDialogActive = false;
 			bSubDialogIsCreate = false;
@@ -471,7 +415,7 @@ SDL_Rect OCDialog::render(int xpos, int ypos){
 		}
 	}
 
-	return tmpBorder;
+	return 0;
 }
 
 void OCDialog::dropLastInputChar(){
@@ -577,72 +521,69 @@ void CPDialog::init(){
 
 }
 
-SDL_Rect CPDialog::render(int xpos, int ypos){
-	SDL_Rect tmpBorder;
-
-		Dialog::setCenter();
+int CPDialog::render(){
+	
+	Dialog::render();
 
 
 	ImGui::Begin("Create New Project");                         
     		
-			ImGui::Text("TileMap Width & Height");  
+		ImGui::Text("TileMap Width & Height");  
 			
-			ImGui::RadioButton("W: 32", &tmapx, 32);
-			ImGui::SameLine();
-			ImGui::RadioButton("W: 64", &tmapx, 64);
-			ImGui::SameLine();
-			ImGui::RadioButton("W: 128", &tmapx, 128);
-			ImGui::SameLine();
-			ImGui::RadioButton("W: 256", &tmapx, 256);
+		ImGui::RadioButton("W: 32", &tmapx, 32);
+		ImGui::SameLine();
+		ImGui::RadioButton("W: 64", &tmapx, 64);
+		ImGui::SameLine();
+		ImGui::RadioButton("W: 128", &tmapx, 128);
+		ImGui::SameLine();
+		ImGui::RadioButton("W: 256", &tmapx, 256);
 
-			ImGui::RadioButton("H: 32", &tmapy, 32);
-			ImGui::SameLine();
-			ImGui::RadioButton("H: 64", &tmapy, 64);
-			ImGui::SameLine();
-			ImGui::RadioButton("H: 128", &tmapy, 128);
-			ImGui::SameLine();
-			ImGui::RadioButton("H: 256", &tmapy, 256);
+		ImGui::RadioButton("H: 32", &tmapy, 32);
+		ImGui::SameLine();
+		ImGui::RadioButton("H: 64", &tmapy, 64);
+		ImGui::SameLine();
+		ImGui::RadioButton("H: 128", &tmapy, 128);
+		ImGui::SameLine();
+		ImGui::RadioButton("H: 256", &tmapy, 256);
 
 
-			ImGui::Text("TileSize X/Y");  
+		ImGui::Text("TileSize X/Y");  
 			
-			ImGui::RadioButton("X: 8", &tilex, 8);
-			ImGui::SameLine();
-			ImGui::RadioButton("X: 16", &tilex, 16);
-			ImGui::SameLine();
-			ImGui::RadioButton("Y: 8", &tiley, 8);
-			ImGui::SameLine();
-			ImGui::RadioButton("Y: 16", &tiley, 16);
+		ImGui::RadioButton("X: 8", &tilex, 8);
+		ImGui::SameLine();
+		ImGui::RadioButton("X: 16", &tilex, 16);
+		ImGui::SameLine();
+		ImGui::RadioButton("Y: 8", &tiley, 8);
+		ImGui::SameLine();
+		ImGui::RadioButton("Y: 16", &tiley, 16);
 
-			mReadPath.render(0,0);
-			if(mReadPath.bIsActive){
-				mActiveInput = &mReadPath;
-			}
+		mReadPath.render();
+		if(mReadPath.bIsActive){
+			mActiveInput = &mReadPath;
+		}
 
-			ImGui::Checkbox("Use Palette", &bHasPalette);
+		ImGui::Checkbox("Use Palette", &bHasPalette);
 
-			if(bHasPalette){
-				mReadPal.render(0,0);	
-				if(mReadPal.bIsActive){
+		if(bHasPalette){
+			mReadPal.render();	
+			if(mReadPal.bIsActive){
 				mActiveInput = &mReadPal;
 			}
-			}
+		}
 
-            if (ImGui::Button("Create")){
-				recieveInput(SDLK_y);
-			}
+        if (ImGui::Button("Create")){
+			recieveInput(SDLK_y);
+		}
 
-			ImGui::SameLine();
+		ImGui::SameLine();
 
-			if (ImGui::Button("Cancel")){
-				recieveInput(SDLK_n);
-			}		
+		if (ImGui::Button("Cancel")){
+			recieveInput(SDLK_n);
+		}		
             
-	//tmpBorder = Dialog::render(xpos, ypos);
-
      ImGui::End();
 
-	return tmpBorder;
+	return 0;
 }
 
 
@@ -696,7 +637,7 @@ void RNDialog::recieveInput(int mKey){
 	}		
 }
 
-SDL_Rect RNDialog::render(int xpos, int ypos){	
+int RNDialog::render(int xpos, int ypos){	
 	ImGui::Begin("Hello, world!", &isShown);                          // Create a window called "Hello, world!" and append into it.
 
    		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
@@ -741,8 +682,7 @@ SDL_Rect RNDialog::render(int xpos, int ypos){
 		
     ImGui::End();
 
-	SDL_Rect tmpBorder;
-	return tmpBorder;
+	return 0;
 }
 
 
@@ -759,16 +699,15 @@ void RNDialog::init(){
 }
 
 
-SDL_Rect ITDialog::render(int xpos, int ypos){	
-	SDL_Rect tmpBorder; 
-
-	Dialog::setCenter();
+int ITDialog::render(){	
+	
+	Dialog::render();
 
 	ImGui::Begin("Import Tile");                         
     		
 		ImGui::Text("Import Tile from bitmap or RAW");
 
-		mTextInput.render(xpos ,  ypos);
+		mTextInput.render();
 
         if (ImGui::Button("Import")){
 			if(mTextInput.bInputIsAccepted){
@@ -781,12 +720,10 @@ SDL_Rect ITDialog::render(int xpos, int ypos){
 		if (ImGui::Button("Cancel")){
 			bInputIsCancel=true;
 		}		
-
-	//tmpBorder = Dialog::render(xpos, ypos);
-        
+	        
     ImGui::End();
 	
-	return tmpBorder;
+	return 0;
 }
 
 
@@ -822,16 +759,15 @@ void ITDialog::recieveInput(int mKey){
 	}
 }
 
-
+/*
 void BDialog::init(){
 		
 }
 
-SDL_Rect BDialog::render(int xpos, int ypos){
+int BDialog::render(){
 	
-	mButtonRect;
-	
-	return mButtonRect;
+		
+	return 0;
 }
 
 void BDialog::setColorScheme(int nScheme){
@@ -844,11 +780,11 @@ void BDialog::setColorScheme(int nScheme){
 		mTextColor = mGlobalSettings.DefaultTextColor;
 	}
 }
-
+*/
 
 void TIDialog::init(){
 	
-	mDialogBorderColor= mGlobalSettings.DefaultTextColor;
+	//mDialogBorderColor= mGlobalSettings.DefaultTextColor;
 	mCursorTime += mGlobalSettings.getTicks();
 
 	if(bInputIsAccepted){
@@ -873,7 +809,7 @@ void TIDialog::dropLastInputChar(){
 	}
 }
 
-SDL_Rect TIDialog::render(int xpos, int ypos){
+int TIDialog::render(){
 	checkCurrentText();
 
 	if(bInputIsAccepted){
@@ -892,7 +828,7 @@ SDL_Rect TIDialog::render(int xpos, int ypos){
 
 	ImGui::PopStyleColor();
 
-	return mButtonRect;
+	return 0;
 }
 
 
@@ -1038,10 +974,10 @@ void HDialog::recieveInput(int mKey){
 }
 
 
-SDL_Rect HDialog::render(int xpos, int ypos){
-	SDL_Rect tmpBorder;
+int HDialog::render(int xpos, int ypos){
 	
-	return tmpBorder;
+	
+	return 0;
 }
 
 void MEDialog::init(){
@@ -1049,10 +985,10 @@ void MEDialog::init(){
 }
 void MEDialog::setColorScheme(int nScheme){
 	if(nScheme == 1){
-		mDialogBorderColor = mGlobalSettings.ErrorBorderColor;
+		//mDialogBorderColor = mGlobalSettings.ErrorBorderColor;
 		mTextColor = mGlobalSettings.ErrorTextColor;		
 	} else {
-		mDialogBorderColor = mGlobalSettings.DefaultBorderColor;
+		//mDialogBorderColor = mGlobalSettings.DefaultBorderColor;
 		mTextColor = mGlobalSettings.DefaultTextColor;		
 	}
 }
@@ -1063,12 +999,9 @@ void MEDialog::update(){
 }
 
 
-SDL_Rect MEDialog::render(int xpos, int ypos){
+int MEDialog::render(){
 
-	SDL_Rect tmpBorder; 
-
-	Dialog::setCenter();
-
+	Dialog::render();
 
 	ImGui::Begin("Message");                         
 		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(mTextColor.r, mTextColor.g, mTextColor.b, 255));
@@ -1078,13 +1011,10 @@ SDL_Rect MEDialog::render(int xpos, int ypos){
 		if (ImGui::Button("Close")){
 			bInputIsCancel=true;
 		}
-
-		//tmpBorder = Dialog::render(xpos, ypos);
-
-            
+        
     ImGui::End();
 
-	return tmpBorder;
+	return 0;
 }
 
 void PIDialog::update(){
@@ -1148,8 +1078,6 @@ void PIDialog::init(){
 
 	
 	std::stringstream convert;
-	
-	bDialogCenter = false;
 		
 	convert << mGlobalSettings.TileMapWidth << std::endl;
 	convert >> cMapWidth;
@@ -1174,9 +1102,10 @@ void PIDialog::init(){
 		
 }
 
-SDL_Rect PIDialog::render(int xpos, int ypos){
-	SDL_Rect tmpBorder; 
-		
+int PIDialog::render(int xpos, int ypos){
+
+	Dialog::render(xpos, ypos);
+
 	ImGui::Begin(mDialogTextMain.c_str(), &mGlobalSettings.bShowProjectInfo);
 	
 	ImGui::Text("%s", TileMap.c_str());
@@ -1189,13 +1118,9 @@ SDL_Rect PIDialog::render(int xpos, int ypos){
 	ImGui::Text("%s", CurrentTile.c_str());
 	ImGui::Text("%s", Flip.c_str());
 	
-	tmpBorder = Dialog::render(xpos, ypos);
-
 	ImGui::End();
 		
-	
-
-	return tmpBorder;
+	return 0;
 }
 
 
@@ -1211,10 +1136,9 @@ void QDialog::recieveInput(int mKey){
 	}
 }
 
-SDL_Rect QDialog::render(int xpos, int ypos){
-    SDL_Rect tmpBorder;			
-
-	Dialog::setCenter();
+int QDialog::render(){
+    
+	Dialog::render();
 
 	ImGui::Begin("Quit Program?");                         
     		
@@ -1229,12 +1153,8 @@ SDL_Rect QDialog::render(int xpos, int ypos){
 			if (ImGui::Button("Cancel")){
 				recieveInput(SDLK_n);
 			}
-
-			//tmpBorder = Dialog::render(xpos, ypos);
             
         ImGui::End();
-
 	
-	
-	return tmpBorder;
+	return 0;
 }

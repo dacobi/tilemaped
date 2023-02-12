@@ -129,15 +129,13 @@ int TEditor::render(){
 		mTileMap.render(mTileMapScrollX,mGlobalSettings.TopBarHeight+mTileMapScrollY,&mTileSet);
 		mTileSelectedTile->bIsSelected = true;
 
-		if(mActiveDialog){
-			//mActiveDialog->render((mGlobalSettings.WindowWidth/2)-(mActiveDialog->mDialogWidth/2),(mGlobalSettings.WindowHeight/2)-(mActiveDialog->mDialogHeight/2));						
-			mActiveDialog->render((mGlobalSettings.WindowWidth/2),(mGlobalSettings.WindowHeight/2));
+		if(mActiveDialog){			
+			mActiveDialog->render();
 		}
-		if(mActiveMessage){
-			//mActiveMessage->render((mGlobalSettings.WindowWidth/2)-(mActiveMessage->mDialogWidth/2),(mGlobalSettings.WindowHeight/2)-(mActiveMessage->mDialogHeight/2));
-			mActiveMessage->render((mGlobalSettings.WindowWidth/2),(mGlobalSettings.WindowHeight/2));
+		if(mActiveMessage){			
+			mActiveMessage->render();
 		}
-		mTopBar.render(0,0);
+		mTopBar.render();
 		mTileSet.renderIm(mGlobalSettings.TopBarHeight, mTileSetScrollY);
 		if(mGlobalSettings.bShowProjectInfo){
 			mProjectInfo.update();
@@ -154,13 +152,13 @@ int TEditor::render(){
 		mTileSelectedTile->renderEd(50,50+mTopBar.mDialogHeight,&mPalette);
 		mColorSelectedTile->bPixelSelected = true;
 		if(mActiveDialog){
-			mActiveDialog->render((mGlobalSettings.WindowWidth/2)-(mActiveDialog->mDialogWidth/2),(mGlobalSettings.WindowHeight/2)-(mActiveDialog->mDialogHeight/2));
+			mActiveDialog->render();
 		}
 		if(mActiveMessage){
-			mActiveMessage->render((mGlobalSettings.WindowWidth/2)-(mActiveMessage->mDialogWidth/2),(mGlobalSettings.WindowHeight/2)-(mActiveMessage->mDialogHeight/2));
+			mActiveMessage->render();
 		}
 		
-		mTopBar.render(0,0);
+		mTopBar.render();
 
 		if(mGlobalSettings.bShowProjectInfo){
 			mProjectInfo.update();
@@ -373,7 +371,7 @@ int TEditor::activateSaveDialog(){
 int TEditor::activateSaveAsDialog(){
 	mActiveDialog = &mSaveAsDialog;
 	mActiveDialog->bDialogIsWatingForText = true;
-	SDL_StartTextInput();
+	//SDL_StartTextInput();
 	return 0;
 }
 
@@ -381,7 +379,7 @@ int TEditor::activateOpenTileDialog(){
 	if(mCurMode == EMODE_MAP){
 		mActiveDialog = &mOpenTileDialog;
 		mActiveDialog->bDialogIsWatingForText = true;
-		SDL_StartTextInput();
+		//SDL_StartTextInput();
 	}
 	return 0;
 }
