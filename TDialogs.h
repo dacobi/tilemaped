@@ -13,15 +13,12 @@ class Dialog{
 		SDL_Color mDialogBorderColor = mGlobalSettings.DefaultBorderColor;
 		SDL_Color mTextColor = mGlobalSettings.DefaultTextColor;
 		void setColorScheme(int nScheme);
-		int mDialogWidth=200;
-		int mDialogHeight=100;
-		//int mDialogBorder=10;
+		int mDialogWidth=400;
+		int mDialogHeight=200;		
 		bool bDialogIsWatingForText=false;
 		bool bInputIsAccept=false;
 		bool bInputIsCancel=false;
-		virtual void recieveInput(int mKey);
-		//virtual void recieveInput(std::string mTextInput);		
-		//virtual int recieveInput(int mx, int my);		
+		virtual void recieveInput(int mKey);		
 		virtual void dropLastInputChar();
 		virtual SDL_Rect render(int xpos, int ypos);		
 		virtual void init();
@@ -31,13 +28,11 @@ class Dialog{
 
 class BDialog: public Dialog{
 	public:
-		std::string mDialogTextMain;
-		TTFTexture mTexDialogTextMain;
+		std::string mDialogTextMain;		
 		SDL_Rect mButtonRect;
 		int mMinDialogWidth=100;
 		virtual void init();
-		virtual void setColorScheme(int nScheme);
-		//virtual int recieveInput(int mx, int my);		
+		virtual void setColorScheme(int nScheme);		
 		virtual SDL_Rect render(int xpos, int ypos);
 };
 
@@ -49,16 +44,9 @@ class TIDialog: public BDialog{
 		bool bInputIsAccepted=true;
 		bool bIsNumeric=false;
 		bool bAutoComplete=false;
-		int mCompleteIndex=0;
-		//char tmpbuf[1000];
-		//char newbuf[1000];
+		int mCompleteIndex=0;				
 		static int MyCallback(ImGuiInputTextCallbackData* data);
-		std::string mCompleteText;
-		//TTFTexture mTexCompleteText;
-		//std::string mCompleteCursor;
-		//std::string mCompleteAfter;
-		//TTFTexture mTexCompleteCursor;
-		//TTFTexture mTexCompleteAfter;
+		std::string mCompleteText;		
 		std::vector<int> mAllowedValues;
 		int mMaxLength=0;
 		int mMaxRange=0;
@@ -71,10 +59,8 @@ class TIDialog: public BDialog{
 		int checkCurrentText();
 		void autoComplete();
 		virtual void dropLastInputChar();
-		virtual void init();
-		//virtual int recieveInput(int mx, int my);		
-		virtual SDL_Rect render(int xpos, int ypos);
-		//virtual void recieveInput(std::string mTextInput);
+		virtual void init();		
+		virtual SDL_Rect render(int xpos, int ypos);		
 		std::string mInputLabel = "Filename";
 		bool bIsActive=false;
 };
@@ -83,14 +69,8 @@ class TIDialog: public BDialog{
 class SDialog: public Dialog{
 	public:
 		virtual void init();
-		std::string mDialogTextMain;
-		//std::string mDialogTextInput;
-		//TTFTexture mTexDialogTextMain;
-		//TTFTexture mTexDialogTextInput;		
-		//BDialog mAcceptButton;
-		//BDialog mCancelButton;
-		virtual void recieveInput(int mKey);		
-		//virtual int recieveInput(int mx, int my);
+		std::string mDialogTextMain;		
+		virtual void recieveInput(int mKey);				
 		virtual SDL_Rect render(int xpos, int ypos);
 };
 
@@ -104,10 +84,8 @@ class RTDialog: public SDialog{
 class SADialog: public SDialog{
 	public:
 		virtual void init();
-		virtual void cancel();
-		//virtual void recieveInput(std::string mTextInput);
-		virtual void recieveInput(int mKey);
-		//virtual int recieveInput(int mx, int my);
+		virtual void cancel();		
+		virtual void recieveInput(int mKey);		
 		virtual void dropLastInputChar();
 		virtual SDL_Rect render(int xpos, int ypos);
 		bool bSubDialogActive = false;	
@@ -120,8 +98,7 @@ class ITDialog: public SADialog{
 		virtual void init();
 		virtual void cancel();
 		virtual SDL_Rect render(int xpos, int ypos);
-		virtual void recieveInput(int mKey);
-		//virtual int recieveInput(int mx, int my);
+		virtual void recieveInput(int mKey);		
 };
 
 class RNDialog: public ITDialog{
@@ -143,8 +120,7 @@ class RNDialog: public ITDialog{
 		ImVec2 wsize;
 		ImVec2 elmin;
 		ImVec2 elmax;
-		ImVec2 esize;
-		//virtual void recieveInput(std::string mTextInput);		
+		ImVec2 esize;		
 };
 
 class OPDialog: public ITDialog{
@@ -155,38 +131,14 @@ class OPDialog: public ITDialog{
 
 class CPDialog: public Dialog{
 	public:
-		std::string mDialogTextMain;		
-		
-		/*
-		std::string mDialogInputWidth;		
-		TTFTexture mTexDialogWidth;
-		std::string mDialogInputHeight;		
-		TTFTexture mTexDialogHeight;
-		std::string mDialogInputSizeX;		
-		TTFTexture mTexDialogSizeX;
-		std::string mDialogInputSizeY;		
-		TTFTexture mTexDialogSizeY;
-		std::string mDialogInputPath;		
-		TTFTexture mTexDialogPath;
-		std::string mDialogInputPal;		
-		TTFTexture mTexDialogPal;
-		TIDialog mReadWidth;
-		TIDialog mReadHeight;
-		TIDialog mReadSizeX;
-		TIDialog mReadSizeY;
-		*/
+		std::string mDialogTextMain;				
 		TIDialog mReadPath;
-		TIDialog mReadPal;
-		//BDialog mCreateButton;
-		//BDialog mCancelButton;
+		TIDialog mReadPal;		
 		TIDialog *mActiveInput;
 		bool bInputIsAccepted = false;
-		virtual void init();
-		//virtual void resize();	
-		virtual void dropLastInputChar();
-		//virtual void recieveInput(std::string cTextInput);		
-		virtual void recieveInput(int mKey);		
-		//virtual int recieveInput(int mx, int my);
+		virtual void init();		
+		virtual void dropLastInputChar();		
+		virtual void recieveInput(int mKey);				
 		virtual SDL_Rect render(int xpos, int ypos);
 		int tmapx=32;
 		int tmapy=32;
@@ -198,8 +150,7 @@ class CPDialog: public Dialog{
 
 class OCDialog: public Dialog{
 	public:
-		virtual void init();
-		//virtual void resize();
+		virtual void init();		
 		bool bSubDialogActive = false;
 		bool bSubDialogIsOpen = false;	
 		bool bSubDialogIsCreate = false;	
@@ -209,10 +160,8 @@ class OCDialog: public Dialog{
 		BDialog mQuitButton;
 		OPDialog mOpenProject;
 		CPDialog mCreateProject;
-		virtual void dropLastInputChar();
-		//virtual void recieveInput(std::string cTextInput);		
-		virtual void recieveInput(int mKey);		
-		//virtual int recieveInput(int mx, int my);
+		virtual void dropLastInputChar();		
+		virtual void recieveInput(int mKey);				
 		virtual SDL_Rect render(int xpos, int ypos);
 };
 
@@ -224,12 +173,11 @@ class HDialog: public SDialog{
 		std::vector<std::string> mCurModeText;
 		BDialog mCloseButton;
 		virtual void init();
-		virtual void recieveInput(int mKey);
-		//virtual int recieveInput(int mx, int my);				
+		virtual void recieveInput(int mKey);		
 		virtual SDL_Rect render(int xpos, int ypos);
 };
 
-class PIDialog {
+class PIDialog: public BDialog{
 	public:
 		TEditor* mEditor;
 		virtual void init();

@@ -28,8 +28,27 @@ void Dialog::dropLastInputChar(){
 }
 
 SDL_Rect Dialog::render(int xpos, int ypos){
+
+	ImVec2 cWinPos;
+
+	cWinPos.x = xpos;
+	cWinPos.y = ypos;
+
+	ImGui::SetWindowPos(cWinPos, ImGuiCond_Once);
+
 	SDL_Rect tmpBorder;
 	
+	ImVec2 mWinPos = ImGui::GetWindowPos();
+	ImVec2 mWinSize = ImGui::GetWindowSize();
+
+	tmpBorder.x = mWinPos.x;
+	tmpBorder.y = mWinPos.y;
+	tmpBorder.w = mWinSize.x;
+	tmpBorder.h = mWinSize.y;
+
+	mDialogWidth = tmpBorder.w;
+	mDialogHeight = tmpBorder.h;
+
 	return tmpBorder;
 }
 
@@ -97,7 +116,7 @@ SDL_Rect TBDialog::render(int xpos, int ypos){
 
 		if (ImGui::BeginMenu("Edit"))
 		{
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Empty Tile (F3)")).c_str())){
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " New Tile (F3)")).c_str())){
 				mGlobalSettings.CurrentEditor->createNewTile();
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Tile (F4)")).c_str())){
@@ -106,7 +125,7 @@ SDL_Rect TBDialog::render(int xpos, int ypos){
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Tile (F5)")).c_str())){
 				mGlobalSettings.CurrentEditor->createNewTileCopy(mGlobalSettings.CurrentEditor->mTileSelectedTile);
 			}
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Unused Tile (F6)")).c_str())){
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Unused Tiles (F6)")).c_str())){
 				mGlobalSettings.CurrentEditor->activateDropUnusedTiles();
 			}
 			if(ImGui::MenuItem("Undo (U)")){
@@ -128,6 +147,13 @@ SDL_Rect TBDialog::render(int xpos, int ypos){
 
 	mGlobalSettings.TopBarHeight = ImGui::GetWindowHeight();
 
+	std::string cProjPath = mGlobalSettings.mFile + " Project: " + mGlobalSettings.ProjectPath;
+	textWidth = ImGui::CalcTextSize(cProjPath.c_str()).x;
+	textWidth *= 1.1;
+
+	ImGui::SetCursorPosX((mGlobalSettings.WindowWidth - textWidth));
+	ImGui::Text("%s", cProjPath.c_str());               
+
 	ImGui::EndMainMenuBar();
 	
 	SDL_Rect tmpRect;
@@ -139,7 +165,9 @@ void RTDialog::init(){
 }
 
 SDL_Rect RTDialog::render(int xpos, int ypos){
-        	
+
+	SDL_Rect tmpBorder;
+
 	ImGui::Begin(mDialogTextMain.c_str());                         
     		
 			ImGui::Text("Remove Unused Tiles? Undo Stack will be cleared!");
@@ -148,14 +176,19 @@ SDL_Rect RTDialog::render(int xpos, int ypos){
 				recieveInput(SDLK_y);
 			}
 
+			ImGui::SameLine();
+
 			if (ImGui::Button("Cancel")){
 				recieveInput(SDLK_n);
 			}
+
+			tmpBorder = Dialog::render(xpos, ypos);
+
             
         ImGui::End();
 
 	
-	SDL_Rect tmpBorder;			
+	
 	return tmpBorder;
 }
 
@@ -187,7 +220,8 @@ void SDialog::recieveInput(int mKey){
 }
 
 SDL_Rect SDialog::render(int xpos, int ypos){
-        	
+    SDL_Rect tmpBorder;			
+
 	ImGui::Begin("Save Project");                         
     		
 			ImGui::Text("%s", mDialogTextMain.c_str()); //mDialogTextMain.c_str());
@@ -197,14 +231,18 @@ SDL_Rect SDialog::render(int xpos, int ypos){
 				mGlobalSettings.mProjectSaveState = 1;
 			}
 
+			ImGui::SameLine();
+
 			if (ImGui::Button("Cancel")){
 				bInputIsCancel=true;
 			}
+
+			tmpBorder = Dialog::render(xpos, ypos);
             
         ImGui::End();
 
 	
-	SDL_Rect tmpBorder;			
+	
 	return tmpBorder;
 }
 
@@ -226,6 +264,9 @@ void SADialog::init(){
 
 SDL_Rect SADialog::render(int xpos, int ypos){
 
+	SDL_Rect tmpBorder;
+
+
 ImGui::Begin("Save Project As");                         
     		
 			ImGui::Text("Save Project As Folder");
@@ -238,13 +279,16 @@ ImGui::Begin("Save Project As");
 				}				
 			}
 
+			ImGui::SameLine();
+
 			if (ImGui::Button("Cancel")){
 				bInputIsCancel=true;
 			}
             
+			tmpBorder = Dialog::render(xpos, ypos);
+
         ImGui::End();
 
-	SDL_Rect tmpBorder;
 
 	if(bSubDialogActive){
 		tmpBorder = mSubDialog->render(xpos + 50, ypos + 50);
@@ -304,6 +348,8 @@ void SADialog::dropLastInputChar(){
 
 SDL_Rect OPDialog::render(int xpos, int ypos){
 
+SDL_Rect tmpRect;
+
 ImGui::Begin("Open Project");                         
     		
 			ImGui::Text("Open Project from Folder");
@@ -316,13 +362,17 @@ ImGui::Begin("Open Project");
 				}				
 			}
 
+			ImGui::SameLine();
+
 			if (ImGui::Button("Cancel")){
 				bInputIsCancel=true;
 			}		
+
+			tmpRect = Dialog::render(xpos, ypos);
             
         ImGui::End();
 
-	SDL_Rect tmpRect;
+	
 	return tmpRect;
 
 }
@@ -331,6 +381,7 @@ void OPDialog::init(){
 	mDialogTextMain = mGlobalSettings.mFile + " Open Project From Folder";
 	
 	mTextInput.mDialogTextMain = "";
+	mTextInput.mInputLabel = "Folder";
 	mTextInput.bIsInputActive = true;
 	mTextInput.bAutoComplete = true;
 	mTextInput.init();
@@ -511,7 +562,7 @@ void CPDialog::init(){
 }
 
 SDL_Rect CPDialog::render(int xpos, int ypos){
-	SDL_Rect tmpBorder;// = Dialog::render(xpos, ypos);
+	SDL_Rect tmpBorder;
 
 	
 
@@ -570,6 +621,8 @@ SDL_Rect CPDialog::render(int xpos, int ypos){
 				recieveInput(SDLK_n);
 			}		
             
+	tmpBorder = Dialog::render(xpos, ypos);
+
      ImGui::End();
 
 	return tmpBorder;
@@ -704,10 +757,14 @@ SDL_Rect ITDialog::render(int xpos, int ypos){
 			}				
 		}
 
+		ImGui::SameLine();
+
 		if (ImGui::Button("Cancel")){
 			bInputIsCancel=true;
 		}		
-            
+
+	tmpBorder = Dialog::render(xpos, ypos);
+        
     ImGui::End();
 	
 	return tmpBorder;
@@ -997,6 +1054,9 @@ SDL_Rect MEDialog::render(int xpos, int ypos){
 		if (ImGui::Button("Close")){
 			bInputIsCancel=true;
 		}
+
+		tmpBorder = Dialog::render(xpos, ypos);
+
             
     ImGui::End();
 
@@ -1083,16 +1143,17 @@ void PIDialog::init(){
 	flipv=0;	
 
 	update();
-		
+	
+	mDialogTextMain = mGlobalSettings.mInfo + " Project Info";
+
 		
 }
 
 SDL_Rect PIDialog::render(int xpos, int ypos){
 	SDL_Rect tmpBorder; 
-
+		
+	ImGui::Begin(mDialogTextMain.c_str(), &mGlobalSettings.bShowProjectInfo);
 	
-	ImGui::Begin("\uf449 Project Info", &mGlobalSettings.bShowProjectInfo);
-
 	ImGui::Text("%s", TileMap.c_str());
 	ImGui::Text("%s", TileSizeX.c_str());
 	ImGui::Text("%s", TileSizeY.c_str());
@@ -1103,7 +1164,11 @@ SDL_Rect PIDialog::render(int xpos, int ypos){
 	ImGui::Text("%s", CurrentTile.c_str());
 	ImGui::Text("%s", Flip.c_str());
 	
+	tmpBorder = Dialog::render(xpos, ypos);
+
 	ImGui::End();
 		
+	
+
 	return tmpBorder;
 }
