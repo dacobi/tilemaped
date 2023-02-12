@@ -901,7 +901,7 @@ void TIDialog::autoComplete(){
 		mCompleteText = "";
 		mFile = std::string((const char*)(cPath.filename().c_str()));			 //cPath.filename();
 
-		std::cout << "Complete Before" << std::endl;
+		std::cout << "Complete Before: " << mDir << ", "  << mFile << std::endl;
 
 		if(fs::is_directory(fs::status(mDir))){
 			for (const auto & entry : fs::directory_iterator(mDir)){
