@@ -269,7 +269,7 @@ SDL_Rect SADialog::render(int xpos, int ypos){
 
 ImGui::Begin("Save Project As");                         
     		
-			ImGui::Text("Save Project As Folder");
+			ImGui::Text("Save Project As Folder             ");
 
 			mTextInput.render(xpos ,  ypos);
 
