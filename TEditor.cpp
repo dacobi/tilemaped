@@ -130,7 +130,7 @@ int TEditor::render(){
 		mTileSelectedTile->bIsSelected = true;
 
 		if(mActiveDialog){
-			//mActiveDialog->render((mGlobalSettings.WindowWidth/2)-(mActiveDialog->mDialogWidth/2),(mGlobalSettings.WindowHeight/2)-(mActiveDialog->mDialogHeight/2));
+			//mActiveDialog->render((mGlobalSettings.WindowWidth/2)-(mActiveDialog->mDialogWidth/2),(mGlobalSettings.WindowHeight/2)-(mActiveDialog->mDialogHeight/2));						
 			mActiveDialog->render((mGlobalSettings.WindowWidth/2),(mGlobalSettings.WindowHeight/2));
 		}
 		if(mActiveMessage){

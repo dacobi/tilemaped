@@ -27,14 +27,16 @@ void Dialog::dropLastInputChar(){
 
 }
 
-SDL_Rect Dialog::render(int xpos, int ypos){
+void Dialog::setCenter(){
+	ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Once, ImVec2(0.5f, 0.5f));
+}
 
-	
+SDL_Rect Dialog::render(int xpos, int ypos){
 
 	SDL_Rect tmpBorder;
 	
-	
 	ImVec2 mWinSize = ImGui::GetWindowSize();
+	
 	tmpBorder.w = mWinSize.x;
 	tmpBorder.h = mWinSize.y;
 
@@ -43,19 +45,11 @@ SDL_Rect Dialog::render(int xpos, int ypos){
 	cWinPos.x = xpos;
 	cWinPos.y = ypos;
 
-	if(bDialogCenter){
-		cWinPos.x -=  mWinSize.x/2;
-		cWinPos.y -=  mWinSize.y/2;
-	}
-
-	ImGui::SetWindowPos(cWinPos, ImGuiCond_Once);
-
-	ImVec2 mWinPos = ImGui::GetWindowPos();
-
-	tmpBorder.x = mWinPos.x;
-	tmpBorder.y = mWinPos.y;
+	ImGui::SetWindowPos(cWinPos, ImGuiCond_Once); 
 	
-
+	tmpBorder.x = cWinPos.x;
+	tmpBorder.y = cWinPos.y;
+	
 	mDialogWidth = tmpBorder.w;
 	mDialogHeight = tmpBorder.h;
 
@@ -178,6 +172,9 @@ SDL_Rect RTDialog::render(int xpos, int ypos){
 
 	SDL_Rect tmpBorder;
 
+	Dialog::setCenter();
+
+
 	ImGui::Begin(mDialogTextMain.c_str());                         
     		
 			ImGui::Text("Remove Unused Tiles? Undo Stack will be cleared!");
@@ -192,7 +189,7 @@ SDL_Rect RTDialog::render(int xpos, int ypos){
 				recieveInput(SDLK_n);
 			}
 
-			tmpBorder = Dialog::render(xpos, ypos);
+			//tmpBorder = Dialog::render(xpos, ypos);
 
             
         ImGui::End();
@@ -230,7 +227,10 @@ void SDialog::recieveInput(int mKey){
 }
 
 SDL_Rect SDialog::render(int xpos, int ypos){
-    SDL_Rect tmpBorder;			
+    SDL_Rect tmpBorder;// = Dialog::render(xpos, ypos);;			
+
+	Dialog::setCenter();
+
 
 	ImGui::Begin("Save Project");                         
     		
@@ -247,7 +247,7 @@ SDL_Rect SDialog::render(int xpos, int ypos){
 				bInputIsCancel=true;
 			}
 
-			tmpBorder = Dialog::render(xpos, ypos);
+			//tmpBorder = Dialog::render(xpos, ypos);
             
         ImGui::End();
 
@@ -275,10 +275,12 @@ void SADialog::init(){
 
 SDL_Rect SADialog::render(int xpos, int ypos){
 
-	SDL_Rect tmpBorder;
+	SDL_Rect tmpBorder; // = Dialog::render(xpos, ypos);
+
+	Dialog::setCenter();
 
 
-ImGui::Begin("Save Project As");                         
+	ImGui::Begin("Save Project As");                         
     		
 			ImGui::Text("Save Project As Folder             ");
 
@@ -296,7 +298,7 @@ ImGui::Begin("Save Project As");
 				bInputIsCancel=true;
 			}
             
-			tmpBorder = Dialog::render(xpos, ypos);
+			//tmpBorder = Dialog::render(xpos, ypos);
 
         ImGui::End();
 
@@ -361,6 +363,9 @@ SDL_Rect OPDialog::render(int xpos, int ypos){
 
 SDL_Rect tmpRect;
 
+	Dialog::setCenter();
+
+
 ImGui::Begin("Open Project");                         
     		
 			ImGui::Text("Open Project from Folder");
@@ -379,7 +384,7 @@ ImGui::Begin("Open Project");
 				bInputIsCancel=true;
 			}		
 
-			tmpRect = Dialog::render(xpos, ypos);
+			//tmpRect = Dialog::render(xpos, ypos);
             
         ImGui::End();
 
@@ -575,7 +580,8 @@ void CPDialog::init(){
 SDL_Rect CPDialog::render(int xpos, int ypos){
 	SDL_Rect tmpBorder;
 
-	
+		Dialog::setCenter();
+
 
 	ImGui::Begin("Create New Project");                         
     		
@@ -632,7 +638,7 @@ SDL_Rect CPDialog::render(int xpos, int ypos){
 				recieveInput(SDLK_n);
 			}		
             
-	tmpBorder = Dialog::render(xpos, ypos);
+	//tmpBorder = Dialog::render(xpos, ypos);
 
      ImGui::End();
 
@@ -756,6 +762,8 @@ void RNDialog::init(){
 SDL_Rect ITDialog::render(int xpos, int ypos){	
 	SDL_Rect tmpBorder; 
 
+	Dialog::setCenter();
+
 	ImGui::Begin("Import Tile");                         
     		
 		ImGui::Text("Import Tile from bitmap or RAW");
@@ -774,7 +782,7 @@ SDL_Rect ITDialog::render(int xpos, int ypos){
 			bInputIsCancel=true;
 		}		
 
-	tmpBorder = Dialog::render(xpos, ypos);
+	//tmpBorder = Dialog::render(xpos, ypos);
         
     ImGui::End();
 	
@@ -1059,6 +1067,9 @@ SDL_Rect MEDialog::render(int xpos, int ypos){
 
 	SDL_Rect tmpBorder; 
 
+	Dialog::setCenter();
+
+
 	ImGui::Begin("Message");                         
 		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(mTextColor.r, mTextColor.g, mTextColor.b, 255));
 		ImGui::Text("%s", mDialogTextMain.c_str());
@@ -1068,7 +1079,7 @@ SDL_Rect MEDialog::render(int xpos, int ypos){
 			bInputIsCancel=true;
 		}
 
-		tmpBorder = Dialog::render(xpos, ypos);
+		//tmpBorder = Dialog::render(xpos, ypos);
 
             
     ImGui::End();
@@ -1203,6 +1214,8 @@ void QDialog::recieveInput(int mKey){
 SDL_Rect QDialog::render(int xpos, int ypos){
     SDL_Rect tmpBorder;			
 
+	Dialog::setCenter();
+
 	ImGui::Begin("Quit Program?");                         
     		
 			ImGui::Text("Any unsaved progress will be lost   "); 
@@ -1217,7 +1230,7 @@ SDL_Rect QDialog::render(int xpos, int ypos){
 				recieveInput(SDLK_n);
 			}
 
-			tmpBorder = Dialog::render(xpos, ypos);
+			//tmpBorder = Dialog::render(xpos, ypos);
             
         ImGui::End();
 

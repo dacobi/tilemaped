@@ -21,7 +21,8 @@ class Dialog{
 		bool bInputIsCancel = false;
 		virtual void recieveInput(int mKey);		
 		virtual void dropLastInputChar();
-		virtual SDL_Rect render(int xpos, int ypos);		
+		virtual SDL_Rect render(int xpos, int ypos);
+		void setCenter();	
 		virtual void init();
 		virtual void update();
 		virtual void cancel();
