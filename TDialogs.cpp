@@ -893,19 +893,19 @@ void TIDialog::autoComplete(){
 		std::string mDir,mFile;
 
 		if(cPath.parent_path() == ""){
-			mDir = std::string((const char*)(fs::current_path().c_str()));			
+			mDir = fs::current_path().string();
 		} else {
-			mDir = std::string((const char*)(cPath.parent_path().c_str()));			
+			mDir = cPath.parent_path().string();
 		}
 
 		mCompleteText = "";
-		mFile = std::string((const char*)(cPath.filename().c_str()));			 //cPath.filename();
+		mFile = cPath.filename().string();			 //cPath.filename();
 
 		std::cout << "Complete Before: " << mDir << ", "  << mFile << std::endl;
 
 		if(fs::is_directory(fs::status(mDir))){
 			for (const auto & entry : fs::directory_iterator(mDir)){
-				std::string tStr =   std::string((const char*)((entry.path()).filename().c_str())); // (entry.path()).filename();
+				std::string tStr =   (entry.path()).filename().string(); // (entry.path()).filename();
 				std::cout << "Complete:" << mFile << std::endl;
 				if(mFile.length()){
 					std::size_t subpos = tStr.find(mFile);						
