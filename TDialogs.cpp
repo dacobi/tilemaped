@@ -79,6 +79,19 @@ SDL_Rect TBDialog::render(int xpos, int ypos){
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Project Info (F2)")).c_str())){
 				mGlobalSettings.CurrentEditor->activateProjectInfo();
 			}
+			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
+				if(ImGui::MenuItem("Selected Tile Type (S)", NULL , &mGlobalSettings.bShowTypeSelection)){										
+				}
+				if(ImGui::MenuItem("Selected Tile (T)", NULL , &mGlobalSettings.bShowSelectedTile)){										
+				}		
+				
+			}
+			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE){
+				if(ImGui::MenuItem("Selected Color (S)", NULL , &mGlobalSettings.bShowPixelType)){										
+				}
+				if(ImGui::MenuItem("Pixel Grid (P)", NULL , &mGlobalSettings.bShowPixelGrip)){										
+				}
+			}
 			ImGui::EndMenu();
 		}
 
