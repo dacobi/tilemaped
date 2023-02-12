@@ -893,7 +893,7 @@ void TIDialog::autoComplete(){
 		std::string mDir,mFile;
 
 		if(cPath.parent_path() == ""){
-			mDir = ".";
+			mDir = std::string((const char*)(fs::current_path().c_str()));			
 		} else {
 			mDir = std::string((const char*)(cPath.parent_path().c_str()));			
 		}
