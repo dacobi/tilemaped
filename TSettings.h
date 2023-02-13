@@ -83,6 +83,8 @@ class TSettings{
 		int TileMapWidth=128;		
 		int TileSizeX=16;
 		int TileSizeY=16;
+		int TileSetBPP=8;
+		int PaletteOffset=0;
 		int TileRenderSize=16;
 		int PaletteScale=2;
 		std::string ProjectPath;

@@ -635,9 +635,31 @@ int TileSet::loadFromFolder(std::string path, TPalette* tpal){
 
 	std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
 
-	int twidth = tbuffer[0];
-    int theight = tbuffer[1];
+	int magic1 = tbuffer[0];
+    int magic2 = tbuffer[1];
 
+	int twidth;
+    int theight;
+
+	if( (magic1 == 0x0) ||(magic1 == 0x1) ||(magic1 == 0x10) ||(magic1 == 0x11)  ){
+		twidth = ((magic1 & 0xf0) >> 4);
+		theight = (magic1 & 0x0f);
+	} else {
+		std::cout << "Error in Tile File: " << cTileFile << std::endl;
+		return 1;	
+	}
+
+	mGlobalSettings.TileSizeX = mTileSizeIn[twidth];
+	mGlobalSettings.TileSizeY = mTileSizeIn[theight];
+
+	if( (magic2 == 0x8) ||(magic2 == 0x4) ||(magic2 == 0x2) ){
+		mGlobalSettings.TileSetBPP = magic2;
+	} else {
+		std::cout << "Error in Tile File: " << cTileFile << std::endl;
+		return 1;	
+	}
+
+/*
 	if((twidth == 8) || (twidth == 16)){
 		mGlobalSettings.TileSizeX = twidth;
 		mGlobalSettings.TileSizeY = theight;
@@ -645,8 +667,8 @@ int TileSet::loadFromFolder(std::string path, TPalette* tpal){
 		std::cout << "Error in Tile File: " << cTileFile << std::endl;
 		return 1;		
 	}
-
-	int tmpTileSize = twidth*theight;
+*/
+	int tmpTileSize = mGlobalSettings.TileSizeX*mGlobalSettings.TileSizeY;
 
 	tbuffer.erase(tbuffer.begin());
 	tbuffer.erase(tbuffer.begin());
@@ -678,8 +700,18 @@ int TileSet::saveToFolder(std::string tpath){
 
 	std::vector<unsigned char> obuffer;
 
-	obuffer.push_back(mGlobalSettings.TileSizeX);
-	obuffer.push_back(mGlobalSettings.TileSizeY);
+	int magic1, magic2;
+
+	magic1 = mTileSizeOut[mGlobalSettings.TileSizeX];
+	magic1 = (magic1 << 4) + mTileSizeOut[mGlobalSettings.TileSizeY];
+
+	magic2 = mGlobalSettings.TileSetBPP;
+
+	obuffer.push_back(magic1);
+	obuffer.push_back(magic2);
+
+	//obuffer.push_back(mGlobalSettings.TileSizeX);
+	//obuffer.push_back(mGlobalSettings.TileSizeY);
 
 	for(auto &mTile : TTiles){		
 		obuffer.insert(obuffer.end(), mTile->FileData.begin(), mTile->FileData.end());

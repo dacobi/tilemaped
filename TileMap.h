@@ -100,6 +100,8 @@ class TileSet{
 		int render(int ypos, int mScroll);
 		int renderIm(int ypos, int mScroll);		
 		bool updateWinPos=false;
+		std::map<int, int> mTileSizeIn = {{0,8},{1,16}};
+		std::map<int, int> mTileSizeOut = {{8,0},{16,1}};
 };
 
 class TileProperties{
