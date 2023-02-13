@@ -414,6 +414,7 @@ int TEditor::flipSelectedTile(){
 	return 1;
 }
 
+/*
 int TEditor::replaceSelectedColor(int x, int y){
 	if(mGlobalSettings.bShowPixelType){
 				int mOldColor = mColorSelected;
@@ -449,6 +450,7 @@ int TEditor::replaceSelectedColor(int x, int y){
 	}
 	return 0;
 }
+*/
 
 int TEditor::replaceSelectedTiles(int mx, int my){
 	if(mCurMode == EMODE_MAP){	
@@ -519,28 +521,20 @@ int TEditor::findSelTile(){
 
 	if(leftMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
 		int tSel = -1;
-/*
-		tSel = searchRectsXY(mPalette.PixelAreas, cx, cy);
-		if(tSel != -1){
-			mColorSelectedTile->bPixelSelected = false;
-			mColorSelected = tSel;
-			mColorSelectedTile = mPalette.TPixels[tSel];
-			mColorSelectedTile->bPixelSelected = true;
-		} else { */
-			tSel = searchRectsXY(mTileSelectedTile->PixelAreas, cx, cy);
-			if(tSel != -1){
 
-	       		TEActionReplacePixel *mCurAction = new TEActionReplacePixel();
-				mCurAction->doAction(mTileSelectedTile, tSel, mTileSelectedTile->FileData[tSel], mColorSelected, &mPalette);
+		tSel = searchRectsXY(mTileSelectedTile->PixelAreas, cx, cy);
+		if(tSel != -1){
+
+       		TEActionReplacePixel *mCurAction = new TEActionReplacePixel();
+			mCurAction->doAction(mTileSelectedTile, tSel, mTileSelectedTile->FileData[tSel], mColorSelected, &mPalette);
 				
-				if(!(*mCurAction == * mTileSelectedTile->mActionStack.mLastAction)){
-	       				mTileSelectedTile->mActionStack.newActionGroup();	
-	       				mTileSelectedTile->mActionStack.addAction(mCurAction);
-	       				mTileSelectedTile->mActionStack.mLastAction = mCurAction;
-	       				mTileSelectedTile->mActionStack.redoClearStack();
-	       		}
-			}
-//		}
+			if(!(*mCurAction == * mTileSelectedTile->mActionStack.mLastAction)){
+       				mTileSelectedTile->mActionStack.newActionGroup();	
+       				mTileSelectedTile->mActionStack.addAction(mCurAction);
+       				mTileSelectedTile->mActionStack.mLastAction = mCurAction;
+       				mTileSelectedTile->mActionStack.redoClearStack();
+       		}
+		}
 	}
 
 	if(rightMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
@@ -561,7 +555,6 @@ int TEditor::handlePalette(){
 
 	if(ImButtonsPalette.mLeft.bButtonIsDown){
 		int tSel = -1;
-
 		tSel = searchRectsXY(mPalette.PixelAreas, ImButtonsPalette.mLeft.mMousePos.x, ImButtonsPalette.mLeft.mMousePos.y);
 		if(tSel != -1){
 			mColorSelectedTile->bPixelSelected = false;
@@ -573,43 +566,38 @@ int TEditor::handlePalette(){
 
 	if(ImButtonsPalette.mRight.bButtonIsDown){
 		if(mGlobalSettings.bShowPixelType){
-				int mOldColor = mColorSelected;
-				int tSel = searchRectsXY(mPalette.PixelAreas, ImButtonsPalette.mRight.mMousePos.x, ImButtonsPalette.mRight.mMousePos.y);
-				if(tSel > -1){					
-					std::vector<int> newSelection;
-					int cPixIndex = 0;
-					for(auto &cPixel : mTileSelectedTile->FileData){
-						if(cPixel == mOldColor){
-							newSelection.push_back(cPixIndex);
-						}
-						cPixIndex++;
+			int mOldColor = mColorSelected;
+			int tSel = searchRectsXY(mPalette.PixelAreas, ImButtonsPalette.mRight.mMousePos.x, ImButtonsPalette.mRight.mMousePos.y);
+			if(tSel > -1){					
+				std::vector<int> newSelection;
+				int cPixIndex = 0;
+				for(auto &cPixel : mTileSelectedTile->FileData){
+					if(cPixel == mOldColor){
+						newSelection.push_back(cPixIndex);
 					}
-					if(newSelection.size()){
-						TEActionReplacePixels* newAction = new TEActionReplacePixels();
-						newAction->doAction(mTileSelectedTile, newSelection, mOldColor, tSel, &mPalette);
-						if(!(newAction == mTileSelectedTile->mActionStack.mLastAction)){
-							mTileSelectedTile->mActionStack.mLastAction = newAction;
-							mTileSelectedTile->mActionStack.newActionGroup();
-							mTileSelectedTile->mActionStack.addSubActions(newAction->mSubActions);
-						}
+					cPixIndex++;
+				}
+				if(newSelection.size()){
+					TEActionReplacePixels* newAction = new TEActionReplacePixels();
+					newAction->doAction(mTileSelectedTile, newSelection, mOldColor, tSel, &mPalette);
+					if(!(newAction == mTileSelectedTile->mActionStack.mLastAction)){
+						mTileSelectedTile->mActionStack.mLastAction = newAction;
+						mTileSelectedTile->mActionStack.newActionGroup();
+						mTileSelectedTile->mActionStack.addSubActions(newAction->mSubActions);
 					}
+				}
 
-				} 
+			} 
+		}
 	}
-	}
-
 	return 0;
 }
 
 int TEditor::handleEMTile(){
 
-	//if(rightMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
-	//	replaceSelectedColor(cx,cy);
-	//}	
-
 	handlePalette();
 	handleTile();
-	
+
 	return 0;
 }
 

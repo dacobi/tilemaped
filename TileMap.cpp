@@ -319,37 +319,6 @@ int TPalette::importGimpPalette(std::string palPath){
 	return 1;
 }
 
-/*
-int TPalette::testPaletteFile(std::string palPath){
-
-	fs::path tPath = palPath;
-
-	if((fs::exists(fs::status(tPath)))  && !(fs::is_directory(fs::status(tPath)))){
-		if(tPath.extension() == ".gpl"){
-			std::cout << "Gimp palette found" << std::endl;
-			return 2;
-		} else {
-			std::ifstream infile(tPath, std::ios::binary );
-    		std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
-
-			int magic1,magic2;
-
-			magic1 = tbuffer[0];
-			magic2 = tbuffer[1];
-
-			tbuffer.erase(tbuffer.begin());
-			tbuffer.erase(tbuffer.begin());
-	
-			if((magic1 == 16) && (magic2 == 42) && (tbuffer.size() == 512)){
-				std::cout << "X16 palette found" << std::endl;
-				return 1;
-			}
-		}	
-	}
-	return 0;
-}
-*/
-
 int TPalette::saveToFile(std::string cpath){
 	if(mGlobalSettings.ProjectPalette.size() == 514){		
 		std::ofstream outfile(cpath, std::ios::binary );
