@@ -761,8 +761,7 @@ int TEditor::handleEvents(){
 				mGlobalSettings.mDeleteUnusedTilesState = 0;
 			}
 			if(mGlobalSettings.mProjectSaveState == 1){
-				if(saveToFolder(mGlobalSettings.ProjectPath)){
-					std::cout << "hello" << std::endl;
+				if(saveToFolder(mGlobalSettings.ProjectPath)){					
 					showMessage("Error Creating Project Folder!", true);
 				} 
 				mGlobalSettings.mProjectSaveState = 0;

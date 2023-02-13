@@ -781,9 +781,7 @@ int Tile::updateTexture(TPalette* tpal){
 
 			for(int i = 0; i < (mGlobalSettings.TileSizeX * mGlobalSettings.TileSizeY); i++){
     			PixelData.push_back(tpal->mapPaletteColor(getPixel(i, j)));
-			}
-
-			std::cout << "Update Ofs: " << j << std::endl;
+			}			
     		SDL_UpdateTexture(TPOffset[j], NULL, PixelData.data(), mGlobalSettings.TileSizeX * sizeof(Uint32));		
 		}
 	} else {
@@ -821,8 +819,7 @@ int Tile::createNew(TPalette* tpal){
 
 int Tile::initTexture(){
 	if(mGlobalSettings.TileSetBPP < 0x8){
-		for(int i = 0; i < 16; i++){
-			std::cout << "Create Ofs: " << i << std::endl;
+		for(int i = 0; i < 16; i++){			
 			TPOffset[i] = SDL_CreateTexture(mGlobalSettings.TRenderer,SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, mGlobalSettings.TileSizeX,mGlobalSettings.TileSizeY);
 			SDL_SetTextureBlendMode(TPOffset[i], SDL_BLENDMODE_BLEND);
 		}
@@ -919,8 +916,7 @@ SDL_Rect Tile::render(int xpos, int ypos, int tscale,TileProperties tProps){
 
 	SDL_Rect tmpRect;
 
-	if(mGlobalSettings.TileSetBPP < 0x8){
-		std::cout << "Render Ofs: " << tProps.mPaletteOffset << std::endl;
+	if(mGlobalSettings.TileSetBPP < 0x8){		
 		tmpRect = { xpos, ypos, mGlobalSettings.TileSizeX*tscale, mGlobalSettings.TileSizeY*tscale};
         SDL_RenderCopyEx(mGlobalSettings.TRenderer, TPOffset[tProps.mPaletteOffset], NULL, &tmpRect, 0, NULL, flip);	        
 	} else {
@@ -982,8 +978,24 @@ Tile* TileSet::createNewFromFile(std::string newPath, TPalette* tpal){
 			if(newSurf->format->BitsPerPixel == 8){
 				if((newSurf->w == mGlobalSettings.TileSizeX) && (newSurf->h == mGlobalSettings.TileSizeY)){
 					std::vector<unsigned char> tbuffer;
-					for(int i = 0; i < (mGlobalSettings.TileSizeX*mGlobalSettings.TileSizeY); i++){
-						tbuffer.push_back(((unsigned char*)(newSurf->pixels))[i]);
+					if(mGlobalSettings.TileSetBPP == 0x4){
+						unsigned char tmpChar;
+						bool sndPix=false;
+						for(int i = 0; i < (mGlobalSettings.TileSizeX*mGlobalSettings.TileSizeY); i++){
+							if(sndPix){
+								tmpChar = (tmpChar << 4) + ((unsigned char*)(newSurf->pixels))[i]%16;
+								tbuffer.push_back(tmpChar);
+								sndPix = false;
+							} else {
+								tmpChar = ((unsigned char*)(newSurf->pixels))[i]%16;
+								sndPix = true;
+							}
+							
+						}
+					} else {
+						for(int i = 0; i < (mGlobalSettings.TileSizeX*mGlobalSettings.TileSizeY); i++){
+							tbuffer.push_back(((unsigned char*)(newSurf->pixels))[i]);
+						}
 					}
 					SDL_FreeSurface(newSurf);
 					return createNewFromBuffer(tbuffer, tpal);
