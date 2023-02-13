@@ -30,10 +30,12 @@ class TTexture{
 
 class TPixel{
 	public:
+		int PixelIndex;
 		SDL_Color PixelColor;
 		SDL_Rect CurrentArea;
 		int setPixelColor(unsigned char tcolor, TPalette* tpal);
 		SDL_Rect renderIm(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
+		SDL_Rect renderEditor(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderEd(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		bool bPixelSelected = false;
@@ -44,6 +46,8 @@ class TPixel{
 class TPalette : public Dialog{
 	public:
 		std::vector<SDL_Color> TPalette;
+		std::vector<SDL_Color> TPaletteEdit;
+		ImVec4 mEditColor;
 		int initPalette();
 		int loadFromFile(std::string palPath);
 		int saveToFolder(std::string palPath);
@@ -51,14 +55,21 @@ class TPalette : public Dialog{
 		int importGimpPalette(std::string palPath);
 		//int testPaletteFile(std::string palPath);
 		std::vector<TPixel*> TPixels;
+		std::vector<TPixel*> TPixelsEdit;
 		std::vector<SDL_Rect> PixelAreas;
 		int initTPixels();
+		int updateTPixels();
 		Uint32 mapPaletteColor(int tcolor);
 		ImU32 getImColor(SDL_Color cColor);	
+		ImVec4 getIm4Color(SDL_Color cColor);
+		SDL_Color getSDLColor(ImVec4 cCol);
+		int updatePalette();
+		int renderEditor(int xpos, int ypos);
 		int renderIm(int xpos, int ypos);
 		int render(int xpos, int ypos);
 		SDL_Rect renderTileEd(int xpos,int ypos, int tcolor);
 		std::map<int,int> mMapColorIn = {{0,0},{1,17},{2,34},{3,51},{4,68},{5,85},{6,102},{7,119},{8,136},{9,153},{10,170},{11,187},{12,204},{13,221},{14,238},{15,255}};
+		std::map<int,int> mMapColorOut = {{0,0},{17,1},{34,2},{51,3},{68,4},{85,5},{102,6},{119,7},{136,8},{153,9},{170,10},{187,11},{204,12},{221,13},{238,14},{255,15}};
 };
 
 

@@ -84,6 +84,7 @@ SDL_Rect TTexture::render(int xpos, int ypos, int tscale, bool updateRect ,bool 
 }
 
 int TPixel::setPixelColor(unsigned char tcolor, TPalette* tpal){
+	PixelIndex = tcolor;
 	PixelColor = tpal->TPalette[tcolor];
 	return 0;
 }
@@ -120,6 +121,40 @@ SDL_Rect TPixel::renderIm(int xpos, int ypos, int tscale, bool updateRect ,bool 
 		ImDrawList *tList = ImGui::GetWindowDrawList();
 
 		tList->AddRectFilled(elmin, elmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(PixelColor));
+
+		if(bPixelSelected){
+			ImVec2 exmin,exmax;
+			exmin.x = elmin.x -1;
+			exmin.y = elmin.y -1;
+			exmax.x = elmax.x +1;
+			exmax.y = elmax.y +1;			
+			tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor);
+			tList->AddRect(exmin, exmax, mGlobalSettings.ImAltHighLightColor);
+		} else {
+			if(drawGrid){
+				tList->AddRect(elmin, elmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(mGlobalSettings.PixelGridColor));
+			}	
+		}
+
+    	
+
+		return CurrentArea;
+}
+
+SDL_Rect TPixel::renderEditor(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
+		CurrentArea = { xpos, ypos, mGlobalSettings.TileRenderSize*tscale, mGlobalSettings.TileRenderSize*tscale};
+
+		ImVec2 elmin;
+		ImVec2 elmax;
+
+		elmin.x = xpos;
+		elmin.y = ypos;
+		elmax.x = xpos + mGlobalSettings.TileRenderSize*tscale;
+		elmax.y = ypos + mGlobalSettings.TileRenderSize*tscale;
+
+		ImDrawList *tList = ImGui::GetWindowDrawList();
+
+		tList->AddRectFilled(elmin, elmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(mGlobalSettings.CurrentEditor->mPalette.TPaletteEdit[PixelIndex]));
 
 		if(bPixelSelected){
 			ImVec2 exmin,exmax;
@@ -208,6 +243,33 @@ void TTexture::renderEd(int xpos, int ypos, TPalette* tpal){
 	}
 
 }
+
+SDL_Color TPalette::getSDLColor(ImVec4 cCol){
+	SDL_Color nCol;
+	nCol.a = 0xff;
+
+	int tColR =  mMapColorIn[((int)(cCol.x * 255.0f))/16];
+	int tColG =  mMapColorIn[((int)(cCol.y * 255.0f))/16];
+	int tColB =  mMapColorIn[((int)(cCol.z * 255.0f))/16];
+
+	nCol.r = tColR;
+	nCol.g = tColG;
+	nCol.b = tColB;
+
+	return nCol;
+}
+
+
+ImVec4 TPalette::getIm4Color(SDL_Color cColor){
+	ImVec4 tColor;
+	tColor.w = 1.0f;
+	tColor.x = cColor.r / 255.0f;
+	tColor.y = cColor.g / 255.0f;
+	tColor.z = cColor.b / 255.0f;
+
+	return tColor;
+}
+
 
 ImU32 TPalette::getImColor(SDL_Color cColor){
 	ImU32 tColor;
@@ -339,6 +401,37 @@ int TPalette::saveToFolder(std::string cpath){
 	return 0;
 }
 
+int TPalette::updatePalette(){
+
+	TPalette = TPaletteEdit;
+	updateTPixels();
+
+	int pindex=0;
+	for(int i = 2; i < 514; i+=2){
+			/*SDL_Color tmpcol;
+			
+			tmpcol.r = mMapColorIn[tbuffer[i+1]];
+			tmpcol.g = mMapColorIn[tbuffer[i] >> 4];
+			tmpcol.b = mMapColorIn[tbuffer[i] & 0xf];
+			if((i  == 0) ) {				
+				tmpcol.a = 0;
+			} else {
+				tmpcol.a = 255;
+			}
+			
+			TPalette.push_back(tmpcol);
+			*/
+		//FileData[i]
+		mGlobalSettings.ProjectPalette[i] = mMapColorOut[TPalette[pindex].g] << 4;
+		mGlobalSettings.ProjectPalette[i] += mMapColorOut[TPalette[pindex].b];
+		mGlobalSettings.ProjectPalette[i+1] = mMapColorOut[TPalette[pindex].r];
+
+		pindex++;
+	}
+
+	return 0;
+}
+
 int TPalette::loadFromFile(std::string filename){
 
 	if(fs::exists(fs::status(filename))){
@@ -379,6 +472,8 @@ int TPalette::loadFromFile(std::string filename){
 		
 		PixelAreas.resize(256);	
 
+		TPaletteEdit = TPalette;
+
 		std::cout << "Palette loaded from: " << filename << std::endl;
 		return 0;
 	}
@@ -400,6 +495,16 @@ int TPalette::initPalette(){
 		TPalette.push_back(tmpcol);
 	}
 	PixelAreas.resize(256);
+	
+	TPaletteEdit = TPalette;
+	
+	return 0;
+}
+
+int TPalette::updateTPixels(){
+	for(int i = 0; i < 256; i++){				
+		TPixels[i]->setPixelColor(i, this);
+	}
 	return 0;
 }
 
@@ -408,7 +513,7 @@ int TPalette::initTPixels(){
 	for(int i = 0; i < 256; i++){
 		tmptpix = new TPixel;
 		tmptpix->setPixelColor(i, this);
-		TPixels.push_back(tmptpix);
+		TPixels.push_back(tmptpix);		
 	}
 	return 0;
 }
@@ -458,6 +563,63 @@ int TPalette::renderIm(int xpos,int ypos){
 	}
 
 	mGlobalSettings.CurrentEditor->ImButtonsPalette.updateButtonStates();
+
+	ImGui::End();
+
+return 0;
+}
+
+int TPalette::renderEditor(int xpos,int ypos){
+	
+	Dialog::render(xpos, ypos);
+
+	ImGui::Begin("Palette: Edit Mode");
+
+    //ImVec4 color = getIm4Color(TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelected]);
+	//std::cout << "Color Is: " << color.x << ","<< color.y << ","<< color.z << ","<< color.w << std::endl;
+
+
+    ImGuiColorEditFlags misc_flags = ( 0 ); //: ImGuiColorEditFlags_NoOptions);
+
+
+	ImGui::Text("Change Selected Color");
+    //ImGui::SameLine();
+    ImGui::ColorEdit3("Color##1", (float*)&mEditColor, misc_flags);
+
+	ImVec2 cSize;
+	cSize.x = 20 + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4) * 16);
+	cSize.y = 170 + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4) * 16);
+
+	ImGui::SetWindowSize(cSize, ImGuiCond_Once);
+
+	ImVec2 cPos = ImGui::GetWindowPos();
+	cPos.x += 10;
+	cPos.y += 150;
+
+	for(int i = 0; i < 16; i++){
+		for(int j = 0; j < 16; j++){
+			PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->renderEditor(
+					cPos.x + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4)*j),
+					cPos.y + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4)*i),
+					mGlobalSettings.PaletteScale,true,true);
+		}
+	}
+
+	//TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelected] = getSDLColor(color);
+
+	mGlobalSettings.CurrentEditor->ImButtonsPalette.updateButtonStates();
+
+	
+
+	if(ImGui::Button("Apply Color")){
+		TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelected] = getSDLColor(mEditColor);
+	}
+
+	ImGui::SameLine();
+
+	if(ImGui::Button("Apply All Changes")){
+		mGlobalSettings.CurrentEditor->activetePaletteUpdate();
+	}
 
 	ImGui::End();
 

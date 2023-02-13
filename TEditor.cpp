@@ -65,6 +65,8 @@ void TEditor::initDialogs(){
 
 	mRemoveUnused.init();
 
+	mPaletteUpdate.init();
+
 	mInputNumber.init();
 	
 }
@@ -164,7 +166,14 @@ int TEditor::render(){
 			mProjectInfo.update();
 			mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
 		}
+	}
 
+	if(mCurMode == EMODE_PALED){
+		mTopBar.render();
+		mPalette.renderEditor(100,100);
+		if(mActiveDialog){			
+			mActiveDialog->render();
+		}
 	}
 
 	return 0;
@@ -174,7 +183,9 @@ int TEditor::switchMode(){
 	if(mCurMode == EMODE_MAP){
 		mCurMode = EMODE_TILE;
 	} else {
-		mCurMode = EMODE_MAP;
+		if(mCurMode == EMODE_TILE){
+			mCurMode = EMODE_MAP;
+		}
 	}
 	mTopBar.init();
 	return 0;
@@ -252,6 +263,34 @@ int TEditor::activateDropUnusedTiles(){
 	if(mCurMode == EMODE_MAP){
 		mActiveDialog = &mRemoveUnused;
 	}
+	return 0;
+}
+
+int TEditor::activetePaletteUpdate(){
+	if(mCurMode == EMODE_PALED){
+		mActiveDialog = &mPaletteUpdate;
+	}
+	return 0;
+}
+
+
+int TEditor::activetePaletteEdit(){
+	mPalette.mEditColor = mPalette.getIm4Color(mPalette.TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelected]);
+	mCurMode = EMODE_PALED;
+	return 0;
+}
+
+int TEditor::updatePalette(){
+	mActionStack.redoClearStack();	
+	mActionStack.undoClearStack();
+
+	//mPalette.TPalette = mPalette.TPaletteEdit;
+	mPalette.updatePalette();
+
+	for(int i = 0; i < mTileSet.TTiles.size(); i++){		
+		mTileSet.TTiles[i]->updateTexture(&mPalette);		
+	}
+
 	return 0;
 }
 
@@ -551,6 +590,24 @@ int TEditor::findSelTile(){
 	return 0;
 }
 
+int TEditor::handlePaletteEdit(){
+
+	if(ImButtonsPalette.mLeft.bButtonIsDown){
+		int tSel = -1;
+		tSel = searchRectsXY(mPalette.PixelAreas, ImButtonsPalette.mLeft.mMousePos.x, ImButtonsPalette.mLeft.mMousePos.y);
+		if(tSel != -1){
+			std::cout << "Color Selected: " << mColorSelected << std::endl;
+			mColorSelectedTile->bPixelSelected = false;
+			mColorSelected = tSel;
+			mColorSelectedTile = mPalette.TPixels[tSel];
+			mColorSelectedTile->bPixelSelected = true;
+			mPalette.mEditColor = mPalette.getIm4Color(mPalette.TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelected]);
+		}
+	}
+
+	return 0;
+}
+
 int TEditor::handlePalette(){
 
 	if(ImButtonsPalette.mLeft.bButtonIsDown){
@@ -694,6 +751,10 @@ int TEditor::handleEvents(){
 				} 
 				mGlobalSettings.mProjectSaveState = 0;
 			}
+			if(mGlobalSettings.mPaletteUpdateState == 1){
+				updatePalette();
+				mGlobalSettings.mPaletteUpdateState = 0;
+			}
 			if(mGlobalSettings.mOpenTileState == 1){
 				Tile* newTile = createNewTileFromFile(mGlobalSettings.mNewTilePath);
 				if(newTile){
@@ -733,6 +794,9 @@ int TEditor::handleEvents(){
 			}
 			if(mCurMode == EMODE_TILE){
 				handleEMTile();
+			}
+			if(mCurMode == EMODE_PALED){
+				handlePaletteEdit();
 			}		
 	}
 

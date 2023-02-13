@@ -68,6 +68,7 @@ class TEditor{
 		int handleTileSet();
 		int handleTileMap();
 		int handlePalette();
+		int handlePaletteEdit();
 		int handleTile();
 		int handleEMTile();		
 		int findSelMap();
@@ -103,6 +104,7 @@ class TEditor{
 		TEActionUndoStack mActionStack;
 		void undoLastActionGroup();
 		void redoLastActionGroup();
+		int updatePalette();
 		Dialog *mActiveDialog = NULL;
 		Dialog *mActiveMessage = NULL;
 		SDialog mSaveDialog;
@@ -116,6 +118,7 @@ class TEditor{
 		MEDialog mErrorMessage;
 		RNDialog mInputNumber;
 		QDialog mQuitDialog;
+		PUDialog mPaletteUpdate;
 		Tile* createNewTile();
 		Tile* createNewTileCopy(Tile* cCopyTile);
 		Tile* createNewTileFromFile(std::string newTilePath);
@@ -129,6 +132,8 @@ class TEditor{
 		int cancelActiveDialog();
 		int activateSaveAsDialog();
 		int activateProjectInfo();
+		int activetePaletteEdit();
+		int activetePaletteUpdate();
 		int activateDropUnusedTiles();
 		int rx,ry;
 		int cx,cy;

@@ -96,6 +96,7 @@ class TSettings{
 		bool bRunningOCD = false;
 		int mOpenTileState = 0;
 		int mDeleteUnusedTilesState = 0;
+		int mPaletteUpdateState = 0;
 		std::string mNewTilePath = "";				
 		bool bShowTypeSelection = false;
 		bool bShowPixelGrip = true;
@@ -148,7 +149,8 @@ class TSettings{
 
 enum {
 	EMODE_MAP,
-	EMODE_TILE
+	EMODE_TILE,
+	EMODE_PALED
 } emodes;
 
 enum {

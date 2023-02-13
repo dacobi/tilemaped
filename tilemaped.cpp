@@ -478,6 +478,7 @@ int main( int argc, char* args[] )
 	else
 	{	
 		mGlobalSettings.CurrentEditor = &mEditor;
+
 		if(mGlobalSettings.bRunningOCD){			
 			mGlobalSettings.runOCD();
 			

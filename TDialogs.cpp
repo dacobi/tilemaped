@@ -43,8 +43,21 @@ void TBDialog::init(){
 	mDialogHeight =  mGlobalSettings.TopBarHeight;
 	mDialogTextActions = mGlobalSettings.mFloppy +" Save/Save As: F12/F11    " + mGlobalSettings.mBook + " Help: F1";	
 	
-	mDialogTextWindow = mEditor->mCurMode == EMODE_MAP ? mGlobalSettings.mWindow + " TileMap Editor" : mGlobalSettings.mWindow + " Tile Editor";
+	//mDialogTextWindow = mEditor->mCurMode == EMODE_MAP ? mGlobalSettings.mWindow + " TileMap Editor" : mGlobalSettings.mWindow + " Tile Editor";
 	
+	mDialogTextWindow = mGlobalSettings.mWindow;
+	switch(mEditor->mCurMode){
+		case EMODE_MAP:
+			mDialogTextWindow += " TileMap Editor";
+		break;
+		case EMODE_TILE:
+			mDialogTextWindow += " Tile Editor";
+		break;
+		case EMODE_PALED:
+			mDialogTextWindow += " Palette Editor";
+		break;
+	};
+
 	mDialogTextProject = mGlobalSettings.mFile + " Project: " + mGlobalSettings.ProjectPath + "  " + mGlobalSettings.mInfo + " Info: F2";
 	
 }
@@ -52,8 +65,21 @@ void TBDialog::init(){
 int TBDialog::render(){
 	mDialogWidth = mGlobalSettings.WindowWidth;
 		
-	mDialogTextWindow = mEditor->mCurMode == EMODE_MAP ? mGlobalSettings.mWindow+ " Tilemap Editor" : mGlobalSettings.mWindow + " Tile Editor";
+	//mDialogTextWindow = mEditor->mCurMode == EMODE_MAP ? mGlobalSettings.mWindow+ " Tilemap Editor" : mGlobalSettings.mWindow + " Tile Editor";
 	
+	mDialogTextWindow = mGlobalSettings.mWindow;
+	switch(mEditor->mCurMode){
+		case EMODE_MAP:
+			mDialogTextWindow += " TileMap Editor";
+		break;
+		case EMODE_TILE:
+			mDialogTextWindow += " Tile Editor";
+		break;
+		case EMODE_PALED:
+			mDialogTextWindow += " Palette Editor";
+		break;
+	};
+
 	ImGui::BeginMainMenuBar();
 		if (ImGui::BeginMenu("File"))
 		{
@@ -77,6 +103,9 @@ int TBDialog::render(){
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Tile")).c_str())){
 				mGlobalSettings.CurrentEditor->mCurMode = EMODE_TILE;
+			}
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Palette")).c_str())){
+				mGlobalSettings.CurrentEditor->activetePaletteEdit();
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Project Info (F2)")).c_str())){
 				mGlobalSettings.CurrentEditor->activateProjectInfo();
@@ -114,6 +143,11 @@ int TBDialog::render(){
 					mGlobalSettings.CurrentEditor->activateDropUnusedTiles();
 				}
 			}
+
+			
+		
+
+
 			if(ImGui::MenuItem("Undo (U)")){
 				mGlobalSettings.CurrentEditor->undoLastActionGroup();	  		
 			}
@@ -155,6 +189,24 @@ void RTDialog::recieveInput(int mKey){
 	if(mKey == SDLK_y){
 		bInputIsAccept=true;
 		mGlobalSettings.mDeleteUnusedTilesState = 1;
+	}
+	if(mKey == SDLK_n){
+		bInputIsCancel=true;
+	}
+}
+
+void PUDialog::init(){
+	mDialogTextMain = mGlobalSettings.mInfo +" Apply Palette Changes? Undo Stack will be cleared";
+	mDialogTextTitle = "Apply Palette Changes";
+	mDialogButtonAccept = "Apply";
+	mDialogButtonCancel = "Cancel";
+}
+
+void PUDialog::recieveInput(int mKey){
+	
+	if(mKey == SDLK_y){
+		bInputIsAccept=true;
+		mGlobalSettings.mPaletteUpdateState = 1;
 	}
 	if(mKey == SDLK_n){
 		bInputIsCancel=true;
