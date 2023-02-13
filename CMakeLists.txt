@@ -27,6 +27,6 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-	#	target_link_libraries(tilemaped mingw32 SDL2main SDL2 SDL2_image SDL2_ttf)
+	#mingw32 SDL2main SDL2 SDL2_image SDL2_ttf
 	target_link_libraries(tilemaped mingw32 ${SDL2_LIBRARIES} SDL2_image SDL2_ttf)
 endif()
