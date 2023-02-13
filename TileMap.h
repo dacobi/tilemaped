@@ -47,7 +47,7 @@ class TPalette : public Dialog{
 	public:
 		std::vector<SDL_Color> TPalette;
 		std::vector<SDL_Color> TPaletteEdit;
-		ImVec4 mEditColor;
+		ImVec4 mEditColor;		
 		int initPalette();
 		int loadFromFile(std::string palPath);
 		int saveToFolder(std::string palPath);

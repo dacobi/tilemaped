@@ -605,6 +605,10 @@ int TEditor::handlePaletteEdit(){
 		}
 	}
 
+	if(ImButtonsPalette.mRight.bButtonIsDown){
+		
+	}
+
 	return 0;
 }
 
