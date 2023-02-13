@@ -575,19 +575,13 @@ int TPalette::renderEditor(int xpos,int ypos){
 
 	ImGui::Begin("Palette: Edit Mode");
 
-    //ImVec4 color = getIm4Color(TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelected]);
-	//std::cout << "Color Is: " << color.x << ","<< color.y << ","<< color.z << ","<< color.w << std::endl;
 	static ImVec4 backup_color;
-
 
     ImGuiColorEditFlags misc_flags = ( 0 ); //: ImGuiColorEditFlags_NoOptions);
 
-
-	ImGui::Text("Change Selected Color");
-    //ImGui::SameLine();
-    //bColorPicker = 
+	ImGui::Text("Change Selected Color");     
 	ImGui::ColorEdit3("Selected Color##1", (float*)&mEditColor, misc_flags);
-	//ImGui::SameLine();
+	
 	bool bColorPicker = ImGui::ColorButton("Selected Color##3b", mEditColor, misc_flags);
 	ImGui::SameLine();
 	ImGui::Text("Pick Selected Color");
@@ -606,36 +600,13 @@ int TPalette::renderEditor(int xpos,int ypos){
             ImGui::Text("Select Color");
             ImGui::Separator();
             ImGui::ColorPicker3("##picker", (float*)&mEditColor, misc_flags | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview);
-            ImGui::SameLine();
-            //ImGui::BeginGroup(); // Lock X position
+            ImGui::SameLine();            
             ImGui::Text("Current");
             ImGui::ColorButton("##current", mEditColor, ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreviewHalf, ImVec2(60, 40));
             ImGui::Text("Previous");
             if (ImGui::ColorButton("##previous", backup_color, ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreviewHalf, ImVec2(60, 40)))
                 	mEditColor = backup_color;
-            /*ImGui::Separator();
-            ImGui::Text("Palette");
-            for (int n = 0; n < IM_ARRAYSIZE(saved_palette); n++)
-            {
-                ImGui::PushID(n);
-                if ((n % 8) != 0)
-                    ImGui::SameLine(0.0f, ImGui::GetStyle().ItemSpacing.y);
-                ImGuiColorEditFlags palette_button_flags = ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_NoTooltip;
-                if (ImGui::ColorButton("##palette", saved_palette[n], palette_button_flags, ImVec2(20, 20)))
-                    color = ImVec4(saved_palette[n].x, saved_palette[n].y, saved_palette[n].z, color.w); // Preserve alpha!
-                // Allow user to drop colors into each palette entry. Note that ColorButton() is already a
-                // drag source by default, unless specifying the ImGuiColorEditFlags_NoDragDrop flag.
-                if (ImGui::BeginDragDropTarget())
-                {
-                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_3F))
-                        memcpy((float*)&saved_palette[n], payload->Data, sizeof(float) * 3);
-                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(IMGUI_PAYLOAD_TYPE_COLOR_4F))
-                        memcpy((float*)&saved_palette[n], payload->Data, sizeof(float) * 4);
-                    ImGui::EndDragDropTarget();
-                }
-                ImGui::PopID();
-            }*/
-            //ImGui::EndGroup();
+            
             ImGui::EndPopup();
         }
 
@@ -659,17 +630,10 @@ int TPalette::renderEditor(int xpos,int ypos){
 		}
 	}
 
-	//TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelected] = getSDLColor(color);
-
 	mGlobalSettings.CurrentEditor->ImButtonsPalette.updateButtonStates();
 
-	
 
-	//if(ImGui::Button("Apply Color")){
-		TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelected] = getSDLColor(mEditColor);
-	//}
-
-	//ImGui::SameLine();
+	TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelected] = getSDLColor(mEditColor);
 
 	if(ImGui::Button("Apply Changes")){
 		mGlobalSettings.CurrentEditor->activetePaletteUpdate();

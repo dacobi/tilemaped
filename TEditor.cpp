@@ -284,7 +284,6 @@ int TEditor::updatePalette(){
 	mActionStack.redoClearStack();	
 	mActionStack.undoClearStack();
 
-	//mPalette.TPalette = mPalette.TPaletteEdit;
 	mPalette.updatePalette();
 
 	for(int i = 0; i < mTileSet.TTiles.size(); i++){		
@@ -596,7 +595,6 @@ int TEditor::handlePaletteEdit(){
 		int tSel = -1;
 		tSel = searchRectsXY(mPalette.PixelAreas, ImButtonsPalette.mLeft.mMousePos.x, ImButtonsPalette.mLeft.mMousePos.y);
 		if(tSel != -1){
-			std::cout << "Color Selected: " << mColorSelected << std::endl;
 			mColorSelectedTile->bPixelSelected = false;
 			mColorSelected = tSel;
 			mColorSelectedTile = mPalette.TPixels[tSel];
