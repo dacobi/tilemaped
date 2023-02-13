@@ -3,12 +3,16 @@
 #include "TileMap.h"
 #include "TEditor.h"
 
+extern TSettings mGlobalSettings;
+
 void TEAction::undo(){
 
 }
 
 void TEActionReplaceTile::undo(){
 	mTileMap->setTile(mCurrentTile, mOldValue);
+	mTileMap->setOffset(mCurrentTile, mOldOffset);
+
 }
 
 void TEActionReplacePixel::undo(){
@@ -21,6 +25,8 @@ void TEAction::redo(){}
 
 void TEActionReplaceTile::redo(){
 	mTileMap->setTile(mCurrentTile, mNewValue);
+	mTileMap->setOffset(mCurrentTile, mNewOffset);
+
 }
 
 void TEActionReplacePixel::redo(){
@@ -34,7 +40,10 @@ void TEActionReplaceTile::doAction(TileMap *cTileMap, int mCurTile, int mOld, in
 	mCurrentTile = mCurTile;
 	mOldValue = mOld;
 	mNewValue = mNew;
+	mNewOffset = mGlobalSettings.PaletteOffset;
+	mOldOffset = mTileMap->getOffset(mCurrentTile);
 	mTileMap->setTile(mCurrentTile, mNew);
+	mTileMap->setOffset(mCurrentTile, mNewOffset);
 	TEActionType=ACTION_TILE;
 }
 

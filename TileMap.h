@@ -19,7 +19,10 @@ class TTexture{
 		int loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal);		
 		int saveToFile(std::string filename);
 		int setPixel(int xpos, int ypos, unsigned char tcolor, TPalette* tpal);
-		int setAllPixels(unsigned char tcolor, TPalette* tpal);
+		unsigned char getPixel(int pindex);
+		unsigned char getPixel(int pindex, int poffset);
+		int setPixel(int pindex, unsigned char pcolor);
+		//int setAllPixels(unsigned char tcolor, TPalette* tpal);
 		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderEx(int xpos, int ypos, int tscale, SDL_RendererFlip flip);
 		void renderEd(int xpos, int ypos, TPalette* tpal);
@@ -35,6 +38,7 @@ class TPixel{
 		SDL_Rect CurrentArea;
 		int setPixelColor(unsigned char tcolor, TPalette* tpal);
 		SDL_Rect renderIm(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
+		SDL_Rect renderImDisabled(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderEditor(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderEd(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
@@ -78,14 +82,15 @@ class TPalette : public Dialog{
 class Tile: public TTexture{
 	public:		
 		~Tile();
-		std::vector<SDL_Rect> PixelAreas;
 		int initTile();
-		int setPixel(int pindex, unsigned char pcolor);
-		unsigned char getPixel(int pindex);
+		int initTexture();
+		std::vector<SDL_Texture*> TPOffset;		
+		std::vector<SDL_Rect> PixelAreas;		
 		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderIm(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect render(int xpos, int ypos, int tscale, TileProperties tProps);
 		void renderEd(int xpos, int ypos, TPalette* tpal);
+		int updateTexture(TPalette* tpal);
 		int loadFromFile(std::string filename,TPalette* tpal);
 		int loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal);	
 		int createNew(TPalette* tpal);	
@@ -137,6 +142,8 @@ class TileMap{
 		int setTile(int cTile, int cTileVal);
 		int getFlip(int cTile);
 		int setFlip(int cTile, int cTileFlip);
+		int getOffset(int cTile);
+		int setOffset(int cTile, int cOffset);
 		TileProperties getTileProp(int cTile);
 		std::vector<SDL_Rect> TileAreas;
 		int removeTile(int cDropTile);

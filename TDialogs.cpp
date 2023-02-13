@@ -29,11 +29,33 @@ void Dialog::dropLastInputChar(){
 
 int Dialog::render(){
 	ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Once, ImVec2(0.5f, 0.5f));
+	ImVec2 cWinSize = ImGui::GetWindowSize();
+	mDialogWidth = cWinSize.x;
+	mDialogHeight = cWinSize.y;
 	return 0;
 }
 
+int Dialog::render(int ypos){
+	ImVec2 cCenter = ImGui::GetMainViewport()->GetCenter();
+	cCenter.y = ypos;
+	if(bUpdateWinPos){
+		ImGui::SetNextWindowPos(cCenter, ImGuiCond_Always, ImVec2(0.5f, 0.0f));
+		bUpdateWinPos = false;
+	} else {
+		ImGui::SetNextWindowPos(cCenter, ImGuiCond_Once, ImVec2(0.5f, 0.0f));
+	}
+	ImVec2 cWinSize = ImGui::GetWindowSize();
+	mDialogWidth = cWinSize.x;
+	mDialogHeight = cWinSize.y;
+	return 0;
+}
+
+
 int Dialog::render(int xpos, int ypos){
 	ImGui::SetNextWindowPos(ImVec2(xpos, ypos), ImGuiCond_Once);
+	ImVec2 cWinSize = ImGui::GetWindowSize();
+	mDialogWidth = cWinSize.x;
+	mDialogHeight = cWinSize.y;
 	return 0;
 }
 
@@ -109,6 +131,9 @@ int TBDialog::render(){
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Project Info (F2)")).c_str())){
 				mGlobalSettings.CurrentEditor->activateProjectInfo();
+			}
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Palette Offset")).c_str(), NULL, &mGlobalSettings.bShowPaletteOffset) ){ 
+
 			}
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
 				if(ImGui::MenuItem("Selected Tile Type (S)", NULL , &mGlobalSettings.bShowTypeSelection)){										
@@ -498,6 +523,7 @@ void OCDialog::recieveInput(int mKey){
 								
 				mGlobalSettings.TileMapWidth = mCreateProject.tmapx;
 				mGlobalSettings.TileMapHeight = mCreateProject.tmapy;
+				mGlobalSettings.TileSetBPP = mCreateProject.tbpp;
 				mGlobalSettings.TileSizeX = mCreateProject.tilex;
 				mGlobalSettings.TileSizeY = mCreateProject.tiley;
 				mGlobalSettings.ProjectPath = mCreateProject.mReadPath.mDialogTextMain;
@@ -608,6 +634,14 @@ int CPDialog::render(){
 		ImGui::RadioButton("Y: 8", &tiley, 8);
 		ImGui::SameLine();
 		ImGui::RadioButton("Y: 16", &tiley, 16);
+
+		ImGui::Text("Tile BPP");  
+		ImGui::RadioButton("BPP: 8", &tbpp, 8);
+		ImGui::SameLine();
+		ImGui::RadioButton("BPP: 4", &tbpp, 4);
+		ImGui::SameLine();
+		ImGui::RadioButton("BPP: 2", &tbpp, 2);
+
 
 		mReadPath.render();
 		if(mReadPath.bIsActive){
@@ -1175,6 +1209,51 @@ int PIDialog::render(int xpos, int ypos){
 	return 0;
 }
 
+void PODialog::init(){
+	mDialogTextMain = mGlobalSettings.mImage + " Palette Offset";
+}
+
+int PODialog::render(int xpos, int ypos){
+
+	Dialog::render(ypos);
+
+	ImGui::Begin(mDialogTextMain.c_str(), &mGlobalSettings.bShowPaletteOffset);
+
+	ImGui::RadioButton("0", &mGlobalSettings.PaletteOffset, 0);
+	ImGui::SameLine();
+	ImGui::RadioButton("1", &mGlobalSettings.PaletteOffset, 1);
+	ImGui::SameLine();
+	ImGui::RadioButton("2", &mGlobalSettings.PaletteOffset, 2);
+	ImGui::SameLine();
+	ImGui::RadioButton("3", &mGlobalSettings.PaletteOffset, 3);
+	ImGui::SameLine();
+	ImGui::RadioButton("4", &mGlobalSettings.PaletteOffset, 4);
+	ImGui::SameLine();
+	ImGui::RadioButton("5", &mGlobalSettings.PaletteOffset, 5);
+	ImGui::SameLine();
+	ImGui::RadioButton("6", &mGlobalSettings.PaletteOffset, 6);
+	ImGui::SameLine();
+	ImGui::RadioButton("7", &mGlobalSettings.PaletteOffset, 7);
+	ImGui::SameLine();
+	ImGui::RadioButton("8", &mGlobalSettings.PaletteOffset, 8);
+	ImGui::SameLine();
+	ImGui::RadioButton("9", &mGlobalSettings.PaletteOffset, 9);
+	ImGui::SameLine();
+	ImGui::RadioButton("10", &mGlobalSettings.PaletteOffset, 10);
+	ImGui::SameLine();
+	ImGui::RadioButton("11", &mGlobalSettings.PaletteOffset, 11);
+	ImGui::SameLine();
+	ImGui::RadioButton("12", &mGlobalSettings.PaletteOffset, 12);
+	ImGui::SameLine();
+	ImGui::RadioButton("13", &mGlobalSettings.PaletteOffset, 13);
+	ImGui::SameLine();
+	ImGui::RadioButton("14", &mGlobalSettings.PaletteOffset, 14);
+	ImGui::SameLine();
+	ImGui::RadioButton("15", &mGlobalSettings.PaletteOffset, 15);
+	
+	ImGui::End();
+	return 0;
+}
 
 void QDialog::recieveInput(int mKey){
 	

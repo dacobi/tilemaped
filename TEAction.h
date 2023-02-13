@@ -64,6 +64,8 @@ class TEActionReplaceTile: public TEAction{
 		int mCurrentTile;
 		int mOldValue;
 		int mNewValue;
+		int mOldOffset;
+		int mNewOffset;
 		TileMap *mTileMap;
 		void doAction(TileMap *cTileMap, int mCurTile, int mOld, int mNew);	
 		virtual void undo();

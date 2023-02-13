@@ -119,6 +119,7 @@ class TEditor{
 		RNDialog mInputNumber;
 		QDialog mQuitDialog;
 		PUDialog mPaletteUpdate;
+		PODialog mPaletteOffset;
 		Tile* createNewTile();
 		Tile* createNewTileCopy(Tile* cCopyTile);
 		Tile* createNewTileFromFile(std::string newTilePath);

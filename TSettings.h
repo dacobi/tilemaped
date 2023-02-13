@@ -84,7 +84,9 @@ class TSettings{
 		int TileSizeX=16;
 		int TileSizeY=16;
 		int TileSetBPP=8;
+		std::map<int, int> mTileBPPSize = {{8,1 },{4,2 },{2,4}};
 		int PaletteOffset=0;
+		bool bShowPaletteOffset = false;
 		int TileRenderSize=16;
 		int PaletteScale=2;
 		std::string ProjectPath;
@@ -102,7 +104,7 @@ class TSettings{
 		bool bShowPixelGrip = true;
 		bool bShowPixelType = false;
 		bool bShowSelectedTile = true;
-		bool bShowProjectInfo = false;
+		bool bShowProjectInfo = false;		
 		int mSelectedTile = 0;
 		int mTileEdScale = 4;
 		TTF_Font *TFont;

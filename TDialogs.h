@@ -13,13 +13,15 @@ class Dialog{
 		std::string mDialogTextTitle;				
 		void setColorScheme(int nScheme);
 		int mDialogWidth = 400;
-		int mDialogHeight = 200;		
+		int mDialogHeight = 200;
+		bool bUpdateWinPos = false;
 		bool bDialogIsWatingForText = false;
 		bool bInputIsAccept = false;
 		bool bInputIsCancel = false;
 		virtual void recieveInput(int mKey);		
 		virtual void dropLastInputChar();
 		virtual int render(int xpos, int ypos);
+		virtual int render(int ypos);
 		virtual int render();		
 		virtual void init();
 		virtual void update();
@@ -139,6 +141,7 @@ class CPDialog: public Dialog{
 		int tmapy=32;
 		int tilex=16;
 		int tiley=16;
+		int tbpp=8;
 		bool bHasPalette = false;
 };
 
@@ -162,6 +165,12 @@ class HDialog: public SDialog{
 		std::vector<std::string> mCurModeText;		
 		virtual void init();
 		virtual void recieveInput(int mKey);		
+		virtual int render(int xpos, int ypos);
+};
+
+class PODialog: public Dialog{
+	public:
+		virtual void init();
 		virtual int render(int xpos, int ypos);
 };
 

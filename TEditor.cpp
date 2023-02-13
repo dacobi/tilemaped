@@ -68,6 +68,14 @@ void TEditor::initDialogs(){
 	mPaletteUpdate.init();
 
 	mInputNumber.init();
+
+	mPaletteOffset.init();
+
+	if(mGlobalSettings.TileSetBPP < 0x8){
+		mGlobalSettings.bShowPaletteOffset = true;
+	}
+
+	
 	
 }
 
@@ -143,6 +151,9 @@ int TEditor::render(){
 			mProjectInfo.update();
 			mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
 		}
+		if(mGlobalSettings.bShowPaletteOffset){			
+			mPaletteOffset.render(mProjectInfo.mDialogWidth,mGlobalSettings.TopBarHeight);
+		}
 
 	    
 
@@ -165,6 +176,9 @@ int TEditor::render(){
 		if(mGlobalSettings.bShowProjectInfo){
 			mProjectInfo.update();
 			mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
+		}
+		if(mGlobalSettings.bShowPaletteOffset){			
+			mPaletteOffset.render(mProjectInfo.mDialogWidth,mGlobalSettings.TopBarHeight);
 		}
 	}
 
@@ -564,7 +578,7 @@ int TEditor::findSelTile(){
 		if(tSel != -1){
 
        		TEActionReplacePixel *mCurAction = new TEActionReplacePixel();
-			mCurAction->doAction(mTileSelectedTile, tSel, mTileSelectedTile->FileData[tSel], mColorSelected, &mPalette);
+			mCurAction->doAction(mTileSelectedTile, tSel, mTileSelectedTile->getPixel(tSel), mColorSelected, &mPalette);
 				
 			if(!(*mCurAction == * mTileSelectedTile->mActionStack.mLastAction)){
        				mTileSelectedTile->mActionStack.newActionGroup();	
@@ -961,6 +975,8 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	
 	mTileSet.updateWinPos = true;
 	mTileSet.reCalculateScale();
+
+	mPaletteOffset.bUpdateWinPos = true;
 
 	return 0;
 }
