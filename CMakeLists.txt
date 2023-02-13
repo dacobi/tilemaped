@@ -6,6 +6,8 @@ file(GLOB Tilemaped_SRC "*.cpp" ".h")
 
 add_executable(tilemaped ${Tilemaped_SRC})
 
+find_package(SDL2 REQUIRED)
+
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	set(CMAKE_CXX_COMPILER "g++")
 	set(CMAKE_CXX_FLAGS "-std=c++17 -mwindows")
@@ -16,12 +18,12 @@ endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 	set(CMAKE_CXX_COMPILER "g++")
-	target_include_directories(tilemaped PUBLIC /usr/include/SDL2 ./backends .)	
+	target_include_directories(tilemaped PUBLIC . ${SDL2_INCLUDE_DIRS})
 endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 	set(CMAKE_CXX_FLAGS "-std=c++17")
-	target_link_libraries(tilemaped SDL2 SDL2_image SDL2_ttf)
+	target_link_libraries(tilemaped ${SDL2_LIBRARIES} SDL2_image SDL2_ttf)
 endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
