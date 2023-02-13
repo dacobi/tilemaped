@@ -88,7 +88,57 @@ int TPixel::setPixelColor(unsigned char tcolor, TPalette* tpal){
 	return 0;
 }
 
+/*
+ImVec2 elmin = ImGui::GetItemRectMin();
+	ImVec2 elmax = ImGui::GetItemRectMax();
 
+	tmpRect.x = elmin.x;
+	tmpRect.y = elmin.y;
+	tmpRect.w = elmax.x - elmin.x;
+	tmpRect.h = elmax.y - elmin.y;
+	
+	ImDrawList *tList = ImGui::GetWindowDrawList();
+
+	if(bIsSelected){		
+		tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor);
+	} else {
+		tList->AddRect(elmin, elmax, mGlobalSettings.ImHighLightColor);
+	}
+*/
+
+SDL_Rect TPixel::renderIm(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
+		CurrentArea = { xpos, ypos, mGlobalSettings.TileRenderSize*tscale, mGlobalSettings.TileRenderSize*tscale};
+
+		ImVec2 elmin;
+		ImVec2 elmax;
+
+		elmin.x = xpos;
+		elmin.y = ypos;
+		elmax.x = xpos + mGlobalSettings.TileRenderSize*tscale;
+		elmax.y = ypos + mGlobalSettings.TileRenderSize*tscale;
+
+		ImDrawList *tList = ImGui::GetWindowDrawList();
+
+		tList->AddRectFilled(elmin, elmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(PixelColor));
+
+		if(bPixelSelected){
+			ImVec2 exmin,exmax;
+			exmin.x = elmin.x -1;
+			exmin.y = elmin.y -1;
+			exmax.x = elmax.x +1;
+			exmax.y = elmax.y +1;			
+			tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor);
+			tList->AddRect(exmin, exmax, mGlobalSettings.ImAltHighLightColor);
+		} else {
+			if(drawGrid){
+				tList->AddRect(elmin, elmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(mGlobalSettings.PixelGridColor));
+			}	
+		}
+
+    	
+
+		return CurrentArea;
+}
 
 SDL_Rect TPixel::render(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
 	CurrentArea = { xpos, ypos, mGlobalSettings.TileRenderSize*tscale, mGlobalSettings.TileRenderSize*tscale};
@@ -157,6 +207,19 @@ void TTexture::renderEd(int xpos, int ypos, TPalette* tpal){
 		}
 	}
 
+}
+
+ImU32 TPalette::getImColor(SDL_Color cColor){
+	ImU32 tColor;
+	tColor = cColor.a;
+	tColor = tColor << 8;
+	tColor += cColor.b;
+	tColor = tColor << 8;
+	tColor += cColor.g;
+	tColor = tColor << 8;
+	tColor += cColor.r;
+
+	return tColor;
 }
 
 Uint32 TPalette::mapPaletteColor(int tcolor){
@@ -400,6 +463,39 @@ int TPalette::render(int xpos,int ypos){
 return 0;
 }
 
+int TPalette::renderIm(int xpos,int ypos){
+	
+	Dialog::render(xpos, ypos);
+
+	ImGui::Begin("Palette");
+
+	ImVec2 cSize;
+	cSize.x = 20 + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4) * 16);
+	cSize.y = 50 + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4) * 16);
+
+	ImGui::SetWindowSize(cSize, ImGuiCond_Once);
+
+	ImVec2 cPos = ImGui::GetWindowPos();
+	cPos.x += 10;
+	cPos.y += 40;
+
+	for(int i = 0; i < 16; i++){
+		for(int j = 0; j < 16; j++){
+			PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->renderIm(
+					cPos.x + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4)*j),
+					cPos.y + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4)*i),
+					mGlobalSettings.PaletteScale,true,true);
+		}
+	}
+
+	mGlobalSettings.CurrentEditor->ImButtonsPalette.updateButtonStates();
+
+	ImGui::End();
+
+return 0;
+}
+
+
 Tile::~Tile(){
 	
 	if(TileTex){
@@ -408,6 +504,50 @@ Tile::~Tile(){
 		TileTex = NULL;
 	}
 	
+}
+
+int Tile::setPixel(int pindex, unsigned char pcolor){
+	if(mGlobalSettings.TileSetBPP == 0x8){
+		FileData[pindex] = pcolor;
+	}
+	if(mGlobalSettings.TileSetBPP == 0x4){
+		int cindex = pindex / 2;
+		int crem = pindex % 2;
+		unsigned char ccolor;
+
+		int tmppix = FileData[cindex];
+
+		if(crem){
+			ccolor = (tmppix & 0xf0) + pcolor;
+		} else {
+			ccolor = (tmppix & 0x0f) + (pcolor << 4);
+		}
+
+		FileData[cindex] = ccolor;
+	}
+	return 0;
+}
+
+unsigned char Tile::getPixel(int pindex){
+	if(mGlobalSettings.TileSetBPP == 0x8){
+		 return FileData[pindex];
+	}
+	if(mGlobalSettings.TileSetBPP == 0x4){
+		int cindex = pindex / 2;
+		int crem = pindex % 2;
+		unsigned char ccolor;
+
+		int tmppix = FileData[cindex];
+
+		if(crem){
+			ccolor = (tmppix & 0x0f);
+		} else {
+			ccolor = ((tmppix & 0xf0) >> 4);			
+		}
+
+		return ccolor;
+	}
+	return 0;
 }
 
 int Tile::createNew(TPalette* tpal){

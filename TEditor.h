@@ -67,6 +67,8 @@ class TEditor{
 		int handleEMMAp();
 		int handleTileSet();
 		int handleTileMap();
+		int handlePalette();
+		int handleTile();
 		int handleEMTile();		
 		int findSelMap();
 		int findSelTile();
@@ -85,6 +87,7 @@ class TEditor{
 		int mTileSetScrollY = 0;
 		int applyScroll(int mx,int my, int amount, int xamount);
 		ImWinMouseState ImButtonsTileSet;		
+		ImWinMouseState ImButtonsPalette;		
 		bool leftMouseButtonDown = false;		
 		bool rightMouseButtonDown = false;		
 		bool bLCTRLisDown = false;

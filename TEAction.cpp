@@ -12,7 +12,8 @@ void TEActionReplaceTile::undo(){
 }
 
 void TEActionReplacePixel::undo(){
-	mCurrentTile->FileData[mCurrentPixel] = mOldValue;
+	//mCurrentTile->FileData[mCurrentPixel] = mOldValue;
+	mCurrentTile->setPixel(mCurrentPixel, mOldValue);
 	mCurrentTile->updateTexture(mCurrentPalette);
 }
 
@@ -23,7 +24,8 @@ void TEActionReplaceTile::redo(){
 }
 
 void TEActionReplacePixel::redo(){
-	mCurrentTile->FileData[mCurrentPixel] = mNewValue;
+	//mCurrentTile->FileData[mCurrentPixel] = mNewValue;
+	mCurrentTile->setPixel(mCurrentPixel, mNewValue);
 	mCurrentTile->updateTexture(mCurrentPalette);
 }
 
@@ -42,7 +44,8 @@ void TEActionReplacePixel::doAction(Tile* mCurTile, int mCurPix, int mOld, int m
 	mOldValue = mOld;
 	mNewValue = mNew;
 	mCurrentPalette = mPal;
-	mCurrentTile->FileData[mCurrentPixel] = mNewValue;
+	//mCurrentTile->FileData[mCurrentPixel] = mNewValue;
+	mCurrentTile->setPixel(mCurrentPixel, mNewValue);
 	mCurrentTile->updateTexture(mCurrentPalette);
 	TEActionType=ACTION_PIXEL;
 }

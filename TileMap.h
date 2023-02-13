@@ -3,6 +3,7 @@
 
 #include "TSettings.h"
 #include "TEAction.h"
+#include "TDialogs.h"
 
 
 class TTexture{
@@ -32,6 +33,7 @@ class TPixel{
 		SDL_Color PixelColor;
 		SDL_Rect CurrentArea;
 		int setPixelColor(unsigned char tcolor, TPalette* tpal);
+		SDL_Rect renderIm(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderEd(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		bool bPixelSelected = false;
@@ -39,7 +41,7 @@ class TPixel{
 
 
 
-class TPalette{
+class TPalette : public Dialog{
 	public:
 		std::vector<SDL_Color> TPalette;
 		int initPalette();
@@ -51,7 +53,9 @@ class TPalette{
 		std::vector<TPixel*> TPixels;
 		std::vector<SDL_Rect> PixelAreas;
 		int initTPixels();
-		Uint32 mapPaletteColor(int tcolor);		
+		Uint32 mapPaletteColor(int tcolor);
+		ImU32 getImColor(SDL_Color cColor);	
+		int renderIm(int xpos, int ypos);
 		int render(int xpos, int ypos);
 		SDL_Rect renderTileEd(int xpos,int ypos, int tcolor);
 		std::map<int,int> mMapColorIn = {{0,0},{1,17},{2,34},{3,51},{4,68},{5,85},{6,102},{7,119},{8,136},{9,153},{10,170},{11,187},{12,204},{13,221},{14,238},{15,255}};
@@ -65,6 +69,8 @@ class Tile: public TTexture{
 		~Tile();
 		std::vector<SDL_Rect> PixelAreas;
 		int initTile();
+		int setPixel(int pindex, unsigned char pcolor);
+		unsigned char getPixel(int pindex);
 		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderIm(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect render(int xpos, int ypos, int tscale, TileProperties tProps);
