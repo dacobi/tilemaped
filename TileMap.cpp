@@ -95,25 +95,6 @@ int TPixel::setPixelColor(unsigned char tcolor, TPalette* tpal){
 	return 0;
 }
 
-/*
-ImVec2 elmin = ImGui::GetItemRectMin();
-	ImVec2 elmax = ImGui::GetItemRectMax();
-
-	tmpRect.x = elmin.x;
-	tmpRect.y = elmin.y;
-	tmpRect.w = elmax.x - elmin.x;
-	tmpRect.h = elmax.y - elmin.y;
-	
-	ImDrawList *tList = ImGui::GetWindowDrawList();
-
-	if(bIsSelected){		
-		tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor);
-	} else {
-		tList->AddRect(elmin, elmax, mGlobalSettings.ImHighLightColor);
-	}
-*/
-
-
 SDL_Rect TPixel::renderIm(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
 		CurrentArea = { xpos, ypos, mGlobalSettings.TileRenderSize*tscale, mGlobalSettings.TileRenderSize*tscale};
 
@@ -380,9 +361,7 @@ int TPalette::importGimpPalette(std::string palPath){
 			tmpcol.r = tpalette[i][0];
 			tmpcol.g = tpalette[i][1];
 			tmpcol.b = tpalette[i][2];
-			
-			//std::cout << "Color: R: " << (int)tmpcol.r << " G: " << (int)tmpcol.g << " B: " << (int)tmpcol.b << std::endl;
- 
+						
 			if((i  == 0) ) {				
 				tmpcol.a = 0;
 			} else {
@@ -439,11 +418,8 @@ int TPalette::saveToFolder(std::string cpath){
 }
 
 int TPalette::updatePalette(){
-
-	//std::cout << "TPalette = TPaletteEdit: " << TPaletteEdit.size() << std::endl;
+	
 	TPalette = TPaletteEdit;
-	//std::cout << "TPalette: " << TPalette.size() << std::endl;
-	//std::cout << "updateTPixels" << std::endl;
 	updateTPixels();
 
 	if(!mGlobalSettings.ProjectPalette.size()){
@@ -454,29 +430,10 @@ int TPalette::updatePalette(){
 	}
 
 	int pindex=0;
-	for(int i = 2; i < 514; i+=2){
-			/*SDL_Color tmpcol;
-			
-			tmpcol.r = mMapColorIn[tbuffer[i+1]];
-			tmpcol.g = mMapColorIn[tbuffer[i] >> 4];
-			tmpcol.b = mMapColorIn[tbuffer[i] & 0xf];
-			if((i  == 0) ) {				
-				tmpcol.a = 0;
-			} else {
-				tmpcol.a = 255;
-			}
-			
-			TPalette.push_back(tmpcol);
-			*/
-		//FileData[i]
-		//std::cout << "TPalette: " << TPalette[pindex].r << ", "<< TPalette[pindex].g << ", "<<  TPalette[pindex].b << ", " << std::endl;
-		//std::cout << "TPalette: " << pindex << ", " << i << ", " << mMapColorOut[TPalette[pindex].r] << ", "<< mMapColorOut[TPalette[pindex].g] << ", "<< mMapColorOut[TPalette[pindex].b] << ", " << std::endl;
-
+	for(int i = 2; i < 514; i+=2){			
 		mGlobalSettings.ProjectPalette[i] = mMapColorOut[TPalette[pindex].g] << 4;
 		mGlobalSettings.ProjectPalette[i] += mMapColorOut[TPalette[pindex].b];
 		mGlobalSettings.ProjectPalette[i+1] = mMapColorOut[TPalette[pindex].r];
-		
-
 		pindex++;
 	}
 
@@ -894,30 +851,15 @@ int Tile::updateTexture(TPalette* tpal){
 		TTexture::updateTexture(tpal);
 	}
 
-/*
-	if(PixelData.size()){		
-		PixelData.erase(PixelData.begin(),PixelData.end());
-	}
-
-	for(int i = 0; i < (mGlobalSettings.TileSizeX * mGlobalSettings.TileSizeY); i++){
-    		PixelData.push_back(tpal->mapPaletteColor(getPixel(i)));
-	}
-
-    SDL_UpdateTexture(TileTex, NULL, PixelData.data(), mGlobalSettings.TileSizeX * sizeof(Uint32));
-	*/
 	return 0;
 }
 
 
 int Tile::createNew(TPalette* tpal){
-	std::cout << "initTile" << std::endl;
+	
 	initTile();
-	std::cout << "initTexture" << std::endl;
 	initTexture();
-
-    FileData.resize(((mGlobalSettings.TileSizeX * mGlobalSettings.TileSizeY)/mGlobalSettings.mTileBPPSize[mGlobalSettings.TileSetBPP]), 0);
-	std::cout << "setAllPixels" << std::endl;
-	//setAllPixels(0, tpal);
+    FileData.resize(((mGlobalSettings.TileSizeX * mGlobalSettings.TileSizeY)/mGlobalSettings.mTileBPPSize[mGlobalSettings.TileSetBPP]), 0);	
 	updateTexture(tpal);
 	
 	return 0;
@@ -933,9 +875,7 @@ int Tile::initTexture(){
 	} else {
 		TTexture::initTexture();
 	}
-
-	//TileTex = SDL_CreateTexture(mGlobalSettings.TRenderer,SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, mGlobalSettings.TileSizeX,mGlobalSettings.TileSizeY);
-	//SDL_SetTextureBlendMode(TileTex, SDL_BLENDMODE_BLEND);
+	
 	return 0;
 }
 
@@ -992,17 +932,6 @@ SDL_Rect Tile::renderIm(int xpos, int ypos, int tscale, bool updateRect ,bool dr
 		tList->AddRect(elmin, elmax, mGlobalSettings.ImHighLightColor);
 	}
 
-	/*
-	if(bIsSelected){
-		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.AltHighlightColor.r, mGlobalSettings.AltHighlightColor.g, mGlobalSettings.AltHighlightColor.b, 0xff); 
-		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &tmpRect);
-		SDL_Rect sndRect = tmpRect;
-		sndRect.x = sndRect.x-1;
-		sndRect.y = sndRect.y-1;
-		sndRect.w = sndRect.w+2;
-		sndRect.h = sndRect.h+2;
-		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &sndRect);
-	} */
 	return tmpRect;
 }
 
@@ -1028,8 +957,6 @@ SDL_Rect Tile::render(int xpos, int ypos, int tscale,TileProperties tProps){
 	} else {
 		tmpRect = TTexture::renderEx(xpos, ypos, tscale, flip);
 	}
-
-	
 	
 	if(bIsSelected){
 		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.AltHighlightColor.r, mGlobalSettings.AltHighlightColor.g, mGlobalSettings.AltHighlightColor.b, 0xff);
@@ -1042,7 +969,6 @@ SDL_Rect Tile::render(int xpos, int ypos, int tscale,TileProperties tProps){
 		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &sndRect);
 	}
 
-	
 	return tmpRect;
 }
 
@@ -1142,9 +1068,7 @@ Tile* TileSet::createNewCopy(Tile* cCopyTile, TPalette* tpal){
 }
 
 Tile* TileSet::createNew(TPalette* tpal){	
-	std::vector<unsigned char> tbuf;
-	//tbuf.resize(mGlobalSettings.TileSizeX * mGlobalSettings.TileSizeY,0);
-	//((mGlobalSettings.TileSizeX * mGlobalSettings.TileSizeY)/mTileBPPSize[mGlobalSettings.TileSetBPP])
+	std::vector<unsigned char> tbuf;	
 	tbuf.resize(((mGlobalSettings.TileSizeX * mGlobalSettings.TileSizeY)/mGlobalSettings.mTileBPPSize[mGlobalSettings.TileSetBPP]),0);
 	return createNewFromBuffer(tbuf, tpal);
 }
@@ -1216,15 +1140,6 @@ int TileSet::loadFromFolder(std::string path, TPalette* tpal){
 		return 1;	
 	}
 
-/*
-	if((twidth == 8) || (twidth == 16)){
-		mGlobalSettings.TileSizeX = twidth;
-		mGlobalSettings.TileSizeY = theight;
-	} else {
-		std::cout << "Error in Tile File: " << cTileFile << std::endl;
-		return 1;		
-	}
-*/
 	int tmpTileSize = ((mGlobalSettings.TileSizeX * mGlobalSettings.TileSizeY)/mGlobalSettings.mTileBPPSize[mGlobalSettings.TileSetBPP]);
 
 	tbuffer.erase(tbuffer.begin());
@@ -1266,9 +1181,6 @@ int TileSet::saveToFolder(std::string tpath){
 
 	obuffer.push_back(magic1);
 	obuffer.push_back(magic2);
-
-	//obuffer.push_back(mGlobalSettings.TileSizeX);
-	//obuffer.push_back(mGlobalSettings.TileSizeY);
 
 	for(auto &mTile : TTiles){		
 		obuffer.insert(obuffer.end(), mTile->FileData.begin(), mTile->FileData.end());
