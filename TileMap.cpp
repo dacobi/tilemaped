@@ -89,6 +89,9 @@ SDL_Rect TTexture::render(int xpos, int ypos, int tscale, bool updateRect ,bool 
 int TPixel::setPixelColor(unsigned char tcolor, TPalette* tpal){
 	PixelIndex = tcolor;
 	PixelColor = tpal->TPalette[tcolor];
+	if(tcolor == 0){
+		PixelColor.a = 0x00;
+	}
 	return 0;
 }
 
@@ -437,8 +440,18 @@ int TPalette::saveToFolder(std::string cpath){
 
 int TPalette::updatePalette(){
 
+	//std::cout << "TPalette = TPaletteEdit: " << TPaletteEdit.size() << std::endl;
 	TPalette = TPaletteEdit;
+	//std::cout << "TPalette: " << TPalette.size() << std::endl;
+	//std::cout << "updateTPixels" << std::endl;
 	updateTPixels();
+
+	if(!mGlobalSettings.ProjectPalette.size()){
+		mGlobalSettings.ProjectPalette.resize(514);
+		mGlobalSettings.ProjectPalette[0] = 16;
+		mGlobalSettings.ProjectPalette[1] = 42;
+		mGlobalSettings.bProjectHasPalette = true;
+	}
 
 	int pindex=0;
 	for(int i = 2; i < 514; i+=2){
@@ -456,9 +469,13 @@ int TPalette::updatePalette(){
 			TPalette.push_back(tmpcol);
 			*/
 		//FileData[i]
+		//std::cout << "TPalette: " << TPalette[pindex].r << ", "<< TPalette[pindex].g << ", "<<  TPalette[pindex].b << ", " << std::endl;
+		//std::cout << "TPalette: " << pindex << ", " << i << ", " << mMapColorOut[TPalette[pindex].r] << ", "<< mMapColorOut[TPalette[pindex].g] << ", "<< mMapColorOut[TPalette[pindex].b] << ", " << std::endl;
+
 		mGlobalSettings.ProjectPalette[i] = mMapColorOut[TPalette[pindex].g] << 4;
 		mGlobalSettings.ProjectPalette[i] += mMapColorOut[TPalette[pindex].b];
 		mGlobalSettings.ProjectPalette[i+1] = mMapColorOut[TPalette[pindex].r];
+		
 
 		pindex++;
 	}
@@ -717,7 +734,7 @@ int TPalette::renderEditor(int xpos,int ypos){
 	mGlobalSettings.CurrentEditor->ImButtonsPalette.updateButtonStates();
 
 
-	TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelected] = getSDLColor(mEditColor);
+	TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelectedEdit] = getSDLColor(mEditColor);
 
 	if(ImGui::Button("Apply Changes")){
 		mGlobalSettings.CurrentEditor->activetePaletteUpdate();
@@ -727,7 +744,7 @@ int TPalette::renderEditor(int xpos,int ypos){
 
 	if(ImGui::Button("Cancel Changes")){
 		TPaletteEdit = TPalette;
-		mEditColor = getIm4Color(TPalette[mGlobalSettings.CurrentEditor->mColorSelected]);
+		mEditColor = getIm4Color(TPalette[mGlobalSettings.CurrentEditor->mColorSelectedEdit]);
 	}
 
 	ImGui::End();

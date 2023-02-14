@@ -61,6 +61,9 @@ class TEditor{
 		Tile* mTileSelectedTile;
 		int mColorSelected;
 		TPixel* mColorSelectedTile;
+		int mColorSelectedEdit;
+		TPixel* mColorSelectedTileEdit;
+		int mLastPixelOffset = 0;
 		bool bEditorRunning=true;
 		int handleEvents(SDL_Event* cEvent);
 		int handleEvents();
