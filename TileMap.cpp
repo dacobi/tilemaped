@@ -635,11 +635,26 @@ int TPalette::renderIm(int xpos,int ypos){
 
 		for(int i = 0; i < 16; i++){
 			if(i == mGlobalSettings.PaletteOffset){
-				for(int j = 0; j < 16; j++){
-					PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->renderIm(
-					cPos.x + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+3)*j),
-					cPos.y + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+3)*i),
-					mGlobalSettings.PaletteScale,true,true);
+				if(mGlobalSettings.TileSetBPP == 0x4){
+					for(int j = 0; j < 16; j++){
+						PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->renderIm(
+						cPos.x + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+3)*j),
+						cPos.y + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+3)*i),
+						mGlobalSettings.PaletteScale,true,true);
+					}
+				} else  {
+					for(int j = 0; j < 4; j++){
+						PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->renderIm(
+						cPos.x + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+3)*j),
+						cPos.y + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+3)*i),
+						mGlobalSettings.PaletteScale,true,true);
+					}
+					for(int j = 4; j < 16; j++){
+						PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->renderImDisabled(
+						cPos.x + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+3)*j),
+						cPos.y + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+3)*i),
+						mGlobalSettings.PaletteScale,true,true);
+					}
 				}
 			} else {
 				for(int j = 0; j < 16; j++){
@@ -782,6 +797,31 @@ int TTexture::setPixel(int pindex, unsigned char pcolor){
 
 		FileData[cindex] = ccolor;
 	}
+	if(mGlobalSettings.TileSetBPP == 0x2){
+		int cindex = pindex / 4;
+		int crem = pindex % 4;
+		unsigned char ccolor;
+
+		int tmppix = FileData[cindex];
+
+		if(crem){
+			switch(crem){
+				case 1:
+					ccolor = (tmppix & 0xCF) + (((pcolor%16)%4) << 4);
+				break;
+				case 2:
+					ccolor = (tmppix & 0xF3) + (((pcolor%16)%4) << 2);
+				break;
+				case 3:
+					ccolor = (tmppix & 0xFC) + (((pcolor%16)%4));
+				break;
+			};
+		} else {
+			ccolor = (tmppix & 0x3f) + (((pcolor%16)%4) << 6);
+		}
+
+		FileData[cindex] = ccolor;
+	}
 	return 0;
 }
 
@@ -809,6 +849,30 @@ unsigned char TTexture::getPixel(int pindex){
 			ccolor = ((tmppix & 0xf0) >> 4);			
 		}
 
+		return ccolor;
+	}
+	if(mGlobalSettings.TileSetBPP == 0x2){
+		int cindex = pindex / 4;
+		int crem = pindex % 4;
+		unsigned char ccolor;
+
+		int tmppix = FileData[cindex];
+
+		if(crem){
+			switch(crem){
+				case 1:
+					ccolor = ((tmppix & 0x30) >> 4);
+				break;
+				case 2:
+					ccolor = ((tmppix & 0x0C) >> 2);
+				break;
+				case 3:
+					ccolor = (tmppix & 0x03);
+				break;
+			};
+		} else {
+			ccolor = ((tmppix & 0xC0) >> 6);
+		}
 		return ccolor;
 	}
 	return 0;
@@ -1016,7 +1080,7 @@ Tile* TileSet::createNewFromFile(std::string newPath, TPalette* tpal){
 		}
 
 		SDL_Surface *newSurf = IMG_Load(newPath.c_str());
-		if(newSurf){
+		if(newSurf && (mGlobalSettings.TileSetBPP > 0x2)){
 			if(newSurf->format->BitsPerPixel == 8){
 				if((newSurf->w == mGlobalSettings.TileSizeX) && (newSurf->h == mGlobalSettings.TileSizeY)){
 					std::vector<unsigned char> tbuffer;
