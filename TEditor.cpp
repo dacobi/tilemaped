@@ -177,9 +177,9 @@ int TEditor::render(){
 			mProjectInfo.update();
 			mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
 		}
-		if(mGlobalSettings.bShowPaletteOffset){			
-			mPaletteOffset.render(mProjectInfo.mDialogWidth,mGlobalSettings.TopBarHeight);
-		}
+		//if(mGlobalSettings.bShowPaletteOffset){			
+		//	mPaletteOffset.render(mProjectInfo.mDialogWidth,mGlobalSettings.TopBarHeight);
+		//}
 	}
 
 	if(mCurMode == EMODE_PALED){
@@ -644,7 +644,9 @@ int TEditor::handlePalette(){
 			if(tSel > -1){					
 				std::vector<int> newSelection;
 				int cPixIndex = 0;
-				for(auto &cPixel : mTileSelectedTile->FileData){
+				//for(auto &cPixel : mTileSelectedTile->FileData){
+				for(int i = 0; i < (mGlobalSettings.TileSizeX *mGlobalSettings.TileSizeY); i++){
+					auto cPixel = mTileSelectedTile->getPixel(i);
 					if(cPixel == mOldColor){
 						newSelection.push_back(cPixIndex);
 					}

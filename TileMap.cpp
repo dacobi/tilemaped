@@ -580,8 +580,13 @@ int TPalette::renderIm(int xpos,int ypos){
 	ImGui::Begin("Palette");
 
 	ImVec2 cSize;
-	cSize.x = 20 + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4) * 16);
-	cSize.y = 50 + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4) * 16);
+	if(mGlobalSettings.TileSetBPP < 0x8){
+		cSize.x = 90 + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4) * 16);
+		cSize.y = 50 + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4) * 16);
+	} else {
+		cSize.x = 20 + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4) * 16);
+		cSize.y = 50 + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4) * 16);
+	}
 
 	ImGui::SetWindowSize(cSize, ImGuiCond_Once);
 
@@ -591,19 +596,39 @@ int TPalette::renderIm(int xpos,int ypos){
 
 	if(mGlobalSettings.TileSetBPP < 0x8){
 
+	cPos.x += 70;
+
+	ImGui::RadioButton("0", &mGlobalSettings.PaletteOffset, 0);
+	ImGui::RadioButton("1", &mGlobalSettings.PaletteOffset, 1);	
+	ImGui::RadioButton("2", &mGlobalSettings.PaletteOffset, 2);
+	ImGui::RadioButton("3", &mGlobalSettings.PaletteOffset, 3);
+	ImGui::RadioButton("4", &mGlobalSettings.PaletteOffset, 4);
+	ImGui::RadioButton("5", &mGlobalSettings.PaletteOffset, 5);
+	ImGui::RadioButton("6", &mGlobalSettings.PaletteOffset, 6);	
+	ImGui::RadioButton("7", &mGlobalSettings.PaletteOffset, 7);
+	ImGui::RadioButton("8", &mGlobalSettings.PaletteOffset, 8);
+	ImGui::RadioButton("9", &mGlobalSettings.PaletteOffset, 9);
+	ImGui::RadioButton("10", &mGlobalSettings.PaletteOffset, 10);
+	ImGui::RadioButton("11", &mGlobalSettings.PaletteOffset, 11);
+	ImGui::RadioButton("12", &mGlobalSettings.PaletteOffset, 12);
+	ImGui::RadioButton("13", &mGlobalSettings.PaletteOffset, 13);
+	ImGui::RadioButton("14", &mGlobalSettings.PaletteOffset, 14);
+	ImGui::RadioButton("15", &mGlobalSettings.PaletteOffset, 15);
+
+
 		for(int i = 0; i < 16; i++){
 			if(i == mGlobalSettings.PaletteOffset){
 				for(int j = 0; j < 16; j++){
 					PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->renderIm(
-					cPos.x + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4)*j),
-					cPos.y + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4)*i),
+					cPos.x + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+3)*j),
+					cPos.y + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+3)*i),
 					mGlobalSettings.PaletteScale,true,true);
 				}
 			} else {
 				for(int j = 0; j < 16; j++){
 					PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->renderImDisabled(
-					cPos.x + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4)*j),
-					cPos.y + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4)*i),
+					cPos.x + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+3)*j),
+					cPos.y + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+3)*i),
 					mGlobalSettings.PaletteScale,true,true);
 				}
 			}
@@ -614,8 +639,8 @@ int TPalette::renderIm(int xpos,int ypos){
 	for(int i = 0; i < 16; i++){
 		for(int j = 0; j < 16; j++){
 			PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->renderIm(
-					cPos.x + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4)*j),
-					cPos.y + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4)*i),
+					cPos.x + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+3)*j),
+					cPos.y + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+3)*i),
 					mGlobalSettings.PaletteScale,true,true);
 		}
 	}
