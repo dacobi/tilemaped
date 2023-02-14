@@ -20,6 +20,7 @@
 #include <filesystem>
 #include <sstream>
 #include <cstdlib>
+#include <algorithm>
 
 
 class TTexture;

@@ -155,7 +155,7 @@ int TEditor::render(){
 			mPaletteOffset.render(mProjectInfo.mDialogWidth,mGlobalSettings.TopBarHeight);
 		}
 
-	    
+		mSelection.renderSelection();	    
 
 	}
 	
@@ -507,9 +507,22 @@ int TEditor::replaceSelectedColor(int x, int y){
 */
 
 int TEditor::replaceSelectedTiles(int mx, int my){
-	if(mCurMode == EMODE_MAP){	
-		int tSel = -1;
-			
+	if(mCurMode == EMODE_MAP){
+		if(mSelection.mSelected.size()){
+			int tSel = -1;		
+			tSel = searchRectsXY(mTileSet.TileAreas, mx, my);
+			if(tSel != -1){ 
+					
+				TEActionReplaceTiles* newAction = new TEActionReplaceTiles();
+				newAction->doAction(&mTileMap, mSelection.mSelected, -1, tSel);
+				if(!(newAction == mActionStack.mLastAction)){
+					mActionStack.mLastAction = newAction;
+					mActionStack.newActionGroup();
+					mActionStack.addSubActions(newAction->mSubActions);
+				}				
+			}
+		} else {
+			int tSel = -1;		
 			tSel = searchRectsXY(mTileSet.TileAreas, mx, my);
 			if(tSel != -1){ 
 				if(mMapSelectedTile == tSel) { return 0; }
@@ -526,7 +539,7 @@ int TEditor::replaceSelectedTiles(int mx, int my){
 					}
 				}
 			}		
-		
+		}
 	}
 	return 0;
 }
@@ -709,7 +722,7 @@ int TEditor::handleTileSet(){
 			}		
 
 	}
-	if(ImButtonsTileSet.mRight.bButtonIsDown && mGlobalSettings.bShowTypeSelection){
+	if(ImButtonsTileSet.mRight.bButtonIsDown && (mGlobalSettings.bShowTypeSelection || mSelection.mSelected.size())){
 		replaceSelectedTiles(ImButtonsTileSet.mRight.mMousePos.x ,ImButtonsTileSet.mRight.mMousePos.y);
 	}
 
@@ -731,12 +744,27 @@ int TEditor::handleTileMap(){
 				mMapSelectedTile = mTileMap.getTile(tSel);
    	 			mTileSelectedTile->bIsSelected = false;
    	 			mTileSelectedTile = mTileSet.TTiles[mMapSelectedTile];
-   	 			mTileSelectedTile->bIsSelected = true;
+   	 			mTileSelectedTile->bIsSelected = true;				
 			}
+			mSelection.cancelSelection();
 		}
 	}
 
-	findSelMap();
+	if(leftMouseButtonDown && bLShiftIsDown &&!mGlobalSettings.mio->WantCaptureMouse){
+		if(!mSelection.bIsSelecting){
+			mSelection.startSelection(cx, cy);	
+		} else {
+			mSelection.updateSelection(cx, cy);
+		}
+	} else {
+		if(mSelection.bIsSelecting){
+			mSelection.confirmSelection();
+		} else {
+			findSelMap();
+		}
+	}
+
+	
 
 	return 0;
 }
@@ -907,6 +935,9 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			if(cEvent->key.keysym.sym == SDLK_LCTRL){
 	  				bLCTRLisDown = true;
 	  			}
+				if(cEvent->key.keysym.sym == SDLK_LSHIFT){
+	  				bLShiftIsDown = true;
+	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_u){
 					undoLastActionGroup();	  		
 	  			}
@@ -954,6 +985,9 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			bTileSetGrapped = false;
 	  			bTileMapGrapped = false;
 	  		}
+			if(cEvent->key.keysym.sym == SDLK_LSHIFT){
+	  			bLShiftIsDown = false;
+			}
 	  		break;
 	  	case SDL_MOUSEBUTTONDOWN:
 	        if (cEvent->button.button == SDL_BUTTON_LEFT){	  		

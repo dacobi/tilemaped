@@ -4,6 +4,7 @@
 #include "TSettings.h"
 #include "TileMap.h"
 #include "TDialogs.h"
+#include "TSelection.h"
 
 class ImWinMouseButton{
 	public:
@@ -95,8 +96,10 @@ class TEditor{
 		bool leftMouseButtonDown = false;		
 		bool rightMouseButtonDown = false;		
 		bool bLCTRLisDown = false;
+		bool bLShiftIsDown = false;
 		bool bTileMapGrapped = false;
 		bool bTileSetGrapped = false;
+		TSelection mSelection;
 		int flipSelectedTile();		
 		//int replaceSelectedColor(int x, int y);
 		int replaceSelectedTiles(int x, int y);

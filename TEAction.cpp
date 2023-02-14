@@ -85,12 +85,22 @@ void TEActionReplaceTiles::doAction(TileMap* cTileMap, std::vector<int> &newSel,
 
 	TEActionType = ACTION_TILES;
 
-	for(auto &mSelElement : mSelection){
-		if(mSelElement > -1){ 	
-			TEActionReplaceTile* newAction = new TEActionReplaceTile();
-			newAction->doAction(mTileMap, mSelElement, mOldValue, mNewValue);
-			mSubActions.push_back(newAction);
-		} 
+	if(mOldValue == -1){
+		for(auto &mSelElement : mSelection){
+			if(mSelElement > -1){ 	
+				TEActionReplaceTile* newAction = new TEActionReplaceTile();
+				newAction->doAction(mTileMap, mSelElement, mTileMap->getTile(mSelElement), mNewValue);
+				mSubActions.push_back(newAction);
+			} 
+		}
+	} else {
+		for(auto &mSelElement : mSelection){
+			if(mSelElement > -1){ 	
+				TEActionReplaceTile* newAction = new TEActionReplaceTile();
+				newAction->doAction(mTileMap, mSelElement, mOldValue, mNewValue);
+				mSubActions.push_back(newAction);
+			} 
+		}
 	}
 }
 
