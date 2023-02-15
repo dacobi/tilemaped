@@ -271,7 +271,7 @@ if(mCurMode == EMODE_MAP){
 
 int TEditor::activateProjectInfo(){
 	//if(mCurMode == EMODE_MAP){
-		mGlobalSettings.bShowProjectInfo = !mGlobalSettings.bShowProjectInfo;
+	mGlobalSettings.bShowProjectInfo = !mGlobalSettings.bShowProjectInfo;
 	//}
 	return 0;
 }
@@ -667,7 +667,18 @@ int TEditor::findSelTile(){
 			}
 		}
 
-	if(rightMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
+		if((rightMouseButtonClicks && bLShiftIsDown) && !mGlobalSettings.mio->WantCaptureMouse){
+		
+		//	if(rightMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse  && !bLShiftIsDown){
+				int tSel = -1;
+				tSel = searchRectsXY(mTileSelectedTile->PixelAreas, cx, cy);
+					if(tSel >-1){
+						mTileSelectedTile->mSelection.modifySelection(tSel);
+					}
+		//	}
+		}
+
+	if(rightMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse  && !bLShiftIsDown){
 		int tSel = -1;
 		tSel = searchRectsXY(mTileSelectedTile->PixelAreas, cx, cy);
 		if(tSel >-1){
@@ -697,7 +708,15 @@ int TEditor::handlePaletteEdit(){
 	}
 
 	if(ImButtonsPalette.mRight.bButtonIsDown){
-		
+		int tSel = -1;
+		tSel = searchRectsXY(mPalette.PixelAreas, ImButtonsPalette.mRight.mMousePos.x, ImButtonsPalette.mRight.mMousePos.y);
+		if(tSel != -1){
+			//mColorSelectedTileEdit->bPixelSelected = false;
+			//mColorSelectedEdit = tSel;
+			//mColorSelectedTileEdit = mPalette.TPixels[tSel];
+			//mColorSelectedTileEdit->bPixelSelected = true;
+			mPalette.mEditColor = mPalette.getIm4Color(mPalette.TPaletteEdit[tSel]);
+		}
 	}
 
 	return 0;
@@ -808,9 +827,20 @@ int TEditor::handleTileSet(){
 
 int TEditor::handleTileMap(){
 
-	int tSel = -1;
+	
 
-	if(rightMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
+	if((rightMouseButtonClicks && bLShiftIsDown) && !mGlobalSettings.mio->WantCaptureMouse){
+		int tSel = -1;
+		tSel = searchRectsXY(mTileMap.TileAreas, cx, cy);
+	    if(tSel != -1){	    	
+			//std::cout << "Modify" << std::endl;
+			mGlobalSettings.bShowSelectedTile = false;
+			mSelection.modifySelection(tSel);
+		}
+	} else {
+		int tSel = -1;
+
+		if(rightMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse && !bLShiftIsDown){
 		tSel = searchRectsXY(mTileMap.TileAreas, cx, cy);
 	    if(tSel != -1){
 	    	mGlobalSettings.mSelectedTile = tSel;
@@ -821,11 +851,13 @@ int TEditor::handleTileMap(){
    	 			mTileSelectedTile = mTileSet.TTiles[mMapSelectedTile];
    	 			mTileSelectedTile->bIsSelected = true;				
 			}
+			//std::cout << "Cancel" << std::endl;
 			mSelection.cancelSelection();
 		}
 	}
+	}
 
-	if(leftMouseButtonDown && bLShiftIsDown &&!mGlobalSettings.mio->WantCaptureMouse){
+	if(leftMouseButtonDown && bLShiftIsDown && !mGlobalSettings.mio->WantCaptureMouse){
 		if(!mSelection.bIsSelecting){
 			mSelection.startSelection(cx, cy);	
 		} else {
@@ -946,6 +978,9 @@ int TEditor::handleEvents(){
 	if(mapWidthY < (mGlobalSettings.WindowHeight-mGlobalSettings.TopBarHeight)){
 		mTileMapScrollY = -(mapWidthY - (mGlobalSettings.WindowHeight-mGlobalSettings.TopBarHeight))/2;
 	}
+
+	leftMouseButtonClicks = 0;
+	rightMouseButtonClicks = 0;
 
 	return 0;	
 }
@@ -1081,7 +1116,10 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	    	break;
 	    	case SDL_MOUSEBUTTONUP:
 	        if (cEvent->button.button == SDL_BUTTON_LEFT){
-	  			
+	  			leftMouseButtonClicks = cEvent->button.clicks;
+	    	}
+			if (cEvent->button.button == SDL_BUTTON_RIGHT){
+	  			rightMouseButtonClicks = cEvent->button.clicks;
 	    	}
 	    	break;	    		
 	    	case SDL_MOUSEWHEEL:

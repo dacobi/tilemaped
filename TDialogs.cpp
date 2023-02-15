@@ -65,8 +65,6 @@ void TBDialog::init(){
 	mDialogHeight =  mGlobalSettings.TopBarHeight;
 	mDialogTextActions = mGlobalSettings.mFloppy +" Save/Save As: F12/F11    " + mGlobalSettings.mBook + " Help: F1";	
 	
-	//mDialogTextWindow = mEditor->mCurMode == EMODE_MAP ? mGlobalSettings.mWindow + " TileMap Editor" : mGlobalSettings.mWindow + " Tile Editor";
-	
 	mDialogTextWindow = mGlobalSettings.mWindow;
 	switch(mEditor->mCurMode){
 		case EMODE_MAP:
@@ -87,8 +85,6 @@ void TBDialog::init(){
 int TBDialog::render(){
 	mDialogWidth = mGlobalSettings.WindowWidth;
 		
-	//mDialogTextWindow = mEditor->mCurMode == EMODE_MAP ? mGlobalSettings.mWindow+ " Tilemap Editor" : mGlobalSettings.mWindow + " Tile Editor";
-	
 	mDialogTextWindow = mGlobalSettings.mWindow;
 	switch(mEditor->mCurMode){
 		case EMODE_MAP:
@@ -129,17 +125,21 @@ int TBDialog::render(){
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Palette")).c_str())){
 				mGlobalSettings.CurrentEditor->activetePaletteEdit();
 			}
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Project Info (F2)")).c_str())){
-				mGlobalSettings.CurrentEditor->activateProjectInfo();
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Project Info (F2)")).c_str() ,NULL,  &mGlobalSettings.bShowProjectInfo)){
+				//mGlobalSettings.CurrentEditor->activateProjectInfo();
 			}
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Palette Offset")).c_str(), NULL, &mGlobalSettings.bShowPaletteOffset) ){ 
-
-			}
+			
+			
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
+				if(mGlobalSettings.TileSetBPP < 0x8){
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Palette Offset")).c_str(), NULL, &mGlobalSettings.bShowPaletteOffset) ){ 
+					}
+				}
 				if(ImGui::MenuItem("Selected Tile Type (S)", NULL , &mGlobalSettings.bShowTypeSelection)){										
 				}
 				if(ImGui::MenuItem("Selected Tile (T)", NULL , &mGlobalSettings.bShowSelectedTile)){										
-				}		
+				}
+
 				
 			}
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE){
@@ -854,32 +854,9 @@ void ITDialog::recieveInput(int mKey){
 	}
 }
 
-/*
-void BDialog::init(){
-		
-}
-
-int BDialog::render(){
-	
-		
-	return 0;
-}
-
-void BDialog::setColorScheme(int nScheme){
-
-	if(nScheme == 1){
-		mDialogBorderColor = mGlobalSettings.ErrorBorderColor;
-		mTextColor = mGlobalSettings.ErrorTextColor;
-	} else {
-		mDialogBorderColor = mGlobalSettings.DefaultBorderColor;
-		mTextColor = mGlobalSettings.DefaultTextColor;
-	}
-}
-*/
 
 void TIDialog::init(){
 	
-	//mDialogBorderColor= mGlobalSettings.DefaultTextColor;
 	mCursorTime += mGlobalSettings.getTicks();
 
 	if(bInputIsAccepted){

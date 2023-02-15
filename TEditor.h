@@ -95,7 +95,9 @@ class TEditor{
 		ImWinMouseState ImButtonsTileSet;		
 		ImWinMouseState ImButtonsPalette;		
 		bool leftMouseButtonDown = false;		
-		bool rightMouseButtonDown = false;		
+		bool rightMouseButtonDown = false;
+		int leftMouseButtonClicks = 0;
+		int rightMouseButtonClicks = 0;
 		bool bLCTRLisDown = false;
 		bool bLShiftIsDown = false;
 		bool bTileMapGrapped = false;

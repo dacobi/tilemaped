@@ -76,7 +76,7 @@ int TSelection::getSelection(std::vector<SDL_Rect> &sRects, SDL_Rect &cSel, int 
         for(int j = 0; j <= wStep; j++){
             //std::cout << "Getting Selection: " << cStepX << "," << cStepY << std::endl;
             if((item = searchSelection(sRects, cSel.x + cStepX, cSel.y + cStepY)) != -1){
-                addToSelection(item);                
+                if(findInSelection(item) == -1)  addToSelection(item);                
             }            
             cStepX += xdelta;
         }
@@ -96,7 +96,7 @@ int TSelection::renderSelection(){
 }
 
 int TSelection::startSelection(int mx, int my){
-    clearSelection();
+    //clearSelection();
     mCurSelection.x = mx;
     mCurSelection.y = my;
     mCurSelection.w = 0;
