@@ -976,6 +976,12 @@ void Tile::renderEd(int xpos, int ypos, TPalette* tpal){
 	for(int i=0; i < mGlobalSettings.TileSizeY; i++){
 		for(int j=0; j < mGlobalSettings.TileSizeX; j++){
 			PixelAreas[j+(mGlobalSettings.TileSizeX*i)] = tpal->renderTileEd(xpos + (mGlobalSettings.TileSizeX * mGlobalSettings.mTileEdScale)*j, ypos + (mGlobalSettings.TileSizeY * mGlobalSettings.mTileEdScale)*i, getPixel(j+(i*mGlobalSettings.TileSizeX))); //FileData[j+(i*mGlobalSettings.TileSizeX)]);
+			if(mSelection.mSelected.size()){
+				if((mSelection.findInSelection(j+(mGlobalSettings.TileSizeX*i)) != -1)){
+					SDL_SetRenderDrawColor(mGlobalSettings.TRenderer,mGlobalSettings.AltHighlightColor.r,mGlobalSettings.AltHighlightColor.g,mGlobalSettings.AltHighlightColor.b, 0xff);
+					SDL_RenderDrawRect(mGlobalSettings.TRenderer, &PixelAreas[j+(mGlobalSettings.TileSizeX*i)]);
+				}
+			}
 		}
 	}
 }

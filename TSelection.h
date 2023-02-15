@@ -18,7 +18,7 @@ class TSelection{
         bool bHasSelection = false;
         int startSelection(int mx, int my);
         int updateSelection(int rx, int ry);
-        int confirmSelection();
+        int confirmSelection(std::vector<SDL_Rect> &sRects, int xdelta, int ydelta);
         void cancelSelection();
         int renderSelection();
         int findInSelection(int item);

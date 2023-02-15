@@ -102,7 +102,7 @@ class TEditor{
 		bool bTileSetGrapped = false;
 		TSelection mSelection;
 		int flipSelectedTile();		
-		//int replaceSelectedColor(int x, int y);
+		int replaceSelectedColor(int x, int y);
 		int replaceSelectedTiles(int x, int y);
 		int searchRectsXY(std::vector<SDL_Rect> &sRects, int mx, int my);
 		int searchRects(std::vector<SDL_Rect> &sRects);

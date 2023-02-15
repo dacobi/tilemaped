@@ -67,14 +67,24 @@ void TEActionReplacePixels::doAction(Tile* mCurTile, std::vector<int> &newSel,in
 	mSelection = newSel;
 	TEActionType=ACTION_PIXELS;
 
-	for(auto &mSelElement : mSelection){
-		if(mSelElement > -1){ 
-			TEActionReplacePixel* newAction = new TEActionReplacePixel();
-			newAction->doAction(mCurrentTile, mSelElement, mOldColor, mNewValue, mCurrentPalette);
-			mSubActions.push_back(newAction);
+	if(mOldColor == -1){
+		for(auto &mSelElement : mSelection){
+			if(mSelElement > -1){ 
+				TEActionReplacePixel* newAction = new TEActionReplacePixel();
+				newAction->doAction(mCurrentTile, mSelElement, mCurTile->getPixel(mSelElement), mNewValue, mCurrentPalette);
+				mSubActions.push_back(newAction);
+			}
+		}
+	} else {
+
+		for(auto &mSelElement : mSelection){
+			if(mSelElement > -1){ 
+				TEActionReplacePixel* newAction = new TEActionReplacePixel();
+				newAction->doAction(mCurrentTile, mSelElement, mOldColor, mNewValue, mCurrentPalette);
+				mSubActions.push_back(newAction);
+			}
 		}
 	}
-
 }
 
 void TEActionReplaceTiles::doAction(TileMap* cTileMap, std::vector<int> &newSel,int mOld, int mNew){

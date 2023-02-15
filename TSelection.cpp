@@ -43,11 +43,12 @@ void TSelection::clearSelection(){
     mSelected.erase(mSelected.begin(), mSelected.end());
 }
 
-int TSelection::confirmSelection(){
+int TSelection::confirmSelection(std::vector<SDL_Rect> &sRects, int xdelta, int ydelta){
     bIsSelecting = false;
     bHasSelection = true;
     //std::cout << "Got Selection" << std::endl;
-    getSelection(mGlobalSettings.CurrentEditor->mTileMap.TileAreas, mCurSelection, mGlobalSettings.TileSizeX * mGlobalSettings.TileMapScale,  mGlobalSettings.TileSizeY * mGlobalSettings.TileMapScale);
+    //getSelection(mGlobalSettings.CurrentEditor->mTileMap.TileAreas, mCurSelection, mGlobalSettings.TileSizeX * mGlobalSettings.TileMapScale,  mGlobalSettings.TileSizeY * mGlobalSettings.TileMapScale);
+    getSelection(sRects, mCurSelection, xdelta, ydelta);
     return 0;
 }
 
@@ -69,11 +70,13 @@ int TSelection::getSelection(std::vector<SDL_Rect> &sRects, SDL_Rect &cSel, int 
 
     int item = -1;
 
+    //std::cout << "Selection: " << cSel.x << "," << cSel.y << std::endl;
+
     for(int i = 0; i <= hStep; i++){
         for(int j = 0; j <= wStep; j++){
             //std::cout << "Getting Selection: " << cStepX << "," << cStepY << std::endl;
             if((item = searchSelection(sRects, cSel.x + cStepX, cSel.y + cStepY)) != -1){
-                addToSelection(item);
+                addToSelection(item);                
             }            
             cStepX += xdelta;
         }

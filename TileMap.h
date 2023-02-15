@@ -4,6 +4,7 @@
 #include "TSettings.h"
 #include "TEAction.h"
 #include "TDialogs.h"
+#include "TSelection.h"
 
 
 class TTexture{
@@ -96,6 +97,7 @@ class Tile: public TTexture{
 		int createNew(TPalette* tpal);	
 		bool bIsSelected = false;
 		TEActionUndoStack mActionStack;
+		TSelection mSelection;
 };	
 
 class TileSet{

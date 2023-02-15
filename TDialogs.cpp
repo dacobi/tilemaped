@@ -171,13 +171,13 @@ int TBDialog::render(){
 			}
 
 			if(mGlobalSettings.CurrentEditor->mCurMode != EMODE_PALED){
-				if(ImGui::MenuItem("Select All")){
+				if(ImGui::MenuItem("Select All (A)")){
 					mGlobalSettings.CurrentEditor->handleSelection(SELMODE_ALL);
 				}
-				if(ImGui::MenuItem("Select None")){
+				if(ImGui::MenuItem("Select None (N)")){
 					mGlobalSettings.CurrentEditor->handleSelection(SELMODE_NONE);
 				}
-				if(ImGui::MenuItem("Invert Selection")){
+				if(ImGui::MenuItem("Invert Selection (I)")){
 					mGlobalSettings.CurrentEditor->handleSelection(SELMODE_INVERT);
 				}
 			}
