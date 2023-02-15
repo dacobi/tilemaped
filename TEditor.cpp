@@ -438,6 +438,25 @@ int TEditor::activateOpenTileDialog(){
 	return 0;
 }
 
+int TEditor::handleSelection(int SELMODE){
+	switch (SELMODE)
+	{
+	case SELMODE_ALL:
+		mSelection.selectRange(0, mGlobalSettings.TileMapWidth *  mGlobalSettings.TileMapHeight);
+		break;
+	case SELMODE_NONE:
+		mSelection.clearSelection();
+		break;
+	case SELMODE_INVERT:
+		mSelection.invertSelection(0, mGlobalSettings.TileMapWidth *  mGlobalSettings.TileMapHeight);
+		break;
+	default:
+		break;
+	}
+
+	return 0;
+}
+
 int TEditor::cancelActiveDialog(){
 	mActiveDialog->cancel();
 	mActiveDialog = NULL;

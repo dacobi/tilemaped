@@ -66,6 +66,7 @@ class TEditor{
 		TPixel* mColorSelectedTileEdit;
 		int mLastPixelOffset = 0;
 		bool bEditorRunning=true;
+		int handleSelection(int SELMODE);
 		int handleEvents(SDL_Event* cEvent);
 		int handleEvents();
 		int handleEMMAp();

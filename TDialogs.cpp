@@ -167,12 +167,21 @@ int TBDialog::render(){
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Unused Tiles (F6)")).c_str())){
 					mGlobalSettings.CurrentEditor->activateDropUnusedTiles();
 				}
+				
 			}
 
-			
+			if(mGlobalSettings.CurrentEditor->mCurMode != EMODE_PALED){
+				if(ImGui::MenuItem("Select All")){
+					mGlobalSettings.CurrentEditor->handleSelection(SELMODE_ALL);
+				}
+				if(ImGui::MenuItem("Select None")){
+					mGlobalSettings.CurrentEditor->handleSelection(SELMODE_NONE);
+				}
+				if(ImGui::MenuItem("Invert Selection")){
+					mGlobalSettings.CurrentEditor->handleSelection(SELMODE_INVERT);
+				}
+			}
 		
-
-
 			if(ImGui::MenuItem("Undo (U)")){
 				mGlobalSettings.CurrentEditor->undoLastActionGroup();	  		
 			}

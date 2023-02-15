@@ -16,7 +16,7 @@ int TSelection::findInSelection(int item){
 
 int TSelection::addToSelection(int item){
     mSelected.push_back(item);
-    std::cout << "Add To Selection: " << item << std::endl;
+    //std::cout << "Add To Selection: " << item << std::endl;
     return mSelected.size()-1;
 }
 
@@ -46,8 +46,9 @@ void TSelection::clearSelection(){
 int TSelection::confirmSelection(){
     bIsSelecting = false;
     bHasSelection = true;
-    std::cout << "Got Selection" << std::endl;
+    //std::cout << "Got Selection" << std::endl;
     getSelection(mGlobalSettings.CurrentEditor->mTileMap.TileAreas, mCurSelection, mGlobalSettings.TileSizeX * mGlobalSettings.TileMapScale,  mGlobalSettings.TileSizeY * mGlobalSettings.TileMapScale);
+    return 0;
 }
 
 int TSelection::searchSelection(std::vector<SDL_Rect> &sRects, int mx, int my){
@@ -70,7 +71,7 @@ int TSelection::getSelection(std::vector<SDL_Rect> &sRects, SDL_Rect &cSel, int 
 
     for(int i = 0; i <= hStep; i++){
         for(int j = 0; j <= wStep; j++){
-            std::cout << "Getting Selection: " << cStepX << "," << cStepY << std::endl;
+            //std::cout << "Getting Selection: " << cStepX << "," << cStepY << std::endl;
             if((item = searchSelection(sRects, cSel.x + cStepX, cSel.y + cStepY)) != -1){
                 addToSelection(item);
             }            
@@ -79,6 +80,7 @@ int TSelection::getSelection(std::vector<SDL_Rect> &sRects, SDL_Rect &cSel, int 
         cStepX = 0;
         cStepY += ydelta;       
     }
+    return 0;
 }
 
 int TSelection::renderSelection(){
@@ -110,4 +112,24 @@ int TSelection::updateSelection(int rx, int ry){
 void TSelection::cancelSelection(){
     bIsSelecting = false;
     clearSelection();
+}
+
+int TSelection::invertSelection(int sstart, int send){
+   for(int i = sstart; i < send; i++){
+        if(findInSelection(i) != -1){
+            removeFromSelection(i);
+        } else {
+            addToSelection(i);
+        }
+    }
+    return 0;
+}
+
+int TSelection::selectRange(int sstart, int send){
+    for(int i = sstart; i < send; i++){
+        if(findInSelection(i) == -1){
+            addToSelection(i);
+        }
+    }
+    return 0;
 }

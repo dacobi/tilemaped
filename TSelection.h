@@ -3,6 +3,13 @@
 
 #include "TSettings.h"
 
+enum{
+    SELMODE_ALL,
+    SELMODE_NONE,
+    SELMODE_INVERT
+} selectm;
+
+
 class TSelection{
     public:
         std::vector<int> mSelected;
@@ -19,6 +26,8 @@ class TSelection{
         int removeFromSelection(int item);
         int modifySelection(int item);
         void clearSelection();
+        int invertSelection(int sstart, int send);
+        int selectRange(int sstart, int send);
    		int searchSelection(std::vector<SDL_Rect> &sRects, int mx, int my);
         int getSelection(std::vector<SDL_Rect> &sRects, SDL_Rect &cSel, int xdelta, int ydelta);
 };
