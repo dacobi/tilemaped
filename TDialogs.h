@@ -161,11 +161,14 @@ class OCDialog: public Dialog{
 
 class HDialog: public SDialog{
 	public:
-		std::string	mCurModeHead;
-		std::vector<std::string> mCurModeText;		
+		std::string	mHelpTitle;
+		std::vector<std::string> mHelpTextMap;		
+		std::vector<std::string> mHelpTextTile;		
+		std::vector<std::string> mHelpTextPalette;
+		std::vector<std::string> mHelpTextGeneral;				
 		virtual void init();
 		virtual void recieveInput(int mKey);		
-		virtual int render(int xpos, int ypos);
+		virtual int render();
 };
 
 class PODialog: public Dialog{

@@ -282,8 +282,7 @@ void TSettings::initHelpText(){
 	mHelpTextMap.push_back("Left Mouse Button: Select Tile and place in TileMap");
 	mHelpTextTile.push_back("Left Mouse Button: Select Color and place in Tile");
 
-	mHelpTextMap.push_back("Right Mouse Button: Select Tile or Tile Type in TileMap/TileSet");
-	mHelpTextMap.push_back("                    Replace Selected Tile Type from TileSet");
+	mHelpTextMap.push_back("Right Mouse Button: Select Tile or Tile Type in TileMap/TileSet \nReplace Selected Tile Type from TileSet");
 	mHelpTextTile.push_back("Right Mouse Button: Replace Selected Pixel Color with new Color");
 	mHelpTextMap.push_back("S: Toggle Show Selected Tile Type");
 	mHelpTextMap.push_back("T: Toggle Show Selected Tile in TileMap Editor");

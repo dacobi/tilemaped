@@ -28,7 +28,7 @@ void Dialog::dropLastInputChar(){
 }
 
 int Dialog::render(){
-	ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Once, ImVec2(0.5f, 0.5f));
+	ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 	ImVec2 cWinSize = ImGui::GetWindowSize();
 	mDialogWidth = cWinSize.x;
 	mDialogHeight = cWinSize.y;
@@ -117,13 +117,16 @@ int TBDialog::render(){
 		if (ImGui::BeginMenu("View"))
 		{
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Tilemap")).c_str())){
-				mGlobalSettings.CurrentEditor->mCurMode = EMODE_MAP;
+				//mGlobalSettings.CurrentEditor->mCurMode = EMODE_MAP;
+				mGlobalSettings.CurrentEditor->setMode(EMODE_MAP);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Tile")).c_str())){
-				mGlobalSettings.CurrentEditor->mCurMode = EMODE_TILE;
+				//mGlobalSettings.CurrentEditor->mCurMode = EMODE_TILE;
+				mGlobalSettings.CurrentEditor->setMode(EMODE_TILE);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Palette")).c_str())){
-				mGlobalSettings.CurrentEditor->activetePaletteEdit();
+				//mGlobalSettings.CurrentEditor->activatePaletteEdit();
+				mGlobalSettings.CurrentEditor->setMode(EMODE_PALED);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Project Info (F2)")).c_str() ,NULL,  &mGlobalSettings.bShowProjectInfo)){
 				//mGlobalSettings.CurrentEditor->activateProjectInfo();
@@ -1038,7 +1041,10 @@ int TIDialog::checkCurrentText(){
 }
 
 void HDialog::init(){
-	
+	mHelpTextMap = mGlobalSettings.mHelpTextMap;
+	mHelpTextTile = mGlobalSettings.mHelpTextTile;
+	mHelpTextGeneral = mGlobalSettings.mHelpText;
+	mHelpTextPalette = mGlobalSettings.mHelpTextPalette;
 }
 
 void HDialog::recieveInput(int mKey){
@@ -1046,9 +1052,58 @@ void HDialog::recieveInput(int mKey){
 }
 
 
-int HDialog::render(int xpos, int ypos){
-	
-	
+int HDialog::render(){
+
+	Dialog::render();
+
+	ImGui::Begin("Help");
+
+	ImGui::SetWindowSize(ImVec2(800, 900), ImGuiCond_Once);
+
+    ImGui::Separator();
+
+	if(ImGui::CollapsingHeader("General")){
+		for(int i = 0; i < mHelpTextGeneral.size(); i++){
+			ImGui::BulletText("%s", mHelpTextGeneral[i].c_str());
+		}
+	}
+
+	ImGui::Separator();
+
+
+	if(ImGui::CollapsingHeader("TileMap")){
+		for(int i = 0; i < mHelpTextMap.size(); i++){
+			ImGui::BulletText("%s", mHelpTextMap[i].c_str());
+		}
+	}
+
+	ImGui::Separator();
+
+	if(ImGui::CollapsingHeader("Tile")){
+		for(int i = 0; i < mHelpTextTile.size(); i++){
+			ImGui::BulletText("%s", mHelpTextTile[i].c_str());
+		}
+	}
+
+	ImGui::Separator();
+
+
+	if(ImGui::CollapsingHeader("Palette")){
+		for(int i = 0; i < mHelpTextPalette.size(); i++){
+			ImGui::BulletText("%s", mHelpTextPalette[i].c_str());
+		}
+	}
+
+	ImGui::Separator();
+
+
+
+	if(ImGui::Button("Close")){
+		recieveInput(SDLK_n);
+	}
+
+	ImGui::End();
+
 	return 0;
 }
 

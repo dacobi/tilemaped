@@ -46,14 +46,19 @@ void TEditor::initDialogs(){
 	mSaveAsDialog.init();
 	mSaveAsDialog.mSubDialog = &mSaveDialog;
 	
+	/*
 	mHelpDialogMap.mCurModeText = mGlobalSettings.mHelpTextMap;
 	mHelpDialogMap.mCurModeHead = "TileMap";
 	mHelpDialogMap.init();
 	
 	mHelpDialogTile.mCurModeText = mGlobalSettings.mHelpTextTile;
 	mHelpDialogTile.mCurModeHead = "Tile";
-	mHelpDialogTile.init();
 	
+	*/
+
+
+	mHelpDialog.init();
+
 	mTopBar.mEditor = this;
 	mTopBar.init();
 	mProjectInfo.mEditor = this;
@@ -196,15 +201,35 @@ int TEditor::render(){
 	return 0;
 }
 
+int TEditor::setMode(int newMode){
+
+	if(newMode == EMODE_PALED){
+		activatePaletteEdit();
+	}
+
+	mLastMode = mCurMode;
+	mCurMode = newMode;
+	return 0;
+}
+
+
 int TEditor::switchMode(){
-	if(mCurMode == EMODE_MAP){
+	/*if(mCurMode == EMODE_MAP){
 		mCurMode = EMODE_TILE;
 	} else {
 		if(mCurMode == EMODE_TILE){
 			mCurMode = EMODE_MAP;
 		}
+	}*/
+	//mTopBar.init();
+
+	if(mLastMode == EMODE_PALED){
+		activatePaletteEdit();
 	}
-	mTopBar.init();
+
+	std::swap(mCurMode, mLastMode);
+	
+
 	return 0;
 }
 
@@ -283,7 +308,7 @@ int TEditor::activateDropUnusedTiles(){
 	return 0;
 }
 
-int TEditor::activetePaletteUpdate(){
+int TEditor::activatePaletteUpdate(){
 	if(mCurMode == EMODE_PALED){
 		mActiveDialog = &mPaletteUpdate;
 	}
@@ -291,11 +316,13 @@ int TEditor::activetePaletteUpdate(){
 }
 
 
-int TEditor::activetePaletteEdit(){
+int TEditor::activatePaletteEdit(){
 	mPalette.mEditColor = mPalette.getIm4Color(mPalette.TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelected]);
-	mColorSelectedTileEdit = mColorSelectedTile;
+	mColorSelectedTileEdit->bPixelSelected = false;
+	mColorSelectedTileEdit = mColorSelectedTile;	
+	mColorSelectedTileEdit->bPixelSelected = true;
 	mColorSelectedEdit = mColorSelected;
-	mCurMode = EMODE_PALED;
+	//setMode(EMODE_PALED);
 	return 0;
 }
 
@@ -410,13 +437,9 @@ int TEditor::activateQuitDialog(){
 
 
 int TEditor::activateHelpDialog(){
-	if(mCurMode == EMODE_MAP){
-		mActiveDialog = &mHelpDialogMap;
-	}
-	if(mCurMode == EMODE_TILE){
-		mActiveDialog = &mHelpDialogTile;
-	}
-
+	
+	mActiveDialog = &mHelpDialog;
+	
 	return 0;
 }
 
@@ -710,11 +733,7 @@ int TEditor::handlePaletteEdit(){
 	if(ImButtonsPalette.mRight.bButtonIsDown){
 		int tSel = -1;
 		tSel = searchRectsXY(mPalette.PixelAreas, ImButtonsPalette.mRight.mMousePos.x, ImButtonsPalette.mRight.mMousePos.y);
-		if(tSel != -1){
-			//mColorSelectedTileEdit->bPixelSelected = false;
-			//mColorSelectedEdit = tSel;
-			//mColorSelectedTileEdit = mPalette.TPixels[tSel];
-			//mColorSelectedTileEdit->bPixelSelected = true;
+		if(tSel != -1){			
 			mPalette.mEditColor = mPalette.getIm4Color(mPalette.TPaletteEdit[tSel]);
 		}
 	}
@@ -1070,7 +1089,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					handleSelection(SELMODE_NONE);
 				}
 	  			if(cEvent->key.keysym.sym == SDLK_F1){	  				
-		  			//activateHelpDialog();
+		  			activateHelpDialog();
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F2){	  				
 		  			activateProjectInfo();

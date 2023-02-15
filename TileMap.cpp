@@ -709,7 +709,7 @@ int TPalette::renderEditor(int xpos,int ypos){
 	TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelectedEdit] = getSDLColor(mEditColor);
 
 	if(ImGui::Button("Apply Changes")){
-		mGlobalSettings.CurrentEditor->activetePaletteUpdate();
+		mGlobalSettings.CurrentEditor->activatePaletteUpdate();
 	}
 
 	ImGui::SameLine();

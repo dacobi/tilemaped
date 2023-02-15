@@ -85,7 +85,9 @@ class TEditor{
 		int createNewProject();
 		int render();
 		int switchMode();
+		int setMode(int );
 		int mCurMode = EMODE_MAP;
+		int mLastMode = EMODE_TILE;
 		int mouseSelX=0;
 		int mouseSelY=0;
 		int mTileMapScrollX = 0;
@@ -119,8 +121,8 @@ class TEditor{
 		SDialog mSaveDialog;
 		SADialog mSaveAsDialog;
 		ITDialog mOpenTileDialog;
-		HDialog mHelpDialogMap;
-		HDialog mHelpDialogTile;
+		//HDialog mHelpDialogMap;
+		HDialog mHelpDialog;
 		PIDialog mProjectInfo;
 		MEDialog mInfoMessage;
 		RTDialog mRemoveUnused;
@@ -142,8 +144,8 @@ class TEditor{
 		int cancelActiveDialog();
 		int activateSaveAsDialog();
 		int activateProjectInfo();
-		int activetePaletteEdit();
-		int activetePaletteUpdate();
+		int activatePaletteEdit();
+		int activatePaletteUpdate();
 		int activateDropUnusedTiles();
 		int rx,ry;
 		int cx,cy;
