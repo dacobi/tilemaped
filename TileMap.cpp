@@ -174,12 +174,12 @@ SDL_Rect TPixel::renderEditor(int xpos, int ypos, int tscale, bool updateRect ,b
 
 		tList->AddRectFilled(elmin, elmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(mGlobalSettings.CurrentEditor->mPalette.TPaletteEdit[PixelIndex]));
 
-		if(bPixelSelected){
+		if(bPixelSelectedEdit){
 			ImVec2 exmin,exmax;
 			exmin.x = elmin.x -1;
 			exmin.y = elmin.y -1;
-			exmax.x = elmax.x +1;
-			exmax.y = elmax.y +1;			
+			exmax.x = elmax.x +2;
+			exmax.y = elmax.y +2;			
 			tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor);
 			tList->AddRect(exmin, exmax, mGlobalSettings.ImAltHighLightColor);
 		} else {
@@ -908,7 +908,7 @@ SDL_Rect Tile::render(int xpos, int ypos, int tscale, bool updateRect ,bool draw
 }
 
 SDL_Rect Tile::renderIm(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
-	SDL_Rect tmpRect;// = TTexture::render(xpos, ypos, tscale, updateRect, drawGrid);
+	SDL_Rect tmpRect;
 
 	if(mGlobalSettings.TileSetBPP < 0x8){
 		ImGui::Image((ImTextureID)(intptr_t)TPOffset[mGlobalSettings.PaletteOffset], ImVec2(mGlobalSettings.TileSizeX * tscale, mGlobalSettings.TileSizeY * tscale));	
@@ -981,52 +981,29 @@ int Tile::renderSelection(SDL_Rect &sRect, SDL_Color sColor){
 	tmpBorder.w = sRect.w +2;
 	tmpBorder.h = sRect.h +2;
 	SDL_RenderDrawRect(mGlobalSettings.TRenderer,&tmpBorder);
-	tmpBorder.x--;
+	/*tmpBorder.x--;
 	tmpBorder.y--;
 	tmpBorder.w+=2;
 	tmpBorder.h+=2;
-	SDL_RenderDrawRect(mGlobalSettings.TRenderer,&tmpBorder);
+	SDL_RenderDrawRect(mGlobalSettings.TRenderer,&tmpBorder);*/
 	return 0;
 }
 
 void Tile::renderEd(int xpos, int ypos, TPalette* tpal){
 	for(int i=0; i < mGlobalSettings.TileSizeY; i++){
 		for(int j=0; j < mGlobalSettings.TileSizeX; j++){
-			PixelAreas[j+(mGlobalSettings.TileSizeX*i)] = tpal->renderTileEd(xpos + (mGlobalSettings.TileSizeX * mGlobalSettings.mTileEdScale)*j, ypos + (mGlobalSettings.TileSizeY * mGlobalSettings.mTileEdScale)*i, getPixel(j+(i*mGlobalSettings.TileSizeX))); //FileData[j+(i*mGlobalSettings.TileSizeX)]);
-			//if(mSelection.mSelected.size()){
-			//	if((mSelection.findInSelection(j+(mGlobalSettings.TileSizeX*i)) != -1)){
-					//SDL_SetRenderDrawColor(mGlobalSettings.TRenderer,mGlobalSettings.AltHighlightColor.r,mGlobalSettings.AltHighlightColor.g,mGlobalSettings.AltHighlightColor.b, 0xff);
-					//SDL_RenderDrawRect(mGlobalSettings.TRenderer, &PixelAreas[j+(mGlobalSettings.TileSizeX*i)]);
-					SDL_Color tColor;
-					tColor.a = 0xff;
-					tColor.r = 0xff;
-					tColor.g = 0xff;
-					tColor.b = 0xff;
-					//renderSelection(PixelAreas[j+(mGlobalSettings.TileSizeX*i)], tColor);// mGlobalSettings.DefaultHighlightColor);
-			//	}
-			//}
+			PixelAreas[j+(mGlobalSettings.TileSizeX*i)] = tpal->renderTileEd(xpos + (mGlobalSettings.TileSizeX * mGlobalSettings.mTileEdScale)*j, ypos + (mGlobalSettings.TileSizeY * mGlobalSettings.mTileEdScale)*i, getPixel(j+(i*mGlobalSettings.TileSizeX))); 			
 		}
 	}
 	if(mSelection.mSelected.size()){
 		for(int i=0; i < mGlobalSettings.TileSizeY; i++){
-			for(int j=0; j < mGlobalSettings.TileSizeX; j++){
-			//PixelAreas[j+(mGlobalSettings.TileSizeX*i)] = tpal->renderTileEd(xpos + (mGlobalSettings.TileSizeX * mGlobalSettings.mTileEdScale)*j, ypos + (mGlobalSettings.TileSizeY * mGlobalSettings.mTileEdScale)*i, getPixel(j+(i*mGlobalSettings.TileSizeX))); //FileData[j+(i*mGlobalSettings.TileSizeX)]);
-	
-				if((mSelection.findInSelection(j+(mGlobalSettings.TileSizeX*i)) != -1)){
-					//SDL_SetRenderDrawColor(mGlobalSettings.TRenderer,mGlobalSettings.AltHighlightColor.r,mGlobalSettings.AltHighlightColor.g,mGlobalSettings.AltHighlightColor.b, 0xff);
-					//SDL_RenderDrawRect(mGlobalSettings.TRenderer, &PixelAreas[j+(mGlobalSettings.TileSizeX*i)]);
-					SDL_Color tColor;
-					tColor.a = 0xff;
-					tColor.r = 0xff;
-					tColor.g = 0xff;
-					tColor.b = 0xff;
-					renderSelection(PixelAreas[j+(mGlobalSettings.TileSizeX*i)], tColor);// mGlobalSettings.DefaultHighlightColor);
+			for(int j=0; j < mGlobalSettings.TileSizeX; j++){	
+				if((mSelection.findInSelection(j+(mGlobalSettings.TileSizeX*i)) != -1)){					
+					renderSelection(PixelAreas[j+(mGlobalSettings.TileSizeX*i)], mGlobalSettings.DefaultHighlightColor);
 				}
 			}
 		}
 	}
-
-
 }
 
 int Tile::loadFromFile(std::string filename,TPalette* tpal){ 
@@ -1565,20 +1542,14 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 					SDL_RenderDrawRect(mGlobalSettings.TRenderer, &TileAreas[j+(i*mGlobalSettings.TileMapWidth)]);
 				}
 			}
-			/*
-			if(mGlobalSettings.CurrentEditor->mSelection.mSelected.size()){
-				if(mGlobalSettings.CurrentEditor->mSelection.findInSelection((j+(i*mGlobalSettings.TileMapWidth))) != -1){
-					SDL_SetRenderDrawColor(mGlobalSettings.TRenderer,mGlobalSettings.DefaultHighlightColor.r,mGlobalSettings.DefaultHighlightColor.g,mGlobalSettings.DefaultHighlightColor.b, 0xff);
-					SDL_RenderDrawRect(mGlobalSettings.TRenderer, &TileAreas[j+(i*mGlobalSettings.TileMapWidth)]);
-				}
-			} */
 		}
 	}
 	if(mGlobalSettings.CurrentEditor->mSelection.mSelected.size()){
 		for(int i=0; i < mGlobalSettings.TileMapHeight; i++){
 			for(int j=0; j < mGlobalSettings.TileMapWidth; j++){
 				if(mGlobalSettings.CurrentEditor->mSelection.findInSelection((j+(i*mGlobalSettings.TileMapWidth))) != -1){
-					mTiles->TTiles[getTile(j+(i*mGlobalSettings.TileMapWidth))]->renderSelection(TileAreas[j+(i*mGlobalSettings.TileMapWidth)], mGlobalSettings.DefaultHighlightColor);
+					//mTiles->TTiles[getTile(j+(i*mGlobalSettings.TileMapWidth))]->renderSelection(TileAreas[j+(i*mGlobalSettings.TileMapWidth)], mGlobalSettings.DefaultHighlightColor);
+					Tile::renderSelection(TileAreas[j+(i*mGlobalSettings.TileMapWidth)], mGlobalSettings.DefaultHighlightColor);
 				}
 			}
 		}

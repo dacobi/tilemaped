@@ -106,11 +106,14 @@ class TSettings{
 		bool bShowPixelType = false;
 		bool bShowSelectedTile = true;
 		bool bShowProjectInfo = false;		
+		bool bShowHelpDialog = false;		
 		int mSelectedTile = 0;
 		int mTileEdScale = 4;
 		TTF_Font *TFont;
 		TTF_Font *UFont;
 		TTF_Font *LFont;
+		ImFont* DFont;
+		ImFont* SFont;
 		SDL_Color DefaultBGColor = {0xc0,0xc0,0xc0,0xff};
 		SDL_Color DefaultDarkBGColor = {0xb0,0xb0,0xb0,0xff};
 		SDL_Color DefaultTextColor = {0xff,0xff,0xff,0xff};

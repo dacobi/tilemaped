@@ -28,7 +28,12 @@ void Dialog::dropLastInputChar(){
 }
 
 int Dialog::render(){
-	ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+	if(bUpdateWinPos){
+		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+		bUpdateWinPos = false;
+	} else {
+		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Once, ImVec2(0.5f, 0.5f));
+	}
 	ImVec2 cWinSize = ImGui::GetWindowSize();
 	mDialogWidth = cWinSize.x;
 	mDialogHeight = cWinSize.y;
@@ -52,7 +57,12 @@ int Dialog::render(int ypos){
 
 
 int Dialog::render(int xpos, int ypos){
-	ImGui::SetNextWindowPos(ImVec2(xpos, ypos), ImGuiCond_Once);
+	if(bUpdateWinPos){
+		ImGui::SetNextWindowPos(ImVec2(xpos, ypos), ImGuiCond_Always);
+		bUpdateWinPos = false;
+	} else {
+		ImGui::SetNextWindowPos(ImVec2(xpos, ypos), ImGuiCond_Once);
+	}
 	ImVec2 cWinSize = ImGui::GetWindowSize();
 	mDialogWidth = cWinSize.x;
 	mDialogHeight = cWinSize.y;
@@ -127,6 +137,9 @@ int TBDialog::render(){
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Palette")).c_str())){
 				//mGlobalSettings.CurrentEditor->activatePaletteEdit();
 				mGlobalSettings.CurrentEditor->setMode(EMODE_PALED);
+			}
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Help Dialog (F1)")).c_str())){
+				mGlobalSettings.CurrentEditor->activateHelpDialog();
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Project Info (F2)")).c_str() ,NULL,  &mGlobalSettings.bShowProjectInfo)){
 				//mGlobalSettings.CurrentEditor->activateProjectInfo();
@@ -341,6 +354,7 @@ int SADialog::render(){
 
 
 	if(bSubDialogActive){
+		mSubDialog->bUpdateWinPos = true;
 		mSubDialog->render();
 		if(mSubDialog->bInputIsAccept){
 			recieveInput(SDLK_y);
@@ -1056,49 +1070,74 @@ int HDialog::render(){
 
 	Dialog::render();
 
-	ImGui::Begin("Help");
+	ImGui::Begin("Help", &mGlobalSettings.bShowHelpDialog);
 
-	ImGui::SetWindowSize(ImVec2(800, 900), ImGuiCond_Once);
+	ImGui::SetWindowSize(ImVec2(950, 900), ImGuiCond_Once);
 
     ImGui::Separator();
 
+	
+	
+
 	if(ImGui::CollapsingHeader("General")){
+		ImGui::PushFont(mGlobalSettings.SFont);
 		for(int i = 0; i < mHelpTextGeneral.size(); i++){
 			ImGui::BulletText("%s", mHelpTextGeneral[i].c_str());
 		}
+		ImGui::PopFont();
 	}
 
 	ImGui::Separator();
 
 
 	if(ImGui::CollapsingHeader("TileMap")){
+		ImGui::PushFont(mGlobalSettings.SFont);
 		for(int i = 0; i < mHelpTextMap.size(); i++){
 			ImGui::BulletText("%s", mHelpTextMap[i].c_str());
 		}
+		ImGui::PopFont();
 	}
 
 	ImGui::Separator();
 
 	if(ImGui::CollapsingHeader("Tile")){
+		ImGui::PushFont(mGlobalSettings.SFont);
 		for(int i = 0; i < mHelpTextTile.size(); i++){
 			ImGui::BulletText("%s", mHelpTextTile[i].c_str());
 		}
+		ImGui::PopFont();
 	}
 
 	ImGui::Separator();
 
 
 	if(ImGui::CollapsingHeader("Palette")){
+		ImGui::PushFont(mGlobalSettings.SFont);
 		for(int i = 0; i < mHelpTextPalette.size(); i++){
 			ImGui::BulletText("%s", mHelpTextPalette[i].c_str());
 		}
+		ImGui::PopFont();
 	}
 
 	ImGui::Separator();
 
 
+	 ImGuiStyle& style = ImGui::GetStyle();
 
-	if(ImGui::Button("Close")){
+    float size = ImGui::CalcTextSize("   Close   ").x + style.FramePadding.x * 2.0f;
+    float avail = ImGui::GetContentRegionAvail().x;
+
+    float off = (avail - size) * 0.5f;
+    if (off > 0.0f)
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+	
+
+	if(ImGui::Button("   Close   ")){
+		mGlobalSettings.bShowHelpDialog = false;
+		recieveInput(SDLK_n);
+	}
+
+	if(!mGlobalSettings.bShowHelpDialog){
 		recieveInput(SDLK_n);
 	}
 
@@ -1258,6 +1297,9 @@ int PODialog::render(int xpos, int ypos){
 
 	Dialog::render(ypos);
 
+	ImGui::PushFont(mGlobalSettings.SFont);
+
+
 	ImGui::Begin(mDialogTextMain.c_str(), &mGlobalSettings.bShowPaletteOffset);
 
 	ImGui::RadioButton("0", &mGlobalSettings.PaletteOffset, 0);
@@ -1292,6 +1334,8 @@ int PODialog::render(int xpos, int ypos){
 	ImGui::SameLine();
 	ImGui::RadioButton("15", &mGlobalSettings.PaletteOffset, 15);
 	
+	ImGui::PopFont();
+
 	ImGui::End();
 	return 0;
 }

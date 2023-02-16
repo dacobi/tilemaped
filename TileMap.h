@@ -44,6 +44,8 @@ class TPixel{
 		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderEd(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		bool bPixelSelected = false;
+		bool bPixelSelectedEdit = false;
+
 };
 
 
@@ -52,7 +54,8 @@ class TPalette : public Dialog{
 	public:
 		std::vector<SDL_Color> TPalette;
 		std::vector<SDL_Color> TPaletteEdit;
-		ImVec4 mEditColor;		
+		ImVec4 mEditColor;
+		bool bUpdateEditColor = true;	
 		int initPalette();
 		int loadFromFile(std::string palPath);
 		int saveToFolder(std::string palPath);
@@ -91,7 +94,7 @@ class Tile: public TTexture{
 		SDL_Rect renderIm(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect render(int xpos, int ypos, int tscale, TileProperties tProps);
 		void renderEd(int xpos, int ypos, TPalette* tpal);
-		int renderSelection(SDL_Rect &sRect, SDL_Color sColor);
+		static int renderSelection(SDL_Rect &sRect, SDL_Color sColor);
 		int updateTexture(TPalette* tpal);
 		int loadFromFile(std::string filename,TPalette* tpal);
 		int loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal);	

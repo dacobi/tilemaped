@@ -172,7 +172,10 @@ int TSettings::initSettings(){
 	builder.AddRanges(io.Fonts->GetGlyphRangesDefault()); // Add one of the default ranges
 	builder.BuildRanges(&ranges);       
 
-	mio->Fonts->AddFontFromFileTTF("nerdfont.ttf", 25.0,  NULL, ranges.Data);
+	DFont = mio->Fonts->AddFontFromFileTTF("nerdfont.ttf", 25.0,  NULL, ranges.Data);
+	mio->Fonts->Build();
+
+	SFont = mio->Fonts->AddFontFromFileTTF("nerdfont.ttf", 20.0,  NULL, ranges.Data);
 	mio->Fonts->Build();
 	
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
@@ -279,31 +282,23 @@ int TSettings::runOCD(){
 
 void TSettings::initHelpText(){
 
-	mHelpTextMap.push_back("Left Mouse Button: Select Tile and place in TileMap");
-	mHelpTextTile.push_back("Left Mouse Button: Select Color and place in Tile");
+	mHelpText.push_back("WINDOWS: Tilemaped has 3 main windows which are TileMap Editor, Tile Editor\nand Palette Editor. Select window in View menu and press (SPACE)\nto quickly switch back to last active window.\nPress (F2) to view the Project Info dialog. When working with Tile BPPs\nlower than 8 the Palette Offset dialog can be shown/hidden in the View menu.");	
+	mHelpText.push_back("UNDO: Most changes to TileMap and Tiles can be undone. Press (U) to undo\nand (R) to redo action. Some operations will clear the Undo Stack.");
+	mHelpText.push_back("SELECTION: Tiles and Pixels can be selected using the mouse. Hold (LEFT SHIFT)\nand (LEFT MOUSE BUTTON) to select a range by dragging.\nHold (LEFT SHIFT) and press (RIGHT MOUSE BUTTON)\nto modify Selection on a Tile/Pixel basis.\nPress (A) to select All, (N) to select None and (I) to Invert selection.");
 
-	mHelpTextMap.push_back("Right Mouse Button: Select Tile or Tile Type in TileMap/TileSet \nReplace Selected Tile Type from TileSet");
-	mHelpTextTile.push_back("Right Mouse Button: Replace Selected Pixel Color with new Color");
-	mHelpTextMap.push_back("S: Toggle Show Selected Tile Type");
-	mHelpTextMap.push_back("T: Toggle Show Selected Tile in TileMap Editor");
 
-	mHelpTextMap.push_back("Mouse Scroll Wheel: Scale TileMap and Scroll TileSet");
-	mHelpTextMap.push_back("LCTRL + Left Mouse Button: Move TileMap and Scroll TileSet");
-	mHelpTextMap.push_back("F3: Create Empty Tile");
-	mHelpTextMap.push_back("F4: Import Tile from file");	
-	mHelpTextMap.push_back("F5: Copy Selected Tile");
-	mHelpTextMap.push_back("F6: Remove Unused Tiles. Undo stack will be cleared!");
+	mHelpTextMap.push_back("PLACE TILE: To place a Tile in the TileMap press (LEFT MOUSE BUTTON) to select\na Tile in the TileSet and then (LEFT MOUSE BUTTON) to place it in the TileMap.");
+	mHelpTextMap.push_back("SELECT TILE: Press (RIGHT MOUSE BUTTON) to select a Tile in the TileMap.\nPress (S) to show all Tiles of the Selected Tile Type.\nPress (RIGHT MOUSE BUTTON) on a Tile in the TileSet\nto replace all selected Tiles in the TileMap.");
+	mHelpTextMap.push_back("SCROLL/SCALE: Use (MOUSE SCROLL WHEEL) to scale the TileMap and Scroll the TileSet.\nHold (LEFT CONTROL) and (LEFT MOUSE BUTTON) to move the TileMap.");	
+	mHelpTextMap.push_back("TILESET: Press (F3) to create an empty Tile. Press (F4) to import a Tile from file.\nPress (F5) to create a copy of the selected Tile.\nPress (F6) to remove all unused Tiles.");	
 	
+	mHelpTextTile.push_back("PLACE PIXEL: To place a pixel in the Tile press (LEFT MOUSE BUTTON) to select\na color in the Palette and then (LEFT MOUSE BUTTON) to place it in the Tile.");	
+	mHelpTextTile.push_back("SELECT PIXEL: Press (RIGHT MOUSE BUTTON) to select a color in the Tile.\nPress (S) to show all Pixels of the Selected color.\nPress (RIGHT MOUSE BUTTON) on a color in the Palette\nto replace all selected Pixels in the Tile.");	
+	mHelpTextTile.push_back("GRID: Press (P) to show Pixel Grid in Tile Editor.");
 
-	
-	mHelpTextTile.push_back("S: Toggle Show Selected Pixel Color");
-
-	mHelpTextTile.push_back("P: Toggle Show Pixel Grid in Tile Editor");
-
-	mHelpText.push_back("Space: Switch between TileMap and Tile Editor");	
-	
-	mHelpText.push_back("U: Undo last Action");
-	mHelpText.push_back("R: Redo last Action");
+	mHelpTextPalette.push_back("CHANGE COLOR: Press (LEFT MOUSE BUTTON) to select a Color in the Palette Editor.\nUse RGB sliders or Press (LEFT MOUSE BUTTON) on the Pick Selected Color Box.");
+	mHelpTextPalette.push_back("COPY COLOR: Press (RIGHT MOUSE BUTTON) on a Color to copy its value to the selected Color.");
+	mHelpTextPalette.push_back("APPLY/CANCEL: Press <Apply Changes> to update the Project Palette.\nPress <Cancel Changes> to revert the Palette Editor to the Project Palette.");
 }
 
 void printUsage(){
@@ -317,6 +312,16 @@ void printUsage(){
 
 void TSettings::printHelpText(){
 	initHelpText();
+
+
+	
+	std::cout << "General:" << std::endl;	
+
+	for(const auto& cStr : mHelpText){
+		std::cout << cStr << std::endl;	
+	}
+
+	std::cout  << std::endl;	
 	std::cout << "TileMap Editor:" << std::endl;	
 	
 	for(const auto& cStr : mHelpTextMap){
@@ -329,13 +334,16 @@ void TSettings::printHelpText(){
 	for(const auto& cStr : mHelpTextTile){
 		std::cout << cStr << std::endl;	
 	}
-		
-	std::cout  << std::endl;	
-	std::cout << "General:" << std::endl;	
 
-	for(const auto& cStr : mHelpText){
+	std::cout  << std::endl;		
+	std::cout << "Palette Editor:" << std::endl;	
+
+	for(const auto& cStr : mHelpTextPalette){
 		std::cout << cStr << std::endl;	
 	}
+
+	std::cout  << std::endl;	
+	
 
 	printUsage();
 }
@@ -351,7 +359,7 @@ int main( int argc, char* args[] )
 	bool mCreateNewProject=false;
 	
 	if(((argc < 3) && (argc > 1)) || ((argc > 4) && (argc < 7)) || ((argc > 9)) || (argc == 8)){
-		if((argc == 2) && (std::string(args[1]) == "-h")){
+		if((argc == 2) && ((std::string(args[1]) == "-h") || (std::string(args[1]) == "--help"))){
 			mGlobalSettings.printHelpText();
 		} else {
 			printUsage();
