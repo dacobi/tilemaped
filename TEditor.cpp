@@ -854,16 +854,19 @@ int TEditor::handleEvents(){
 			if(mGlobalSettings.mDeleteUnusedTilesState){
 				dropUnusedTiles();
 				mGlobalSettings.mDeleteUnusedTilesState = 0;
+				return 0;
 			}
 			if(mGlobalSettings.mProjectSaveState == 1){
 				if(saveToFolder(mGlobalSettings.ProjectPath)){					
 					showMessage("Error Creating Project Folder!", true);
 				} 
 				mGlobalSettings.mProjectSaveState = 0;
+				return 0;
 			}
 			if(mGlobalSettings.mPaletteUpdateState == 1){
 				updatePalette();
 				mGlobalSettings.mPaletteUpdateState = 0;
+				return 0;
 			}
 			if(mGlobalSettings.mOpenTileState == 1){
 				Tile* newTile = createNewTileFromFile(mGlobalSettings.mNewTilePath);
@@ -878,13 +881,11 @@ int TEditor::handleEvents(){
 					mGlobalSettings.mOpenTileState = 0;
 					cancelActiveDialog();
 					showMessage("Tile Loaded Successfully");
-
 					return 0;
 				} else {
 					mGlobalSettings.mOpenTileState = 0;
 					cancelActiveDialog();
-					showMessage("Error Loading Tile!", true);
-					
+					showMessage("Error Loading Tile!", true);					
 					return 0;
 				}
 				mGlobalSettings.mOpenTileState = 0;
