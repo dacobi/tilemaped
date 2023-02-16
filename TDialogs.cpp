@@ -339,45 +339,44 @@ int SADialog::render(){
 			mTextInput.render();
 
 
-				Dialog::render();
+				
 
-	ImGui::SetNextWindowSize(ImVec2(800, 600));
+	
 
-if (ImGui::Button("Open File Dialog"))
-    	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose Folder", NULL, ".");
+	if (ImGui::Button("Open File Dialog")){
+		Dialog::render();
+    	ImGui::SetNextWindowSize(ImVec2(800, 600));
+		ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose Folder", NULL, ".");
+	}
 
-  // display
-  if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")) 
-  {
-    // action if OK
-    if (ImGuiFileDialog::Instance()->IsOk())
-    {
-      std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
-      std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
-	  mTextInput.mDialogTextMain = filePathName;
-      // action
-    }
+  	// display
+  	if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")){
+    	// action if OK
+    	if (ImGuiFileDialog::Instance()->IsOk()){
+      		std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+      		std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+	  		mTextInput.mDialogTextMain = filePathName;
+      		// action
+    	}
     
-    // close
-    ImGuiFileDialog::Instance()->Close();
-  }
+    	// close
+    	ImGuiFileDialog::Instance()->Close();
+  	}
 
-  		ImGui::SameLine();
+  	ImGui::SameLine();
 
+        if (ImGui::Button(mDialogButtonAccept.c_str())){
+			if(mTextInput.bInputIsAccepted){
+				recieveInput(SDLK_y);					
+			}				
+		}
 
-            if (ImGui::Button(mDialogButtonAccept.c_str())){
-				if(mTextInput.bInputIsAccepted){
-					recieveInput(SDLK_y);					
-				}				
-			}
+		ImGui::SameLine();
 
-			ImGui::SameLine();
-
-			if (ImGui::Button(mDialogButtonCancel.c_str())){
-				bInputIsCancel=true;
-			}
+		if (ImGui::Button(mDialogButtonCancel.c_str())){
+			bInputIsCancel=true;
+		}
             
-
         ImGui::End();
 
 
@@ -443,53 +442,46 @@ int OPDialog::render(){
 
 	Dialog::render();
 
-
-
 	ImGui::Begin("Open Project");                         
-
 		
-			ImGui::Text("Open Project from Folder");
+	ImGui::Text("Open Project from Folder");
 
-			mTextInput.render();
+	mTextInput.render();
 
-	Dialog::render();
-
-	ImGui::SetNextWindowSize(ImVec2(800, 600));
-
-if (ImGui::Button("Open File Dialog"))
+	if (ImGui::Button("Open File Dialog")){
+		Dialog::render();
+		ImGui::SetNextWindowSize(ImVec2(800, 600));
     	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose Folder", NULL, ".");
+	}
 
-  // display
-  if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")) 
-  {
-    // action if OK
-    if (ImGuiFileDialog::Instance()->IsOk())
-    {
-      std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
-      std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
-	  mTextInput.mDialogTextMain = filePathName;
-      // action
-    }
+  	// display
+  	if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")){
+    	// action if OK
+    	if (ImGuiFileDialog::Instance()->IsOk()){
+      		std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+      		std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+	  		mTextInput.mDialogTextMain = filePathName;
+      		// action
+    	}
     
-    // close
-    ImGuiFileDialog::Instance()->Close();
-  }
+    	// close
+    	ImGuiFileDialog::Instance()->Close();
+  	}
 
-  		ImGui::SameLine();
+  	ImGui::SameLine();
 
-            if (ImGui::Button("Open")){
-				if(mTextInput.bInputIsAccepted){
-					recieveInput(SDLK_y);					
-				}				
-			}
+        if (ImGui::Button("Open")){
+			if(mTextInput.bInputIsAccepted){
+				recieveInput(SDLK_y);					
+			}				
+		}
 
-			ImGui::SameLine();
+		ImGui::SameLine();
 
-			if (ImGui::Button("Cancel")){
-				bInputIsCancel=true;
-			}		
-
-            
+		if (ImGui::Button("Cancel")){
+			bInputIsCancel=true;
+		}		
+    
         ImGui::End();
 
 	
@@ -874,47 +866,43 @@ int ITDialog::render(){
 
 	ImGui::Begin("Import Tile");                         
     		
-		ImGui::Text("Import Tile from bitmap or RAW");
+	ImGui::Text("Import Tile from bitmap or RAW");
 
-		mTextInput.render();
+	mTextInput.render();
 
-			Dialog::render();
-
-	ImGui::SetNextWindowSize(ImVec2(800, 600));
-
-if (ImGui::Button("Open File Dialog"))
+	if (ImGui::Button("Open File Dialog")){
+		Dialog::render();
+		ImGui::SetNextWindowSize(ImVec2(800, 600));
     	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose File", ".png,.data,.raw,.bin", ".");
-
-  // display
-  if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")) 
-  {
-    // action if OK
-    if (ImGuiFileDialog::Instance()->IsOk())
-    {
-      std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
-      std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
-	  mTextInput.mDialogTextMain = filePathName;
-      // action
-    }
-    
+	}
+  
+  	// display
+  	if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")){
+    	// action if OK
+    	if (ImGuiFileDialog::Instance()->IsOk()){
+      		std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+      		std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+	  		mTextInput.mDialogTextMain = filePathName;
+      		// action
+    	}    
     // close
-    ImGuiFileDialog::Instance()->Close();
-  }
+    	ImGuiFileDialog::Instance()->Close();
+  	}
 
-  		ImGui::SameLine();
+  	ImGui::SameLine();
 
 
-        if (ImGui::Button("Import")){
-			if(mTextInput.bInputIsAccepted){
-				recieveInput(SDLK_y);					
-			}				
-		}
+    if (ImGui::Button("Import")){
+		if(mTextInput.bInputIsAccepted){
+			recieveInput(SDLK_y);					
+		}				
+	}
 
-		ImGui::SameLine();
+	ImGui::SameLine();
 
-		if (ImGui::Button("Cancel")){
-			bInputIsCancel=true;
-		}		
+	if (ImGui::Button("Cancel")){
+		bInputIsCancel=true;
+	}		
 	        
     ImGui::End();
 	
