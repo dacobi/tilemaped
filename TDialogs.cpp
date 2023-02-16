@@ -171,7 +171,9 @@ int TBDialog::render(){
 		if (ImGui::BeginMenu("Edit"))
 		{
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
-
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Flip Tile (F)")).c_str())){
+					mGlobalSettings.CurrentEditor->flipSelectedTile();
+				}
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " New Tile (F3)")).c_str())){
 					mGlobalSettings.CurrentEditor->createNewTile();
 				}
@@ -1343,6 +1345,8 @@ int PIDialog::render(int xpos, int ypos){
 
 	Dialog::render(xpos, ypos);
 
+	ImGui::PushFont(mGlobalSettings.SFont);
+
 	ImGui::Begin(mDialogTextMain.c_str(), &mGlobalSettings.bShowProjectInfo);
 	
 	ImGui::Text("%s", TileMap.c_str());
@@ -1356,7 +1360,9 @@ int PIDialog::render(int xpos, int ypos){
 	ImGui::Text("%s", Flip.c_str());
 	
 	ImGui::End();
-		
+
+	ImGui::PopFont();
+
 	return 0;
 }
 

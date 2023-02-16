@@ -282,7 +282,7 @@ int TSettings::runOCD(){
 
 void TSettings::initHelpText(){
 
-	mHelpText.push_back("WINDOWS: Tilemaped has 3 main windows which are TileMap Editor, Tile Editor\nand Palette Editor. Select window in View menu and press (SPACE)\nto quickly switch back to last active window.\nPress (F2) to view the Project Info dialog. When working with Tile BPPs\nlower than 8 the Palette Offset dialog can be shown/hidden in the View menu.");	
+	mHelpText.push_back("WINDOWS: Tilemaped has 3 main windows which are TileMap Editor, Tile Editor\nand Palette Editor. Select window in View menu and press (SPACE)\nto quickly switch back to the last active window.\nPress (F2) to view the Project Info dialog. When working with Tile BPPs\nlower than 8 the Palette Offset dialog can be shown/hidden in the View menu.");	
 	mHelpText.push_back("UNDO: Most changes to TileMap and Tiles can be undone. Press (U) to undo\nand (R) to redo action. Some operations will clear the Undo Stack.");
 	mHelpText.push_back("SELECTION: Tiles and Pixels can be selected using the mouse. Hold (LEFT SHIFT)\nand (LEFT MOUSE BUTTON) to select a range by dragging.\nHold (LEFT SHIFT) and press (RIGHT MOUSE BUTTON)\nto modify Selection on a Tile/Pixel basis.\nPress (A) to select All, (N) to select None and (I) to Invert selection.");
 
@@ -291,6 +291,9 @@ void TSettings::initHelpText(){
 	mHelpTextMap.push_back("SELECT TILE: Press (RIGHT MOUSE BUTTON) to select a Tile in the TileMap.\nPress (S) to show all Tiles of the Selected Tile Type.\nPress (RIGHT MOUSE BUTTON) on a Tile in the TileSet\nto replace all selected Tiles in the TileMap.");
 	mHelpTextMap.push_back("SCROLL/SCALE: Use (MOUSE SCROLL WHEEL) to scale the TileMap and Scroll the TileSet.\nHold (LEFT CONTROL) and (LEFT MOUSE BUTTON) to move the TileMap.");	
 	mHelpTextMap.push_back("TILESET: Press (F3) to create an empty Tile. Press (F4) to import a Tile from file.\nPress (F5) to create a copy of the selected Tile.\nPress (F6) to remove all unused Tiles.");	
+	mHelpTextMap.push_back("FLIP TILE: Press (F) to flip the selected Tile.");
+	mHelpTextMap.push_back("PALETTE OFFSET: Tiles from the TileSet will have the current Palette Offset.");
+
 	
 	mHelpTextTile.push_back("PLACE PIXEL: To place a pixel in the Tile press (LEFT MOUSE BUTTON) to select\na color in the Palette and then (LEFT MOUSE BUTTON) to place it in the Tile.");	
 	mHelpTextTile.push_back("SELECT PIXEL: Press (RIGHT MOUSE BUTTON) to select a color in the Tile.\nPress (S) to show all Pixels of the Selected color.\nPress (RIGHT MOUSE BUTTON) on a color in the Palette\nto replace all selected Pixels in the Tile.");	
