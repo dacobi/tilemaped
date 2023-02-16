@@ -125,6 +125,8 @@ class OPDialog: public ITDialog{
 	public:
 		virtual void init();
 		virtual int render();
+		virtual void recieveInput(int mKey);		
+
 };
 
 class CPDialog: public Dialog{

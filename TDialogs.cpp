@@ -340,11 +340,6 @@ int SADialog::render(){
 
 			mTextInput.render();
 
-
-				
-
-	
-
 	if (ImGui::Button("Open File Dialog")){
 		Dialog::render();
     	ImGui::SetNextWindowSize(ImVec2(800, 600));
@@ -489,6 +484,23 @@ int OPDialog::render(){
 	
 	return 0;
 
+}
+
+void OPDialog::recieveInput(int mKey){
+	if(mKey == SDLK_y){
+		if(mTextInput.bInputIsAccepted){
+			bInputIsAccept=true;	
+			bDialogIsWatingForText = false;
+
+		}		
+	}
+
+	if(mKey == SDLK_n){
+		bInputIsCancel=true;
+	}		
+	if(mKey == SDLK_TAB){
+		mTextInput.autoComplete();		
+	}
 }
 
 void OPDialog::init(){
@@ -790,13 +802,13 @@ void RNDialog::recieveInput(int mKey){
 		bInputIsAccept=true;	
 		bDialogIsWatingForText = false;
 
-		SDL_StopTextInput();
+		//SDL_StopTextInput();
 		return;
 	}
 
 	if(mKey == SDLK_n){
 		bInputIsCancel=true;
-		SDL_StopTextInput();		
+		//SDL_StopTextInput();		
 	}		
 }
 
@@ -931,13 +943,13 @@ void ITDialog::recieveInput(int mKey){
 			bDialogIsWatingForText = false;
 			mGlobalSettings.mOpenTileState = 1;
 			mGlobalSettings.mNewTilePath = mTextInput.mDialogTextMain;
-			SDL_StopTextInput();
+			//SDL_StopTextInput();
 		}		
 	}
 
 	if(mKey == SDLK_n){
 		bInputIsCancel=true;
-		SDL_StopTextInput();		
+		//SDL_StopTextInput();		
 	}		
 	if(mKey == SDLK_TAB){
 		mTextInput.autoComplete();		

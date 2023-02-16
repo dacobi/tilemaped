@@ -59,11 +59,11 @@ class TEditor{
 		TileMap mTileMap;
 		TBDialog mTopBar;
 		int mMapSelectedTile;
-		Tile* mTileSelectedTile;
+		Tile* mTileSelectedTile = NULL;
 		int mColorSelected;
 		TPixel* mColorSelectedTile;
 		int mColorSelectedEdit;
-		TPixel* mColorSelectedTileEdit;
+		TPixel* mColorSelectedTileEdit = NULL;
 		int mLastPixelOffset = 0;
 		bool bEditorRunning=true;
 		int handleSelection(int SELMODE);

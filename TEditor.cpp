@@ -289,9 +289,11 @@ int TEditor::activatePaletteUpdate(){
 
 
 int TEditor::activatePaletteEdit(){
-	if(mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor){
-		mPalette.mEditColor = mPalette.getIm4Color(mPalette.TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelected]);
-		mColorSelectedTileEdit->bPixelSelectedEdit = false;
+	if(mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor){		
+		mPalette.mEditColor = mPalette.getIm4Color(mPalette.TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelected]);		
+		if(mColorSelectedTileEdit){
+			mColorSelectedTileEdit->bPixelSelectedEdit = false;
+		}
 		mColorSelectedTileEdit = mColorSelectedTile;	
 		mColorSelectedTileEdit->bPixelSelectedEdit = true;
 		mColorSelectedEdit = mColorSelected;
@@ -475,8 +477,10 @@ int TEditor::handleSelection(int SELMODE){
 }
 
 int TEditor::cancelActiveDialog(){
-	mActiveDialog->cancel();
-	mActiveDialog = NULL;
+	if(mActiveDialog){	
+		mActiveDialog->cancel();
+		mActiveDialog = NULL;
+	}
 	return 0;
 }
 
@@ -860,7 +864,7 @@ int TEditor::handleEvents(){
 				if(saveToFolder(mGlobalSettings.ProjectPath)){					
 					showMessage("Error Creating Project Folder!", true);
 				} 
-				mGlobalSettings.mProjectSaveState = 0;
+				mGlobalSettings.mProjectSaveState = 0;				
 				return 0;
 			}
 			if(mGlobalSettings.mPaletteUpdateState == 1){

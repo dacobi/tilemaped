@@ -70,7 +70,9 @@
         "filesystem": "cpp",
         "ios": "cpp",
         "locale": "cpp",
-        "target": "cpp"
+        "target": "cpp",
+        "list": "cpp",
+        "regex": "cpp"
     },
     "editor.autoClosingQuotes": "never",
     "editor.autoSurround": "never",
