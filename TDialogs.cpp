@@ -2,6 +2,7 @@
 #include "TDialogs.h"
 #include "TEditor.h"
 #include "imgui_stdlib.h"
+#include "ImGuiFileDialog.h"
 
 void Dialog::setColorScheme(int nScheme){}
 
@@ -337,6 +338,33 @@ int SADialog::render(){
 
 			mTextInput.render();
 
+
+				Dialog::render();
+
+	ImGui::SetNextWindowSize(ImVec2(800, 600));
+
+if (ImGui::Button("Open File Dialog"))
+    	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose Folder", NULL, ".");
+
+  // display
+  if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")) 
+  {
+    // action if OK
+    if (ImGuiFileDialog::Instance()->IsOk())
+    {
+      std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+      std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+	  mTextInput.mDialogTextMain = filePathName;
+      // action
+    }
+    
+    // close
+    ImGuiFileDialog::Instance()->Close();
+  }
+
+  		ImGui::SameLine();
+
+
             if (ImGui::Button(mDialogButtonAccept.c_str())){
 				if(mTextInput.bInputIsAccepted){
 					recieveInput(SDLK_y);					
@@ -416,11 +444,38 @@ int OPDialog::render(){
 	Dialog::render();
 
 
+
 	ImGui::Begin("Open Project");                         
-    		
+
+		
 			ImGui::Text("Open Project from Folder");
 
 			mTextInput.render();
+
+	Dialog::render();
+
+	ImGui::SetNextWindowSize(ImVec2(800, 600));
+
+if (ImGui::Button("Open File Dialog"))
+    	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose Folder", NULL, ".");
+
+  // display
+  if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")) 
+  {
+    // action if OK
+    if (ImGuiFileDialog::Instance()->IsOk())
+    {
+      std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+      std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+	  mTextInput.mDialogTextMain = filePathName;
+      // action
+    }
+    
+    // close
+    ImGuiFileDialog::Instance()->Close();
+  }
+
+  		ImGui::SameLine();
 
             if (ImGui::Button("Open")){
 				if(mTextInput.bInputIsAccepted){
@@ -473,6 +528,8 @@ int OCDialog::render(){
 				bSubDialogActive = true;
 				bSubDialogIsOpen = true;
 				bDialogIsWatingForText = true;				
+				//ImGuiFileDialog::Instance()->OpenDialog("ChooseDirDlgKey", "Choose a Directory", nullptr, ".");
+
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Create Project")).c_str())){
 				bSubDialogActive = true;
@@ -820,6 +877,32 @@ int ITDialog::render(){
 		ImGui::Text("Import Tile from bitmap or RAW");
 
 		mTextInput.render();
+
+			Dialog::render();
+
+	ImGui::SetNextWindowSize(ImVec2(800, 600));
+
+if (ImGui::Button("Open File Dialog"))
+    	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose File", ".png,.data,.raw,.bin", ".");
+
+  // display
+  if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")) 
+  {
+    // action if OK
+    if (ImGuiFileDialog::Instance()->IsOk())
+    {
+      std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+      std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+	  mTextInput.mDialogTextMain = filePathName;
+      // action
+    }
+    
+    // close
+    ImGuiFileDialog::Instance()->Close();
+  }
+
+  		ImGui::SameLine();
+
 
         if (ImGui::Button("Import")){
 			if(mTextInput.bInputIsAccepted){
