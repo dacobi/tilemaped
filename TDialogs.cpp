@@ -200,6 +200,12 @@ int TBDialog::render(){
 					mGlobalSettings.CurrentEditor->handleSelection(SELMODE_INVERT);
 				}
 			}
+
+			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_PALED){
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import Palette")).c_str())){
+					mGlobalSettings.CurrentEditor->mPalette.bImportingPalette = true;
+				}
+			}
 		
 			if(ImGui::MenuItem("Undo (U)")){
 				mGlobalSettings.CurrentEditor->undoLastActionGroup();	  		
@@ -360,7 +366,7 @@ int SADialog::render(){
     	ImGuiFileDialog::Instance()->Close();
   	}
 
-  	ImGui::SameLine();
+  	//ImGui::SameLine();
 
         if (ImGui::Button(mDialogButtonAccept.c_str())){
 			if(mTextInput.bInputIsAccepted){
@@ -465,7 +471,7 @@ int OPDialog::render(){
     	ImGuiFileDialog::Instance()->Close();
   	}
 
-  	ImGui::SameLine();
+  	//ImGui::SameLine();
 
         if (ImGui::Button("Open")){
 			if(mTextInput.bInputIsAccepted){
@@ -737,6 +743,26 @@ int CPDialog::render(){
 			mActiveInput = &mReadPath;
 		}
 
+		if (ImGui::Button("Open File Dialog")){
+			Dialog::render();
+			ImGui::SetNextWindowSize(ImVec2(800, 600));
+    		ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose Folder", NULL, ".");
+		}
+
+  		// display
+  		if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")){
+    		// action if OK
+    		if (ImGuiFileDialog::Instance()->IsOk()){
+      			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+      			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+	  			mReadPath.mDialogTextMain = filePathName;
+      			// action
+    		}
+    
+    		// close
+    		ImGuiFileDialog::Instance()->Close();
+  		}
+
 		ImGui::Checkbox("Use Palette", &bHasPalette);
 
 		if(bHasPalette){
@@ -744,6 +770,26 @@ int CPDialog::render(){
 			if(mReadPal.bIsActive){
 				mActiveInput = &mReadPal;
 			}
+
+		if (ImGui::Button("Choose Palette File")){
+			Dialog::render();
+			ImGui::SetNextWindowSize(ImVec2(800, 600));
+    		ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyPal", "Choose Palette", ".gpl, .bin", ".");
+		}
+
+  		// display
+  		if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKeyPal")){
+    		// action if OK
+    		if (ImGuiFileDialog::Instance()->IsOk()){
+      			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+      			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+	  			mReadPal.mDialogTextMain = filePathName;
+      			// action
+    		}
+    
+    		// close
+    		ImGuiFileDialog::Instance()->Close();
+  		}
 		}
 
         if (ImGui::Button("Create")){
@@ -903,7 +949,7 @@ int ITDialog::render(){
     	ImGuiFileDialog::Instance()->Close();
   	}
 
-  	ImGui::SameLine();
+  	//ImGui::SameLine();
 
 
     if (ImGui::Button("Import")){

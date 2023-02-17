@@ -61,6 +61,8 @@ class TPalette : public Dialog{
 		int saveToFolder(std::string palPath);
 		int saveToFile(std::string palPath);
 		int importGimpPalette(std::string palPath);
+		int importPaletteEdit(std::string palPath);
+		bool bImportingPalette = false;
 		//int testPaletteFile(std::string palPath);
 		std::vector<TPixel*> TPixels;
 		std::vector<TPixel*> TPixelsEdit;

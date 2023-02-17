@@ -180,6 +180,9 @@ int TEditor::render(){
 		if(mActiveDialog){			
 			mActiveDialog->render();
 		}
+		if(mActiveMessage){			
+			mActiveMessage->render();
+		}
 	}
 
 	return 0;
@@ -497,8 +500,7 @@ int TEditor::toggleSelectedTile(){
 int TEditor::flipSelectedTile(){
 	if(mCurMode == EMODE_MAP){
 		if(mGlobalSettings.mSelectedTile > -1){
-			int cTileFlip = mTileMap.getFlip(mGlobalSettings.mSelectedTile);
-			std::cout << "Flipping Tile: " << cTileFlip << std::endl;		
+			int cTileFlip = mTileMap.getFlip(mGlobalSettings.mSelectedTile);			
 			cTileFlip++;
 			if(cTileFlip > 3){cTileFlip = 0;}
 			mTileMap.setFlip(mGlobalSettings.mSelectedTile, cTileFlip);

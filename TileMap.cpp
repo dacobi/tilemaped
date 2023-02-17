@@ -3,6 +3,7 @@
 #include "cx16_palette.h"
 #include "TEditor.h"
 #include <SDL.h>
+#include "ImGuiFileDialog.h"
 
 extern TSettings mGlobalSettings;
 
@@ -317,6 +318,118 @@ Uint32 TPalette::mapPaletteColor(int tcolor){
 	
 
 	return tmpcol;
+}
+
+int TPalette::importPaletteEdit(std::string palPath){
+
+	int pType = mGlobalSettings.testPaletteFile(palPath);
+
+	if(pType == 0){
+		mGlobalSettings.CurrentEditor->showMessage("Error: Not Palette File!", true);
+		return 1;
+	}
+
+	if(pType == 2){		
+		std::ifstream input( palPath, std::ios::in );
+		unsigned char tpalette[256][3];
+
+		std::string nline;
+    	std::string ntmp;    
+    
+    	std::getline(input, nline);
+    	std::getline(input, nline);
+    	std::getline(input, nline);
+    	std::getline(input, nline);            
+        
+    	std::stringstream convert;
+    	int mr, mg, mb;
+    
+    	for(int i = 0; i < 256; i++){
+ 			std::getline(input, nline);       	
+    		
+			convert << nline << std::endl;
+    		convert >> mr >> mg >> mb >> ntmp;
+    	
+	    	tpalette[i][0] = mr;
+    		tpalette[i][1] = mg;
+    		tpalette[i][2] = mb;    	
+    	}
+
+		if(TPaletteEdit.size()){
+			TPaletteEdit.erase(TPaletteEdit.begin(), TPaletteEdit.end());
+		}
+
+		for(int i = 0; i < 256; i++){
+			SDL_Color tmpcol;
+			
+			tmpcol.r = tpalette[i][0];
+			tmpcol.g = tpalette[i][1];
+			tmpcol.b = tpalette[i][2];
+						
+			if((i  == 0) ) {				
+				tmpcol.a = 0;
+			} else {
+				tmpcol.a = 255;
+			}
+			
+			TPaletteEdit.push_back(tmpcol);
+		}
+		mGlobalSettings.CurrentEditor->showMessage("Palette Import Succesful");
+		return 0;
+	}
+
+	if(pType == 1){
+		if(fs::exists(fs::status(palPath))){
+			if(fs::is_directory(fs::status(palPath))){
+				std::cout << "Palette path is directory: " << palPath << std::endl;
+				return 1;
+			}
+		}
+
+	std::ifstream infile(palPath, std::ios::binary );
+    std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
+
+	//mGlobalSettings.ProjectPalette = tbuffer;
+
+	int magic1,magic2;
+
+	magic1 = tbuffer[0];
+	magic2 = tbuffer[1];
+
+	tbuffer.erase(tbuffer.begin());
+	tbuffer.erase(tbuffer.begin());
+
+	
+	if((magic1 == 16) && (magic2 == 42) && (tbuffer.size() == 512)){
+
+		if(TPaletteEdit.size()){
+			TPaletteEdit.erase(TPaletteEdit.begin(), TPaletteEdit.end());
+		}
+	
+		for(int i = 0; i < 512; i+=2){
+			SDL_Color tmpcol;
+			
+			tmpcol.r = mMapColorIn[tbuffer[i+1]];
+			tmpcol.g = mMapColorIn[tbuffer[i] >> 4];
+			tmpcol.b = mMapColorIn[tbuffer[i] & 0xf];
+			if((i  == 0) ) {				
+				tmpcol.a = 0;
+			} else {
+				tmpcol.a = 255;
+			}
+			
+			TPaletteEdit.push_back(tmpcol);
+		}
+		
+		mGlobalSettings.CurrentEditor->showMessage("Palette Import Succesful");		
+		return 0;
+	}
+
+	std::cout << "Error Loading Palette: " << palPath << std::endl;
+	return 1;
+	}
+
+	return 0;
 }
 
 int TPalette::importGimpPalette(std::string palPath){
@@ -647,6 +760,26 @@ int TPalette::renderEditor(int xpos,int ypos){
 	Dialog::render(xpos, ypos);
 
 	ImGui::Begin("Palette: Edit Mode");
+
+	if(bImportingPalette){
+		Dialog::render();
+		ImGui::SetNextWindowSize(ImVec2(800, 600));
+    	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose Palette File", ".gpl,.bin", ".");	
+		bImportingPalette = false;
+	}
+
+	// display
+  	if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")){
+    	// action if OK
+    	if (ImGuiFileDialog::Instance()->IsOk()){
+      		std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+      		std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+	  		importPaletteEdit(filePathName);
+      		// action
+    	}    
+    // close
+    	ImGuiFileDialog::Instance()->Close();
+  	}
 
 	static ImVec4 backup_color;
 
