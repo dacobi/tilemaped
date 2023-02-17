@@ -224,10 +224,20 @@ int TBDialog::render(){
 	mGlobalSettings.TopBarHeight = ImGui::GetWindowHeight();
 
 	std::string cProjPath = mGlobalSettings.mFile + " Project: " + mGlobalSettings.ProjectPath;
-	textWidth = ImGui::CalcTextSize(cProjPath.c_str()).x;
-	textWidth *= 1.1;
+	auto textWidthP = ImGui::CalcTextSize(cProjPath.c_str()).x;
+	textWidthP += 20;
 
-	ImGui::SetCursorPosX((mGlobalSettings.WindowWidth - textWidth));
+	if(textWidthP > ((mGlobalSettings.WindowWidth/2)-textWidth)){
+		std::string newProjectPath = mGlobalSettings.ProjectPath.substr(mGlobalSettings.ProjectPath.size()/2, mGlobalSettings.ProjectPath.size()-(mGlobalSettings.ProjectPath.size()/2));
+		newProjectPath.insert(0, ".");
+		newProjectPath.insert(0, ".");
+		newProjectPath.insert(0, ".");
+		cProjPath = mGlobalSettings.mFile + " Project: " + newProjectPath;
+		textWidthP =  ImGui::CalcTextSize(cProjPath.c_str()).x;
+		textWidthP +=20;
+	}
+
+	ImGui::SetCursorPosX((mGlobalSettings.WindowWidth - textWidthP));
 	ImGui::Text("%s", cProjPath.c_str());               
 
 	ImGui::EndMainMenuBar();
