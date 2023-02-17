@@ -860,19 +860,19 @@ int TEditor::handleEvents(){
 			if(mGlobalSettings.mDeleteUnusedTilesState){
 				dropUnusedTiles();
 				mGlobalSettings.mDeleteUnusedTilesState = 0;
-				return 0;
+				//return 0;
 			}
 			if(mGlobalSettings.mProjectSaveState == 1){
 				if(saveToFolder(mGlobalSettings.ProjectPath)){					
 					showMessage("Error Creating Project Folder!", true);
 				} 
 				mGlobalSettings.mProjectSaveState = 0;				
-				return 0;
+				//return 0;
 			}
 			if(mGlobalSettings.mPaletteUpdateState == 1){
 				updatePalette();
 				mGlobalSettings.mPaletteUpdateState = 0;
-				return 0;
+				//return 0;
 			}
 			if(mGlobalSettings.mOpenTileState == 1){
 				Tile* newTile = createNewTileFromFile(mGlobalSettings.mNewTilePath);

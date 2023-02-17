@@ -774,7 +774,7 @@ int CPDialog::render(){
 		if (ImGui::Button("Choose Palette File")){
 			Dialog::render();
 			ImGui::SetNextWindowSize(ImVec2(800, 600));
-    		ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyPal", "Choose Palette", ".gpl, .bin", ".");
+    		ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyPal", "Choose Palette", ".gpl,.bin", ".");
 		}
 
   		// display
