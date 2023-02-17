@@ -324,7 +324,6 @@ int SDialog::render(){
 	return 0;
 }
 
-
 void SADialog::cancel(){
 	Dialog::cancel();
 	mSubDialog->cancel();
@@ -352,9 +351,9 @@ int SADialog::render(){
 
 	ImGui::Begin(mDialogTextTitle.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
     		
-			ImGui::Text("%s", mDialogTextMain.c_str());
+	ImGui::Text("%s", mDialogTextMain.c_str());
 
-			mTextInput.render();
+	mTextInput.render();
 
 	if (ImGui::Button("Choose Folder")){
 		Dialog::render();
@@ -369,29 +368,30 @@ int SADialog::render(){
       		std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
       		std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
 	  		mTextInput.mDialogTextMain = filePathName;
+			mTextInput.checkCurrentText();
+			if(mTextInput.bInputIsAccepted){
+				recieveInput(SDLK_y);
+			}
       		// action
     	}
     
     	// close
     	ImGuiFileDialog::Instance()->Close();
   	}
+  	
+    if (ImGui::Button(mDialogButtonAccept.c_str())){
+		if(mTextInput.bInputIsAccepted){
+			recieveInput(SDLK_y);					
+		}				
+	}
 
-  	//ImGui::SameLine();
+	ImGui::SameLine();
 
-        if (ImGui::Button(mDialogButtonAccept.c_str())){
-			if(mTextInput.bInputIsAccepted){
-				recieveInput(SDLK_y);					
-			}				
-		}
-
-		ImGui::SameLine();
-
-		if (ImGui::Button(mDialogButtonCancel.c_str())){
-			bInputIsCancel=true;
-		}
+	if (ImGui::Button(mDialogButtonCancel.c_str())){
+		bInputIsCancel=true;
+	}
             
-        ImGui::End();
-
+    ImGui::End();
 
 	if(bSubDialogActive){
 		mSubDialog->bUpdateWinPos = true;
@@ -411,17 +411,16 @@ int SADialog::render(){
 void SADialog::recieveInput(int mKey){
 	
 	if(bSubDialogActive){
-			if(mKey == SDLK_y){
-				bInputIsAccept=true;
-				bSubDialogActive = false;
-				mGlobalSettings.mProjectSaveState = 1;
-				mGlobalSettings.ProjectPath = mTextInput.mDialogTextMain;
-			}	
-			if(mKey == SDLK_n){
-				bSubDialogActive=false;
-				bDialogIsWatingForText = true;
-				//SDL_StartTextInput();				
-			}		
+		if(mKey == SDLK_y){
+			bInputIsAccept=true;
+			bSubDialogActive = false;
+			mGlobalSettings.mProjectSaveState = 1;
+			mGlobalSettings.ProjectPath = mTextInput.mDialogTextMain;
+		}	
+		if(mKey == SDLK_n){
+			bSubDialogActive=false;
+			bDialogIsWatingForText = true;			
+		}		
 	} else {
 		if(mKey == SDLK_y){
 			if(fs::is_directory(fs::status(mTextInput.mDialogTextMain))){
@@ -433,12 +432,10 @@ void SADialog::recieveInput(int mKey){
 					mGlobalSettings.ProjectPath = mTextInput.mDialogTextMain;
 					bInputIsAccept=true;
 				}	
-			}
-			//SDL_StopTextInput();
+			}			
 		}
 		if(mKey == SDLK_n){
 			bInputIsCancel=true;
-			//SDL_StopTextInput();			
 		}
 		if(mKey == SDLK_TAB){		
 			mTextInput.autoComplete();			
@@ -474,6 +471,10 @@ int OPDialog::render(){
       		std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
       		std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
 	  		mTextInput.mDialogTextMain = filePathName;
+			mTextInput.checkCurrentText();
+			if(mTextInput.bInputIsAccepted){
+				recieveInput(SDLK_y);
+			}
       		// action
     	}
     
@@ -481,25 +482,21 @@ int OPDialog::render(){
     	ImGuiFileDialog::Instance()->Close();
   	}
 
-  	//ImGui::SameLine();
+    if (ImGui::Button("Open")){
+		if(mTextInput.bInputIsAccepted){
+			recieveInput(SDLK_y);					
+		}				
+	}
 
-        if (ImGui::Button("Open")){
-			if(mTextInput.bInputIsAccepted){
-				recieveInput(SDLK_y);					
-			}				
-		}
+	ImGui::SameLine();
 
-		ImGui::SameLine();
-
-		if (ImGui::Button("Cancel")){
-			bInputIsCancel=true;
-		}		
+	if (ImGui::Button("Cancel")){
+		bInputIsCancel=true;
+	}		
     
-        ImGui::End();
-
+    ImGui::End();
 	
 	return 0;
-
 }
 
 void OPDialog::recieveInput(int mKey){
@@ -855,14 +852,11 @@ void RNDialog::recieveInput(int mKey){
 		mNumber = cNumber;
 		bInputIsAccept=true;	
 		bDialogIsWatingForText = false;
-
-		//SDL_StopTextInput();
 		return;
 	}
 
 	if(mKey == SDLK_n){
 		bInputIsCancel=true;
-		//SDL_StopTextInput();		
 	}		
 }
 
@@ -951,14 +945,15 @@ int ITDialog::render(){
       		std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
       		std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
 	  		mTextInput.mDialogTextMain = filePathName;
+			mTextInput.checkCurrentText();
+			if(mTextInput.bInputIsAccepted){
+				recieveInput(SDLK_y);
+			}
       		// action
     	}    
     // close
     	ImGuiFileDialog::Instance()->Close();
   	}
-
-  	//ImGui::SameLine();
-
 
     if (ImGui::Button("Import")){
 		if(mTextInput.bInputIsAccepted){
@@ -997,13 +992,11 @@ void ITDialog::recieveInput(int mKey){
 			bDialogIsWatingForText = false;
 			mGlobalSettings.mOpenTileState = 1;
 			mGlobalSettings.mNewTilePath = mTextInput.mDialogTextMain;
-			//SDL_StopTextInput();
 		}		
 	}
 
 	if(mKey == SDLK_n){
 		bInputIsCancel=true;
-		//SDL_StopTextInput();		
 	}		
 	if(mKey == SDLK_TAB){
 		mTextInput.autoComplete();		
@@ -1082,21 +1075,15 @@ void TIDialog::autoComplete(){
 		}
 
 		mCompleteText = "";
-		mFile = cPath.filename().string();			 //cPath.filename();
-
-		//std::cout << "Complete Before: " << mDir << ", "  << mFile << std::endl;
+		mFile = cPath.filename().string();			 
 
 		if(fs::is_directory(fs::status(mDir))){
 			for (const auto & entry : fs::directory_iterator(mDir)){
-				std::string tStr =   (entry.path()).filename().string(); // (entry.path()).filename();
-
-				//std::cout << "Complete:" << mFile << std::endl;
-
+				std::string tStr =   (entry.path()).filename().string(); 
 				if(mFile.length()){
 					std::size_t subpos = tStr.find(mFile);						
 					if((subpos != std::string::npos) && (subpos == 0)){												
-						mCompleteText = tStr.substr(mFile.length());
-						//std::cout << "Complete Subpos:" << mCompleteText << std::endl;						
+						mCompleteText = tStr.substr(mFile.length());						
 						break;
 					} 				
 				}

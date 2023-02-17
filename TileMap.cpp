@@ -1680,8 +1680,7 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 	if(mGlobalSettings.CurrentEditor->mSelection.mSelected.size()){
 		for(int i=0; i < mGlobalSettings.TileMapHeight; i++){
 			for(int j=0; j < mGlobalSettings.TileMapWidth; j++){
-				if(mGlobalSettings.CurrentEditor->mSelection.findInSelection((j+(i*mGlobalSettings.TileMapWidth))) != -1){
-					//mTiles->TTiles[getTile(j+(i*mGlobalSettings.TileMapWidth))]->renderSelection(TileAreas[j+(i*mGlobalSettings.TileMapWidth)], mGlobalSettings.DefaultHighlightColor);
+				if(mGlobalSettings.CurrentEditor->mSelection.findInSelection((j+(i*mGlobalSettings.TileMapWidth))) != -1){					
 					Tile::renderSelection(TileAreas[j+(i*mGlobalSettings.TileMapWidth)], mGlobalSettings.DefaultHighlightColor);
 				}
 			}
