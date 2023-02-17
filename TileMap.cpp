@@ -764,12 +764,12 @@ int TPalette::renderEditor(int xpos,int ypos){
 	if(bImportingPalette){
 		Dialog::render();
 		ImGui::SetNextWindowSize(ImVec2(800, 600));
-    	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose Palette File", ".gpl,.bin", ".");	
+    	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyPal", "Choose Palette File", ".gpl,.bin", ".");	
 		bImportingPalette = false;
 	}
 
 	// display
-  	if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")){
+  	if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKeyPal")){
     	// action if OK
     	if (ImGuiFileDialog::Instance()->IsOk()){
       		std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();

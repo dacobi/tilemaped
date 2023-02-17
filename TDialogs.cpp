@@ -305,7 +305,7 @@ int SDialog::render(){
     
 	Dialog::render();
 
-	ImGui::Begin(mDialogTextTitle.c_str());                         
+	ImGui::Begin(mDialogTextTitle.c_str(),NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
     		
 		ImGui::Text("%s", mDialogTextMain.c_str()); 
 
@@ -350,20 +350,20 @@ int SADialog::render(){
 	Dialog::render();
 
 
-	ImGui::Begin(mDialogTextTitle.c_str());                         
+	ImGui::Begin(mDialogTextTitle.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
     		
 			ImGui::Text("%s", mDialogTextMain.c_str());
 
 			mTextInput.render();
 
-	if (ImGui::Button("Open File Dialog")){
+	if (ImGui::Button("Choose Folder")){
 		Dialog::render();
     	ImGui::SetNextWindowSize(ImVec2(800, 600));
-		ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose Folder", NULL, ".");
+		ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeySave", "Choose Folder", NULL, ".");
 	}
 
   	// display
-  	if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")){
+  	if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKeySave")){
     	// action if OK
     	if (ImGuiFileDialog::Instance()->IsOk()){
       		std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
@@ -455,20 +455,20 @@ int OPDialog::render(){
 
 	Dialog::render();
 
-	ImGui::Begin("Open Project");                         
+	ImGui::Begin("Open Project",NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
 		
 	ImGui::Text("Open Project from Folder");
 
 	mTextInput.render();
 
-	if (ImGui::Button("Open File Dialog")){
+	if (ImGui::Button("Choose Project Folder")){
 		Dialog::render();
 		ImGui::SetNextWindowSize(ImVec2(800, 600));
-    	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose Folder", NULL, ".");
+    	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyPfold", "Choose Folder", NULL, ".");
 	}
 
   	// display
-  	if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")){
+  	if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKeyPfold")){
     	// action if OK
     	if (ImGuiFileDialog::Instance()->IsOk()){
       		std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
@@ -550,8 +550,6 @@ int OCDialog::render(){
 				bSubDialogActive = true;
 				bSubDialogIsOpen = true;
 				bDialogIsWatingForText = true;				
-				//ImGuiFileDialog::Instance()->OpenDialog("ChooseDirDlgKey", "Choose a Directory", nullptr, ".");
-
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Create Project")).c_str())){
 				bSubDialogActive = true;
@@ -709,7 +707,7 @@ int CPDialog::render(){
 	Dialog::render();
 
 
-	ImGui::Begin("Create New Project");                         
+	ImGui::Begin("Create New Project", NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
     		
 		ImGui::Text("TileMap Width & Height");  
 			
@@ -753,14 +751,14 @@ int CPDialog::render(){
 			mActiveInput = &mReadPath;
 		}
 
-		if (ImGui::Button("Open File Dialog")){
+		if (ImGui::Button("New Project Folder")){
 			Dialog::render();
 			ImGui::SetNextWindowSize(ImVec2(800, 600));
-    		ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose Folder", NULL, ".");
+    		ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyNewf", "Choose Folder", NULL, ".");
 		}
 
   		// display
-  		if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")){
+  		if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKeyNewf")){
     		// action if OK
     		if (ImGuiFileDialog::Instance()->IsOk()){
       			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
@@ -784,11 +782,11 @@ int CPDialog::render(){
 		if (ImGui::Button("Choose Palette File")){
 			Dialog::render();
 			ImGui::SetNextWindowSize(ImVec2(800, 600));
-    		ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyPal", "Choose Palette", ".gpl,.bin", ".");
+    		ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyNewp", "Choose Palette", ".gpl,.bin", ".");
 		}
 
   		// display
-  		if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKeyPal")){
+  		if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKeyNewp")){
     		// action if OK
     		if (ImGuiFileDialog::Instance()->IsOk()){
       			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
@@ -934,20 +932,20 @@ int ITDialog::render(){
 	
 	Dialog::render();
 
-	ImGui::Begin("Import Tile");                         
+	ImGui::Begin("Import Tile", NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
     		
 	ImGui::Text("Import Tile from bitmap or RAW");
 
 	mTextInput.render();
 
-	if (ImGui::Button("Open File Dialog")){
+	if (ImGui::Button("Choose Tile File")){
 		Dialog::render();
 		ImGui::SetNextWindowSize(ImVec2(800, 600));
-    	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose File", ".png,.data,.raw,.bin", ".");
+    	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyTile", "Choose File", ".png,.data,.raw,.bin", ".");
 	}
   
   	// display
-  	if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")){
+  	if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKeyTile")){
     	// action if OK
     	if (ImGuiFileDialog::Instance()->IsOk()){
       		std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
@@ -1415,7 +1413,7 @@ int PIDialog::render(int xpos, int ypos){
 
 	ImGui::PushFont(mGlobalSettings.SFont);
 
-	ImGui::Begin(mDialogTextMain.c_str(), &mGlobalSettings.bShowProjectInfo);
+	ImGui::Begin(mDialogTextMain.c_str(), &mGlobalSettings.bShowProjectInfo, ImGuiWindowFlags_AlwaysAutoResize);
 	
 	ImGui::Text("%s", TileMap.c_str());
 	ImGui::Text("%s", TileSizeX.c_str());
@@ -1501,7 +1499,7 @@ int QDialog::render(){
     
 	Dialog::render();
 
-	ImGui::Begin("Quit Program?");                         
+	ImGui::Begin("Quit Program?", NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
     		
 			ImGui::Text("Any unsaved progress will be lost   "); 
 
