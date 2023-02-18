@@ -4,6 +4,7 @@
 #include "TEditor.h"
 #include <SDL.h>
 #include "ImGuiFileDialog.h"
+//#include "TSelection.h"
 
 extern TSettings mGlobalSettings;
 
@@ -1682,6 +1683,23 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 			for(int j=0; j < mGlobalSettings.TileMapWidth; j++){
 				if(mGlobalSettings.CurrentEditor->mSelection.findInSelection((j+(i*mGlobalSettings.TileMapWidth))) != -1){					
 					Tile::renderSelection(TileAreas[j+(i*mGlobalSettings.TileMapWidth)], mGlobalSettings.DefaultHighlightColor);
+				}
+			}
+		}
+	}
+
+	if(mGlobalSettings.CurrentEditor->mCurrentBrushTile){
+		if(mGlobalSettings.CurrentEditor->mCurrentBrushTile->mSelected.size()){
+			for(int i=0; i < mGlobalSettings.TileMapHeight; i++){
+				for(int j=0; j < mGlobalSettings.TileMapWidth; j++){
+					if(mGlobalSettings.CurrentEditor->mCurrentBrushTile->findInSelection((j+(i*mGlobalSettings.TileMapWidth))) != -1){
+						//std::cout << "Render Tile: " << mGlobalSettings.CurrentEditor->mCurBrush->findInSelection((j+(i*mGlobalSettings.TileMapWidth))) << std::endl;
+						int findex = mGlobalSettings.CurrentEditor->mCurrentBrushTile->findInSelection((j+(i*mGlobalSettings.TileMapWidth)));
+						if(mGlobalSettings.CurrentEditor->mCurrentBrushTile->mBrushElements[findex] != -1){
+							mTiles->TTiles[mGlobalSettings.CurrentEditor->mCurrentBrushTile->mBrushElements[mGlobalSettings.CurrentEditor->mCurrentBrushTile->findInSelection((j+(i*mGlobalSettings.TileMapWidth)))]]->render(xpos + (mGlobalSettings.TileSizeX * j * mGlobalSettings.TileMapScale), ypos + (mGlobalSettings.TileSizeY * i * mGlobalSettings.TileMapScale), mGlobalSettings.TileMapScale, getTileProp(0));
+						}
+						Tile::renderSelection(TileAreas[j+(i*mGlobalSettings.TileMapWidth)], mGlobalSettings.DefaultHighlightColor);
+					}
 				}
 			}
 		}

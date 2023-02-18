@@ -75,7 +75,8 @@ class TEditor{
 		int handlePalette();
 		int handlePaletteEdit();
 		int handleTile();
-		int handleEMTile();		
+		int handleEMTile();
+		int handleBrushes();	
 		int findSelMap();
 		int findSelTile();
 		int resizeWindowEvent(SDL_Event* event);
@@ -96,6 +97,7 @@ class TEditor{
 		int applyScroll(int mx,int my, int amount, int xamount);
 		ImWinMouseState ImButtonsTileSet;		
 		ImWinMouseState ImButtonsPalette;		
+		ImWinMouseState ImButtonsBrushesTile;		
 		bool leftMouseButtonDown = false;		
 		bool rightMouseButtonDown = false;
 		int leftMouseButtonClicks = 0;
@@ -104,7 +106,12 @@ class TEditor{
 		bool bLShiftIsDown = false;
 		bool bTileMapGrapped = false;
 		bool bTileSetGrapped = false;
+		bool bShowBrushesTile = false;
 		TSelection mSelection;
+		TBrush *mCurrentBrushTile = NULL;
+		TBrush tmpBrush;
+		TBrushList mBrushesTile;
+		bool bShowBrushListTile = false;
 		int flipSelectedTile();		
 		int replaceSelectedColor(int x, int y);
 		int replaceSelectedTiles(int x, int y);
@@ -147,6 +154,7 @@ class TEditor{
 		int activatePaletteEdit();
 		int activatePaletteUpdate();
 		int activateDropUnusedTiles();
+		int activateBrushes();
 		int rx,ry;
 		int cx,cy;
 		int mButtonState;

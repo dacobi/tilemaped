@@ -2,6 +2,7 @@
 #define __TEACTION__
 
 #include "TSettings.h"
+#include "TSelection.h"
 
 class TEAction{
 	public:
@@ -46,14 +47,20 @@ class TEActionReplaceMany: public TEAction{
 		std::vector<TEAction*> mSubActions;
 		
 		bool compareSelection(TEActionReplaceMany *mCmp){
-			if(mSelection.size() == mCmp->mSelection.size()){
-				for(int i = 0; i < mSelection.size(); i++){
-					if(mSelection[i] != mCmp->mSelection[i]){
-						return false;
-					}
-				}
+
+			//if(mSelection.size() == mCmp->mSelection.size()){
+			//	for(int i = 0; i < mSelection.size(); i++){
+			//		if(mSelection[i] != mCmp->mSelection[i]){
+			//			return false;
+			//		}
+			//	}
+			//	return true;
+			//}
+
+			if(mSelection == mCmp->mSelection){
 				return true;
 			}
+
 			return false;
 		}
 };
@@ -137,6 +144,26 @@ class TEActionReplaceTiles: public TEActionReplaceMany{
 			const TEActionReplaceTiles* mrhs =  dynamic_cast<const TEActionReplaceTiles*>(&rhs); 
 			if(mrhs){
 				if((mNewValue == mrhs->mNewValue)){ // Not testing mOldValue
+					return compareSelection((TEActionReplaceMany*)mrhs);
+				}
+			}	
+			 return false;
+		}
+};
+
+
+class TEActionBrushTiles: public TEActionReplaceMany{
+	public:	
+		~TEActionBrushTiles(){};		
+		std::vector<int> mNewValues;
+		int UUID;
+		TileMap *mTileMap;
+		void doAction(TileMap* cTileMap, TBrush &mBrush);	
+		
+		virtual bool doCompare(const TEAction& rhs){
+			const TEActionBrushTiles* mrhs =  dynamic_cast<const TEActionBrushTiles*>(&rhs); 
+			if(mrhs){
+				if((mNewValues == mrhs->mNewValues) && (UUID ==mrhs->UUID )){ // Not testing mOldValue
 					return compareSelection((TEActionReplaceMany*)mrhs);
 				}
 			}	

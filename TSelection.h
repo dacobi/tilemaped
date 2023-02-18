@@ -2,6 +2,7 @@
 #define __TSELECTION__
 
 #include "TSettings.h"
+#include "TDialogs.h"
 
 enum{
     SELMODE_ALL,
@@ -30,6 +31,57 @@ class TSelection{
         int selectRange(int sstart, int send);
    		int searchSelection(std::vector<SDL_Rect> &sRects, int mx, int my);
         int getSelection(std::vector<SDL_Rect> &sRects, SDL_Rect &cSel, int xdelta, int ydelta);
+};
+
+enum{
+    TBRUSH_TILE,
+    TBRUSH_PIXEL
+};
+
+class TBrush: public TSelection{
+    public:
+        std::vector<int> mBrushElements;
+        int UUID;
+        int mBrushWidth = 1;
+        int mBrushHeight = 1;
+        int mLastClickX;
+        int mLastClickY;
+        int mDeltaBaseX;
+        int mDeltaBaseY;
+        int *mDeltaScaleX;
+        int *mDeltaScaleY;
+        int mCursorPos=0;
+        int mRenderScale;
+        ImVec2 mWinSize;
+        ImVec2 mWinPos;
+        bool bIsSelected = false;
+        bool bIsEditing = false;
+        int setElementNext(int element);
+        int nextElement();
+        int configBrush(int nWidth, int nHeight, int bType, int nRenderScale);
+        int setBrushDeltas(int nDeltaX, int nDeltaY, int *nScaleX,int *nScaleY);
+        int getBrushSelection(int bx, int by, std::vector<SDL_Rect> &sRects);
+        int renderSelection();
+        SDL_Rect renderIm(int xpos, int ypos);
+};
+
+class TBrushList{
+    public:
+        int mBrushType;
+        std::vector<TBrush*> mBrushes;
+        bool *bIsShown;
+        bool bIsEditing = false;
+        int mWinHeight = 600;
+        int mRenderScaleTile;
+        int mNewBrushX=1;
+        int mNewBrushY=1;
+        int mSelectedBrush=0;
+   		std::vector<SDL_Rect> BrushAreas;
+        int addBrush(int sizex, int sizey);
+        int addBrushElement(int element);
+        int removeBrush();
+        //int renderIm(int xpos, int ypos);
+        int renderIm();
 };
 
 #endif

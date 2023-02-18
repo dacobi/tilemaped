@@ -3,6 +3,7 @@
 #include "TileMap.h"
 #include "TEditor.h"
 
+
 extern TSettings mGlobalSettings;
 
 void TEAction::undo(){
@@ -59,6 +60,29 @@ void TEActionReplacePixel::doAction(Tile* mCurTile, int mCurPix, int mOld, int m
 	TEActionType=ACTION_PIXEL;
 }
 
+void TEActionBrushTiles::doAction(TileMap* cTileMap, TBrush &mBrush){
+	UUID = mBrush.UUID;
+	mNewValues = mBrush.mBrushElements;
+	mSelection = mBrush.mSelected;
+	mTileMap = cTileMap;
+	TEActionType=ACTION_TBRUSH;
+
+	int eindex = 0;
+
+	std::cout << "Starting brush do" << std::endl;
+
+	for(auto &mSelElement : mSelection){
+		if(mSelElement > -1){ 
+			TEActionReplaceTile* newAction = new TEActionReplaceTile();
+			std::cout << "Do Brush: " << mSelElement << ", " << mTileMap->getTile(mSelElement) << ", " << mNewValues[eindex] << std::endl;
+			if(mNewValues[eindex] != -1){
+				newAction->doAction(mTileMap, mSelElement, mTileMap->getTile(mSelElement), mNewValues[eindex]);
+				mSubActions.push_back(newAction);			
+			}
+		}
+		eindex++;
+	}
+}
 
 void TEActionReplacePixels::doAction(Tile* mCurTile, std::vector<int> &newSel,int mOldColor, int mNewColor, TPalette* mPal){
 	mCurrentTile = mCurTile;		
