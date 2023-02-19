@@ -339,7 +339,7 @@ SDL_Rect TBrush::renderIm(int xpos, int ypos){
 }
 
 int TBrush::writeToFile(std::ofstream &outfile){
-    std::string tmpStr, tmpStr2;
+    std::string tmpStr, tmpStr2,tmpStr3;
     std::stringstream convert;
     tmpStr = "brush ";
     convert << mBrushWidth << std::endl;
@@ -353,6 +353,10 @@ int TBrush::writeToFile(std::ofstream &outfile){
     tmpStr = "elements";
     for(int i = 0; i < mBrushElements.size(); i++){
         convert << mBrushElements[i] << std::endl;
+        convert >> tmpStr2;
+        tmpStr += " ";
+        tmpStr += tmpStr2;
+        convert << getElementFlip(i) << std::endl;
         convert >> tmpStr2;
         tmpStr += " ";
         tmpStr += tmpStr2;
@@ -371,7 +375,9 @@ int TBrush::readFromFile(std::ifstream &infile){
     if(tmpStr == "elements"){
         for(int i = 0; i < (mBrushWidth*mBrushHeight); i++){
             convert >> tmpInt;
+            convert >> tmpInt2;
             setElementNext(tmpInt);
+            setElementFlip(i, tmpInt2);
         }   
     } else {
         std::cout << "Error Reading Brush!" << std::endl;
@@ -454,6 +460,14 @@ int TBrush::getElementFlip(int element){
         cFlip += mElementProps[element].bFlipX;        
     }
     return cFlip;
+}
+
+int TBrush::setElementFlip(int element, int cFlip){    
+    if(element > -1){        
+        mElementProps[element].bFlipX = (cFlip & 0x1);        
+        mElementProps[element].bFlipY = (cFlip & 0x2);      
+    }
+    return 0;
 }
 
 int TBrushList::renderIm(){
