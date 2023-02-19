@@ -111,7 +111,7 @@ class TEditor{
 		TBrush *mCurrentBrushTile = NULL;
 		TBrush tmpBrush;
 		TBrushList mBrushesTile;
-		bool bShowBrushListTile = false;
+		//bool bShowBrushListTile = false;
 		int flipSelectedTile();		
 		int replaceSelectedColor(int x, int y);
 		int replaceSelectedTiles(int x, int y);

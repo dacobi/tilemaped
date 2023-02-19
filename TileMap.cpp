@@ -1692,7 +1692,7 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 		}
 	}
 
-	if(mGlobalSettings.CurrentEditor->mCurrentBrushTile){
+	if(mGlobalSettings.CurrentEditor->mCurrentBrushTile && !mGlobalSettings.CurrentEditor->mBrushesTile.bIsEditing){
 		if(mGlobalSettings.CurrentEditor->mCurrentBrushTile->mSelected.size()){
 			for(int i=0; i < mGlobalSettings.TileMapHeight; i++){
 				for(int j=0; j < mGlobalSettings.TileMapWidth; j++){

@@ -477,10 +477,11 @@ int TEditor::activateBrushes(){
 
 int TEditor::activateBrush(){
 	if(mCurMode == EMODE_MAP){
-		if(mBrushesTile.mBrushes.size() && (mBrushesTile.mSelectedBrush > -1)){
-			if(!mCurrentBrushTile){
-				mCurrentBrushTile = mBrushesTile.mBrushes[mBrushesTile.mSelectedBrush];
-			}		
+		//if(mBrushesTile.mBrushes.size() && (mBrushesTile.mSelectedBrush > -1)){
+		if(!mCurrentBrushTile){
+				mCurrentBrushTile = mBrushesTile.getBrush();
+		} else {		
+				mCurrentBrushTile = mBrushesTile.getNextBrush();
 		}
 	}
 	return 0;
@@ -846,6 +847,7 @@ int TEditor::handleBrushes(){
 
 	if(mCurMode == EMODE_MAP){
 		if(ImButtonsBrushesTile.mLeft.bButtonIsDown){ 
+			if(ImButtonsBrushesTile.mLeft.mMousePos.y < mBrushesTile.mBrushOffset) {return 0;}
 			int tSel = -1;
 			tSel = searchRectsXY(mBrushesTile.BrushAreas, ImButtonsBrushesTile.mLeft.mMousePos.x, ImButtonsBrushesTile.mLeft.mMousePos.y);
 			if(tSel != -1){
@@ -1085,11 +1087,18 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			}		  			
 	  		} else {
 	  			if(cEvent->key.keysym.sym == SDLK_ESCAPE){
-					if(mCurrentBrushTile){
-						mCurrentBrushTile = NULL;
-					} else {
-						activateQuitDialog();
+					if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
+						if(mGlobalSettings.CurrentEditor->bShowBrushesTile){
+							mGlobalSettings.CurrentEditor->bShowBrushesTile = false;
+							return 0;
+						}
+						if(mCurrentBrushTile){
+							mCurrentBrushTile = NULL;
+							return 0;
+						}
 					}
+					
+					activateQuitDialog();					
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_SPACE){
 	  				switchMode();
@@ -1155,10 +1164,16 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			if(cEvent->key.keysym.sym == SDLK_F11){	  				
 		  			activateSaveAsDialog();
 	  			}
-				if(cEvent->key.keysym.sym == SDLK_F9){	  				
+				if(cEvent->key.keysym.sym == SDLK_F8){	  				
 					activateBrushes();
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F10){	  				
+					if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
+						if(mCurrentBrushTile){
+							mCurrentBrushTile = NULL;
+						}	  			}
+				}
+				if(cEvent->key.keysym.sym == SDLK_F9){	  				
 					activateBrush();
 	  			}	  			
 			}

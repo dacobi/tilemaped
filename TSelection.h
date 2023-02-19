@@ -43,6 +43,7 @@ class TBrush: public TSelection{
         std::vector<int> mBrushElements;
         std::vector<TileProperties> mElementProps;
         int UUID;
+        int mBrushType;
         int mBrushWidth = 1;
         int mBrushHeight = 1;
         int mLastClickX;
@@ -61,6 +62,9 @@ class TBrush: public TSelection{
         int flipElementV();
         int flipElementH();
         int nextElement();
+        int prevElement();
+        int nextLine();
+        int prevLine();
         int configBrush(int nWidth, int nHeight, int bType, int nRenderScale);
         int setBrushDeltas(int nDeltaX, int nDeltaY, int *nScaleX,int *nScaleY);
         int getBrushSelection(int bx, int by, std::vector<SDL_Rect> &sRects);
@@ -87,8 +91,11 @@ class TBrushList{
         int mNewBrushX=1;
         int mNewBrushY=1;
         int mSelectedBrush=0;
+        int mBrushOffset = 0;
    		std::vector<SDL_Rect> BrushAreas;
         int init(std::string cTitle, std::string cType, int cBrushType, bool *cIsShown, int cRenderScale);
+        TBrush* getBrush();
+        TBrush* getNextBrush();
         int addBrush(int sizex, int sizey);
         int addBrushElement(int element);
         int removeBrush();

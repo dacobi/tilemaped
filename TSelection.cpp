@@ -151,6 +151,7 @@ int TBrush::configBrush(int nWidth, int nHeight, int bType, int nRenderScale){
     mBrushWidth = nWidth;
     mBrushHeight = nHeight;
     mRenderScale = nRenderScale;
+    mBrushType = bType;
     if(bType == TBRUSH_TILE){
         setBrushDeltas(mGlobalSettings.TileSizeX, mGlobalSettings.TileSizeY, &mGlobalSettings.TileMapScale, &mGlobalSettings.TileMapScale);
     } else if (bType == TBRUSH_PIXEL) {
@@ -356,7 +357,12 @@ int TBrush::writeToFile(std::ofstream &outfile){
         convert >> tmpStr2;
         tmpStr += " ";
         tmpStr += tmpStr2;
-        convert << getElementFlip(i) << std::endl;
+        if(mBrushType == TBRUSH_TILE){
+            convert << getElementFlip(i) << std::endl;
+        }
+        if(mBrushType == TBRUSH_PIXEL){
+            convert << 0 << std::endl;
+        }
         convert >> tmpStr2;
         tmpStr += " ";
         tmpStr += tmpStr2;
@@ -377,7 +383,9 @@ int TBrush::readFromFile(std::ifstream &infile){
             convert >> tmpInt;
             convert >> tmpInt2;
             setElementNext(tmpInt);
-            setElementFlip(i, tmpInt2);
+            if(mBrushType == TBRUSH_TILE){
+                setElementFlip(i, tmpInt2);
+            }
         }   
     } else {
         std::cout << "Error Reading Brush!" << std::endl;
@@ -420,6 +428,34 @@ int TBrush::nextElement(){
     mCursorPos++;
     if(mCursorPos > (mBrushElements.size()-1)){
         mCursorPos = 0;
+    }
+    return 0;
+}
+
+int TBrush::prevElement(){
+    mCursorPos--;
+    if(mCursorPos < 0){
+        mCursorPos = (mBrushElements.size()-1);
+    }
+    return 0;
+}
+
+int TBrush::nextLine(){
+    if(mBrushHeight > 1){
+        mCursorPos += mBrushWidth;
+        if(mCursorPos > (mBrushElements.size()-1)){
+            mCursorPos = mCursorPos % mBrushWidth;
+        }
+    }
+    return 0;
+}
+
+int TBrush::prevLine(){
+    if(mBrushHeight > 1){
+        mCursorPos -= mBrushWidth;
+        if(mCursorPos < 0){
+            mCursorPos =  (mBrushElements.size()) + mCursorPos;
+        }
     }
     return 0;
 }
@@ -470,6 +506,31 @@ int TBrush::setElementFlip(int element, int cFlip){
     return 0;
 }
 
+TBrush* TBrushList::getBrush(){
+    TBrush* cBrush = NULL;
+    
+    if(mBrushes.size()){
+        cBrush = mBrushes[mSelectedBrush];
+    }
+    
+    return cBrush;
+}
+
+TBrush* TBrushList::getNextBrush(){
+    TBrush* cBrush = NULL;
+    
+    if(mBrushes.size()){
+        mSelectedBrush++;
+        if(mSelectedBrush > (mBrushes.size()-1)){
+            mSelectedBrush = 0;
+        }
+    
+        cBrush = mBrushes[mSelectedBrush];
+    }
+
+    return cBrush;
+}
+
 int TBrushList::renderIm(){
 
     ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Once, ImVec2(0.5f, 0.5f));
@@ -511,22 +572,40 @@ int TBrushList::renderIm(){
             mBrushes[mSelectedBrush]->bIsEditing = false;
         }
 
-        ImGui::SameLine();
+        
 
         if(ImGui::Button("Reset Cursor")){
             mBrushes[mSelectedBrush]->mCursorPos = 0;
         }        
-
-        if(ImGui::Button("Next Element")){
-            mBrushes[mSelectedBrush]->nextElement();
-        }
-
 
         ImGui::SameLine();
 
         if(ImGui::Button("Empty Element")){
             mBrushes[mSelectedBrush]->setElementNext(-1);
         }
+
+        if(ImGui::Button("Next Element")){
+            mBrushes[mSelectedBrush]->nextElement();
+        }
+
+        ImGui::SameLine();
+
+        if(ImGui::Button("Prev Element")){
+            mBrushes[mSelectedBrush]->prevElement();
+        }
+
+        if(ImGui::Button("Next Line")){
+            mBrushes[mSelectedBrush]->nextLine();
+        }
+
+        ImGui::SameLine();
+
+        if(ImGui::Button("Prev Line")){
+            mBrushes[mSelectedBrush]->prevLine();
+        }
+
+
+        
         if(ImGui::Button("Flip H")){
             mBrushes[mSelectedBrush]->flipElementH();
         }
@@ -557,6 +636,10 @@ int TBrushList::renderIm(){
     }
 
     ImGui::BeginChild("Brush List");
+
+    ImVec2 tSubWinPos = ImGui::GetWindowPos();
+
+    mBrushOffset = tSubWinPos.y;
 
     int yoffset = 20 - ImGui::GetScrollY();
 
