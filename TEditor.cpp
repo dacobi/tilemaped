@@ -69,9 +69,11 @@ void TEditor::initDialogs(){
 		mGlobalSettings.bShowPaletteOffset = true;
 	}
 
-	mBrushesTile.mBrushType = TBRUSH_TILE;
-	mBrushesTile.bIsShown = &bShowBrushesTile;
-	mBrushesTile.mRenderScaleTile = mGlobalSettings.TileMapScale;
+	mBrushesTile.init("Tiles","Tile", TBRUSH_TILE, &bShowBrushesTile, mGlobalSettings.TileMapScale);
+
+	//mBrushesTile.mBrushType = TBRUSH_TILE;
+	//mBrushesTile.bIsShown = &bShowBrushesTile;
+	//mBrushesTile.mRenderScale = mGlobalSettings.TileMapScale;
 	//mBrushesTile.addBrush(8,2);
 	//mBrushesTile.addBrush(3,3);
 
@@ -107,6 +109,10 @@ int TEditor::loadFromFolder(std::string path){
 	
 	initDialogs();
 
+	if(fs::exists(fs::status(path+DIRDEL+"tbrushes.dat"))){
+		mBrushesTile.loadFromFile(path+DIRDEL+"tbrushes.dat");
+	}
+
 	return 0;
 }
 
@@ -126,6 +132,8 @@ int TEditor::saveToFolder(std::string path){
 	mTileSet.saveToFolder(path);
 	mTileMap.saveToFolder(path);
 	mPalette.saveToFolder(path);
+
+	mBrushesTile.saveToFile(path + DIRDEL + "tbrushes.dat");
 
 	return 0;
 }
@@ -273,8 +281,7 @@ int TEditor::applyScroll(int mx,int my, int amount, int xamount){
 }
 
 void TEditor::undoLastActionGroup(){
-	if(mCurMode == EMODE_MAP){
-		std::cout << "UNDO" << std::endl;
+	if(mCurMode == EMODE_MAP){		
 		mActionStack.undoLastActionGroup();
 	}
 	if(mCurMode == EMODE_TILE){
@@ -465,7 +472,21 @@ int TEditor::activateBrushes(){
 	if(mCurMode == EMODE_MAP){
 		bShowBrushesTile = !bShowBrushesTile;
 	}
+	return 0;
 }
+
+int TEditor::activateBrush(){
+	if(mCurMode == EMODE_MAP){
+		if(mBrushesTile.mBrushes.size() && (mBrushesTile.mSelectedBrush > -1)){
+			if(!mCurrentBrushTile){
+				mCurrentBrushTile = mBrushesTile.mBrushes[mBrushesTile.mSelectedBrush];
+			}		
+		}
+	}
+	return 0;
+}
+
+
 
 
 int TEditor::handleSelection(int SELMODE){
@@ -814,6 +835,7 @@ int TEditor::handleBrushes(){
 			}		
 		}
 	}
+	return 0;
 }
 
 int TEditor::handleTileSet(){
@@ -1116,6 +1138,9 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F9){	  				
 					activateBrushes();
+	  			}
+				if(cEvent->key.keysym.sym == SDLK_F10){	  				
+					activateBrush();
 	  			}	  			
 			}
 	  		break;

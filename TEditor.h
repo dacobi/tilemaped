@@ -155,6 +155,7 @@ class TEditor{
 		int activatePaletteUpdate();
 		int activateDropUnusedTiles();
 		int activateBrushes();
+		int activateBrush();
 		int rx,ry;
 		int cx,cy;
 		int mButtonState;

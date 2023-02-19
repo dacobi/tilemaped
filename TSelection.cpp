@@ -259,7 +259,11 @@ SDL_Rect TBrush::renderIm(int xpos, int ypos){
     for(int i=0; i < mBrushHeight; i++){
             for(int j=0; j < mBrushWidth; j++){
                 if(mBrushElements[j+(i*mBrushWidth)] > -1){
-                    tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TileTex, telmin, telmax);
+                    if(mGlobalSettings.TileSetBPP < 0x8){
+                        tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TPOffset[mGlobalSettings.PaletteOffset], telmin, telmax);
+                    } else {
+                        tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TileTex, telmin, telmax);
+                    }
                 }
                 if(bIsEditing){
                     if((j+(i*mBrushWidth)) == mCursorPos){
@@ -301,6 +305,57 @@ SDL_Rect TBrush::renderIm(int xpos, int ypos){
     return tmpRect;
 }
 
+int TBrush::writeToFile(std::ofstream &outfile){
+    std::string tmpStr, tmpStr2;
+    std::stringstream convert;
+    tmpStr = "brush ";
+    convert << mBrushWidth << std::endl;
+    convert >> tmpStr2;
+    tmpStr += tmpStr2;
+    tmpStr += " ";
+    convert << mBrushHeight << std::endl;
+    convert >> tmpStr2;
+    tmpStr += tmpStr2;
+    outfile << tmpStr << std::endl;
+    tmpStr = "elements";
+    for(int i = 0; i < mBrushElements.size(); i++){
+        convert << mBrushElements[i] << std::endl;
+        convert >> tmpStr2;
+        tmpStr += " ";
+        tmpStr += tmpStr2;
+    }
+    outfile << tmpStr << std::endl;
+    return 0;
+}
+
+int TBrush::readFromFile(std::ifstream &infile){
+    std::string tmpStr, tmpStr2;
+    std::stringstream convert;
+    int tmpInt, tmpInt2;
+    std::getline(infile, tmpStr);
+    convert << tmpStr << std::endl;
+    convert >> tmpStr;
+    if(tmpStr == "elements"){
+        for(int i = 0; i < (mBrushWidth*mBrushHeight); i++){
+            convert >> tmpInt;
+            setElementNext(tmpInt);
+        }   
+    } else {
+        std::cout << "Error Reading Brush!" << std::endl;
+        return 1; 
+    }
+    return 0;
+}
+
+int TBrushList::init(std::string cTitle, std::string cType, int cBrushType, bool *cIsShown, int cRenderScale){
+    mTitle = cTitle;
+    mType = cType;
+    mBrushType = cBrushType;
+    bIsShown = cIsShown;
+    mRenderScale = cRenderScale;
+    return 0;
+}
+
 int TBrushList::addBrush(int sizex, int sizey){
 
     TBrush* newBrush = new TBrush();
@@ -308,7 +363,7 @@ int TBrushList::addBrush(int sizex, int sizey){
     mBrushes.push_back(newBrush);
 
     if(mBrushType == TBRUSH_TILE){
-        newBrush->configBrush(sizex, sizey, mBrushType, mRenderScaleTile);
+        newBrush->configBrush(sizex, sizey, mBrushType, mRenderScale);
     }
 
     BrushAreas.resize(mBrushes.size());
@@ -327,6 +382,7 @@ int TBrush::nextElement(){
     if(mCursorPos > (mBrushElements.size()-1)){
         mCursorPos = 0;
     }
+    return 0;
 }
 
 
@@ -334,6 +390,7 @@ int TBrushList::addBrushElement(int element){
     if(bIsEditing){
         mBrushes[mSelectedBrush]->setElementNext(element);
     }
+    return 0;
 }
 
 int TBrushList::removeBrush(){
@@ -344,6 +401,7 @@ int TBrushList::removeBrush(){
             mSelectedBrush--;
         }
     }
+    return 0;
 }
 
 int TBrushList::renderIm(){
@@ -351,7 +409,9 @@ int TBrushList::renderIm(){
     ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Once, ImVec2(0.5f, 0.5f));
 	ImGui::SetNextWindowSize(ImVec2(500,600), ImGuiCond_Once);
 
-    ImGui::Begin("Brushes: Tiles", bIsShown);
+    std::string cTitleType = "Brushes: " + mTitle;
+
+    ImGui::Begin(cTitleType.c_str(), bIsShown);
 
     ImGui::SliderInt("Brush Width", &mNewBrushX, 1, 9);
     ImGui::SliderInt("Brush Height", &mNewBrushY, 1, 9);
@@ -443,6 +503,73 @@ int TBrushList::renderIm(){
     mGlobalSettings.CurrentEditor->ImButtonsBrushesTile.updateButtonStates();
 
     ImGui::End();
+
+    return 0;
+}
+
+int TBrushList::saveToFile(std::string cBrushPath){
+
+    std::string tmpStr,tmpStr2;
+    std::ofstream output(cBrushPath, std::ios::out );
+    std::stringstream convert;
+
+    //std::cout << "Writhing tbrushes.dat" << std::endl;
+
+    tmpStr = "brushes ";
+    convert << mBrushes.size() << std::endl;
+    convert >> tmpStr2;
+     
+    tmpStr += tmpStr2;
+
+    output << tmpStr << std::endl;
+
+    for(int i = 0; i < mBrushes.size(); i++){
+        mBrushes[i]->writeToFile(output);
+    }
+
+    output.close();
+    
+    return 0;
+}
+
+int TBrushList::loadFromFile(std::string cBrushPath){
+
+    std::string tmpStr,tmpStr2;
+    int tmpInt,tmpInt2,tmpInt3;
+    std::ifstream input(cBrushPath, std::ios::in );
+    std::stringstream convert;
+
+    //std::cout << "Reading tbrushes.dat" << std::endl;
+
+    std::getline(input, tmpStr);
+
+    convert << tmpStr << std::endl;
+
+    convert >> tmpStr;
+    convert >> tmpInt;
+
+    if(tmpStr == "brushes"){
+        for(int i = 0; i < tmpInt; i++){
+            std::getline(input, tmpStr);
+            convert << tmpStr << std::endl;
+            convert >> tmpStr;
+            convert >> tmpInt2;
+            convert >> tmpInt3;
+            if(tmpStr == "brush"){
+                addBrush(tmpInt2, tmpInt3);
+                if(mBrushes[i]->readFromFile(input)){
+                    std::cout << "Error Loading Brushes: " << cBrushPath << std::endl;
+                    return 1;            
+                }
+            } else {
+                std::cout << "Error Loading Brushes: " << cBrushPath << std::endl;
+                return 1;            
+            }
+        }
+    } else {
+        std::cout << "Error Loading Brushes: " << cBrushPath << std::endl;
+        return 1;
+    }
 
     return 0;
 }

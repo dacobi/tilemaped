@@ -63,25 +63,32 @@ class TBrush: public TSelection{
         int getBrushSelection(int bx, int by, std::vector<SDL_Rect> &sRects);
         int renderSelection();
         SDL_Rect renderIm(int xpos, int ypos);
+        int writeToFile(std::ofstream &outfile);
+        int readFromFile(std::ifstream &infile);
 };
 
 class TBrushList{
     public:
         int mBrushType;
         std::vector<TBrush*> mBrushes;
+        std::string mTitle;
+        std::string mType;
         bool *bIsShown;
         bool bIsEditing = false;
         int mWinHeight = 600;
-        int mRenderScaleTile;
+        int mRenderScale;
         int mNewBrushX=1;
         int mNewBrushY=1;
         int mSelectedBrush=0;
    		std::vector<SDL_Rect> BrushAreas;
+        int init(std::string cTitle, std::string cType, int cBrushType, bool *cIsShown, int cRenderScale);
         int addBrush(int sizex, int sizey);
         int addBrushElement(int element);
         int removeBrush();
         //int renderIm(int xpos, int ypos);
         int renderIm();
+        int saveToFile(std::string cBrushPath);
+        int loadFromFile(std::string cBrushPath);
 };
 
 #endif
