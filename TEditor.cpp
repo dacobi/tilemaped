@@ -400,6 +400,16 @@ Tile* TEditor::createNewTile(){
 	return NULL;
 }
 
+int TEditor::rotateTile(){
+	if(mCurMode == EMODE_MAP){
+		if(mTileSelectedTile){
+			mTileSelectedTile->rotate();
+			return 0;
+		}
+	}
+	return 1;
+}
+
 Tile* TEditor::createNewTileCopy(Tile* cCopyTile){
 	if(mCurMode == EMODE_MAP){
 	Tile* newTile = mTileSet.createNewCopy(mTileSelectedTile,  &mPalette);
@@ -1153,10 +1163,10 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					createNewTileCopy(mTileSelectedTile);
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F6){	  									
-					activateDropUnusedTiles();
+					rotateTile();
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F7){	  									
-					//mActiveDialog = &mInputNumber;									
+					activateDropUnusedTiles();
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F12){	  				
 		  			activateSaveDialog();

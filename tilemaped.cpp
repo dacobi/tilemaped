@@ -306,7 +306,7 @@ void TSettings::initHelpText(){
 	mHelpTextMap.push_back("PLACE TILE: To place a Tile in the TileMap press (LEFT MOUSE BUTTON) to select\na Tile in the TileSet and then (LEFT MOUSE BUTTON) to place it in the TileMap.");
 	mHelpTextMap.push_back("SELECT TILE: Press (RIGHT MOUSE BUTTON) to select a Tile in the TileMap.\nPress (S) to show all Tiles of the Selected Tile Type.\nPress (RIGHT MOUSE BUTTON) on a Tile in the TileSet\nto replace all selected Tiles in the TileMap.");
 	mHelpTextMap.push_back("SCROLL/SCALE: Use (MOUSE SCROLL WHEEL) to scale the TileMap and Scroll the TileSet.\nHold (LEFT CONTROL) and (LEFT MOUSE BUTTON) to move the TileMap.");	
-	mHelpTextMap.push_back("TILESET: Press (F3) to create an empty Tile. Press (F4) to import a Tile from file.\nPress (F5) to create a copy of the selected Tile.\nPress (F6) to remove all unused Tiles.");	
+	mHelpTextMap.push_back("TILESET: Press (F3) to create an empty Tile. Press (F4) to import a Tile from file.\nPress (F5) to create a copy of the selected Tile.\nPress (F6) to Rotate Tile. Press (F7) to remove all unused Tiles.");	
 	mHelpTextMap.push_back("FLIP TILE: Press (F) to flip the selected Tile.");
 	mHelpTextMap.push_back("PALETTE OFFSET: Tiles from the TileSet will have the current Palette Offset.");
 

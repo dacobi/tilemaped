@@ -969,6 +969,28 @@ unsigned char TTexture::getPixel(int pindex){
 	return 0;
 }
 
+int Tile::rotate(){
+	if(mGlobalSettings.TileSizeX != mGlobalSettings.TileSizeY){return 1;}
+
+	std::vector<unsigned char> tmpData;
+	tmpData.resize(FileData.size());
+
+	int lsize = mGlobalSettings.TileSizeX / mGlobalSettings.mTileBPPSize[mGlobalSettings.TileSetBPP];
+
+	for(int i = 0; i < lsize; i++){
+		for(int j = 0; j < lsize; j++){
+			tmpData[(i*lsize)+j] = FileData[(lsize*(lsize-j-1))+i];
+		}
+	}
+
+	FileData = tmpData;
+
+	updateTexture(&mGlobalSettings.CurrentEditor->mPalette);
+
+	return 0;
+}
+
+
 int Tile::updateTexture(TPalette* tpal){
 	if(mGlobalSettings.TileSetBPP < 0x8){
 		for(int j = 0; j < 16; j++){

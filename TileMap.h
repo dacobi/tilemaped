@@ -100,7 +100,8 @@ class Tile: public TTexture{
 		int updateTexture(TPalette* tpal);
 		int loadFromFile(std::string filename,TPalette* tpal);
 		int loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal);	
-		int createNew(TPalette* tpal);	
+		int createNew(TPalette* tpal);
+		int rotate();
 		bool bIsSelected = false;
 		TEActionUndoStack mActionStack;
 		TSelection mSelection;

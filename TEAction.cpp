@@ -23,8 +23,7 @@ void TEActionReplaceTileFlip::undo(){
 
 }
 
-void TEActionReplacePixel::undo(){
-	//mCurrentTile->FileData[mCurrentPixel] = mOldValue;
+void TEActionReplacePixel::undo(){	
 	mCurrentTile->setPixel(mCurrentPixel, mOldValue);
 	mCurrentTile->updateTexture(mCurrentPalette);
 }
@@ -44,8 +43,7 @@ void TEActionReplaceTileFlip::redo(){
 
 }
 
-void TEActionReplacePixel::redo(){
-	//mCurrentTile->FileData[mCurrentPixel] = mNewValue;
+void TEActionReplacePixel::redo(){	
 	mCurrentTile->setPixel(mCurrentPixel, mNewValue);
 	mCurrentTile->updateTexture(mCurrentPalette);
 }
@@ -84,7 +82,6 @@ void TEActionReplacePixel::doAction(Tile* mCurTile, int mCurPix, int mOld, int m
 	mOldValue = mOld;
 	mNewValue = mNew;
 	mCurrentPalette = mPal;
-	//mCurrentTile->FileData[mCurrentPixel] = mNewValue;
 	mCurrentTile->setPixel(mCurrentPixel, mNewValue);
 	mCurrentTile->updateTexture(mCurrentPalette);
 	TEActionType=ACTION_PIXEL;
@@ -99,12 +96,9 @@ void TEActionBrushTiles::doAction(TileMap* cTileMap, TBrush &mBrush){
 
 	int eindex = 0;
 
-	//std::cout << "Starting brush do" << std::endl;
-
 	for(auto &mSelElement : mSelection){
 		if(mSelElement > -1){ 
-			TEActionReplaceTileFlip* newAction = new TEActionReplaceTileFlip();
-			//std::cout << "Do Brush: " << mSelElement << ", " << mTileMap->getTile(mSelElement) << ", " << mNewValues[eindex] << std::endl;
+			TEActionReplaceTileFlip* newAction = new TEActionReplaceTileFlip();			
 			if(mNewValues[eindex] != -1){
 				newAction->doAction(mTileMap, mSelElement, mTileMap->getTile(mSelElement), mNewValues[eindex], mTileMap->getFlip(mSelElement), mBrush.getElementFlip(eindex));
 				mSubActions.push_back(newAction);			
