@@ -171,8 +171,19 @@ int TBrush::configBrush(int nWidth, int nHeight, int bType, int nRenderScale){
     std::cout << "mScaleY: " << *mDeltaScaleY << std::endl;
     */
     mBrushElements.resize(mBrushWidth*mBrushHeight, -1);
+    mElementProps.resize(mBrushWidth*mBrushHeight);
 
 
+    return 0;
+}
+
+int TBrush::flipElementV(){
+    mElementProps[mCursorPos].bFlipX = !mElementProps[mCursorPos].bFlipX;
+    return 0;
+}
+
+int TBrush::flipElementH(){
+    mElementProps[mCursorPos].bFlipY = !mElementProps[mCursorPos].bFlipY;
     return 0;
 }
 
@@ -242,13 +253,14 @@ SDL_Rect TBrush::renderIm(int xpos, int ypos){
     elmax.x = elmin.x  + cDeltaX * mBrushWidth;
     elmax.y = elmin.y  + cDeltaY * mBrushHeight;
 
-    
-
     int cStepX = 0;
     int cStepY = 0;
 
     ImVec2 telmin;   
 	ImVec2 telmax;
+
+    ImVec2 edmin;   
+	ImVec2 edmax;
     
     telmin.x = elmin.x;
     telmin.y = elmin.y;
@@ -259,10 +271,31 @@ SDL_Rect TBrush::renderIm(int xpos, int ypos){
     for(int i=0; i < mBrushHeight; i++){
             for(int j=0; j < mBrushWidth; j++){
                 if(mBrushElements[j+(i*mBrushWidth)] > -1){
+    
+                    edmin = telmin;
+                    edmax = telmax;
+
+                    if(mElementProps[j+(i*mBrushWidth)].bFlipX){
+                        int tmpInt;
+                        tmpInt = edmin.x;
+                        edmin.x = edmax.x;
+                        edmax.x = tmpInt;
+                    }
+
+                    if(mElementProps[j+(i*mBrushWidth)].bFlipY){
+                        int tmpInt;
+                        tmpInt = edmin.y;
+                        edmin.y = edmax.y;
+                        edmax.y = tmpInt;
+                    }
+
                     if(mGlobalSettings.TileSetBPP < 0x8){
-                        tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TPOffset[mGlobalSettings.PaletteOffset], telmin, telmax);
+                        //tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TPOffset[mGlobalSettings.PaletteOffset], telmin, telmax);
+                        tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TPOffset[mGlobalSettings.PaletteOffset], edmin, edmax);
                     } else {
-                        tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TileTex, telmin, telmax);
+                        tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TileTex, edmin, edmax);
+                        //tList->AddImageQuad((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TileTex, pos[0], pos[1], pos[2], pos[3], uvs[0], uvs[1], uvs[2], uvs[3], IM_COL32_WHITE);
+                        
                     }
                 }
                 if(bIsEditing){
@@ -404,6 +437,25 @@ int TBrushList::removeBrush(){
     return 0;
 }
 
+TileProperties TBrush::getElementProps(int element){
+    TileProperties cProps;
+    if(element > -1){
+        cProps = mElementProps[element];
+        cProps.mPaletteOffset = mGlobalSettings.PaletteOffset;
+    }
+    return cProps;
+}
+
+int TBrush::getElementFlip(int element){
+    int cFlip = 0;
+    if(element > -1){
+        cFlip = mElementProps[element].bFlipY;
+        cFlip = cFlip << 1;
+        cFlip += mElementProps[element].bFlipX;        
+    }
+    return cFlip;
+}
+
 int TBrushList::renderIm(){
 
     ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Once, ImVec2(0.5f, 0.5f));
@@ -460,6 +512,15 @@ int TBrushList::renderIm(){
 
         if(ImGui::Button("Empty Element")){
             mBrushes[mSelectedBrush]->setElementNext(-1);
+        }
+        if(ImGui::Button("Flip H")){
+            mBrushes[mSelectedBrush]->flipElementH();
+        }
+
+        ImGui::SameLine();
+
+        if(ImGui::Button("Flip V")){
+            mBrushes[mSelectedBrush]->flipElementV();
         }
 
     }

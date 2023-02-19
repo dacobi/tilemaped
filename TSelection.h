@@ -41,6 +41,7 @@ enum{
 class TBrush: public TSelection{
     public:
         std::vector<int> mBrushElements;
+        std::vector<TileProperties> mElementProps;
         int UUID;
         int mBrushWidth = 1;
         int mBrushHeight = 1;
@@ -57,6 +58,8 @@ class TBrush: public TSelection{
         bool bIsSelected = false;
         bool bIsEditing = false;
         int setElementNext(int element);
+        int flipElementV();
+        int flipElementH();
         int nextElement();
         int configBrush(int nWidth, int nHeight, int bType, int nRenderScale);
         int setBrushDeltas(int nDeltaX, int nDeltaY, int *nScaleX,int *nScaleY);
@@ -65,6 +68,9 @@ class TBrush: public TSelection{
         SDL_Rect renderIm(int xpos, int ypos);
         int writeToFile(std::ofstream &outfile);
         int readFromFile(std::ifstream &infile);
+        TileProperties getElementProps(int element);
+        int getElementFlip(int element);
+
 };
 
 class TBrushList{

@@ -548,10 +548,25 @@ int TEditor::toggleSelectedTile(){
 int TEditor::flipSelectedTile(){
 	if(mCurMode == EMODE_MAP){
 		if(mGlobalSettings.mSelectedTile > -1){
-			int cTileFlip = mTileMap.getFlip(mGlobalSettings.mSelectedTile);			
-			cTileFlip++;
+			int cTileFlipOld = mTileMap.getFlip(mGlobalSettings.mSelectedTile);			
+			int cTileFlip = cTileFlipOld + 1;
 			if(cTileFlip > 3){cTileFlip = 0;}
-			mTileMap.setFlip(mGlobalSettings.mSelectedTile, cTileFlip);
+
+			/**/
+
+				TEActionReplaceTileFlip *mCurAction = new TEActionReplaceTileFlip();
+	       		mCurAction->doAction(&mTileMap, mGlobalSettings.mSelectedTile, mTileMap.getTile(mGlobalSettings.mSelectedTile), mTileMap.getTile(mGlobalSettings.mSelectedTile),cTileFlipOld, cTileFlip);
+	       			
+	       		if(!(*mCurAction == *mActionStack.mLastAction)){
+	       			mActionStack.newActionGroup();	
+	       			mActionStack.addAction(mCurAction);
+	       			mActionStack.mLastAction = mCurAction;
+	       			mActionStack.redoClearStack();
+	       		}
+
+			/**/
+
+			//mTileMap.setFlip(mGlobalSettings.mSelectedTile, cTileFlip);
 			return 0;
 		}
 	}
@@ -572,6 +587,7 @@ int TEditor::replaceSelectedColor(int mx, int my){
 							mTileSelectedTile->mActionStack.mLastAction = newAction;
 							mTileSelectedTile->mActionStack.newActionGroup();
 							mTileSelectedTile->mActionStack.addSubActions(newAction->mSubActions);
+							mTileSelectedTile->mActionStack.redoClearStack();
 						}
 
 				} else {
@@ -592,6 +608,7 @@ int TEditor::replaceSelectedColor(int mx, int my){
 							mTileSelectedTile->mActionStack.mLastAction = newAction;
 							mTileSelectedTile->mActionStack.newActionGroup();
 							mTileSelectedTile->mActionStack.addSubActions(newAction->mSubActions);
+							mTileSelectedTile->mActionStack.redoClearStack();
 						}
 					}
 				}
@@ -614,6 +631,7 @@ int TEditor::replaceSelectedTiles(int mx, int my){
 				mActionStack.mLastAction = newAction;
 				mActionStack.newActionGroup();
 				mActionStack.addSubActions(newAction->mSubActions);
+				mActionStack.redoClearStack();
 			}				
 		}
 	} else {
@@ -629,6 +647,7 @@ int TEditor::replaceSelectedTiles(int mx, int my){
 					mActionStack.mLastAction = newAction;
 					mActionStack.newActionGroup();
 					mActionStack.addSubActions(newAction->mSubActions);
+					mActionStack.redoClearStack();
 				}
 			}
 		}		
@@ -657,11 +676,11 @@ int TEditor::findSelMap(){
 							//mCurBrush->getBrushSelection(cx, cy, mTileMap.TileAreas);
 							TEActionBrushTiles* newAction = new TEActionBrushTiles();
 							newAction->doAction(&mTileMap, *mCurrentBrushTile);
-							if(!(*newAction == *mActionStack.mLastAction)){
-								std::cout << "Undo Stack" << std::endl;
+							if(!(*newAction == *mActionStack.mLastAction)){								
 								mActionStack.mLastAction = newAction;
 								mActionStack.newActionGroup();
 								mActionStack.addSubActions(newAction->mSubActions);
+       							mActionStack.redoClearStack();
 							}
 						} else {
 							tSel = searchRectsXY(mTileMap.TileAreas,cx,cy);

@@ -16,6 +16,13 @@ void TEActionReplaceTile::undo(){
 
 }
 
+void TEActionReplaceTileFlip::undo(){
+	mTileMap->setTile(mCurrentTile, mOldValue);
+	mTileMap->setFlip(mCurrentTile, mOldFlip);
+	mTileMap->setOffset(mCurrentTile, mOldOffset);
+
+}
+
 void TEActionReplacePixel::undo(){
 	//mCurrentTile->FileData[mCurrentPixel] = mOldValue;
 	mCurrentTile->setPixel(mCurrentPixel, mOldValue);
@@ -30,11 +37,34 @@ void TEActionReplaceTile::redo(){
 
 }
 
+void TEActionReplaceTileFlip::redo(){
+	mTileMap->setTile(mCurrentTile, mNewValue);
+	mTileMap->setFlip(mCurrentTile, mNewFlip);
+	mTileMap->setOffset(mCurrentTile, mNewOffset);
+
+}
+
 void TEActionReplacePixel::redo(){
 	//mCurrentTile->FileData[mCurrentPixel] = mNewValue;
 	mCurrentTile->setPixel(mCurrentPixel, mNewValue);
 	mCurrentTile->updateTexture(mCurrentPalette);
 }
+
+void TEActionReplaceTileFlip::doAction(TileMap *cTileMap, int mCurTile, int mOld, int mNew, int cFlipOld, int cFlipNew){
+	mTileMap = cTileMap;
+	mCurrentTile = mCurTile;
+	mOldValue = mOld;
+	mNewValue = mNew;
+	mOldFlip = cFlipOld;
+	mNewFlip = cFlipNew;
+	mNewOffset = mGlobalSettings.PaletteOffset;
+	mOldOffset = mTileMap->getOffset(mCurrentTile);
+	mTileMap->setTile(mCurrentTile, mNew);
+	mTileMap->setFlip(mCurrentTile, mNewFlip);
+	mTileMap->setOffset(mCurrentTile, mNewOffset);
+	TEActionType=ACTION_TILEFLIP;
+}
+
 
 void TEActionReplaceTile::doAction(TileMap *cTileMap, int mCurTile, int mOld, int mNew){
 	mTileMap = cTileMap;
@@ -69,14 +99,14 @@ void TEActionBrushTiles::doAction(TileMap* cTileMap, TBrush &mBrush){
 
 	int eindex = 0;
 
-	std::cout << "Starting brush do" << std::endl;
+	//std::cout << "Starting brush do" << std::endl;
 
 	for(auto &mSelElement : mSelection){
 		if(mSelElement > -1){ 
-			TEActionReplaceTile* newAction = new TEActionReplaceTile();
-			std::cout << "Do Brush: " << mSelElement << ", " << mTileMap->getTile(mSelElement) << ", " << mNewValues[eindex] << std::endl;
+			TEActionReplaceTileFlip* newAction = new TEActionReplaceTileFlip();
+			//std::cout << "Do Brush: " << mSelElement << ", " << mTileMap->getTile(mSelElement) << ", " << mNewValues[eindex] << std::endl;
 			if(mNewValues[eindex] != -1){
-				newAction->doAction(mTileMap, mSelElement, mTileMap->getTile(mSelElement), mNewValues[eindex]);
+				newAction->doAction(mTileMap, mSelElement, mTileMap->getTile(mSelElement), mNewValues[eindex], mTileMap->getFlip(mSelElement), mBrush.getElementFlip(eindex));
 				mSubActions.push_back(newAction);			
 			}
 		}

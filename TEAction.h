@@ -88,6 +88,25 @@ class TEActionReplaceTile: public TEAction{
 		}
 };
 
+class TEActionReplaceTileFlip: public TEActionReplaceTile{
+	public:
+		~TEActionReplaceTileFlip(){};
+		int mOldFlip;
+		int mNewFlip;
+		void doAction(TileMap *cTileMap, int mCurTile, int mOld, int mNew, int cFlipOld, int cFlipNew);	
+		virtual void undo();
+		virtual void redo();
+		virtual bool doCompare(const TEAction& rhs){
+			const TEActionReplaceTileFlip* mrhs =  dynamic_cast<const TEActionReplaceTileFlip*>(&rhs); 
+			if(mrhs){
+				if((mCurrentTile == mrhs->mCurrentTile) &&  (mNewValue == mrhs->mNewValue) &&  (mNewFlip == mrhs->mNewFlip)){ // Not testing mOldValue
+					return true;
+				}
+			}	
+			 return false;
+		}
+};
+
 class TEActionReplacePixel: public TEAction{
 	public:
 		~TEActionReplacePixel(){};
