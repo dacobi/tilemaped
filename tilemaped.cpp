@@ -56,6 +56,22 @@ class MEDialog;
 
 TSettings mGlobalSettings;
 
+int TSettings::testProjectFolder(std::string cPath){
+	fs::path pPath = cPath;
+
+	if((fs::exists(fs::status(pPath)))  && (fs::is_directory(fs::status(pPath)))){
+		fs::path mPath = cPath  + DIRDEL + "map.bin";
+		if(fs::exists(fs::status(mPath))){
+			fs::path tPath = cPath  + DIRDEL + "tiles.bin";
+			if(fs::exists(fs::status(tPath))){
+				return 1;
+			}
+		}
+	}
+
+	return 0;
+}
+
 int TSettings::testPaletteFile(std::string palPath){
 
 	fs::path tPath = palPath;

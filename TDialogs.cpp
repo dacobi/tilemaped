@@ -535,6 +535,7 @@ void OPDialog::init(){
 void OCDialog::init(){	
 	mOpenProject.init();
 	mOpenProject.mTextInput.bMustBeFolder = true;
+	mOpenProject.mTextInput.bMustBeProject = true;
 	
 	mCreateProject.init();
 	
@@ -1174,6 +1175,13 @@ int TIDialog::checkCurrentText(){
 			if(cExists){				
 				bInputIsAccepted=false;
 				return 1;
+			}
+		}
+		if(bMustBeProject){
+			int isProj = mGlobalSettings.testProjectFolder(mDialogTextMain);
+			if(!cIsFolder || !isProj){						
+				bInputIsAccepted=false;
+				return 1;				
 			}
 		}
 	}

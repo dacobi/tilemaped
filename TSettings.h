@@ -138,6 +138,7 @@ class TSettings{
 		int initSettings();
 		void initHelpText();
 		int testPaletteFile(std::string palPath);
+		int testProjectFolder(std::string cPath);
 		void printHelpText();		
 		int initTicks();
 		int updateTicks();

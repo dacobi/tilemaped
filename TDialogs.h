@@ -48,6 +48,7 @@ class TIDialog: public Dialog{
 		bool bMustBeFolder=false;
 		bool bMustNotBeFile=false;
 		bool bMustNotExist=false;
+		bool bMustBeProject=false;
 		int checkCurrentText();
 		void autoComplete();
 		virtual void dropLastInputChar();
