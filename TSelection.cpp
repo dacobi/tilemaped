@@ -7,11 +7,6 @@ extern TSettings mGlobalSettings;
 int TSelection::findInSelection(int item){
     std::vector<int>::iterator it;
 	
-	//if((it = std::find(mSelected.begin(), mSelected.end(), item)) != mSelected.end()){
-      //  return it - mSelected.begin();
-	
-    //}
-
     for(int i = 0; i < mSelected.size(); i++){
         if(item == mSelected[i]){
             return i;
@@ -23,7 +18,7 @@ int TSelection::findInSelection(int item){
 
 int TSelection::addToSelection(int item){
     mSelected.push_back(item);
-    //std::cout << "Add To Selection: " << item << std::endl;
+    
     return mSelected.size()-1;
 }
 
@@ -155,7 +150,7 @@ int TBrush::configBrush(int nWidth, int nHeight, int bType, int nRenderScale){
     if(bType == TBRUSH_TILE){
         setBrushDeltas(mGlobalSettings.TileSizeX, mGlobalSettings.TileSizeY, &mGlobalSettings.TileMapScale, &mGlobalSettings.TileMapScale);
     } else if (bType == TBRUSH_PIXEL) {
-        setBrushDeltas(mGlobalSettings.TileSizeX, mGlobalSettings.TileSizeY, &mGlobalSettings.mTileEdScale, &mGlobalSettings.mTileEdScale);
+        setBrushDeltas(mGlobalSettings.TilePixelSize, mGlobalSettings.TilePixelSize, &mGlobalSettings.mTileEdScale, &mGlobalSettings.mTileEdScale);
     } else {
         std::cout << "Error Creating Brush!" << std::endl;
         return 1;
@@ -163,14 +158,6 @@ int TBrush::configBrush(int nWidth, int nHeight, int bType, int nRenderScale){
 
     UUID = rand();
 
-    /*
-    std::cout << "mHeight: " << mBrushHeight << std::endl;        
-    std::cout << "mWidth: " << mBrushWidth << std::endl;        
-    std::cout << "mDeltaX: " << mDeltaBaseX << std::endl;
-    std::cout << "mDeltaY: " << mDeltaBaseY << std::endl;
-    std::cout << "mScaleX: " << *mDeltaScaleX << std::endl;
-    std::cout << "mScaleY: " << *mDeltaScaleY << std::endl;
-    */
     mBrushElements.resize(mBrushWidth*mBrushHeight, -1);
     mElementProps.resize(mBrushWidth*mBrushHeight);
 
@@ -201,8 +188,6 @@ int TBrush::getBrushSelection(int bx, int by, std::vector<SDL_Rect> &sRects){
     mLastClickY = by;
 
     clearSelection();
-    //mSelected.resize(mBrushWidth*mBrushHeight);
-    //mBrushElements.resize(mBrushWidth*mBrushHeight, 4);
 
     int cDeltaX = mDeltaBaseX * *mDeltaScaleX;
     int cDeltaY = mDeltaBaseY * *mDeltaScaleY;
@@ -213,15 +198,24 @@ int TBrush::getBrushSelection(int bx, int by, std::vector<SDL_Rect> &sRects){
     int item;
 
     for(int i = 0; i < mBrushHeight; i++){
-        for(int j = 0; j < mBrushWidth; j++){
+        for(int j = 0; j < mBrushWidth; j++){            
             item = searchSelection(sRects, bx + cStepX, by + cStepY);
-            addToSelection(item);
-            //std::cout << "Adding: " << item << std::endl;
+            if(item > -1){
+                if(findInSelection(item) == -1){
+                    addToSelection(item);
+                } else {
+                    addToSelection(-1);
+                }
+            } else {
+                addToSelection(-1);
+            }
+            
             cStepX += cDeltaX;
         }
         cStepX = 0;
         cStepY += cDeltaY;
     }
+
     return 0;
 }
 
@@ -238,6 +232,88 @@ int TBrush::renderSelection(){
 }
 
 SDL_Rect TBrush::renderIm(int xpos, int ypos){
+    if(mBrushType == TBRUSH_TILE){
+        return renderTile(xpos, ypos);
+    }
+    if(mBrushType == TBRUSH_PIXEL){
+        return renderPixel(xpos, ypos);
+    }
+}
+
+SDL_Rect TBrush::renderPixel(int xpos, int ypos){
+    ImDrawList *tList = ImGui::GetWindowDrawList();
+
+    ImVec2 elmin;   
+	ImVec2 elmax;
+
+    ImVec2 cPos = ImGui::GetWindowPos();
+
+    int cDeltaX = mDeltaBaseX * mRenderScale;
+    int cDeltaY = mDeltaBaseY * mRenderScale;
+
+    elmin.x = xpos + cPos.x;
+    elmin.y = ypos + cPos.y;
+    elmax.x = elmin.x  + cDeltaX * mBrushWidth;
+    elmax.y = elmin.y  + cDeltaY * mBrushHeight;
+
+    int cStepX = 0;
+    int cStepY = 0;
+
+    ImVec2 telmin;   
+	ImVec2 telmax;
+
+    telmin.x = elmin.x;
+    telmin.y = elmin.y;
+
+    telmax.x = elmin.x + cDeltaX;
+    telmax.y = elmin.y + cDeltaY;
+
+    for(int i=0; i < mBrushHeight; i++){
+            for(int j=0; j < mBrushWidth; j++){
+                if(mBrushElements[j+(i*mBrushWidth)] > -1){                    
+                    tList->AddRectFilled(telmin, telmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(mGlobalSettings.CurrentEditor->mPalette.TPalette[mBrushElements[j+(i*mBrushWidth)]]));
+                }
+                if(bIsEditing){
+                    if((j+(i*mBrushWidth)) == mCursorPos){
+                        tList->AddRect(telmin, telmax, mGlobalSettings.ImHighLightColor);
+                    }
+                }
+                telmin.x += cDeltaX;
+                telmax.x += cDeltaX;
+            }
+            telmin.x = elmin.x;
+            telmax.x = elmin.x + cDeltaX;
+            telmin.y += cDeltaY;
+            telmax.y += cDeltaY;
+    }
+
+    tList->AddRect(elmin, elmax, mGlobalSettings.ImHighLightColor);
+
+    if(bIsSelected) {
+        tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor);
+    }
+    if(bIsEditing){
+        tList->AddRect(ImVec2(elmin.x-1, elmin.y-1), ImVec2(elmax.x+2, elmax.y+2), mGlobalSettings.ImHighLightColor);
+    } 
+    
+
+
+
+    mWinPos = elmin;
+
+    mWinSize.x = cDeltaX * mBrushWidth;
+    mWinSize.y = cDeltaY * mBrushHeight;
+
+    SDL_Rect tmpRect;
+    tmpRect.x = mWinPos.x;
+    tmpRect.y = mWinPos.y;
+    tmpRect.w = mWinSize.x;
+    tmpRect.h = mWinSize.y;
+
+    return tmpRect;
+}
+
+SDL_Rect TBrush::renderTile(int xpos, int ypos){
 
 	ImDrawList *tList = ImGui::GetWindowDrawList();
 
@@ -394,12 +470,13 @@ int TBrush::readFromFile(std::ifstream &infile){
     return 0;
 }
 
-int TBrushList::init(std::string cTitle, std::string cType, int cBrushType, bool *cIsShown, int cRenderScale){
+int TBrushList::init(std::string cTitle, std::string cType, int cBrushType, bool *cIsShown, int cRenderScale, TBrush **cCurrentBrush){
     mTitle = cTitle;
     mType = cType;
     mBrushType = cBrushType;
     bIsShown = cIsShown;
     mRenderScale = cRenderScale;
+    mCurrentBrush = cCurrentBrush;
     return 0;
 }
 
@@ -408,10 +485,8 @@ int TBrushList::addBrush(int sizex, int sizey){
     TBrush* newBrush = new TBrush();
 
     mBrushes.push_back(newBrush);
-
-    if(mBrushType == TBRUSH_TILE){
-        newBrush->configBrush(sizex, sizey, mBrushType, mRenderScale);
-    }
+   
+    newBrush->configBrush(sizex, sizey, mBrushType, mRenderScale);
 
     BrushAreas.resize(mBrushes.size());
 
@@ -534,7 +609,7 @@ TBrush* TBrushList::getNextBrush(){
 int TBrushList::renderIm(){
 
     ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Once, ImVec2(0.5f, 0.5f));
-	ImGui::SetNextWindowSize(ImVec2(500,600), ImGuiCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(600,800), ImGuiCond_Once);
 
     std::string cTitleType = "Brushes: " + mTitle;
 
@@ -553,7 +628,8 @@ int TBrushList::renderIm(){
 
     if(ImGui::Button("Remove Brush")){
         removeBrush();
-        mGlobalSettings.CurrentEditor->mCurrentBrushTile = NULL;
+        *mCurrentBrush = NULL;
+        //mGlobalSettings.CurrentEditor->mCurrentBrushTile = NULL;
     }
 
     if(!bIsEditing){
@@ -626,12 +702,12 @@ int TBrushList::renderIm(){
             tmpWinH += cbrushs.h + 10;
         }
 
-        if(tmpWinH > 600){
+        if(tmpWinH > 800){
             mWinHeight = tmpWinH;
-            ImGui::SetNextWindowContentSize(ImVec2(500,mWinHeight + 20));
-        } else if ((tmpWinH < 550) && (mWinHeight > 600)){
-            mWinHeight = 600;
-            ImGui::SetNextWindowContentSize(ImVec2(500,mWinHeight));
+            ImGui::SetNextWindowContentSize(ImVec2(600,mWinHeight + 20));
+        } else if ((tmpWinH < 750) && (mWinHeight > 800)){
+            mWinHeight = 800;
+            ImGui::SetNextWindowContentSize(ImVec2(600,mWinHeight));
         }
     }
 
@@ -658,7 +734,7 @@ int TBrushList::renderIm(){
 
     ImGui::EndChild();
 
-    mGlobalSettings.CurrentEditor->ImButtonsBrushesTile.updateButtonStates();
+    mGlobalSettings.CurrentEditor->ImButtonsBrushes.updateButtonStates();
 
     ImGui::End();
 
@@ -667,11 +743,13 @@ int TBrushList::renderIm(){
 
 int TBrushList::saveToFile(std::string cBrushPath){
 
+    if(mBrushes.size() == 0){
+        return 0;
+    }
+
     std::string tmpStr,tmpStr2;
     std::ofstream output(cBrushPath, std::ios::out );
     std::stringstream convert;
-
-    //std::cout << "Writhing tbrushes.dat" << std::endl;
 
     tmpStr = "brushes ";
     convert << mBrushes.size() << std::endl;
@@ -697,8 +775,6 @@ int TBrushList::loadFromFile(std::string cBrushPath){
     std::ifstream input(cBrushPath, std::ios::in );
     std::stringstream convert;
 
-    //std::cout << "Reading tbrushes.dat" << std::endl;
-
     std::getline(input, tmpStr);
 
     convert << tmpStr << std::endl;
@@ -716,7 +792,7 @@ int TBrushList::loadFromFile(std::string cBrushPath){
             if(tmpStr == "brush"){
                 addBrush(tmpInt2, tmpInt3);
                 if(mBrushes[i]->readFromFile(input)){
-                    std::cout << "Error Loading Brushes: " << cBrushPath << std::endl;
+                    std::cout << "Error Loading Brushes: " << cBrushPath << std::endl;                    
                     return 1;            
                 }
             } else {

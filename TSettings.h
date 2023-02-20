@@ -85,6 +85,7 @@ class TSettings{
 		int TileSizeX=16;
 		int TileSizeY=16;
 		int TileSetBPP=8;
+		int TilePixelSize=16;
 		std::map<int, int> mTileBPPSize = {{8,1 },{4,2 },{2,4}};
 		int PaletteOffset=0;
 		bool bShowPaletteOffset = false;

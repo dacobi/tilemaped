@@ -70,6 +70,8 @@ class TBrush: public TSelection{
         int getBrushSelection(int bx, int by, std::vector<SDL_Rect> &sRects);
         int renderSelection();
         SDL_Rect renderIm(int xpos, int ypos);
+        SDL_Rect renderTile(int xpos, int ypos);
+        SDL_Rect renderPixel(int xpos, int ypos);
         int writeToFile(std::ofstream &outfile);
         int readFromFile(std::ifstream &infile);
         TileProperties getElementProps(int element);
@@ -93,7 +95,8 @@ class TBrushList{
         int mSelectedBrush=0;
         int mBrushOffset = 0;
    		std::vector<SDL_Rect> BrushAreas;
-        int init(std::string cTitle, std::string cType, int cBrushType, bool *cIsShown, int cRenderScale);
+        int init(std::string cTitle, std::string cType, int cBrushType, bool *cIsShown, int cRenderScale, TBrush **cCurrentBrush);
+        TBrush **mCurrentBrush;
         TBrush* getBrush();
         TBrush* getNextBrush();
         int addBrush(int sizex, int sizey);

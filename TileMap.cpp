@@ -223,7 +223,7 @@ SDL_Rect TPixel::render(int xpos, int ypos, int tscale, bool updateRect ,bool dr
 
 
 SDL_Rect TPixel::renderEd(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
-	CurrentArea = { xpos, ypos, mGlobalSettings.TileSizeX*tscale, mGlobalSettings.TileSizeY*tscale};
+	CurrentArea = { xpos, ypos, mGlobalSettings.TilePixelSize*tscale, mGlobalSettings.TilePixelSize*tscale};
 
 	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, PixelColor.r,PixelColor.g,PixelColor.b,PixelColor.a);
 	
@@ -1148,7 +1148,7 @@ int Tile::renderSelection(SDL_Rect &sRect, SDL_Color sColor){
 void Tile::renderEd(int xpos, int ypos, TPalette* tpal){
 	for(int i=0; i < mGlobalSettings.TileSizeY; i++){
 		for(int j=0; j < mGlobalSettings.TileSizeX; j++){
-			PixelAreas[j+(mGlobalSettings.TileSizeX*i)] = tpal->renderTileEd(xpos + (mGlobalSettings.TileSizeX * mGlobalSettings.mTileEdScale)*j, ypos + (mGlobalSettings.TileSizeY * mGlobalSettings.mTileEdScale)*i, getPixel(j+(i*mGlobalSettings.TileSizeX))); 			
+			PixelAreas[j+(mGlobalSettings.TileSizeX*i)] = tpal->renderTileEd(xpos + (mGlobalSettings.TilePixelSize * mGlobalSettings.mTileEdScale)*j, ypos + (mGlobalSettings.TilePixelSize * mGlobalSettings.mTileEdScale)*i, getPixel(j+(i*mGlobalSettings.TileSizeX))); 			
 		}
 	}
 	if(mSelection.mSelected.size()){
@@ -1160,6 +1160,21 @@ void Tile::renderEd(int xpos, int ypos, TPalette* tpal){
 			}
 		}
 	}
+	if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel && !mGlobalSettings.CurrentEditor->mBrushesPixel.bIsEditing){
+		if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel->mSelected.size()){
+			for(int i=0; i < mGlobalSettings.TileSizeY; i++){
+				for(int j=0; j < mGlobalSettings.TileSizeX; j++){	
+					if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel->findInSelection((j+(i*mGlobalSettings.TileSizeX))) != -1){
+						int findex = mGlobalSettings.CurrentEditor->mCurrentBrushPixel->findInSelection((j+(i*mGlobalSettings.TileSizeX)));
+						if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel->mBrushElements[findex] != -1){
+							tpal->renderTileEd(xpos + (mGlobalSettings.TilePixelSize * mGlobalSettings.mTileEdScale)*j, ypos + (mGlobalSettings.TilePixelSize * mGlobalSettings.mTileEdScale)*i, mGlobalSettings.CurrentEditor->mCurrentBrushPixel->mBrushElements[findex]); 			
+						}
+					}
+				}
+			}
+		}
+	}
+
 }
 
 int Tile::loadFromFile(std::string filename,TPalette* tpal){ 
@@ -1692,7 +1707,7 @@ TileProperties TileMap::getTileProp(int cTile){
 	return mCurTileProps;
 }
 
-int TileMap::render(int xpos, int ypos, TileSet* mTiles){
+int TileMap::render(int xpos, int ypos, TileSet* mTiles){	
 	for(int i=0; i < mGlobalSettings.TileMapHeight; i++){
 		for(int j=0; j < mGlobalSettings.TileMapWidth; j++){
 			TileAreas[j+(i*mGlobalSettings.TileMapWidth)] = mTiles->TTiles[getTile(j+(i*mGlobalSettings.TileMapWidth))]->render(xpos + (mGlobalSettings.TileSizeX * j * mGlobalSettings.TileMapScale), ypos + (mGlobalSettings.TileSizeY * i * mGlobalSettings.TileMapScale), mGlobalSettings.TileMapScale, getTileProp(j+(i*mGlobalSettings.TileMapWidth)));
@@ -1718,8 +1733,7 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 		if(mGlobalSettings.CurrentEditor->mCurrentBrushTile->mSelected.size()){
 			for(int i=0; i < mGlobalSettings.TileMapHeight; i++){
 				for(int j=0; j < mGlobalSettings.TileMapWidth; j++){
-					if(mGlobalSettings.CurrentEditor->mCurrentBrushTile->findInSelection((j+(i*mGlobalSettings.TileMapWidth))) != -1){
-						//std::cout << "Render Tile: " << mGlobalSettings.CurrentEditor->mCurBrush->findInSelection((j+(i*mGlobalSettings.TileMapWidth))) << std::endl;
+					if(mGlobalSettings.CurrentEditor->mCurrentBrushTile->findInSelection((j+(i*mGlobalSettings.TileMapWidth))) != -1){						
 						int findex = mGlobalSettings.CurrentEditor->mCurrentBrushTile->findInSelection((j+(i*mGlobalSettings.TileMapWidth)));
 						if(mGlobalSettings.CurrentEditor->mCurrentBrushTile->mBrushElements[findex] != -1){
 							mTiles->TTiles[mGlobalSettings.CurrentEditor->mCurrentBrushTile->mBrushElements[findex]]->render(xpos + (mGlobalSettings.TileSizeX * j * mGlobalSettings.TileMapScale), ypos + (mGlobalSettings.TileSizeY * i * mGlobalSettings.TileMapScale), mGlobalSettings.TileMapScale, mGlobalSettings.CurrentEditor->mCurrentBrushTile->getElementProps(findex));			
@@ -1731,7 +1745,6 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 		}
 	}
 
-	SDL_Rect mBorder;
 
 	mBorder.x = TileAreas[0].x;
 	mBorder.y = TileAreas[0].y;

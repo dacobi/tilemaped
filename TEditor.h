@@ -97,7 +97,7 @@ class TEditor{
 		int applyScroll(int mx,int my, int amount, int xamount);
 		ImWinMouseState ImButtonsTileSet;		
 		ImWinMouseState ImButtonsPalette;		
-		ImWinMouseState ImButtonsBrushesTile;		
+		ImWinMouseState ImButtonsBrushes;		
 		bool leftMouseButtonDown = false;		
 		bool rightMouseButtonDown = false;
 		int leftMouseButtonClicks = 0;
@@ -107,10 +107,13 @@ class TEditor{
 		bool bTileMapGrapped = false;
 		bool bTileSetGrapped = false;
 		bool bShowBrushesTile = false;
+		bool bShowBrushesPixel = false;
 		TSelection mSelection;
 		TBrush *mCurrentBrushTile = NULL;
-		TBrush tmpBrush;
+		TBrush *mCurrentBrushPixel = NULL;
+		//TBrush tmpBrush;
 		TBrushList mBrushesTile;
+		TBrushList mBrushesPixel;
 		//bool bShowBrushListTile = false;
 		int flipSelectedTile();		
 		int replaceSelectedColor(int x, int y);

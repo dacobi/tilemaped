@@ -70,7 +70,7 @@ void TEActionReplaceTile::doAction(TileMap *cTileMap, int mCurTile, int mOld, in
 	mOldValue = mOld;
 	mNewValue = mNew;
 	mNewOffset = mGlobalSettings.PaletteOffset;
-	mOldOffset = mTileMap->getOffset(mCurrentTile);
+	mOldOffset = mTileMap->getOffset(mCurrentTile);	
 	mTileMap->setTile(mCurrentTile, mNew);
 	mTileMap->setOffset(mCurrentTile, mNewOffset);
 	TEActionType=ACTION_TILE;
@@ -87,6 +87,29 @@ void TEActionReplacePixel::doAction(Tile* mCurTile, int mCurPix, int mOld, int m
 	TEActionType=ACTION_PIXEL;
 }
 
+void TEActionBrushPixels::doAction(Tile* cTile, TBrush &mBrush, TPalette* cPalette){
+	UUID = mBrush.UUID;
+	mNewValues = mBrush.mBrushElements;
+	mSelection = mBrush.mSelected;
+	mTile = cTile;
+	mPalette = cPalette;
+	TEActionType=ACTION_PBRUSH;
+
+	int eindex = 0;
+
+	for(auto &mSelElement : mSelection){
+		if(mSelElement > -1){ 			
+			if(mNewValues[eindex] != -1){
+				TEActionReplacePixel* newAction = new TEActionReplacePixel();							
+				newAction->doAction(mTile, mSelElement, mTile->getPixel(mSelElement), mNewValues[eindex], mPalette);
+				mSubActions.push_back(newAction);			
+			}
+		}
+		eindex++;
+	}
+}
+
+
 void TEActionBrushTiles::doAction(TileMap* cTileMap, TBrush &mBrush){
 	UUID = mBrush.UUID;
 	mNewValues = mBrush.mBrushElements;
@@ -97,10 +120,14 @@ void TEActionBrushTiles::doAction(TileMap* cTileMap, TBrush &mBrush){
 	int eindex = 0;
 
 	for(auto &mSelElement : mSelection){
-		if(mSelElement > -1){ 
-			TEActionReplaceTileFlip* newAction = new TEActionReplaceTileFlip();			
+		if(mSelElement > -1){ 	
+			/*	
+			if(std::count(mSelection.begin(), mSelection.end(), mSelElement) > 1){
+				std::cout << "Wooooops" << std::endl;
+			}*/	
 			if(mNewValues[eindex] != -1){
-				newAction->doAction(mTileMap, mSelElement, mTileMap->getTile(mSelElement), mNewValues[eindex], mTileMap->getFlip(mSelElement), mBrush.getElementFlip(eindex));
+				TEActionReplaceTileFlip* newAction = new TEActionReplaceTileFlip();			
+				newAction->doAction(mTileMap, mSelElement, mTileMap->getTile(mSelElement), mNewValues[eindex], mTileMap->getFlip(mSelElement), mBrush.getElementFlip(eindex));				
 				mSubActions.push_back(newAction);			
 			}
 		}

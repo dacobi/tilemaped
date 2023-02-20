@@ -190,6 +190,26 @@ class TEActionBrushTiles: public TEActionReplaceMany{
 		}
 };
 
+class TEActionBrushPixels: public TEActionReplaceMany{
+	public:	
+		~TEActionBrushPixels(){};		
+		std::vector<int> mNewValues;
+		int UUID;
+		Tile *mTile;
+		TPalette* mPalette;
+		void doAction(Tile* cTile, TBrush &mBrush, TPalette* cPalette);	
+		
+		virtual bool doCompare(const TEAction& rhs){
+			const TEActionBrushPixels* mrhs =  dynamic_cast<const TEActionBrushPixels*>(&rhs); 
+			if(mrhs){
+				if((mNewValues == mrhs->mNewValues) && (UUID ==mrhs->UUID )){ // Not testing mOldValue
+					return compareSelection((TEActionReplaceMany*)mrhs);
+				}
+			}	
+			 return false;
+		}
+};
+
 
 
 class TEActionAddTile: public TEAction{

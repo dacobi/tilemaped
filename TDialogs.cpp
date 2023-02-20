@@ -162,6 +162,8 @@ int TBDialog::render(){
 				
 			}
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE){
+				if(ImGui::MenuItem("Brushes (F9)", NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixel)){										
+				}
 				if(ImGui::MenuItem("Selected Color (S)", NULL , &mGlobalSettings.bShowPixelType)){										
 				}
 				if(ImGui::MenuItem("Pixel Grid (P)", NULL , &mGlobalSettings.bShowPixelGrip)){										
