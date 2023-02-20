@@ -197,6 +197,14 @@ int TBDialog::render(){
 			}
 
 			if(mGlobalSettings.CurrentEditor->mCurMode != EMODE_PALED){
+				if(ImGui::MenuItem("Selection")){
+					if(ImGui::MenuItem("Append")){
+
+					}
+					if(ImGui::MenuItem("Replace")){
+
+					}
+				}
 				if(ImGui::MenuItem("Select All (A)")){
 					mGlobalSettings.CurrentEditor->handleSelection(SELMODE_ALL);
 				}
