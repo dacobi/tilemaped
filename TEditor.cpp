@@ -815,6 +815,10 @@ int TEditor::findSelTile(){
 
 int TEditor::handlePaletteEdit(){
 
+	if(!ImButtonsPalette.bWindowHasFocus){
+		return 0;
+	}
+
 	if(ImButtonsPalette.mLeft.bButtonIsDown){
 		int tSel = -1;
 		tSel = searchRectsXY(mPalette.PixelAreas, ImButtonsPalette.mLeft.mMousePos.x, ImButtonsPalette.mLeft.mMousePos.y);
@@ -849,6 +853,10 @@ int TEditor::handlePalette(){
 		mColorSelectedTile->bPixelSelected = true;
 		mLastPixelOffset = mGlobalSettings.PaletteOffset;
 		mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor = true;
+	}
+
+	if(!ImButtonsPalette.bWindowHasFocus){
+		return 0;
 	}
 
 	if(ImButtonsPalette.mLeft.bButtonIsDown){

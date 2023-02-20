@@ -39,6 +39,7 @@ class ImWinMouseButton{
 
 class ImWinMouseState{
 	public:
+		bool bWindowHasFocus = false;
 		ImWinMouseButton mLeft;
 		ImWinMouseButton mRight;
 		ImWinMouseState(){
@@ -48,6 +49,7 @@ class ImWinMouseState{
 		void updateButtonStates(){
 			mLeft.updateButtonState();
 			mRight.updateButtonState();
+			bWindowHasFocus = ImGui::IsWindowFocused();
 		}
 };
 
