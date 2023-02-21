@@ -164,12 +164,8 @@ class TileMap{
 		int render(int xpos,int ypos,TileSet* mTiles);
 		std::map<int,int> mTilemapSizesIn = {{0,32},{1,64},{2,128},{3,256}};
 		std::map<int,int> mTilemapSizesOut = {{32,0},{64,1},{128,2},{256,3}};
-		SDL_Rect mBorder;
-        //int calcSelectionBorder();
-		//int renderSelection(int xpos, int ypos);
-		bool bHasSelection = false;
-		//std::vector<unsigned char> mSelectionBorder;
-		//std::vector<unsigned char> mSelectionEdges;		
+		SDL_Rect mBorder;        
+		//bool bHasSelection = false;		
 };
 
 #endif

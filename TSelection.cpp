@@ -10,15 +10,12 @@ bool TSelection::isInSelection(int item){
     return false;
 }
 
-int TSelection::findInSelection(int item){
-    std::vector<int>::iterator it;
-	
+int TSelection::findInSelection(int item){    	
     for(int i = 0; i < mSelected.size(); i++){
         if(item == mSelected[i]){
             return i;
         }
     }
-
     return -1;
 }
 
@@ -63,8 +60,7 @@ int TSelection::init(int cAreaX, int cAreaY, int cWidth, int cHeight, int *cScal
 }
 
 void TSelection::clearSelection(){
-    mSelected.erase(mSelected.begin(), mSelected.end());
-    //bSelectionUpdate = true;
+    mSelected.erase(mSelected.begin(), mSelected.end());    
     calcSelectionBorder();
 }
 
@@ -83,8 +79,7 @@ int TSelection::confirmSelection(std::vector<SDL_Rect> &sRects, int xdelta, int 
     if(mGlobalSettings.mSelectionMode == 0){
         clearSelection();
     }
-    getSelection(sRects, mCurSelection, xdelta, ydelta);
-    //bSelectionUpdate = true;
+    getSelection(sRects, mCurSelection, xdelta, ydelta);    
     calcSelectionBorder();
     return 0;
 }
@@ -168,21 +163,14 @@ int TSelection::invertSelection(int sstart, int send){
         if(mSelectedBool[i]) mSelected.push_back(i);
     }
 
-    
-
-
-
-    //bSelectionUpdate = true;
     calcSelectionBorder();
     return 0;
 }
 
 int TSelection::selectRange(int sstart, int send){
     clearSelection();
-    for(int i = sstart; i < send; i++){
-        //if(findInSelection(i) == -1){
-            addToSelection(i);
-        //}
+    for(int i = sstart; i < send; i++){        
+        addToSelection(i);        
     }
     calcSelectionBorder();
     return 0;
@@ -200,57 +188,48 @@ int TSelection::renderSelection(int xpos, int ypos){
 				xend = xstart + (mWidth * *mScale)-1;
 				yend = ystart + (mHeight * *mScale)-1;
 				if(edges & 0x1){
-					SDL_RenderDrawLine(mGlobalSettings.TRenderer, xstart, ystart, xend, ystart);				
+					SDL_RenderDrawLine(mGlobalSettings.TRenderer, xstart, ystart, xend, ystart);
+                    SDL_RenderDrawLine(mGlobalSettings.TRenderer, xstart, ystart-1, xend, ystart-1);
+                    SDL_RenderDrawLine(mGlobalSettings.TRenderer, xstart, ystart+1, xend, ystart+1);
 				}
 				if(edges & 0x2){
-					SDL_RenderDrawLine(mGlobalSettings.TRenderer, xend, ystart, xend, yend);							
+					SDL_RenderDrawLine(mGlobalSettings.TRenderer, xend, ystart, xend, yend);
+                    SDL_RenderDrawLine(mGlobalSettings.TRenderer, xend+1, ystart, xend+1, yend);
+                    SDL_RenderDrawLine(mGlobalSettings.TRenderer, xend-1, ystart, xend-1, yend);
 				}
 				if(edges & 0x4){
-					SDL_RenderDrawLine(mGlobalSettings.TRenderer, xstart, yend, xend, yend);				
+					SDL_RenderDrawLine(mGlobalSettings.TRenderer, xstart, yend, xend, yend);
+                    SDL_RenderDrawLine(mGlobalSettings.TRenderer, xstart, yend+1, xend, yend+1);
+                    SDL_RenderDrawLine(mGlobalSettings.TRenderer, xstart, yend-1, xend, yend-1);
 				}
 				if(edges & 0x8){
-					SDL_RenderDrawLine(mGlobalSettings.TRenderer, xstart, ystart, xstart, yend);				
+					SDL_RenderDrawLine(mGlobalSettings.TRenderer, xstart, ystart, xstart, yend);
+                    SDL_RenderDrawLine(mGlobalSettings.TRenderer, xstart-1, ystart, xstart-1, yend);
+                    SDL_RenderDrawLine(mGlobalSettings.TRenderer, xstart+1, ystart, xstart+1, yend);
 				}
 			}
 		}
 	}
-
     return 0;
-
-	//render(xpos + (mGlobalSettings.TileSizeX * j * mGlobalSettings.TileMapScale), ypos + (mGlobalSettings.TileSizeY * i * mGlobalSettings.TileMapScale), mGlobalSettings.TileMapScale, getTileProp(j+(i*mGlobalSettings.TileMapWidth)));
-
 }
 
 int TSelection::getXY(int X,int Y){
     int index = X + (mAreaX * (Y));
     if(index < (mAreaX * mAreaY)){
         return index;
-    }
-    //std::cout << "OVERFLOW!!!!!!!!!!!!!!" << std::endl;
+    }    
     return 0;
 }
 
-
 int TSelection::calcSelectionBorder(){	
-    //if(bSelectionUpdate){
-	//	bSelectionUpdate = false;
-		//std::cout << "calcSelectionBorder()" << std::endl;
-		int lastx,lasty;
-		//mSelectionBorder.clear();
-		//mSelectionEdges.clear();
-
+    
 		if(mSelected.size() == 0){
 			bHasSelection = false;
 			return 0;
 		}
 
 		bHasSelection = true;
-        //std::cout << "HELLO1" << std::endl;
-
-		//if(mGlobalSettings.mSelectionMode == 0)
-
-		//mSelectionBorder.resize(mGlobalSettings.TileMapWidth * mGlobalSettings.TileMapHeight, 0);
-		//mSelectionEdges.resize(mGlobalSettings.TileMapWidth * mGlobalSettings.TileMapHeight, 0);
+    
 		for(int i=0; i < mAreaY; i++){
 			for(int j=0; j < mAreaX; j++){
 				if(isInSelection((getXY(j,i)))){
@@ -263,9 +242,7 @@ int TSelection::calcSelectionBorder(){
 		}
 				
 		for(int yy=0; yy < mAreaY; yy++){
-			for(int xx=0; xx < mAreaX; xx++){
-                
-                //std::cout << "J,I: " << xx << "," << yy << " : " << mAreaY << std::endl;
+			for(int xx=0; xx < mAreaX; xx++){    
 				if(mSelectionBorder[getXY(xx,yy)]){					
 					if(yy==0){
                             mSelectionEdges[getXY(xx,yy)] += 1;
@@ -460,9 +437,6 @@ SDL_Rect TBrush::renderPixel(int xpos, int ypos){
         tList->AddRect(ImVec2(elmin.x-1, elmin.y-1), ImVec2(elmax.x+2, elmax.y+2), mGlobalSettings.ImHighLightColor);
     } 
     
-
-
-
     mWinPos = elmin;
 
     mWinSize.x = cDeltaX * mBrushWidth;
@@ -530,12 +504,10 @@ SDL_Rect TBrush::renderTile(int xpos, int ypos){
                         edmax.y = tmpInt;
                     }
 
-                    if(mGlobalSettings.TileSetBPP < 0x8){
-                        //tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TPOffset[mGlobalSettings.PaletteOffset], telmin, telmax);
+                    if(mGlobalSettings.TileSetBPP < 0x8){                        
                         tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TPOffset[mGlobalSettings.PaletteOffset], edmin, edmax);
                     } else {
-                        tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TileTex, edmin, edmax);
-                        //tList->AddImageQuad((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TileTex, pos[0], pos[1], pos[2], pos[3], uvs[0], uvs[1], uvs[2], uvs[3], IM_COL32_WHITE);
+                        tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TileTex, edmin, edmax);                        
                         
                     }
                 }
@@ -562,9 +534,6 @@ SDL_Rect TBrush::renderTile(int xpos, int ypos){
         tList->AddRect(ImVec2(elmin.x-1, elmin.y-1), ImVec2(elmax.x+2, elmax.y+2), mGlobalSettings.ImHighLightColor);
     } 
     
-
-
-
     mWinPos = elmin;
 
     mWinSize.x = cDeltaX * mBrushWidth;
@@ -792,8 +761,7 @@ int TBrushList::renderIm(){
 
     if(ImGui::Button("Remove Brush")){
         removeBrush();
-        *mCurrentBrush = NULL;
-        //mGlobalSettings.CurrentEditor->mCurrentBrushTile = NULL;
+        *mCurrentBrush = NULL;        
     }
 
     if(!bIsEditing){
@@ -810,9 +778,7 @@ int TBrushList::renderIm(){
         if(ImGui::Button("Brushes Done")){
             bIsEditing = false;
             mBrushes[mSelectedBrush]->bIsEditing = false;
-        }
-
-        
+        }        
 
         if(ImGui::Button("Reset Cursor")){
             mBrushes[mSelectedBrush]->mCursorPos = 0;
@@ -844,8 +810,6 @@ int TBrushList::renderIm(){
             mBrushes[mSelectedBrush]->prevLine();
         }
 
-
-        
         if(ImGui::Button("Flip H")){
             mBrushes[mSelectedBrush]->flipElementH();
         }

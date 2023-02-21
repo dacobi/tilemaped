@@ -543,138 +543,14 @@ int parseArgs(int argc, char *argv[]){
 int main( int argc, char* args[] )
 {
 	TEditor mEditor;
-	std::stringstream mConvert;
-	int nTileSize = 0;
-	int nMapSizeX = 0;
-	int nMapSizeY = 0;	
+	//std::stringstream mConvert;
+	//int nTileSize = 0;
+	//int nMapSizeX = 0;
+	//int nMapSizeY = 0;	
 	bool mCreateNewProject=false;
 	bool bRunSoftware = false;
 	bool bNoVsync = false;
 	
-
-	/*
-	if(((argc < 3) && (argc > 1)) || ((argc > 4) && (argc < 7)) || ((argc > 9)) || (argc == 8)){
-		if((argc == 2) && ((std::string(args[1]) == "-h") || (std::string(args[1]) == "--help"))){
-			mGlobalSettings.printHelpText();
-		} else {
-			printUsage();
-		}
-		return 0;
-	}
-
-	if(argc == 1){
-		mGlobalSettings.bRunningOCD = true;
-	}
-	
-	if(argc == 4){
-		if(std::string(args[1]) != "-c"){
-			printUsage();
-			return 1;
-		}
-
-		if(mGlobalSettings.testPaletteFile(args[2]) == 2){
-				mEditor.mPalette.importGimpPalette(args[2]);
-				mEditor.mPalette.saveToFile(args[3]);
-				std::cout << "Gimp Palette converted and saved to: " << args[3] << std::endl;	
-				return 0;
-		} else {
-			std::cout << "Gimp Palette not found" << std::endl;	
-			return 1;
-		}
-	}
-
-	if(argc == 3){
-		if(std::string(args[1]) != "-o"){
-			printUsage();
-			return 1;
-		}
-		if(fs::is_directory(fs::status(args[2]))){
-			std::cout << "Folder found" << std::endl;						
-		} else {
-			std::cout << "Folder not found!" << std::endl;						
-			return 1;
-		}
-	}
-	
-	if((argc == 7) || (argc == 9)){
-		if(std::string(args[1]) != "-n"){
-			printUsage();
-			return 1;
-		}
-
-		if(argc == 9){
-			if(args[7] == std::string("-p")){
-				if((fs::exists(fs::status(args[8]))) && !(fs::is_directory(fs::status(args[8])))){
-					std::cout << "Palette found" << std::endl;						
-					mGlobalSettings.bProjectHasPalette = true;
-					mGlobalSettings.ProjectPalettePath = std::string(args[8]);
-				} else {
-					std::cout << "Palette file not found!" << std::endl;						
-					return 1;
-				}		
-			} else {
-				printUsage();
-				return 1;
-			}
-		}
-		
-		mConvert << std::string(args[2]) << std::endl;
-		mConvert >> nMapSizeX;
-		
-		if((nMapSizeX == 32) || (nMapSizeX == 64) || (nMapSizeX == 128) || (nMapSizeX == 256)){				
-			mGlobalSettings.TileMapWidth = nMapSizeX;						
-		} else {
-			std::cout << "Wrong TileMap Size!" << std::endl;
-			std::cout << "Valid Values are: 32, 64, 128, 256" << std::endl;						
-			return 1;
-		}
-		
-		mConvert << std::string(args[3]) << std::endl;
-		mConvert >> nMapSizeY;
-		
-		if((nMapSizeY == 32) || (nMapSizeY == 64) || (nMapSizeY == 128) || (nMapSizeY == 256)){	
-			mGlobalSettings.TileMapHeight = nMapSizeY;
-		} else {
-			std::cout << "Wrong TileMap Size!" << std::endl;
-			std::cout << "Valid Values are: 32, 64, 128, 256" << std::endl;						
-			return 1;
-		}			
-
-		mConvert << std::string(args[4]) << std::endl;		
-		mConvert >> nTileSize;
-			
-		if((nTileSize == 16) || (nTileSize == 8)){	
-			mGlobalSettings.TileSizeX = nTileSize;	
-		} else {
-			std::cout << "Wrong TileSize!" << std::endl;
-			std::cout << "Valid Values are: 8, 16" << std::endl;						
-			return 1;
-		}
-
-		mConvert << std::string(args[5]) << std::endl;		
-		mConvert >> nTileSize;
-			
-		if((nTileSize == 16) || (nTileSize == 8)){	
-			mGlobalSettings.TileSizeY = nTileSize;	
-		} else {
-			std::cout << "Wrong TileSize!" << std::endl;
-			std::cout << "Valid Values are: 8, 16" << std::endl;						
-			return 1;
-		}
-
-		if(fs::exists(fs::status(args[6]))){
-			std::cout << "Error Folder Exists! " << std::endl;						
-			return 1;
-		} else {
-			mGlobalSettings.ProjectPath = std::string(args[6]);						
-		}		
-
-
-
-		mCreateNewProject=true;		
-	}
-	*/
-
 	int argvals = parseArgs(argc, args);
 	
 	if(argvals == -1){
