@@ -6,7 +6,7 @@
 
 class TEAction{
 	public:
-		~TEAction(){};
+		virtual ~TEAction(){};
 		int TEActionType=ACTION_EMPTY;
 		virtual void undo();
 		virtual void redo();

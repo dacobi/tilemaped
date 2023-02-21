@@ -153,7 +153,9 @@ class TSettings{
 		std::string mInfo = "\uf449"; // Info circle		
 		std::string mImage = "\uf71e"; // Info circle	
 		std::string mExit = "\uf705";
-		
+		int mSelectionMode = 0;
+		bool bSoftwareRendering = false;
+		bool bNoVSync = false;
 };
 
 enum {

@@ -49,7 +49,7 @@ class ImWinMouseState{
 		void updateButtonStates(){
 			mLeft.updateButtonState();
 			mRight.updateButtonState();
-			bWindowHasFocus = ImGui::IsWindowFocused();
+			bWindowHasFocus = ImGui::IsWindowFocused() || ImGui::IsWindowHovered();
 		}
 };
 

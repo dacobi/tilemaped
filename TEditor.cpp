@@ -69,6 +69,8 @@ void TEditor::initDialogs(){
 		mGlobalSettings.bShowPaletteOffset = true;
 	}
 
+	mSelection.init(mGlobalSettings.TileMapWidth, mGlobalSettings.TileMapHeight, mGlobalSettings.TileSizeX, mGlobalSettings.TileSizeY, &mGlobalSettings.TileMapScale);
+
 	mBrushesTile.init("Tiles","Tile", TBRUSH_TILE, &bShowBrushesTile, mGlobalSettings.TileMapScale, &mCurrentBrushTile);
 	mBrushesPixel.init("Pixels","Pixel", TBRUSH_PIXEL, &bShowBrushesPixel, mGlobalSettings.mTileEdScale, &mCurrentBrushPixel);
 
@@ -205,6 +207,7 @@ int TEditor::render(){
 		}
 		
 		mTopBar.render();
+
 
 		if(mGlobalSettings.bShowProjectInfo){
 			mProjectInfo.update();
@@ -508,12 +511,18 @@ int TEditor::activateBrushes(){
 }
 
 int TEditor::activateBrush(){
-	if(mCurMode == EMODE_MAP){
-		//if(mBrushesTile.mBrushes.size() && (mBrushesTile.mSelectedBrush > -1)){
+	if(mCurMode == EMODE_MAP){		
 		if(!mCurrentBrushTile){
 				mCurrentBrushTile = mBrushesTile.getBrush();
 		} else {		
 				mCurrentBrushTile = mBrushesTile.getNextBrush();
+		}
+	}
+	if(mCurMode == EMODE_TILE){		
+		if(!mCurrentBrushPixel){
+				mCurrentBrushPixel = mBrushesPixel.getBrush();
+		} else {		
+				mCurrentBrushPixel = mBrushesPixel.getNextBrush();
 		}
 	}
 	return 0;
@@ -1164,6 +1173,17 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 							return 0;
 						}
 					}
+
+					if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE){
+						if(mGlobalSettings.CurrentEditor->bShowBrushesPixel){
+							mGlobalSettings.CurrentEditor->bShowBrushesPixel = false;
+							return 0;
+						}
+						if(mCurrentBrushPixel){
+							mCurrentBrushPixel = NULL;
+							return 0;
+						}
+					}
 					
 					activateQuitDialog();					
 	  			}
@@ -1238,7 +1258,13 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
 						if(mCurrentBrushTile){
 							mCurrentBrushTile = NULL;
-						}	  			}
+						}
+					}
+					if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE){
+						if(mCurrentBrushPixel){
+							mCurrentBrushPixel = NULL;
+						}
+					}
 				}
 				if(cEvent->key.keysym.sym == SDLK_F9){	  				
 					activateBrush();

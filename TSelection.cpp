@@ -3,6 +3,12 @@
 
 extern TSettings mGlobalSettings;
 
+bool TSelection::isInSelection(int item){
+    if(std::find(mSelected.begin(), mSelected.end(), item) != mSelected.end()){
+        return true;
+    }
+    return false;
+}
 
 int TSelection::findInSelection(int item){
     std::vector<int>::iterator it;
@@ -34,15 +40,32 @@ int TSelection::removeFromSelection(int item){
 int TSelection::modifySelection(int item){
     if(findInSelection(item) != -1){
         removeFromSelection(item);
+        calcSelectionBorder();
         return 1;
     } else {        
         addToSelection(item);
+        calcSelectionBorder();
         return 0;
     }
 }
 
+int TSelection::init(int cAreaX, int cAreaY, int cWidth, int cHeight, int *cScale){
+    mAreaX = cAreaX;
+    mAreaY = cAreaY;
+    mWidth = cWidth;
+    mHeight = cHeight;
+    mScale = cScale;
+
+    mSelectionBorder.resize(mAreaX*mAreaY, false);
+    mSelectionEdges.resize(mAreaX*mAreaY, 0);
+
+    return 0;
+}
+
 void TSelection::clearSelection(){
     mSelected.erase(mSelected.begin(), mSelected.end());
+    //bSelectionUpdate = true;
+    calcSelectionBorder();
 }
 
 int TSelection::confirmSelection(std::vector<SDL_Rect> &sRects, int xdelta, int ydelta){
@@ -57,7 +80,12 @@ int TSelection::confirmSelection(std::vector<SDL_Rect> &sRects, int xdelta, int 
         mCurSelection.y -= mCurSelection.h;
     }
     
+    if(mGlobalSettings.mSelectionMode == 0){
+        clearSelection();
+    }
     getSelection(sRects, mCurSelection, xdelta, ydelta);
+    //bSelectionUpdate = true;
+    calcSelectionBorder();
     return 0;
 }
 
@@ -123,24 +151,158 @@ void TSelection::cancelSelection(){
 }
 
 int TSelection::invertSelection(int sstart, int send){
-   for(int i = sstart; i < send; i++){
-        if(findInSelection(i) != -1){
-            removeFromSelection(i);
-        } else {
-            addToSelection(i);
-        }
+   
+    std::vector<int> mSelectedOld;
+    std::vector<bool> mSelectedBool;
+    mSelectedBool.resize(mAreaX*mAreaY, true);
+
+    mSelectedOld = mSelected;
+
+    mSelected.clear();
+
+    for(int i = 0; i < mSelectedOld.size(); i++){
+        mSelectedBool[mSelectedOld[i]] = false;
     }
+
+    for(int i = sstart; i < send; i++){        
+        if(mSelectedBool[i]) mSelected.push_back(i);
+    }
+
+    
+
+
+
+    //bSelectionUpdate = true;
+    calcSelectionBorder();
     return 0;
 }
 
 int TSelection::selectRange(int sstart, int send){
+    clearSelection();
     for(int i = sstart; i < send; i++){
-        if(findInSelection(i) == -1){
+        //if(findInSelection(i) == -1){
             addToSelection(i);
-        }
+        //}
     }
+    calcSelectionBorder();
     return 0;
 }
+
+int TSelection::renderSelection(int xpos, int ypos){	
+	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer,mGlobalSettings.DefaultHighlightColor.r,mGlobalSettings.DefaultHighlightColor.g,mGlobalSettings.DefaultHighlightColor.b, 0xff);
+	for(int i=0; i < mAreaY; i++){
+		for(int j=0; j < mAreaX; j++){
+			if(mSelectionEdges[getXY(j,i)]){
+				unsigned char edges = mSelectionEdges[getXY(j,i)];
+				int xstart, xend, ystart, yend;
+				xstart = xpos + (mWidth * j * *mScale);
+				ystart = ypos + (mHeight * i * *mScale);
+				xend = xstart + (mWidth * *mScale)-1;
+				yend = ystart + (mHeight * *mScale)-1;
+				if(edges & 0x1){
+					SDL_RenderDrawLine(mGlobalSettings.TRenderer, xstart, ystart, xend, ystart);				
+				}
+				if(edges & 0x2){
+					SDL_RenderDrawLine(mGlobalSettings.TRenderer, xend, ystart, xend, yend);							
+				}
+				if(edges & 0x4){
+					SDL_RenderDrawLine(mGlobalSettings.TRenderer, xstart, yend, xend, yend);				
+				}
+				if(edges & 0x8){
+					SDL_RenderDrawLine(mGlobalSettings.TRenderer, xstart, ystart, xstart, yend);				
+				}
+			}
+		}
+	}
+
+    return 0;
+
+	//render(xpos + (mGlobalSettings.TileSizeX * j * mGlobalSettings.TileMapScale), ypos + (mGlobalSettings.TileSizeY * i * mGlobalSettings.TileMapScale), mGlobalSettings.TileMapScale, getTileProp(j+(i*mGlobalSettings.TileMapWidth)));
+
+}
+
+int TSelection::getXY(int X,int Y){
+    int index = X + (mAreaX * (Y));
+    if(index < (mAreaX * mAreaY)){
+        return index;
+    }
+    //std::cout << "OVERFLOW!!!!!!!!!!!!!!" << std::endl;
+    return 0;
+}
+
+
+int TSelection::calcSelectionBorder(){	
+    //if(bSelectionUpdate){
+	//	bSelectionUpdate = false;
+		//std::cout << "calcSelectionBorder()" << std::endl;
+		int lastx,lasty;
+		//mSelectionBorder.clear();
+		//mSelectionEdges.clear();
+
+		if(mSelected.size() == 0){
+			bHasSelection = false;
+			return 0;
+		}
+
+		bHasSelection = true;
+        //std::cout << "HELLO1" << std::endl;
+
+		//if(mGlobalSettings.mSelectionMode == 0)
+
+		//mSelectionBorder.resize(mGlobalSettings.TileMapWidth * mGlobalSettings.TileMapHeight, 0);
+		//mSelectionEdges.resize(mGlobalSettings.TileMapWidth * mGlobalSettings.TileMapHeight, 0);
+		for(int i=0; i < mAreaY; i++){
+			for(int j=0; j < mAreaX; j++){
+				if(isInSelection((getXY(j,i)))){
+					mSelectionBorder[(getXY(j,i))] = true;
+				} else {
+					mSelectionBorder[(getXY(j,i))] = false;
+				}
+				mSelectionEdges[(getXY(j,i))] = 0;
+			}
+		}
+				
+		for(int yy=0; yy < mAreaY; yy++){
+			for(int xx=0; xx < mAreaX; xx++){
+                
+                //std::cout << "J,I: " << xx << "," << yy << " : " << mAreaY << std::endl;
+				if(mSelectionBorder[getXY(xx,yy)]){					
+					if(yy==0){
+                            mSelectionEdges[getXY(xx,yy)] += 1;
+                        } else {
+						    if(!mSelectionBorder[getXY(xx,yy-1)]){
+							    mSelectionEdges[getXY(xx,yy)] += 1;
+						    }
+					} 
+					if(xx==0){
+                            mSelectionEdges[getXY(xx,yy)] += 8;
+                        } else {
+						    if(!mSelectionBorder[getXY(xx-1,yy)]){
+						        mSelectionEdges[getXY(xx,yy)] += 8;
+						    }
+                        
+					}
+					if(yy==(mAreaY-1)){
+                        mSelectionEdges[getXY(xx,yy)] += 4;
+                        } else {
+						    if(!mSelectionBorder[getXY(xx,yy+1)]){
+							    mSelectionEdges[getXY(xx,yy)] += 4;
+						    }                        
+					}
+					if(xx==(mAreaX-1)){                        
+                                mSelectionEdges[getXY(xx,yy)] += 2;
+                        } else {
+						    if(!mSelectionBorder[getXY(xx+1,yy)]){                        
+							    mSelectionEdges[getXY(xx,yy)] += 2;
+						    }
+                        
+					}					
+				}
+			}
+		}
+    return 0;
+}
+
 
 int TBrush::configBrush(int nWidth, int nHeight, int bType, int nRenderScale){
     mBrushWidth = nWidth;
@@ -232,12 +394,14 @@ int TBrush::renderSelection(){
 }
 
 SDL_Rect TBrush::renderIm(int xpos, int ypos){
+    SDL_Rect rRect;
     if(mBrushType == TBRUSH_TILE){
-        return renderTile(xpos, ypos);
+        rRect = renderTile(xpos, ypos);
     }
     if(mBrushType == TBRUSH_PIXEL){
-        return renderPixel(xpos, ypos);
+        rRect = renderPixel(xpos, ypos);
     }
+    return rRect;
 }
 
 SDL_Rect TBrush::renderPixel(int xpos, int ypos){

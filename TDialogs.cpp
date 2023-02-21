@@ -197,13 +197,19 @@ int TBDialog::render(){
 			}
 
 			if(mGlobalSettings.CurrentEditor->mCurMode != EMODE_PALED){
-				if(ImGui::MenuItem("Selection")){
-					if(ImGui::MenuItem("Append")){
+				if(ImGui::BeginMenu("Selection Mode")){
+					bool bIsAppend = mGlobalSettings.mSelectionMode;
+					bool bIsReplace = !mGlobalSettings.mSelectionMode;
 
+					if(ImGui::MenuItem("Replace", NULL, &bIsReplace)){
+						mGlobalSettings.mSelectionMode = !bIsReplace;						
 					}
-					if(ImGui::MenuItem("Replace")){
 
+					if(ImGui::MenuItem("Append", NULL, &bIsAppend)){
+						mGlobalSettings.mSelectionMode = bIsAppend;						
 					}
+					
+					ImGui::EndMenu();
 				}
 				if(ImGui::MenuItem("Select All (A)")){
 					mGlobalSettings.CurrentEditor->handleSelection(SELMODE_ALL);
@@ -1277,9 +1283,9 @@ int HDialog::render(){
     float avail = ImGui::GetContentRegionAvail().x;
 
     float off = (avail - size) * 0.5f;
-    if (off > 0.0f)
+    if(off > 0.0f){
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
-	
+	}
 
 	if(ImGui::Button("   Close   ")){
 		mGlobalSettings.bShowHelpDialog = false;

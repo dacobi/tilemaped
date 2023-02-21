@@ -97,6 +97,7 @@ class Tile: public TTexture{
 		SDL_Rect render(int xpos, int ypos, int tscale, TileProperties tProps);
 		void renderEd(int xpos, int ypos, TPalette* tpal);
 		static int renderSelection(SDL_Rect &sRect, SDL_Color sColor);
+		//int renderSelection();
 		int updateTexture(TPalette* tpal);
 		int loadFromFile(std::string filename,TPalette* tpal);
 		int loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal);	
@@ -105,6 +106,7 @@ class Tile: public TTexture{
 		bool bIsSelected = false;
 		TEActionUndoStack mActionStack;
 		TSelection mSelection;
+		//SDL_Rect mRect;
 };	
 
 class TileSet{
@@ -163,6 +165,11 @@ class TileMap{
 		std::map<int,int> mTilemapSizesIn = {{0,32},{1,64},{2,128},{3,256}};
 		std::map<int,int> mTilemapSizesOut = {{32,0},{64,1},{128,2},{256,3}};
 		SDL_Rect mBorder;
+        //int calcSelectionBorder();
+		//int renderSelection(int xpos, int ypos);
+		bool bHasSelection = false;
+		//std::vector<unsigned char> mSelectionBorder;
+		//std::vector<unsigned char> mSelectionEdges;		
 };
 
 #endif

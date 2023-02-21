@@ -17,12 +17,24 @@ class TSelection{
         SDL_Rect mCurSelection;
         bool bIsSelecting = false;
         bool bHasSelection = false;
+        std::vector<bool> mSelectionBorder;
+		std::vector<unsigned char> mSelectionEdges;		
+        bool bSelectionUpdate = false;
+        int mAreaX;
+        int mAreaY;
+        int mWidth;
+        int mHeight;
+        int *mScale;
+        int init(int cAreaX, int cAreaY, int cWidth, int cHeight, int *cScale);
+        int calcSelectionBorder();
+		int renderSelection(int xpos, int ypos);
         int startSelection(int mx, int my);
         int updateSelection(int rx, int ry);
         int confirmSelection(std::vector<SDL_Rect> &sRects, int xdelta, int ydelta);
         void cancelSelection();
         int renderSelection();
         int findInSelection(int item);
+        bool isInSelection(int item);
         int addToSelection(int item);
         int removeFromSelection(int item);
         int modifySelection(int item);
@@ -31,6 +43,7 @@ class TSelection{
         int selectRange(int sstart, int send);
    		int searchSelection(std::vector<SDL_Rect> &sRects, int mx, int my);
         int getSelection(std::vector<SDL_Rect> &sRects, SDL_Rect &cSel, int xdelta, int ydelta);
+        int getXY(int X,int Y);
 };
 
 enum{
@@ -77,6 +90,7 @@ class TBrush: public TSelection{
         TileProperties getElementProps(int element);
         int getElementFlip(int element);
         int setElementFlip(int element, int cFlip);
+        
 
 };
 

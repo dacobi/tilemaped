@@ -115,7 +115,23 @@ int TSettings::initSettings(){
 		return 1;
 	}
 
-	TRenderer = SDL_CreateRenderer( TWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+	Uint32 mFlags = 0;
+
+	if(bSoftwareRendering){
+		mFlags += SDL_RENDERER_SOFTWARE;
+		std::cout << "Software Rendering"<< std::endl;
+	} else {		
+		mFlags += SDL_RENDERER_ACCELERATED;
+		std::cout << "Accelerated Rendering"<< std::endl;
+	}
+
+	if(!bNoVSync){
+		mFlags += SDL_RENDERER_PRESENTVSYNC;
+	} else {
+		std::cout << "No VSYNC"<< std::endl;
+	}
+
+	TRenderer = SDL_CreateRenderer( TWindow, -1, mFlags);// SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
 	if( TRenderer == NULL ){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
 		return 1;
@@ -323,7 +339,8 @@ void TSettings::initHelpText(){
 
 void printUsage(){
 		std::cout << std::endl;	
-		std::cout << "Command Line Usage:" << std::endl;	
+		std::cout << "Command Line Usage:" << std::endl;
+		std::cout << "tilemaped [ --software --novsync ]" << std::endl;		
 		std::cout << "tilemaped -o <folder>" << std::endl;		
 		std::cout << "tilemaped -n <mapwidth> <mapheight> <tilewidth> <tileheight> <folder> [ -p <palette file> ]" << std::endl;
 		std::cout << "tilemaped -c <Gimp Palette> <palfile.bin>" << std::endl;		
@@ -368,6 +385,160 @@ void TSettings::printHelpText(){
 	printUsage();
 }
 
+std::string argStringVal;
+
+int parseArgs(int argc, char *argv[]){
+
+	int argpos = 1;
+	int returnval = 0;
+	int looptime = 12;
+
+	std::stringstream mConvert;
+	int nTileSize = 0;
+	int nMapSizeX = 0;
+	int nMapSizeY = 0;	
+
+	if(argc == 1){
+		return 1;
+	}
+
+	if(argc == 2){
+		if(std::string(argv[argpos]) == "-h"){
+			return 0;
+		}		
+	}	
+	
+	while(argpos < argc){
+
+		if(std::string(argv[argpos]) == "-o"){
+			if((argc-argpos) >= 2){
+				argpos++;
+				if(fs::is_directory(fs::status(argv[argpos]))){
+					std::cout << "Folder found" << std::endl;
+					mGlobalSettings.ProjectPath = std::string(argv[argpos]); 						
+					returnval += 2;
+					argpos++;
+					continue;	
+				} else {
+					std::cout << "Folder not found!" << std::endl;						
+					return -1;
+				}
+			}
+		} else if(std::string(argv[argpos]) == "-c"){ 
+			if((argc-argpos) >= 3){
+				argpos++;			
+				if(mGlobalSettings.testPaletteFile(argv[argpos]) == 2){					
+					mGlobalSettings.ProjectPalettePath = argv[argpos];
+					argpos++;
+					argStringVal = argv[argpos];					
+					returnval += 0x20;
+					argpos++;
+					continue;
+				} else { 
+					return -1;
+				}
+			} else { 
+				return -1;
+			}
+		} else 	if(std::string(argv[argpos]) == "-n"){
+			if((argc-argpos) >= 6){										
+				argpos++;
+				mConvert << std::string(argv[argpos]) << std::endl;
+				mConvert >> nMapSizeX;
+		
+				if((nMapSizeX == 32) || (nMapSizeX == 64) || (nMapSizeX == 128) || (nMapSizeX == 256)){				
+					mGlobalSettings.TileMapWidth = nMapSizeX;						
+				} else {
+					std::cout << "Wrong TileMap Size!" << std::endl;
+					std::cout << "Valid Values are: 32, 64, 128, 256" << std::endl;						
+					return -1;
+				}
+
+				argpos++;
+				mConvert << std::string(argv[argpos]) << std::endl;
+				mConvert >> nMapSizeY;
+		
+				if((nMapSizeY == 32) || (nMapSizeY == 64) || (nMapSizeY == 128) || (nMapSizeY == 256)){	
+					mGlobalSettings.TileMapHeight = nMapSizeY;
+				} else {
+					std::cout << "Wrong TileMap Size!" << std::endl;
+					std::cout << "Valid Values are: 32, 64, 128, 256" << std::endl;						
+					return -1;
+				}			
+
+				argpos++;
+				mConvert << std::string(argv[argpos]) << std::endl;		
+				mConvert >> nTileSize;
+			
+				if((nTileSize == 16) || (nTileSize == 8)){	
+					mGlobalSettings.TileSizeX = nTileSize;	
+				} else {
+					std::cout << "Wrong TileSize!" << std::endl;
+					std::cout << "Valid Values are: 8, 16" << std::endl;						
+					return -1;
+				}
+
+				argpos++;
+				mConvert << std::string(argv[argpos]) << std::endl;		
+				mConvert >> nTileSize;
+			
+				if((nTileSize == 16) || (nTileSize == 8)){	
+					mGlobalSettings.TileSizeY = nTileSize;	
+				} else {
+					std::cout << "Wrong TileSize!" << std::endl;
+					std::cout << "Valid Values are: 8, 16" << std::endl;						
+					return -1;
+				}
+
+				argpos++;
+				if(fs::exists(fs::status(argv[argpos]))){
+					std::cout << "Error Folder Exists! " << std::endl;						
+					return -1;
+				} else {
+					mGlobalSettings.ProjectPath = std::string(argv[argpos]);						
+				}
+				
+				returnval += 4;
+				argpos++;
+
+				if(argpos == argc){	continue; }	
+				
+				if(std::string(argv[argpos]) == "-p"){
+					argpos++;
+					if(argpos == argc){					
+						return -1;
+					}	
+					if((fs::exists(fs::status(argv[argpos]))) && !(fs::is_directory(fs::status(argv[argpos])))){
+						std::cout << "Palette found" << std::endl;						
+						mGlobalSettings.bProjectHasPalette = true;
+						mGlobalSettings.ProjectPalettePath = std::string(argv[argpos]);
+						argpos++;
+						continue;							
+					} else {
+						std::cout << "Palette file not found!" << std::endl;						
+						return -1;
+					}
+				}								
+			} 
+		} else 	if(std::string(argv[argpos]) == "--software"){
+			argpos++;
+			if(!(returnval & 0x8))	returnval += 8;
+			continue;			
+		} else 	if(std::string(argv[argpos]) == "--novsync"){
+			argpos++;
+			if(!(returnval & 0x10)) returnval += 16;
+			continue;	
+		}
+		
+		looptime--;
+		if(looptime == 0){			
+			return -1;
+		}
+	}
+	return returnval;
+
+}
+
 
 int main( int argc, char* args[] )
 {
@@ -377,7 +548,11 @@ int main( int argc, char* args[] )
 	int nMapSizeX = 0;
 	int nMapSizeY = 0;	
 	bool mCreateNewProject=false;
+	bool bRunSoftware = false;
+	bool bNoVsync = false;
 	
+
+	/*
 	if(((argc < 3) && (argc > 1)) || ((argc > 4) && (argc < 7)) || ((argc > 9)) || (argc == 8)){
 		if((argc == 2) && ((std::string(args[1]) == "-h") || (std::string(args[1]) == "--help"))){
 			mGlobalSettings.printHelpText();
@@ -487,18 +662,58 @@ int main( int argc, char* args[] )
 			return 1;
 		}
 
-		if(fs::exists(fs::status(args[5]))){
+		if(fs::exists(fs::status(args[6]))){
 			std::cout << "Error Folder Exists! " << std::endl;						
 			return 1;
 		} else {
-			mGlobalSettings.ProjectPath = std::string(args[5]);						
+			mGlobalSettings.ProjectPath = std::string(args[6]);						
 		}		
 
 
 
 		mCreateNewProject=true;		
 	}
+	*/
+
+	int argvals = parseArgs(argc, args);
 	
+	if(argvals == -1){
+		printUsage();
+		return 1;
+	}
+
+	if(argvals == 0){
+		mGlobalSettings.printHelpText();
+		return 1;
+	}
+
+	if(argvals & 0x20){
+		mEditor.mPalette.importGimpPalette(mGlobalSettings.ProjectPalettePath);
+		mEditor.mPalette.saveToFile(argStringVal);
+		std::cout << "Palette Exported to: " << argStringVal << std::endl;						
+		return 0;
+	}
+
+	if((argvals == 1) || (argvals == 8) || (argvals == 16) || (argvals == 24)){
+		mGlobalSettings.bRunningOCD = true;
+		bRunSoftware = argvals & 0x8;
+		bNoVsync = argvals & 0x10;
+	}
+
+	if((argvals == 2) || (argvals == 10) || (argvals == 18) || (argvals == 26)){
+		bRunSoftware = argvals & 0x8;
+		bNoVsync = argvals & 0x10;
+	}
+
+	if((argvals == 4) || (argvals == 12) || (argvals == 20) || (argvals == 28)){
+		mCreateNewProject = true;
+		bRunSoftware = argvals & 0x8;
+		bNoVsync = argvals & 0x10;
+	}
+
+	mGlobalSettings.bSoftwareRendering = bRunSoftware;
+	mGlobalSettings.bNoVSync = bNoVsync;
+
 	if( mGlobalSettings.initSettings() ){
 		std::cout << "SDL Init Failed!" << std::endl;
 	}
@@ -529,7 +744,7 @@ int main( int argc, char* args[] )
 					mEditor.bEditorRunning = false;
 				}		
 			} else {
-				if(mEditor.loadFromFolder(args[2])){
+				if(mEditor.loadFromFolder(mGlobalSettings.ProjectPath)){
 					mEditor.bEditorRunning = false;
 				}		
 			}
