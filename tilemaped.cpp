@@ -53,6 +53,8 @@ class MEDialog;
 #include "TEditor.h"
 #include "TDialogs.h"
 
+#define NERDFONT "nerdfont.ttf"
+
 
 TSettings mGlobalSettings;
 
@@ -146,7 +148,7 @@ int TSettings::initSettings(){
  	}
  	
  	TTF_Init();
-	TFont =  TTF_OpenFont("/opt/tilemaped/nerdfont.ttf",20);
+	TFont =  TTF_OpenFont(NERDFONT,20);
 
 	
 	if(TFont == NULL){
@@ -154,12 +156,12 @@ int TSettings::initSettings(){
 		return 1;
 	}
 
-	LFont =  TTF_OpenFont("/opt/tilemaped/nerdfont.ttf",30);	
+	LFont =  TTF_OpenFont(NERDFONT,30);	
 	if(LFont == NULL){
 		std::cout << "SDL_TTF Error: " << TTF_GetError() << std::endl;
 		return 1;
 	}
-	UFont =  TTF_OpenFont("/opt/tilemaped/nerdfont.ttf",20);	
+	UFont =  TTF_OpenFont(NERDFONT,20);	
 	if(UFont == NULL){
 		std::cout << "SDL_TTF Error: " << TTF_GetError() << std::endl;
 		return 1;
@@ -204,10 +206,10 @@ int TSettings::initSettings(){
 	builder.AddRanges(io.Fonts->GetGlyphRangesDefault()); // Add one of the default ranges
 	builder.BuildRanges(&ranges);       
 
-	DFont = mio->Fonts->AddFontFromFileTTF("/opt/tilemaped/nerdfont.ttf", 25.0,  NULL, ranges.Data);
+	DFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 25.0,  NULL, ranges.Data);
 	mio->Fonts->Build();
 
-	SFont = mio->Fonts->AddFontFromFileTTF("/opt/tilemaped/nerdfont.ttf", 20.0,  NULL, ranges.Data);
+	SFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 20.0,  NULL, ranges.Data);
 	mio->Fonts->Build();
 	
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
