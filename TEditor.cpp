@@ -883,7 +883,13 @@ int TEditor::handlePalette(){
 	if(ImButtonsPalette.mRight.bButtonIsDown && mBrushesPixel.bIsEditing){
 		int tSel = -1;		
 		tSel = searchRectsXY(mPalette.PixelAreas, cx, cy);
-		mBrushesPixel.addBrushElement(tSel);
+		
+		if(mGlobalSettings.TileSetBPP < 0x8){
+			mBrushesPixel.addBrushElement(tSel%16);
+		} else {
+			mBrushesPixel.addBrushElement(tSel);
+		}
+		
 	} else if(ImButtonsPalette.mRight.bButtonIsDown){
 		replaceSelectedColor(ImButtonsPalette.mRight.mMousePos.x, ImButtonsPalette.mRight.mMousePos.y);		
 	}

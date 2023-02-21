@@ -412,7 +412,7 @@ SDL_Rect TBrush::renderPixel(int xpos, int ypos){
     for(int i=0; i < mBrushHeight; i++){
             for(int j=0; j < mBrushWidth; j++){
                 if(mBrushElements[j+(i*mBrushWidth)] > -1){                    
-                    tList->AddRectFilled(telmin, telmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(mGlobalSettings.CurrentEditor->mPalette.TPalette[mBrushElements[j+(i*mBrushWidth)]]));
+                    tList->AddRectFilled(telmin, telmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(mGlobalSettings.CurrentEditor->mPalette.TPalette[mBrushElements[j+(i*mBrushWidth)] + (16 * mGlobalSettings.PaletteOffset) ] ));
                 }
                 if(bIsEditing){
                     if((j+(i*mBrushWidth)) == mCursorPos){
