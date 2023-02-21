@@ -108,7 +108,7 @@ int TSettings::initSettings(){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
 		return 1;
 	}
-	    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN );
+	    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN );
 	TWindow = SDL_CreateWindow( "Tilemaped", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WindowWidth, WindowHeight, window_flags);
 	if( TWindow == NULL ){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
@@ -146,7 +146,7 @@ int TSettings::initSettings(){
  	}
  	
  	TTF_Init();
-	TFont =  TTF_OpenFont("nerdfont.ttf",20);
+	TFont =  TTF_OpenFont("/opt/tilemaped/nerdfont.ttf",20);
 
 	
 	if(TFont == NULL){
@@ -154,12 +154,12 @@ int TSettings::initSettings(){
 		return 1;
 	}
 
-	LFont =  TTF_OpenFont("nerdfont.ttf",30);	
+	LFont =  TTF_OpenFont("/opt/tilemaped/nerdfont.ttf",30);	
 	if(LFont == NULL){
 		std::cout << "SDL_TTF Error: " << TTF_GetError() << std::endl;
 		return 1;
 	}
-	UFont =  TTF_OpenFont("nerdfont.ttf",20);	
+	UFont =  TTF_OpenFont("/opt/tilemaped/nerdfont.ttf",20);	
 	if(UFont == NULL){
 		std::cout << "SDL_TTF Error: " << TTF_GetError() << std::endl;
 		return 1;
@@ -204,10 +204,10 @@ int TSettings::initSettings(){
 	builder.AddRanges(io.Fonts->GetGlyphRangesDefault()); // Add one of the default ranges
 	builder.BuildRanges(&ranges);       
 
-	DFont = mio->Fonts->AddFontFromFileTTF("nerdfont.ttf", 25.0,  NULL, ranges.Data);
+	DFont = mio->Fonts->AddFontFromFileTTF("/opt/tilemaped/nerdfont.ttf", 25.0,  NULL, ranges.Data);
 	mio->Fonts->Build();
 
-	SFont = mio->Fonts->AddFontFromFileTTF("nerdfont.ttf", 20.0,  NULL, ranges.Data);
+	SFont = mio->Fonts->AddFontFromFileTTF("/opt/tilemaped/nerdfont.ttf", 20.0,  NULL, ranges.Data);
 	mio->Fonts->Build();
 	
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
