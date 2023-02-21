@@ -12,6 +12,14 @@
 #include <sstream>
 #include <cstdlib>
 
+//#define MAPPIMAGE
+
+#ifdef MAPPIMAGE
+#include <stdlib.h>
+#endif
+
+
+
 namespace fs = std::filesystem;
 
 class TTexture;
@@ -52,8 +60,6 @@ class MEDialog;
 #include "TileMap.h"
 #include "TEditor.h"
 #include "TDialogs.h"
-
-#define NERDFONT "nerdfont.ttf"
 
 
 TSettings mGlobalSettings;
@@ -106,11 +112,26 @@ int TSettings::testPaletteFile(std::string palPath){
 
 int TSettings::initSettings(){
 
+	std::string TTFPATH;
+#ifdef MAPPIMAGE
+	TTFPATH = std::string(getenv("TTFPATH"));
+	std::cout << "ENV: " << TTFPATH << std::endl;
+	TTFPATH += "/opt/tilemaped/nerdfont.ttf";
+	std::cout << "ADD: " << TTFPATH << std::endl;
+	#define NERDFONT TTFPATH.c_str()
+#else
+#define NERDFONT "nerdfont.ttf"
+#endif
+
+
+
+
 	if( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER ) < 0 ){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
 		return 1;
 	}
-	    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN );
+
+    SDL_WindowFlags window_flags = (SDL_WindowFlags)( SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN ); // SDL_WINDOW_RESIZABLE |
 	TWindow = SDL_CreateWindow( "Tilemaped", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WindowWidth, WindowHeight, window_flags);
 	if( TWindow == NULL ){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
@@ -146,7 +167,7 @@ int TSettings::initSettings(){
 		std::cout << "SDL_image Error: " << IMG_GetError() << std::endl;
 		return 1;
  	}
- 	
+	
  	TTF_Init();
 	TFont =  TTF_OpenFont(NERDFONT,20);
 
