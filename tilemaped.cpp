@@ -131,12 +131,14 @@ int TSettings::initSettings(){
 		return 1;
 	}
 
-    SDL_WindowFlags window_flags = (SDL_WindowFlags)( SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN ); // SDL_WINDOW_RESIZABLE |
+    SDL_WindowFlags window_flags = (SDL_WindowFlags)( SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN ); // SDL_WINDOW_RESIZABLE |
 	TWindow = SDL_CreateWindow( "Tilemaped", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WindowWidth, WindowHeight, window_flags);
 	if( TWindow == NULL ){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
 		return 1;
 	}
+
+	SDL_SetWindowSize(TWindow, WindowWidth, WindowHeight);
 
 	Uint32 mFlags = 0;
 
