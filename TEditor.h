@@ -147,6 +147,7 @@ class TEditor{
 		Tile* createNewTileCopy(Tile* cCopyTile);
 		Tile* createNewTileFromFile(std::string newTilePath);
 		int rotateTile();
+		int rotateTileLeft();
 		int dropUnusedTiles();
 		int dropUnusedTile(int cDropTile);
 		int showMessage(std::string cMessage, bool isError=false);

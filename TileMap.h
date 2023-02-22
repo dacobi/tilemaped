@@ -23,6 +23,7 @@ class TTexture{
 		unsigned char getPixel(int pindex);
 		unsigned char getPixel(int pindex, int poffset);
 		int setPixel(int pindex, unsigned char pcolor);
+		int setPixel(int pindex, unsigned char pcolor, std::vector<unsigned char> &tBuf);
 		//int setAllPixels(unsigned char tcolor, TPalette* tpal);
 		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderEx(int xpos, int ypos, int tscale, SDL_RendererFlip flip);
@@ -102,7 +103,8 @@ class Tile: public TTexture{
 		int loadFromFile(std::string filename,TPalette* tpal);
 		int loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal);	
 		int createNew(TPalette* tpal);
-		int rotate();
+		int rotater();
+		int rotatel();
 		bool bIsSelected = false;
 		TEActionUndoStack mActionStack;
 		TSelection mSelection;

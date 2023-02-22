@@ -425,7 +425,17 @@ Tile* TEditor::createNewTile(){
 int TEditor::rotateTile(){
 	if(mCurMode == EMODE_MAP){
 		if(mTileSelectedTile){
-			mTileSelectedTile->rotate();
+			mTileSelectedTile->rotater();
+			return 0;
+		}
+	}
+	return 1;
+}
+
+int TEditor::rotateTileLeft(){
+	if(mCurMode == EMODE_MAP){
+		if(mTileSelectedTile){
+			mTileSelectedTile->rotatel();
 			return 0;
 		}
 	}

@@ -152,7 +152,7 @@ int TBDialog::render(){
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Palette Offset")).c_str(), NULL, &mGlobalSettings.bShowPaletteOffset) ){ 
 					}
 				}
-				if(ImGui::MenuItem("Brushes (F9)", NULL , &mGlobalSettings.CurrentEditor->bShowBrushesTile)){										
+				if(ImGui::MenuItem("Brushes (F8)", NULL , &mGlobalSettings.CurrentEditor->bShowBrushesTile)){										
 				}
 				if(ImGui::MenuItem("Selected Tile Type (S)", NULL , &mGlobalSettings.bShowTypeSelection)){										
 				}
@@ -162,7 +162,7 @@ int TBDialog::render(){
 				
 			}
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE){
-				if(ImGui::MenuItem("Brushes (F9)", NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixel)){										
+				if(ImGui::MenuItem("Brushes (F8)", NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixel)){										
 				}
 				if(ImGui::MenuItem("Selected Color (S)", NULL , &mGlobalSettings.bShowPixelType)){										
 				}
@@ -187,8 +187,11 @@ int TBDialog::render(){
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Tile (F5)")).c_str())){
 					mGlobalSettings.CurrentEditor->createNewTileCopy(mGlobalSettings.CurrentEditor->mTileSelectedTile);
 				}
-				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Tile (F6)")).c_str())){
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Tile Right (F6)")).c_str())){
 					mGlobalSettings.CurrentEditor->rotateTile();
+				}
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Tile Left")).c_str())){
+					mGlobalSettings.CurrentEditor->rotateTileLeft();
 				}
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Unused Tiles (F7)")).c_str())){
 					mGlobalSettings.CurrentEditor->activateDropUnusedTiles();

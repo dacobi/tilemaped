@@ -861,6 +861,56 @@ Tile::~Tile(){
 	
 }
 
+int TTexture::setPixel(int pindex, unsigned char pcolor, std::vector<unsigned char> &tBuf){
+	if(mGlobalSettings.TileSetBPP == 0x8){
+		tBuf[pindex] = pcolor;
+	}
+
+	if(mGlobalSettings.TileSetBPP == 0x4){
+		int cindex = pindex / 2;
+		int crem = pindex % 2;
+		unsigned char ccolor = 0;
+
+		int tmppix = tBuf[cindex];
+
+		if(crem){
+			ccolor = (tmppix & 0xf0) + (pcolor%16);
+		} else {
+			ccolor = (tmppix & 0x0f) + ((pcolor%16) << 4);
+		}
+
+		tBuf[cindex] = ccolor;
+	}
+
+	if(mGlobalSettings.TileSetBPP == 0x2){
+		int cindex = pindex / 4;
+		int crem = pindex % 4;
+		unsigned char ccolor = 0;
+
+		int tmppix = tBuf[cindex];
+
+		if(crem){
+			switch(crem){
+				case 1:
+					ccolor = (tmppix & 0xCF) + (((pcolor%16)%4) << 4);
+				break;
+				case 2:
+					ccolor = (tmppix & 0xF3) + (((pcolor%16)%4) << 2);
+				break;
+				case 3:
+					ccolor = (tmppix & 0xFC) + (((pcolor%16)%4));
+				break;
+			};
+		} else {
+			ccolor = (tmppix & 0x3f) + (((pcolor%16)%4) << 6);
+		}
+
+		tBuf[cindex] = ccolor;
+	}
+
+	return 0;
+}
+
 int TTexture::setPixel(int pindex, unsigned char pcolor){
 	if(mGlobalSettings.TileSetBPP == 0x8){
 		FileData[pindex] = pcolor;
@@ -961,17 +1011,49 @@ unsigned char TTexture::getPixel(int pindex){
 	return 0;
 }
 
-int Tile::rotate(){
+int Tile::rotater(){
 	if(mGlobalSettings.TileSizeX != mGlobalSettings.TileSizeY){return 1;}
 
 	std::vector<unsigned char> tmpData;
 	tmpData.resize(FileData.size());
 
-	int lsize = mGlobalSettings.TileSizeX / mGlobalSettings.mTileBPPSize[mGlobalSettings.TileSetBPP];
+	int index;
+	int lsize = mGlobalSettings.TileSizeX;
+	unsigned char tmpPix;
 
-	for(int i = 0; i < lsize; i++){
-		for(int j = 0; j < lsize; j++){
-			tmpData[(i*lsize)+j] = FileData[(lsize*(lsize-j-1))+i];
+	
+	for(int i = 0; i < mGlobalSettings.TileSizeY; i++){
+		for(int j = 0; j < mGlobalSettings.TileSizeX; j++){
+			index = (lsize*(lsize-j-1))+i;
+			tmpPix = getPixel(index);		
+			setPixel((i*(lsize))+j, tmpPix, tmpData);
+		}
+	}
+
+	FileData = tmpData;
+
+	updateTexture(&mGlobalSettings.CurrentEditor->mPalette);
+
+	return 0;
+}
+
+int Tile::rotatel(){
+	if(mGlobalSettings.TileSizeX != mGlobalSettings.TileSizeY){return 1;}
+
+	std::vector<unsigned char> tmpData;
+	tmpData.resize(FileData.size());
+
+	int index;
+	int lsize = mGlobalSettings.TileSizeX;
+	unsigned char tmpPix;
+
+	
+	for(int i = 0; i < mGlobalSettings.TileSizeY; i++){
+		for(int j = 0; j < mGlobalSettings.TileSizeX; j++){
+			//index = (lsize*(lsize-j-1))+i;
+			index = (i*(lsize))+j;
+			tmpPix = getPixel(index);		
+			setPixel((lsize*(lsize-j-1))+i, tmpPix, tmpData);
 		}
 	}
 
