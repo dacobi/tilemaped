@@ -340,7 +340,7 @@ int TSettings::runOCD(){
 void TSettings::initHelpText(){
 
 	mHelpText.push_back("WINDOWS: Tilemaped has 3 main windows which are TileMap Editor, Tile Editor\nand Palette Editor. Select window in View menu and press (SPACE)\nto quickly switch back to the last active window.\nPress (F2) to view the Project Info dialog. When working with Tile BPPs\nlower than 8 the Palette Offset dialog can be shown/hidden in the View menu.");	
-	mHelpText.push_back("UNDO: Most changes to TileMap and Tiles can be undone. Press (U) to undo\nand (R) to redo action. Some operations will clear the Undo Stack.");
+	mHelpText.push_back("UNDO: Most changes to TileMap and Tiles can be undone. Press (U) to undo\nand (R) to redo action. Some operations will clear the Undo Stack.\nIf you wish to keep an Action but undo previous Actions Press (D)\nto drop the Action from the Undo Stack.");
 	mHelpText.push_back("SELECTION: Tiles and Pixels can be selected using the mouse. Hold (LEFT SHIFT)\nand (LEFT MOUSE BUTTON) to select a range by dragging.\nHold (LEFT SHIFT) and press (RIGHT MOUSE BUTTON)\nto modify Selection on a Tile/Pixel basis.\nPress (A) to select All, (N) to select None and (I) to Invert selection.");
 	mHelpText.push_back("BRUSHES: Press (F8) to open the Brush List, then select <width> and <height>\nand Press <Add Brush>. Press (RIGHT MOUSE BUTTON) in TileSet or Palette to add Brush Elements.\nPress (F9) to activate (next) Brush and (F10) to drop selected Brush.");
 
