@@ -264,7 +264,7 @@ int TSettings::getTicks(){
 	return mCurrentTick - mLastTick;
 }
 
-void TSettings::shutdown(){
+void TSettings::shutdown(){	
 	SDL_DestroyRenderer(TRenderer);
 	std::cout << "SDL_DestroyRenderer(TSettings::TRenderer)" << std::endl;
 }

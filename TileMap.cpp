@@ -851,14 +851,16 @@ return 0;
 }
 
 
-Tile::~Tile(){
-	
-	if(TileTex){
-		SDL_DestroyTexture(TileTex);
+Tile::~Tile(){	
+	freeTexture();
+}
+
+void Tile::freeTexture(){
+	if(TileTex != NULL){
 		std::cout << "SDL_DestroyTexture(Tile::TileTex)" << std::endl;
+		SDL_DestroyTexture(TileTex);		
 		TileTex = NULL;
 	}
-	
 }
 
 int TTexture::setPixel(int pindex, unsigned char pcolor, std::vector<unsigned char> &tBuf){
@@ -1049,8 +1051,7 @@ int Tile::rotatel(){
 
 	
 	for(int i = 0; i < mGlobalSettings.TileSizeY; i++){
-		for(int j = 0; j < mGlobalSettings.TileSizeX; j++){
-			//index = (lsize*(lsize-j-1))+i;
+		for(int j = 0; j < mGlobalSettings.TileSizeX; j++){			
 			index = (i*(lsize))+j;
 			tmpPix = getPixel(index);		
 			setPixel((lsize*(lsize-j-1))+i, tmpPix, tmpData);
@@ -1263,7 +1264,7 @@ int Tile::loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal){
 
 void TileSet::shutdown(){
 	for(auto *dTile: TTiles){
-		delete dTile;
+		dTile->freeTexture();
 	}
 }
 
@@ -1341,7 +1342,7 @@ Tile* TileSet::createNew(TPalette* tpal){
 	return createNewFromBuffer(tbuf, tpal);
 }
 
-int TileSet::removeTile(int cDropTile){
+int TileSet::deleteTile(int cDropTile){
 	Tile* dTile = *(TTiles.begin() +  cDropTile); 
 	TTiles.erase(TTiles.begin() +  cDropTile);
 	TileAreas.erase(TileAreas.begin() + cDropTile);
@@ -1349,8 +1350,15 @@ int TileSet::removeTile(int cDropTile){
 	return 0;
 }
 
+int TileSet::removeTile(int cDropTile){
+	Tile* dTile = *(TTiles.begin() +  cDropTile); 
+	TTiles.erase(TTiles.begin() +  cDropTile);
+	TileAreas.erase(TileAreas.begin() + cDropTile);	
+	return 0;
+}
+
 void TileSet::dropLastTile(){
-	(*(TTiles.end()-1))->bIsSelected = false;
+	(*(TTiles.end()-1))->bIsSelected = false;	
 	TTiles.pop_back();
 	TileAreas.pop_back();
 	reCalculateScale();
@@ -1591,7 +1599,8 @@ int TileSet::renderIm(int ypos, int mScroll){
 		for(int i = 0; i < cRowNum; i++){
 			for(int j = 0; j < mCurColumns; j++){
 				TileAreas[(i * mCurColumns) + j] = TTiles[(i*mCurColumns) + j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSizeY*mCurTileScale)+mColSpace)*i), mCurTileScale,true,true);				
-				if((mCurColumns > 1) && (j < (mCurColumns-1))){
+				//std::cout << "Rendering: " <<  i << "," << j << std::endl;
+				if((mCurColumns > 1) && (j < (mCurColumns-1))){					
 					ImGui::SameLine();
 				} 
 			}										
@@ -1601,6 +1610,7 @@ int TileSet::renderIm(int ypos, int mScroll){
 			int i = mCurColumns;
 			for(int j = 0; j < isOdd; j++){
 				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSizeY*mCurTileScale)+mColSpace)*cRowNum), mCurTileScale,true,true);
+				//std::cout << "Rendering: " <<  i << "," << j << std::endl;
 				if((j < (isOdd-1))){
 					ImGui::SameLine();
 				}

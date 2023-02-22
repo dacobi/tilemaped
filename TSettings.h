@@ -71,7 +71,7 @@ class TSettings{
 	public:
 		ImGuiIO *mio;
 		void shutdown();
-		TEditor* CurrentEditor;
+		TEditor* CurrentEditor;		
 		SDL_Renderer *TRenderer;
 		SDL_Window *TWindow;			
 		int WindowWidth=1900;
@@ -153,7 +153,7 @@ class TSettings{
 		std::string mInfo = "\uf449"; // Info circle		
 		std::string mImage = "\uf71e"; // Info circle	
 		std::string mExit = "\uf705";
-		int mSelectionMode = 0;
+		int mSelectionMode = 1;
 		bool bSoftwareRendering = false;
 		bool bNoVSync = false;
 };

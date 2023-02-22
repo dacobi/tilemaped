@@ -187,12 +187,16 @@ int TBDialog::render(){
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Tile (F5)")).c_str())){
 					mGlobalSettings.CurrentEditor->createNewTileCopy(mGlobalSettings.CurrentEditor->mTileSelectedTile);
 				}
-				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Tile Right (F6)")).c_str())){
-					mGlobalSettings.CurrentEditor->rotateTile();
+
+				if(mGlobalSettings.TileSizeX == mGlobalSettings.TileSizeY){
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Tile Right (F6)")).c_str())){
+						mGlobalSettings.CurrentEditor->rotateTile();
+					}
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Tile Left")).c_str())){
+						mGlobalSettings.CurrentEditor->rotateTileLeft();
+					}
 				}
-				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Tile Left")).c_str())){
-					mGlobalSettings.CurrentEditor->rotateTileLeft();
-				}
+				
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Unused Tiles (F7)")).c_str())){
 					mGlobalSettings.CurrentEditor->activateDropUnusedTiles();
 				}

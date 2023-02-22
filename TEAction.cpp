@@ -190,7 +190,7 @@ void TEActionReplaceTiles::doAction(TileMap* cTileMap, std::vector<int> &newSel,
 }
 
 TEActionAddTile::~TEActionAddTile(){	
-	delete mNewTile;
+	mNewTile->freeTexture();
 }
 
 		
@@ -201,6 +201,7 @@ void TEActionAddTile::doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles
 	mEditor = cEditor;
 	mOldMapTile = mEditor->mMapSelectedTile;
 	mEditor->mMapSelectedTile = mTiles->TTiles.size()-1;
+	mTileIndex = mTiles->TTiles.size()-1;
 	mOldTile = mEditor->mTileSelectedTile;
 	mOldTile->bIsSelected = false;
 	mEditor->mTileSelectedTile = mNewTile;
@@ -245,7 +246,8 @@ void TEActionDropTile::undo(){
 }
 
 void TEActionAddTile::undo(){
-	mTiles->dropLastTile();
+	//mTiles->dropLastTile();
+	mTiles->removeTile(mTileIndex);
 	mEditor->mTileSelectedTile->bIsSelected = false;
 	mEditor->mTileSelectedTile = mOldTile;
 	mEditor->mTileSelectedTile->bIsSelected = true;	
@@ -254,6 +256,7 @@ void TEActionAddTile::undo(){
 
 void TEActionAddTile::redo(){
 	mTiles->appendTile(mNewTile);
+	mTileIndex = mTiles->TTiles.size()-1;
 	mEditor->mTileSelectedTile->bIsSelected = false;
 	mEditor->mTileSelectedTile = mNewTile;
 	mEditor->mTileSelectedTile->bIsSelected = true;
@@ -309,6 +312,14 @@ void TEActionUndoStack::undoLastActionGroup(){
 	}
 }
 
+void TEActionUndoStack::dropLastGroup(){
+	if(mUndoStack.size()){			
+		mUndoStack.pop_back();
+		mLastAction = &mEmptyAction;				
+	}		
+}
+
+
 void TEActionUndoStack::redoLastActionGroup(){
 	if(mRedoStack.size()){
 		TEActionGroup *mGroup = *(mRedoStack.end()-1);
@@ -324,7 +335,7 @@ void TEActionUndoStack::redoClearStack(){
 			for(auto *dAction: dGroup->mActions){
 				TEActionAddTile* ddAction = dynamic_cast<TEActionAddTile*>(dAction);
 				if(ddAction){
-					delete ddAction;
+					delete ddAction;					
 				} else {
 					delete dAction;
 				}

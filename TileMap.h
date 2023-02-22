@@ -9,7 +9,7 @@
 
 class TTexture{
 	public:
-		~TTexture();
+		~TTexture();		
 		SDL_Texture *TileTex = NULL;
 		std::vector<unsigned char> FileData;
 		std::vector<Uint32> PixelData;
@@ -89,6 +89,7 @@ class TPalette : public Dialog{
 class Tile: public TTexture{
 	public:		
 		~Tile();
+		void freeTexture();
 		int initTile();
 		int initTexture();
 		std::vector<SDL_Texture*> TPOffset;		
@@ -130,6 +131,7 @@ class TileSet{
 		Tile* createNewFromBuffer(std::vector<unsigned char> &newBuf, TPalette* tpal);
 		Tile* createNewFromFile(std::string newPAth, TPalette* tpal);
 		void dropLastTile();
+		int deleteTile(int cDropTile);
 		int removeTile(int cDropTile);
 		void appendTile(Tile* addTile);
 		int render(int ypos, int mScroll);

@@ -124,9 +124,10 @@ class TEditor{
 		int searchRects(std::vector<SDL_Rect> &sRects);
 		int selectTiles(std::vector<int> &cNewSelection, int cTileType);
 		int toggleSelectedTile();		
-		TEActionUndoStack mActionStack;
+		TEActionUndoStack mActionStack;		
 		void undoLastActionGroup();
 		void redoLastActionGroup();
+		void dropLastActionGroup();
 		int updatePalette();
 		Dialog *mActiveDialog = NULL;
 		Dialog *mActiveMessage = NULL;

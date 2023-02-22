@@ -302,6 +302,16 @@ int TEditor::applyScroll(int mx,int my, int amount, int xamount){
 	return 0;
 }
 
+void TEditor::dropLastActionGroup(){
+	if(mCurMode == EMODE_MAP){		
+		mActionStack.dropLastGroup();
+	}
+	if(mCurMode == EMODE_TILE){
+		mTileSelectedTile->mActionStack.dropLastGroup();
+	}	
+}
+
+
 void TEditor::undoLastActionGroup(){
 	if(mCurMode == EMODE_MAP){		
 		mActionStack.undoLastActionGroup();
@@ -398,17 +408,16 @@ int TEditor::dropUnusedTiles(){
 int TEditor::dropUnusedTile(int cDropTile){	
 			
 	mTileMap.removeTile(cDropTile);
-	mTileSet.removeTile(cDropTile);
+	mTileSet.deleteTile(cDropTile);
 
 	return 0;
 }
 
 Tile* TEditor::createNewTile(){
-	if(mCurMode == EMODE_MAP){
+	if(mCurMode == EMODE_MAP){	
 	Tile* newTile = mTileSet.createNew(&mPalette);
 		if(newTile){
-				TEActionAddTile* newActionTile = new TEActionAddTile();
-				
+				TEActionAddTile* newActionTile = new TEActionAddTile();				
 				newActionTile->doAction(newTile, this, &mTileSet);
       			mActionStack.newActionGroup();	
       			mActionStack.addAction(newActionTile);
@@ -1224,6 +1233,9 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_r){
 		  			redoLastActionGroup();
+	  			}
+				if(cEvent->key.keysym.sym == SDLK_d){
+					dropLastActionGroup();	  		
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_f){
 		  			flipSelectedTile();

@@ -30,6 +30,7 @@ class TEActionUndoStack{
 		void redoLastActionGroup();
 		void redoClearStack();
 		void undoClearStack();
+		void dropLastGroup();
 };
 
 
@@ -220,6 +221,7 @@ class TEActionAddTile: public TEAction{
 		TileSet *mTiles;
 		TEditor *mEditor;
 		int mOldMapTile;
+		int mTileIndex;
 		void doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles);	
 		virtual void undo();
 		virtual void redo();
