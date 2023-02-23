@@ -137,6 +137,7 @@ class TSettings{
 		std::vector<std::string> mHelpText;
 		std::vector<std::string> mHelpTextMap;
 		std::vector<std::string> mHelpTextTile;
+		std::vector<std::string> mHelpTextTileSet;
 		std::vector<std::string> mHelpTextPalette;
 		int mLastTick = 0;
 		int mCurrentTick = 0;

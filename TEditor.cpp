@@ -226,7 +226,7 @@ int TEditor::render(){
 	if(mCurMode == EMODE_TILESET){		
 		mTopBar.render();
 
-		mPalette.renderIm(100 + mGlobalSettings.CurrentEditor->mTileSet.mSelEdWidth * mGlobalSettings.CurrentEditor->mTileSet.mCurEdScale*mGlobalSettings.TileSizeX,50+mTopBar.mDialogHeight);			
+		mPalette.renderIm(100 + (mGlobalSettings.CurrentEditor->mTileSet.mCurEdScale * mGlobalSettings.CurrentEditor->mTileSet.mSelectionAreaX),50+mTopBar.mDialogHeight);			
 		
 		if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
 		mTileSet.renderEd(mTileSetScrollX + 50,mTileSetScrollY + 50+mTopBar.mDialogHeight);

@@ -14,6 +14,8 @@
 
 //#define MAPPIMAGE
 
+#include "version.h"
+
 #ifdef MAPPIMAGE
 #include <stdlib.h>
 #endif
@@ -339,7 +341,7 @@ int TSettings::runOCD(){
 
 void TSettings::initHelpText(){
 
-	mHelpText.push_back("WINDOWS: Tilemaped has 3 main windows which are TileMap Editor, Tile Editor\nand Palette Editor. Select window in View menu and press (SPACE)\nto quickly switch back to the last active window.\nPress (F2) to view the Project Info dialog. When working with Tile BPPs\nlower than 8 the Palette Offset dialog can be shown/hidden in the View menu.");	
+	mHelpText.push_back("WINDOWS: Tilemaped has 4 main windows which are TileMap Editor, Tile Editor\nPalette Editor and TileSet Editor. Select window in View menu and press (SPACE)\nto quickly switch back to the last active window.\nPress (F2) to view the Project Info dialog. When working with Tile BPPs\nlower than 8 the Palette Offset dialog can be shown/hidden in the View menu.");	
 	mHelpText.push_back("UNDO: Most changes to TileMap and Tiles can be undone. Press (U) to undo\nand (R) to redo action. Some operations will clear the Undo Stack.\nIf you wish to keep an Action but undo previous Actions Press (D)\nto drop the Action from the Undo Stack.");
 	mHelpText.push_back("SELECTION: Tiles and Pixels can be selected using the mouse. Hold (LEFT SHIFT)\nand (LEFT MOUSE BUTTON) to select a range by dragging.\nHold (LEFT SHIFT) and press (RIGHT MOUSE BUTTON)\nto modify Selection on a Tile/Pixel basis.\nPress (A) to select All, (N) to select None and (I) to Invert selection.");
 	mHelpText.push_back("BRUSHES: Press (F8) to open the Brush List, then select <width> and <height>\nand Press <Add Brush>. Press (RIGHT MOUSE BUTTON) in TileSet or Palette to add Brush Elements.\nPress (F9) to activate (next) Brush and (F10) to drop selected Brush.");
@@ -356,6 +358,9 @@ void TSettings::initHelpText(){
 	mHelpTextTile.push_back("SELECT PIXEL: Press (RIGHT MOUSE BUTTON) to select a color in the Tile.\nPress (S) to show all Pixels of the Selected color.\nPress (RIGHT MOUSE BUTTON) on a color in the Palette\nto replace all selected Pixels in the Tile.");	
 	mHelpTextTile.push_back("GRID: Press (P) to show Pixel Grid in Tile Editor.");
 
+	mHelpTextTileSet.push_back("EDITOR: The TileSet Editor works much like the Tile Editor, only on the entire TileSet\nYou can set the Tile Grid Width and Tile Scale in the Edit menu under \"TileSet Edit\"\nUse (LEFT CONTROL) and (LEFT MOUSE BUTTON) to Scroll the TileSet");
+	mHelpTextTileSet.push_back("GRID: Press (P) to show Pixel Grid in TileSet Editor and Press (T) to show the Tile Grid.");
+
 	mHelpTextPalette.push_back("CHANGE COLOR: Press (LEFT MOUSE BUTTON) to select a Color in the Palette Editor.\nUse RGB sliders or Press (LEFT MOUSE BUTTON) on the Pick Selected Color Box.");
 	mHelpTextPalette.push_back("COPY COLOR: Press (RIGHT MOUSE BUTTON) on a Color to copy its value to the selected Color.");
 	mHelpTextPalette.push_back("IMPORT: Select <Import Palette> in the Edit menu to import a palette file.\nGimp palettes and Tilemaped palettes are supported.");
@@ -363,6 +368,8 @@ void TSettings::initHelpText(){
 }
 
 void printUsage(){
+		std::cout << std::endl;	
+		std::cout << "TilemapEd Version: " << Tilemaped_Version  << std::endl;
 		std::cout << std::endl;	
 		std::cout << "Command Line Usage:" << std::endl;
 		std::cout << "tilemaped [ --software --novsync ]" << std::endl;		

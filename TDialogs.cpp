@@ -1252,6 +1252,7 @@ int TIDialog::checkCurrentText(){
 void HDialog::init(){
 	mHelpTextMap = mGlobalSettings.mHelpTextMap;
 	mHelpTextTile = mGlobalSettings.mHelpTextTile;
+	mHelpTextTileSet = mGlobalSettings.mHelpTextTileSet;
 	mHelpTextGeneral = mGlobalSettings.mHelpText;
 	mHelpTextPalette = mGlobalSettings.mHelpTextPalette;
 }
@@ -1299,6 +1300,16 @@ int HDialog::render(){
 		ImGui::PushFont(mGlobalSettings.SFont);
 		for(int i = 0; i < mHelpTextTile.size(); i++){
 			ImGui::BulletText("%s", mHelpTextTile[i].c_str());
+		}
+		ImGui::PopFont();
+	}
+
+	ImGui::Separator();
+
+	if(ImGui::CollapsingHeader("TileSet")){
+		ImGui::PushFont(mGlobalSettings.SFont);
+		for(int i = 0; i < mHelpTextTileSet.size(); i++){
+			ImGui::BulletText("%s", mHelpTextTileSet[i].c_str());
 		}
 		ImGui::PopFont();
 	}
