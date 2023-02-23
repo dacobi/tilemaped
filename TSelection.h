@@ -55,22 +55,24 @@ enum{
     TBRUSH_PIXEL
 };
 
+class TBrushList;
+
 class TBrush: public TSelection{
     public:
         std::vector<int> mBrushElements;
         std::vector<TileProperties> mElementProps;
+        TBrushList *mParent;
         int UUID;
         int mBrushType;
         int mBrushWidth = 1;
         int mBrushHeight = 1;
         int mLastClickX;
         int mLastClickY;
-        int mDeltaBaseX;
-        int mDeltaBaseY;
-        int *mDeltaScaleX;
-        int *mDeltaScaleY;
+        //int mDeltaBaseX;
+        //int mDeltaBaseY;        
+        //int *mDeltaScaleY;
         int mCursorPos=0;
-        int mRenderScale;
+        //int mRenderScale;
         ImVec2 mWinSize;
         ImVec2 mWinPos;
         bool bIsSelected = false;
@@ -82,8 +84,8 @@ class TBrush: public TSelection{
         int prevElement();
         int nextLine();
         int prevLine();
-        int configBrush(int nWidth, int nHeight, int bType, int nRenderScale);
-        int setBrushDeltas(int nDeltaX, int nDeltaY, int *nScaleX,int *nScaleY);
+        int configBrush(int nWidth, int nHeight, int bType, TBrushList *cParent);
+        //int setBrushDeltas(int nDeltaX, int nDeltaY);
         int getBrushSelection(int bx, int by, std::vector<SDL_Rect> &sRects);
         int renderSelection();
         SDL_Rect renderIm(int xpos, int ypos);
@@ -105,15 +107,19 @@ class TBrushList{
         std::string mTitle;
         std::string mType;
         bool *bIsShown;
+        int *mDeltaScale;
         bool bIsEditing = false;
         int mWinHeight = 600;
+        int mDeltaBaseX;
+        int mDeltaBaseY;        
         int mRenderScale;
         int mNewBrushX=1;
         int mNewBrushY=1;
         int mSelectedBrush=0;
         int mBrushOffset = 0;
+        int setBrushDeltas(int nDeltaX, int nDeltaY, int *nDeltaScale, int nRenderScale);
    		std::vector<SDL_Rect> BrushAreas;
-        int init(std::string cTitle, std::string cType, int cBrushType, bool *cIsShown, int cRenderScale, TBrush **cCurrentBrush);
+        int init(std::string cTitle, std::string cType, int cBrushType, bool *cIsShown, int nDeltaX, int nDeltaY, int *cDeltaScale, int cRenderScale, TBrush **cCurrentBrush);
         TBrush **mCurrentBrush;
         TBrush* getBrush();
         TBrush* getNextBrush();

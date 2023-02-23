@@ -112,9 +112,11 @@ class TEditor{
 		bool bTileSetGrapped = false;
 		bool bShowBrushesTile = false;
 		bool bShowBrushesPixel = false;
+		bool bShowBrushesPixelTileSet = false;		
 		TSelection mSelection;
 		TBrush *mCurrentBrushTile = NULL;
 		TBrush *mCurrentBrushPixel = NULL;
+		TBrush *mCurrentBrushPixelTileSet = NULL;
 		//TBrush tmpBrush;
 		TBrushList mBrushesTile;
 		TBrushList mBrushesPixel;

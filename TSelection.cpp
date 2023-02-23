@@ -341,19 +341,20 @@ int TSelection::calcSelectionBorder(){
 }
 
 
-int TBrush::configBrush(int nWidth, int nHeight, int bType, int nRenderScale){
+int TBrush::configBrush(int nWidth, int nHeight, int bType, TBrushList* cParent){
     mBrushWidth = nWidth;
     mBrushHeight = nHeight;
-    mRenderScale = nRenderScale;
+    //mRenderScale = nRenderScale;
+    mParent = cParent;
     mBrushType = bType;
-    if(bType == TBRUSH_TILE){
-        setBrushDeltas(mGlobalSettings.TileSizeX, mGlobalSettings.TileSizeY, &mGlobalSettings.TileMapScale, &mGlobalSettings.TileMapScale);
-    } else if (bType == TBRUSH_PIXEL) {
-        setBrushDeltas(mGlobalSettings.TilePixelSize, mGlobalSettings.TilePixelSize, &mGlobalSettings.mTileEdScale, &mGlobalSettings.mTileEdScale);
-    } else {
-        std::cout << "Error Creating Brush!" << std::endl;
-        return 1;
-    } 
+    //if(bType == TBRUSH_TILE){
+    //    setBrushDeltas(mGlobalSettings.TileSizeX, mGlobalSettings.TileSizeY);
+    //} else if (bType == TBRUSH_PIXEL) {
+    //    setBrushDeltas(mGlobalSettings.TilePixelSize, mGlobalSettings.TilePixelSize);
+    //} else {
+    //    std::cout << "Error Creating Brush!" << std::endl;
+    //    return 1;
+    //} 
 
     UUID = rand();
 
@@ -374,11 +375,11 @@ int TBrush::flipElementH(){
     return 0;
 }
 
-int TBrush::setBrushDeltas(int nDeltaX, int nDeltaY, int *nScaleX,int *nScaleY){
+int TBrushList::setBrushDeltas(int nDeltaX, int nDeltaY, int *nDeltaScale, int nRenderScale){
     mDeltaBaseX = nDeltaX;
     mDeltaBaseY = nDeltaY;
-    mDeltaScaleX = nScaleX;
-    mDeltaScaleY = nScaleY;
+    mDeltaScale = nDeltaScale;
+    mRenderScale = nRenderScale;
     return 0;
 }
 int TBrush::getBrushSelection(int bx, int by, std::vector<SDL_Rect> &sRects){
@@ -388,8 +389,8 @@ int TBrush::getBrushSelection(int bx, int by, std::vector<SDL_Rect> &sRects){
 
     clearSelection();
 
-    int cDeltaX = mDeltaBaseX * *mDeltaScaleX;
-    int cDeltaY = mDeltaBaseY * *mDeltaScaleY;
+    int cDeltaX = mParent->mDeltaBaseX * *mParent->mDeltaScale;
+    int cDeltaY = mParent->mDeltaBaseY * *mParent->mDeltaScale;
 
     int cStepX = 0;
     int cStepY = 0;
@@ -419,10 +420,10 @@ int TBrush::getBrushSelection(int bx, int by, std::vector<SDL_Rect> &sRects){
 }
 
 int TBrush::renderSelection(){
-    mCurSelection.x = mLastClickX - ((mDeltaBaseX * *mDeltaScaleX)/2);
-    mCurSelection.y = mLastClickY - ((mDeltaBaseY * *mDeltaScaleY)/2);
-    mCurSelection.w = mBrushWidth * mDeltaBaseX * *mDeltaScaleX;
-    mCurSelection.h = mBrushHeight * mDeltaBaseY * *mDeltaScaleY;
+    mCurSelection.x = mLastClickX - ((mParent->mDeltaBaseX * *mParent->mDeltaScale)/2);
+    mCurSelection.y = mLastClickY - ((mParent->mDeltaBaseY * *mParent->mDeltaScale)/2);
+    mCurSelection.w = mBrushWidth * mParent->mDeltaBaseX * *mParent->mDeltaScale;
+    mCurSelection.h = mBrushHeight * mParent->mDeltaBaseY * *mParent->mDeltaScale;
 
     SDL_SetRenderDrawColor(mGlobalSettings.TRenderer,mGlobalSettings.DefaultHighlightColor.r,mGlobalSettings.DefaultHighlightColor.g,mGlobalSettings.DefaultHighlightColor.b, 0xff);
     SDL_RenderDrawRect(mGlobalSettings.TRenderer, &mCurSelection);
@@ -449,8 +450,8 @@ SDL_Rect TBrush::renderPixel(int xpos, int ypos){
 
     ImVec2 cPos = ImGui::GetWindowPos();
 
-    int cDeltaX = mDeltaBaseX * mRenderScale;
-    int cDeltaY = mDeltaBaseY * mRenderScale;
+    int cDeltaX = mParent->mDeltaBaseX * mParent->mRenderScale;
+    int cDeltaY = mParent->mDeltaBaseY * mParent->mRenderScale;
 
     elmin.x = xpos + cPos.x;
     elmin.y = ypos + cPos.y;
@@ -520,8 +521,8 @@ SDL_Rect TBrush::renderTile(int xpos, int ypos){
 
     ImVec2 cPos = ImGui::GetWindowPos();
 
-    int cDeltaX = mDeltaBaseX * mRenderScale;
-    int cDeltaY = mDeltaBaseY * mRenderScale;
+    int cDeltaX = mParent->mDeltaBaseX * mParent->mRenderScale;
+    int cDeltaY = mParent->mDeltaBaseY * mParent->mRenderScale;
 
     elmin.x = xpos + cPos.x;
     elmin.y = ypos + cPos.y;
@@ -663,13 +664,16 @@ int TBrush::readFromFile(std::ifstream &infile){
     return 0;
 }
 
-int TBrushList::init(std::string cTitle, std::string cType, int cBrushType, bool *cIsShown, int cRenderScale, TBrush **cCurrentBrush){
+int TBrushList::init(std::string cTitle, std::string cType, int cBrushType, bool *cIsShown, int nDeltaX, int nDeltaY, int *cDeltaScale, int cRenderScale, TBrush **cCurrentBrush){
     mTitle = cTitle;
     mType = cType;
     mBrushType = cBrushType;
     bIsShown = cIsShown;
     mRenderScale = cRenderScale;
+    mDeltaScale = cDeltaScale;
     mCurrentBrush = cCurrentBrush;
+    mDeltaBaseX = nDeltaX;
+    mDeltaBaseY = nDeltaY;
     return 0;
 }
 
@@ -679,7 +683,7 @@ int TBrushList::addBrush(int sizex, int sizey){
 
     mBrushes.push_back(newBrush);
    
-    newBrush->configBrush(sizex, sizey, mBrushType, mRenderScale);
+    newBrush->configBrush(sizex, sizey, mBrushType, this);
 
     BrushAreas.resize(mBrushes.size());
 

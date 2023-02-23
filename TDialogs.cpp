@@ -180,7 +180,9 @@ int TBDialog::render(){
 				}
 			}
 
-			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET){				
+			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET){	
+				if(ImGui::MenuItem("Brushes (F8)", NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixelTileSet)){                                                                         
+                }			
 				if(ImGui::MenuItem("Tile Grid (T)", NULL , &mGlobalSettings.bShowTileGrid)){										
 				}
 				if(ImGui::MenuItem("Pixel Grid (P)", NULL , &mGlobalSettings.bShowTilePixelGrid)){										
