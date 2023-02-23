@@ -358,7 +358,7 @@ void TSettings::initHelpText(){
 	mHelpTextTile.push_back("SELECT PIXEL: Press (RIGHT MOUSE BUTTON) to select a color in the Tile.\nPress (S) to show all Pixels of the Selected color.\nPress (RIGHT MOUSE BUTTON) on a color in the Palette\nto replace all selected Pixels in the Tile.");	
 	mHelpTextTile.push_back("GRID: Press (P) to show Pixel Grid in Tile Editor.");
 
-	mHelpTextTileSet.push_back("EDITOR: The TileSet Editor works much like the Tile Editor, only on the entire TileSet\nYou can set the Tile Grid Width and Tile Scale in the Edit menu under \"TileSet Edit\"\nUse (LEFT CONTROL) and (LEFT MOUSE BUTTON) to Scroll the TileSet");
+	mHelpTextTileSet.push_back("EDITOR: The TileSet Editor works much like the Tile Editor, only on the entire TileSet.\nYou can set the Tile Grid Width and Tile Scale in the Edit menu under \"TileSet Edit\".\nUse (LEFT CONTROL) and (LEFT MOUSE BUTTON) to Scroll the TileSet.");
 	mHelpTextTileSet.push_back("GRID: Press (P) to show Pixel Grid in TileSet Editor and Press (T) to show the Tile Grid.");
 
 	mHelpTextPalette.push_back("CHANGE COLOR: Press (LEFT MOUSE BUTTON) to select a Color in the Palette Editor.\nUse RGB sliders or Press (LEFT MOUSE BUTTON) on the Pick Selected Color Box.");
