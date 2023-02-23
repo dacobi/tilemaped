@@ -73,6 +73,7 @@ class TEditor{
 		int handleEvents();
 		int handleEMMAp();
 		int handleTileSet();
+		int handleTileSetEdit();
 		int handleTileMap();
 		int handlePalette();
 		int handlePaletteEdit();

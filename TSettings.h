@@ -103,7 +103,11 @@ class TSettings{
 		int mPaletteUpdateState = 0;
 		std::string mNewTilePath = "";				
 		bool bShowTypeSelection = false;
-		bool bShowPixelGrip = true;
+		bool bShowPixelGrid = true;
+		bool bShowTileGrid = false;
+		bool bShowTilePixelGrid = true;
+		int mTileSetEditWidth = 4;
+		int mTileSetEditScale = 10;
 		bool bShowPixelType = false;
 		bool bShowSelectedTile = true;
 		bool bShowProjectInfo = false;		
@@ -161,7 +165,8 @@ class TSettings{
 enum {
 	EMODE_MAP,
 	EMODE_TILE,
-	EMODE_PALED
+	EMODE_PALED,
+	EMODE_TILESET
 } emodes;
 
 enum {

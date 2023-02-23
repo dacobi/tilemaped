@@ -26,6 +26,7 @@ class TSelection{
         int mHeight;
         int *mScale;
         int init(int cAreaX, int cAreaY, int cWidth, int cHeight, int *cScale);
+        int resize(int cAreaX, int cAreaY, int cWidth, int cHeight, int *cScale);
         int calcSelectionBorder();
 		int renderSelection(int xpos, int ypos);
         int startSelection(int mx, int my);
@@ -37,6 +38,7 @@ class TSelection{
         bool isInSelection(int item);
         int addToSelection(int item);
         int removeFromSelection(int item);
+        int removeRanges(std::vector<int> cRanges);
         int modifySelection(int item);
         void clearSelection();
         int invertSelection(int sstart, int send);
@@ -44,6 +46,8 @@ class TSelection{
    		int searchSelection(std::vector<SDL_Rect> &sRects, int mx, int my);
         int getSelection(std::vector<SDL_Rect> &sRects, SDL_Rect &cSel, int xdelta, int ydelta);
         int getXY(int X,int Y);
+        int getXYFromIndex(int index,int careax, int careay, int &mx, int &my);
+        int getTileIndex(int index, int careax, int careay,int &tIndex);
 };
 
 enum{

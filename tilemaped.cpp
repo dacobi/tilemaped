@@ -138,7 +138,7 @@ int TSettings::initSettings(){
 		return 1;
 	}
 
-//	SDL_SetWindowSize(TWindow, WindowWidth, WindowHeight);
+	SDL_SetWindowSize(TWindow, WindowWidth, WindowHeight);
 
 	Uint32 mFlags = 0;
 

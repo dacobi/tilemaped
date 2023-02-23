@@ -44,6 +44,7 @@ class TPixel{
 		SDL_Rect renderEditor(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderEd(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
+		SDL_Rect renderEdSel(int xpos, int ypos, int tscale, bool drawGrid=false);
 		bool bPixelSelected = false;
 		bool bPixelSelectedEdit = false;
 
@@ -79,6 +80,7 @@ class TPalette : public Dialog{
 		int renderIm(int xpos, int ypos);
 		int render(int xpos, int ypos);
 		SDL_Rect renderTileEd(int xpos,int ypos, int tcolor);
+		SDL_Rect renderTileEd(int xpos,int ypos, int tcolor, int cScale);
 		std::map<int,int> mMapColorIn = {{0,0},{1,17},{2,34},{3,51},{4,68},{5,85},{6,102},{7,119},{8,136},{9,153},{10,170},{11,187},{12,204},{13,221},{14,238},{15,255}};
 		std::map<int,int> mMapColorOut = {{0,0},{17,1},{34,2},{51,3},{68,4},{85,5},{102,6},{119,7},{136,8},{153,9},{170,10},{187,11},{204,12},{221,13},{238,14},{255,15}};
 };
@@ -98,6 +100,7 @@ class Tile: public TTexture{
 		SDL_Rect renderIm(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect render(int xpos, int ypos, int tscale, TileProperties tProps);
 		void renderEd(int xpos, int ypos, TPalette* tpal);
+		void renderEdSel(int xpos, int ypos, TPalette* tpal, int cScale);
 		static int renderSelection(SDL_Rect &sRect, SDL_Color sColor);
 		//int renderSelection();
 		int updateTexture(TPalette* tpal);
@@ -118,10 +121,19 @@ class TileSet{
 		std::string DataPath;
 		std::vector<Tile*> TTiles;
 		std::vector<SDL_Rect> TileAreas;
+		std::vector<SDL_Rect> EditPixelAreas;	
+		void resizeEdit();
+		void updateEditAreas(std::vector<SDL_Rect> &cTile, int xpos, int ypos);
+		int getXY(int xpos, int ypos, int cxpos, int cypos);
+		std::vector<int> getPadding();
 		int mCurTileScale=10;
 		int mCurColumns=1;
 		int mColSpace = 10;
 		int mMaxScrollY=0;
+		int mSelEdWidth=4;
+		int mCurEdScale=10;
+		int mSelectionAreaX;
+		int mSelectionAreaY;
 		int reCalculateScale();
 		SDL_Rect mTileSetBackGround;
 		int loadFromFolder(std::string tpath, TPalette* tpal);
@@ -135,10 +147,15 @@ class TileSet{
 		int removeTile(int cDropTile);
 		void appendTile(Tile* addTile);
 		int render(int ypos, int mScroll);
+		int renderEd(int xpos, int ypos);
 		int renderIm(int ypos, int mScroll);		
 		bool updateWinPos=false;
+		bool bUpdateEditSelection = false;
+		bool bUpdateEditSelectionScale = false;
 		std::map<int, int> mTileSizeIn = {{0,8},{1,16}};
 		std::map<int, int> mTileSizeOut = {{8,0},{16,1}};
+		TSelection mSelection;
+		TEActionUndoStack mActionStack;
 };
 
 class TileProperties{

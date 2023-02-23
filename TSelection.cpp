@@ -29,9 +29,20 @@ int TSelection::removeFromSelection(int item){
     int tSel = findInSelection(item);
     if(tSel != -1){
         mSelected.erase(mSelected.begin() + tSel);
+        //std::cout << "removing: " << item << std::endl;
         return 0;
+    } else {
+        //std::cout << "NOT FOUND!: " << item << std::endl;
     }
     return 1;
+}
+
+int TSelection::removeRanges(std::vector<int> cRanges){
+    for(auto cItem : cRanges){
+        removeFromSelection(cItem);        
+    }
+    calcSelectionBorder();
+    return 0;
 }
 
 int TSelection::modifySelection(int item){
@@ -55,6 +66,16 @@ int TSelection::init(int cAreaX, int cAreaY, int cWidth, int cHeight, int *cScal
 
     mSelectionBorder.resize(mAreaX*mAreaY, false);
     mSelectionEdges.resize(mAreaX*mAreaY, 0);
+
+    return 0;
+}
+
+int TSelection::resize(int cAreaX, int cAreaY, int cWidth, int cHeight, int *cScale){
+    mAreaX = cAreaX;
+    mAreaY = cAreaY;
+    mWidth = cWidth;
+    mHeight = cHeight;
+    mScale = cScale;
 
     return 0;
 }
@@ -104,8 +125,12 @@ int TSelection::getSelection(std::vector<SDL_Rect> &sRects, SDL_Rect &cSel, int 
 
     for(int i = 0; i <= hStep; i++){
         for(int j = 0; j <= wStep; j++){
+            //std::cout << "X: " << cStepX << " Y: " <<  cStepY  << std::endl;
             if((item = searchSelection(sRects, cSel.x + cStepX, cSel.y + cStepY)) != -1){
-                if(findInSelection(item) == -1)  addToSelection(item);                
+                //std::cout << "item: " << item << std::endl; 
+                if(findInSelection(item) == -1){
+                      addToSelection(item);                      
+                }
             }            
             cStepX += xdelta;
         }
@@ -210,6 +235,47 @@ int TSelection::renderSelection(int xpos, int ypos){
 			}
 		}
 	}
+    return 0;
+}
+
+int TSelection::getTileIndex(int index, int careax, int careay,int &tIndex){
+    if(index >= (careax*careay)){            
+        return -1;
+    }
+
+    int cx, cy;
+
+    getXYFromIndex(index, careax, careay, cx, cy);
+
+    int offset = careax / mGlobalSettings.TileSizeX;
+
+    int tx, ty;
+
+    tx = cx % mGlobalSettings.TileSizeX;
+    ty = cy %  mGlobalSettings.TileSizeY;
+
+    int tTile = cx / mGlobalSettings.TileSizeX;
+    tTile += (cy  / mGlobalSettings.TileSizeY) * offset;
+
+    tIndex = tx + (ty * mGlobalSettings.TileSizeX);
+
+    std::cout << "Offset: " << offset << " : " << tx << "," << ty <<  std::endl;  
+
+    std::cout << "Tile: " << tTile << "," << tIndex << " : " << cx << "," << cy << std::endl;
+
+    return tTile;
+}
+
+int TSelection::getXYFromIndex(int index, int careax, int careay,int &mx, int &my){
+    if(index >= (careax*careay)){
+        return 1;
+    }
+    
+    my = index / careax;
+    mx = index % careax;
+
+    //std::cout << "XY: " << mx << "," << my << " : " << index << "," << careax << "," << careay  << std::endl;  
+
     return 0;
 }
 

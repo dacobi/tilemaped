@@ -87,6 +87,9 @@ void TBDialog::init(){
 		case EMODE_PALED:
 			mDialogTextWindow += " Palette Editor";
 		break;
+		case EMODE_TILESET:
+			mDialogTextWindow += " TileSet Editor";
+		break;
 	};
 
 	mDialogTextProject = mGlobalSettings.mFile + " Project: " + mGlobalSettings.ProjectPath + "  " + mGlobalSettings.mInfo + " Info: F2";
@@ -106,6 +109,9 @@ int TBDialog::render(){
 		break;
 		case EMODE_PALED:
 			mDialogTextWindow += " Palette Editor";
+		break;
+		case EMODE_TILESET:
+			mDialogTextWindow += " TileSet Editor";
 		break;
 	};
 
@@ -139,6 +145,10 @@ int TBDialog::render(){
 				//mGlobalSettings.CurrentEditor->activatePaletteEdit();
 				mGlobalSettings.CurrentEditor->setMode(EMODE_PALED);
 			}
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " TileSet")).c_str())){
+				//mGlobalSettings.CurrentEditor->activatePaletteEdit();
+				mGlobalSettings.CurrentEditor->setMode(EMODE_TILESET);
+			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Help Dialog (F1)")).c_str())){
 				mGlobalSettings.CurrentEditor->activateHelpDialog();
 			}
@@ -166,7 +176,7 @@ int TBDialog::render(){
 				}
 				if(ImGui::MenuItem("Selected Color (S)", NULL , &mGlobalSettings.bShowPixelType)){										
 				}
-				if(ImGui::MenuItem("Pixel Grid (P)", NULL , &mGlobalSettings.bShowPixelGrip)){										
+				if(ImGui::MenuItem("Pixel Grid (P)", NULL , &mGlobalSettings.bShowPixelGrid)){										
 				}
 			}
 			ImGui::EndMenu();
@@ -196,9 +206,22 @@ int TBDialog::render(){
 						mGlobalSettings.CurrentEditor->rotateTileLeft();
 					}
 				}
-				
+
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Unused Tiles (F7)")).c_str())){
 					mGlobalSettings.CurrentEditor->activateDropUnusedTiles();
+				}
+				
+			}
+
+			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET){
+				if(ImGui::BeginMenu("TileSet Edit")){
+					if(ImGui::SliderInt("Grid Width", &mGlobalSettings.mTileSetEditWidth, 2, 16)){
+						mGlobalSettings.CurrentEditor->mTileSet.bUpdateEditSelection = true;
+					}
+					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mTileSetEditScale, 2, 16)){
+						mGlobalSettings.CurrentEditor->mTileSet.bUpdateEditSelectionScale = true;
+					}
+					ImGui::EndMenu();
 				}
 				
 			}

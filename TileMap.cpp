@@ -213,6 +213,21 @@ SDL_Rect TPixel::render(int xpos, int ypos, int tscale, bool updateRect ,bool dr
     return CurrentArea;
 }
 
+SDL_Rect TPixel::renderEdSel(int xpos, int ypos, int tscale, bool drawGrid){
+	CurrentArea = { xpos, ypos, tscale, tscale};
+
+	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, PixelColor.r,PixelColor.g,PixelColor.b,PixelColor.a);
+	
+	SDL_RenderFillRect(mGlobalSettings.TRenderer, &CurrentArea);
+    
+	if(drawGrid){
+		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.PixelGridColor.r ,mGlobalSettings.PixelGridColor.g ,mGlobalSettings.PixelGridColor.b ,0xff);
+		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &CurrentArea);
+	}
+
+    return CurrentArea;
+}
+
 
 SDL_Rect TPixel::renderEd(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
 	CurrentArea = { xpos, ypos, mGlobalSettings.TilePixelSize*tscale, mGlobalSettings.TilePixelSize*tscale};
@@ -632,11 +647,18 @@ int TPalette::initTPixels(){
 	return 0;
 }
 
+SDL_Rect TPalette::renderTileEd(int xpos,int ypos, int tcolor, int cScale){
+	SDL_SetRenderDrawBlendMode(mGlobalSettings.TRenderer, SDL_BLENDMODE_BLEND);
+	int ccolor=0;
+	if(tcolor != 0) ccolor = tcolor + (mGlobalSettings.PaletteOffset*16);
+	return TPixels[ccolor]->renderEdSel(xpos, ypos, cScale,mGlobalSettings.bShowTilePixelGrid);	
+}
+
 SDL_Rect TPalette::renderTileEd(int xpos,int ypos, int tcolor){
 	SDL_SetRenderDrawBlendMode(mGlobalSettings.TRenderer, SDL_BLENDMODE_BLEND);
 	int ccolor=0;
 	if(tcolor != 0) ccolor = tcolor + (mGlobalSettings.PaletteOffset*16);
-	return TPixels[ccolor]->renderEd(xpos, ypos, mGlobalSettings.mTileEdScale,false,mGlobalSettings.bShowPixelGrip);	
+	return TPixels[ccolor]->renderEd(xpos, ypos, mGlobalSettings.mTileEdScale,false,mGlobalSettings.bShowPixelGrid);	
 }
 
 int TPalette::render(int xpos,int ypos){
@@ -1221,6 +1243,35 @@ int Tile::renderSelection(SDL_Rect &sRect, SDL_Color sColor){
 	return 0;
 }
 
+void Tile::renderEdSel(int xpos, int ypos, TPalette* tpal, int cScale){
+	for(int i=0; i < mGlobalSettings.TileSizeY; i++){
+		for(int j=0; j < mGlobalSettings.TileSizeX; j++){
+			PixelAreas[j+(mGlobalSettings.TileSizeX*i)] = tpal->renderTileEd(xpos + (cScale)*j, ypos + (cScale)*i, getPixel(j+(i*mGlobalSettings.TileSizeX)), cScale); 			//mGlobalSettings.TilePixelSize * 
+		}
+	}
+
+/*	
+	if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel && !mGlobalSettings.CurrentEditor->mBrushesPixel.bIsEditing){
+		if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel->mSelected.size()){
+			for(int i=0; i < mGlobalSettings.TileSizeY; i++){
+				for(int j=0; j < mGlobalSettings.TileSizeX; j++){	
+					if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel->findInSelection((j+(i*mGlobalSettings.TileSizeX))) != -1){
+						int findex = mGlobalSettings.CurrentEditor->mCurrentBrushPixel->findInSelection((j+(i*mGlobalSettings.TileSizeX)));
+						if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel->mBrushElements[findex] != -1){
+							tpal->renderTileEd(xpos + (mGlobalSettings.TilePixelSize * mGlobalSettings.mTileEdScale)*j, ypos + (mGlobalSettings.TilePixelSize * mGlobalSettings.mTileEdScale)*i, mGlobalSettings.CurrentEditor->mCurrentBrushPixel->mBrushElements[findex]); 			
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	if(mSelection.bHasSelection){
+		mSelection.renderSelection(xpos, ypos);
+	}
+	*/
+}
+
 void Tile::renderEd(int xpos, int ypos, TPalette* tpal){
 	for(int i=0; i < mGlobalSettings.TileSizeY; i++){
 		for(int j=0; j < mGlobalSettings.TileSizeX; j++){
@@ -1328,6 +1379,7 @@ Tile* TileSet::createNewFromBuffer(std::vector<unsigned char> &newBuf, TPalette*
 	newTile->loadFromBuffer(newBuf, tpal);
 	TileAreas.push_back(newRect);
 	TTiles.push_back(newTile);
+	resizeEdit();
 	return newTile;
 
 }
@@ -1347,6 +1399,7 @@ int TileSet::deleteTile(int cDropTile){
 	TTiles.erase(TTiles.begin() +  cDropTile);
 	TileAreas.erase(TileAreas.begin() + cDropTile);
 	delete dTile;
+	resizeEdit();
 	return 0;
 }
 
@@ -1354,6 +1407,7 @@ int TileSet::removeTile(int cDropTile){
 	Tile* dTile = *(TTiles.begin() +  cDropTile); 
 	TTiles.erase(TTiles.begin() +  cDropTile);
 	TileAreas.erase(TileAreas.begin() + cDropTile);	
+	resizeEdit();
 	return 0;
 }
 
@@ -1362,6 +1416,7 @@ void TileSet::dropLastTile(){
 	TTiles.pop_back();
 	TileAreas.pop_back();
 	reCalculateScale();
+	resizeEdit();
 }
 
 void TileSet::appendTile(Tile* addTile){
@@ -1369,6 +1424,7 @@ void TileSet::appendTile(Tile* addTile){
 	SDL_Rect newRect;
 	TileAreas.push_back(newRect);
 	reCalculateScale();
+	resizeEdit();
 }
 
 int TileSet::loadFromFolder(std::string path, TPalette* tpal){ 
@@ -1440,6 +1496,8 @@ int TileSet::loadFromFolder(std::string path, TPalette* tpal){
 		TTiles.push_back(mTile);
 	}
 
+	resizeEdit();
+
 	return 0;
 }
 
@@ -1477,6 +1535,184 @@ int TileSet::reCalculateScale(){
 			return 1;		
 		}
 	}
+	return 0;
+}
+
+std::vector<int> TileSet::getPadding(){
+	int isOdd = TTiles.size() % mSelEdWidth;
+	int cRowNum = TTiles.size() / mSelEdWidth;
+
+	std::vector<int> cPadding;
+	
+	if(isOdd){		
+		for(int i = 0 ; i < (mSelEdWidth-isOdd); i++){
+			for (int yy = 0; yy < mGlobalSettings.TileSizeY; yy++){
+				for (int xx = 0; xx < mGlobalSettings.TileSizeX; xx++){				
+					cPadding.push_back(getXY(yy, xx,  i + isOdd, cRowNum));					
+				}				
+			}			
+		}
+	}
+	return cPadding;	
+}
+
+
+void TileSet::resizeEdit(){
+	int isOdd = TTiles.size() % mSelEdWidth;
+	int cRowNum = TTiles.size() / mSelEdWidth;
+
+	int cPad = 0;
+
+	int dummy = 1;
+
+	if(isOdd){cPad = 1;}
+
+	SDL_Rect rEmpty;
+
+	rEmpty.x = 0;
+	rEmpty.y = 0;
+	rEmpty.w = 0;
+	rEmpty.h = 0;
+
+	mSelectionAreaX = mSelEdWidth * mGlobalSettings.TileSizeX;
+	mSelectionAreaY = mGlobalSettings.TileSizeY * (cRowNum + cPad);
+	//EditPixelAreas.resize(TTiles.size()*(mGlobalSettings.TileSizeX * mGlobalSettings.TileSizeX));
+	EditPixelAreas.resize(mSelectionAreaX*mSelectionAreaY);
+	for(int i = 0; i <  EditPixelAreas.size(); i++){
+		EditPixelAreas[i].x = rEmpty.x;
+		EditPixelAreas[i].y = rEmpty.y;
+		EditPixelAreas[i].w = rEmpty.w;
+		EditPixelAreas[i].h = rEmpty.h;
+	}
+	//mSelection.init(TTiles.size()*(mGlobalSettings.TileSizeX ), mGlobalSettings.TileSizeY, mCurEdScale, mCurEdScale, &mCurEdScale);
+	mSelection.clearSelection();
+	
+	//mSelection.init(mSelectionAreaX , mSelectionAreaY, mCurEdScale, mCurEdScale, &dummy);
+	mSelection.init(mSelectionAreaX , mSelectionAreaY, 1, 1, &mCurEdScale);
+
+
+}
+
+int TileSet::getXY(int xpos, int ypos, int cxpos, int cypos){
+	int index;
+	int lineL = mSelectionAreaX; //mSelEdWidth * mGlobalSettings.TileSizeX;
+	int fullL = lineL * mGlobalSettings.TileSizeY;
+	index = xpos + (ypos * lineL) + (cxpos * mGlobalSettings.TileSizeX) + (cypos * fullL);		
+	return index;
+}
+
+void TileSet::updateEditAreas(std::vector<SDL_Rect> &cTile, int xpos, int ypos){
+	for(int i = 0; i < mGlobalSettings.TileSizeY; i++){
+		for(int j = 0; j < mGlobalSettings.TileSizeX; j++){
+			EditPixelAreas[getXY(j,i, xpos, ypos)] = cTile[(i*mGlobalSettings.TileSizeX)+j];
+		}
+	}
+
+
+}
+
+
+int TileSet::renderEd(int xpos, int ypos){
+
+	if(bUpdateEditSelectionScale){
+		mCurEdScale = mGlobalSettings.mTileSetEditScale;
+	}
+
+	if(bUpdateEditSelection){
+		
+		bUpdateEditSelection = false;
+
+		if(mGlobalSettings.mTileSetEditWidth > TTiles.size()){
+			mSelEdWidth = TTiles.size();
+		} else {
+			mSelEdWidth = mGlobalSettings.mTileSetEditWidth;
+		}
+
+		//int cisOdd = TTiles.size() % mSelEdWidth;
+		//int ccRowNum = TTiles.size() / mSelEdWidth;
+
+		//int ccPad = 0;
+
+		//int cdummy = 1;
+
+		//if(cisOdd){ccPad = 1;}
+
+		//mSelectionAreaX = mSelEdWidth * mGlobalSettings.TileSizeX;
+		//mSelectionAreaY = mGlobalSettings.TileSizeY * (ccRowNum + ccPad);
+
+		resizeEdit();
+
+		mSelection.resize(mSelectionAreaX, mSelectionAreaY, 1, 1, &mCurEdScale);
+
+	} 
+
+	
+
+	int isOdd = TTiles.size() % mSelEdWidth;
+	int cRowNum = TTiles.size() / mSelEdWidth;
+
+	//int dummy = 1;
+
+	//std::cout << "Sel: " << mSelectionAreaX << "," << mSelectionAreaY << "," << mCurEdScale << std::endl;
+	//mSelection.resize(mSelEdWidth * mGlobalSettings.TileSizeX, mGlobalSettings.TileSizeY * (cRowNum + cPad), mCurEdScale, mCurEdScale, &dummy);
+	//mSelection.resize(mSelectionAreaX, mSelectionAreaY, mCurEdScale, mCurEdScale, &dummy);
+	//mSelection.resize(mSelectionAreaX, mSelectionAreaY, 1, 1, &mCurEdScale);
+	
+	SDL_Rect cBorder;
+		for(int i = 0; i < mSelEdWidth; i++){
+			for(int j = 0; j <  cRowNum; j++){
+				//TTiles[(j*mSelEdWidth)+i]->renderEdSel((xpos +  ((mCurEdScale*mGlobalSettings.TileSizeX))*i),ypos + (((mGlobalSettings.TileSizeY*mCurEdScale))*j), &mGlobalSettings.CurrentEditor->mPalette, mCurEdScale);
+				//updateEditAreas(TTiles[(j*mSelEdWidth)+i]->PixelAreas, i, j);
+					int cxpos = xpos +  (mCurEdScale*mGlobalSettings.TileSizeX)*i;
+					int cypos = ypos + (mGlobalSettings.TileSizeY*mCurEdScale)*j;
+
+					for(int ii=0; ii < mGlobalSettings.TileSizeY; ii++){
+						for(int jj=0; jj < mGlobalSettings.TileSizeX; jj++){
+							EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderTileEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, TTiles[(j*mSelEdWidth)+i]->getPixel(jj+(ii*mGlobalSettings.TileSizeX)), mCurEdScale); 			//mGlobalSettings.TilePixelSize * 
+						}
+					}
+
+			
+				if(mGlobalSettings.bShowTileGrid){				
+					cBorder.x = xpos + ((mCurEdScale*mGlobalSettings.TileSizeX)*i);
+					cBorder.y = ypos + ((mGlobalSettings.TileSizeY*mCurEdScale)*j);
+					cBorder.w = (mCurEdScale*mGlobalSettings.TileSizeX);
+					cBorder.h = (mCurEdScale*mGlobalSettings.TileSizeY);
+					Tile::renderSelection(cBorder, mGlobalSettings.DefaultHighlightColor);
+				}
+			}								
+		}	
+		if(isOdd){			
+			int i = mSelEdWidth;
+			for(int j = 0; j < isOdd; j++){
+				//TTiles[(i*cRowNum)+j]->renderEdSel((xpos+  ((mCurEdScale*mGlobalSettings.TileSizeX))*j),ypos + (((mGlobalSettings.TileSizeY*mCurEdScale))*cRowNum), &mGlobalSettings.CurrentEditor->mPalette, mCurEdScale);
+				//updateEditAreas(TTiles[(i*cRowNum)+j]->PixelAreas, j, cRowNum);
+
+					int cxpos = xpos +  (mCurEdScale*mGlobalSettings.TileSizeX)*j;
+					int cypos = ypos + (mGlobalSettings.TileSizeY*mCurEdScale)*cRowNum;
+
+					for(int ii=0; ii < mGlobalSettings.TileSizeY; ii++){
+						for(int jj=0; jj < mGlobalSettings.TileSizeX; jj++){
+							EditPixelAreas[getXY(jj,ii, j, cRowNum)] = mGlobalSettings.CurrentEditor->mPalette.renderTileEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, TTiles[(i*cRowNum)+j]->getPixel(jj+(ii*mGlobalSettings.TileSizeX)), mCurEdScale); 			//mGlobalSettings.TilePixelSize * 
+						}
+					}
+
+				if(mGlobalSettings.bShowTileGrid){	
+					cBorder.x = xpos + ((mCurEdScale*mGlobalSettings.TileSizeX)*j);
+					cBorder.y = ypos + ((mGlobalSettings.TileSizeY*mCurEdScale)*cRowNum);
+					cBorder.w = (mCurEdScale*mGlobalSettings.TileSizeX);
+					cBorder.h = (mCurEdScale*mGlobalSettings.TileSizeY);
+					Tile::renderSelection(cBorder, mGlobalSettings.DefaultHighlightColor);
+				}
+			}
+		}
+
+	
+
+	if(mSelection.bHasSelection){
+		mSelection.renderSelection(xpos, ypos);
+	}		
+
 	return 0;
 }
 

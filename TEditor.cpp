@@ -223,6 +223,23 @@ int TEditor::render(){
 		}
 	}
 
+	if(mCurMode == EMODE_TILESET){		
+		mTopBar.render();
+
+		mPalette.renderIm(100 + mGlobalSettings.CurrentEditor->mTileSet.mSelEdWidth * mGlobalSettings.CurrentEditor->mTileSet.mCurEdScale*mGlobalSettings.TileSizeX,50+mTopBar.mDialogHeight);			
+		mTileSet.renderEd(50,50+mTopBar.mDialogHeight);
+
+		if(mActiveDialog){			
+			mActiveDialog->render();
+		}
+		if(mActiveMessage){			
+			mActiveMessage->render();
+		}
+
+
+		mTileSet.mSelection.renderSelection();	 
+	}
+
 	if(mCurMode == EMODE_PALED){
 		mTopBar.render();
 		mPalette.renderEditor(100,100);
@@ -308,7 +325,10 @@ void TEditor::dropLastActionGroup(){
 	}
 	if(mCurMode == EMODE_TILE){
 		mTileSelectedTile->mActionStack.dropLastGroup();
-	}	
+	}
+	if(mCurMode == EMODE_TILESET){
+		mTileSet.mActionStack.dropLastGroup();
+	}
 }
 
 
@@ -319,6 +339,9 @@ void TEditor::undoLastActionGroup(){
 	if(mCurMode == EMODE_TILE){
 		mTileSelectedTile->mActionStack.undoLastActionGroup();
 	}
+	if(mCurMode == EMODE_TILESET){
+		mTileSet.mActionStack.undoLastActionGroup();
+	}
 }
 
 void TEditor::redoLastActionGroup(){
@@ -327,6 +350,9 @@ if(mCurMode == EMODE_MAP){
 	}
 	if(mCurMode == EMODE_TILE){
 		mTileSelectedTile->mActionStack.redoLastActionGroup();
+	}
+	if(mCurMode == EMODE_TILESET){
+		mTileSet.mActionStack.redoLastActionGroup();
 	}
 }
 
@@ -585,6 +611,25 @@ int TEditor::handleSelection(int SELMODE){
 		}
 	}
 
+	if(mCurMode == EMODE_TILESET){
+		switch (SELMODE)
+		{
+			case SELMODE_ALL:
+				mTileSet.mSelection.selectRange(0, mTileSet.mSelectionAreaX *  mTileSet.mSelectionAreaY);				
+				mTileSet.mSelection.removeRanges(mTileSet.getPadding());
+			break;
+			case SELMODE_NONE:
+				mTileSet.mSelection.clearSelection();
+			break;
+			case SELMODE_INVERT:
+				mTileSet.mSelection.invertSelection(0,  mTileSet.mSelectionAreaX *  mTileSet.mSelectionAreaY);
+				mTileSet.mSelection.removeRanges(mTileSet.getPadding());
+			break;
+			default:
+			break;
+		}
+	}
+
 	return 0;
 }
 
@@ -602,6 +647,10 @@ int TEditor::toggleSelectedTile(){
 			mGlobalSettings.bShowSelectedTile = !mGlobalSettings.bShowSelectedTile;
 			return 0;
 		}
+	}
+	if(mCurMode == EMODE_TILESET){		
+		mGlobalSettings.bShowTileGrid = !mGlobalSettings.bShowTileGrid;
+		return 0;		
 	}
 	return 1;
 }
@@ -637,7 +686,9 @@ int TEditor::flipSelectedTile(){
 
 int TEditor::replaceSelectedColor(int mx, int my){
 	
-	if(mGlobalSettings.bShowPixelType || mTileSelectedTile->mSelection.mSelected.size()){
+	if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE){
+
+		if(mGlobalSettings.bShowPixelType || mTileSelectedTile->mSelection.mSelected.size()){
 			int mOldColor = mColorSelected;
 			int tSel = searchRectsXY(mPalette.PixelAreas, mx, my);
 			if(tSel > -1){					
@@ -675,6 +726,12 @@ int TEditor::replaceSelectedColor(int mx, int my){
 				}
 			} 
 		}
+	}
+
+	if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET){
+
+	}
+
 
 	return 0;
 }
@@ -932,6 +989,51 @@ int TEditor::handleEMMAp(){
 }
 
 
+int TEditor::handleTileSetEdit(){
+
+	handlePalette();
+
+	if(leftMouseButtonDown && bLShiftIsDown && !mGlobalSettings.mio->WantCaptureMouse){
+		if(!mTileSet.mSelection.bIsSelecting){
+			mTileSet.mSelection.startSelection(cx, cy);	
+		} else {
+			mTileSet.mSelection.updateSelection(cx, cy);
+		}
+	} else {
+		if(mTileSet.mSelection.bIsSelecting){
+			mTileSet.mSelection.confirmSelection(mTileSet.EditPixelAreas, mTileSet.mCurEdScale,  mTileSet.mCurEdScale);
+		} 
+	}
+
+	if(leftMouseButtonDown && !bLShiftIsDown && !mGlobalSettings.mio->WantCaptureMouse){
+		int tSel = -1;		
+		tSel = mTileSet.mSelection.searchSelection(mTileSet.EditPixelAreas, cx, cy);
+		if(tSel > -1){
+			int tindex;
+			int ttile;
+			ttile = mTileSet.mSelection.getTileIndex(tSel, mTileSet.mSelectionAreaX, mTileSet.mSelectionAreaY,tindex);
+			
+			if(ttile > -1){
+				Tile* cSelectedTile = mTileSet.TTiles[ttile];
+
+				TEActionReplacePixel *mCurAction = new TEActionReplacePixel();
+				mCurAction->doAction(cSelectedTile, tindex, cSelectedTile->getPixel(tindex), mColorSelected, &mPalette);
+				
+				if(!(*mCurAction == *mTileSet.mActionStack.mLastAction)){
+       				mTileSet.mActionStack.newActionGroup();	
+       				mTileSet.mActionStack.addAction(mCurAction);
+       				mTileSet.mActionStack.mLastAction = mCurAction;
+       				mTileSet.mActionStack.redoClearStack();
+       			}
+			}
+			
+			//std::cout << "TileSet: " << tindex << std::endl;
+		}
+	}
+
+	return 0;
+}
+
 int TEditor::handleBrushes(){
 
 	if(mCurMode == EMODE_MAP){
@@ -1118,7 +1220,12 @@ int TEditor::handleEvents(){
 			}
 			if(mCurMode == EMODE_PALED){
 				handlePaletteEdit();
+			}
+			if(mCurMode == EMODE_TILESET){
+				handleTileSetEdit();
 			}		
+
+			
 	}
 
 
@@ -1220,7 +1327,8 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					if(mCurMode == EMODE_TILE) mGlobalSettings.bShowPixelType = !mGlobalSettings.bShowPixelType;					
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_p){
-		  			if(mCurMode == EMODE_TILE) mGlobalSettings.bShowPixelGrip = !mGlobalSettings.bShowPixelGrip;
+		  			if(mCurMode == EMODE_TILE) mGlobalSettings.bShowPixelGrid = !mGlobalSettings.bShowPixelGrid;
+					if(mCurMode == EMODE_TILESET) mGlobalSettings.bShowTilePixelGrid = !mGlobalSettings.bShowTilePixelGrid;
 	  			}	  			  		
 	  			if(cEvent->key.keysym.sym == SDLK_LCTRL){
 	  				bLCTRLisDown = true;
