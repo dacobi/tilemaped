@@ -152,6 +152,26 @@ class TEActionReplacePixels: public TEActionReplaceMany{
 };
 
 
+class TEActionReplacePixelsSel: public TEActionReplaceMany{
+	public:
+		~TEActionReplacePixelsSel(){};		
+		int mNewValue;
+		TPalette* mCurrentPalette;
+		TileSet *mTileSet;
+		void doAction(TileSet *cTileSet, TSelection &mSelect, int mAreaX, int mAreaY, int cNewColor, TPalette* mPal);	
+		
+		virtual bool doCompare(const TEAction& rhs){
+			const TEActionReplacePixelsSel* mrhs =  dynamic_cast<const TEActionReplacePixelsSel*>(&rhs); 
+			if(mrhs){
+				if((mNewValue == mrhs->mNewValue)){ // Not testing mOldValue
+					return compareSelection((TEActionReplaceMany*)mrhs);
+				}
+			}	
+			 return false;
+		}
+};
+
+
 class TEActionReplaceTiles: public TEActionReplaceMany{
 	public:	
 		~TEActionReplaceTiles(){};

@@ -259,10 +259,6 @@ int TSelection::getTileIndex(int index, int careax, int careay,int &tIndex){
 
     tIndex = tx + (ty * mGlobalSettings.TileSizeX);
 
-    std::cout << "Offset: " << offset << " : " << tx << "," << ty <<  std::endl;  
-
-    std::cout << "Tile: " << tTile << "," << tIndex << " : " << cx << "," << cy << std::endl;
-
     return tTile;
 }
 
@@ -273,8 +269,6 @@ int TSelection::getXYFromIndex(int index, int careax, int careay,int &mx, int &m
     
     my = index / careax;
     mx = index % careax;
-
-    //std::cout << "XY: " << mx << "," << my << " : " << index << "," << careax << "," << careay  << std::endl;  
 
     return 0;
 }

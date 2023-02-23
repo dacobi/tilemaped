@@ -110,6 +110,28 @@ void TEActionBrushPixels::doAction(Tile* cTile, TBrush &mBrush, TPalette* cPalet
 }
 
 
+void TEActionReplacePixelsSel::doAction(TileSet *cTileSet, TSelection &mSelect, int mAreaX, int mAreaY, int cNewColor, TPalette* mPal){
+	mNewValue = cNewColor;
+	mCurrentPalette = mPal;
+	mSelection = mSelect.mSelected;
+	mTileSet = cTileSet;
+	TEActionType=ACTION_PIXELSSEL;
+
+	int eindex = 0;
+
+	for(auto &mSelElement : mSelection){
+		if(mSelElement > -1){ 	
+				int tindex;
+				int tTile = mSelect.getTileIndex(mSelElement, mAreaX, mAreaY, tindex);
+				Tile *mTile = mTileSet->TTiles[tTile];
+				TEActionReplacePixel* newAction = new TEActionReplacePixel();							
+				newAction->doAction(mTile, tindex, mTile->getPixel(tindex), mNewValue, mCurrentPalette);
+				mSubActions.push_back(newAction);			
+		}
+		eindex++;
+	}
+}
+
 void TEActionBrushTiles::doAction(TileMap* cTileMap, TBrush &mBrush){
 	UUID = mBrush.UUID;
 	mNewValues = mBrush.mBrushElements;

@@ -227,13 +227,21 @@ int TEditor::render(){
 		mTopBar.render();
 
 		mPalette.renderIm(100 + mGlobalSettings.CurrentEditor->mTileSet.mSelEdWidth * mGlobalSettings.CurrentEditor->mTileSet.mCurEdScale*mGlobalSettings.TileSizeX,50+mTopBar.mDialogHeight);			
+		
+		if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
 		mTileSet.renderEd(50,50+mTopBar.mDialogHeight);
+		mColorSelectedTile->bPixelSelected = true;
 
 		if(mActiveDialog){			
 			mActiveDialog->render();
 		}
 		if(mActiveMessage){			
 			mActiveMessage->render();
+		}
+
+		if(mGlobalSettings.bShowProjectInfo){
+			mProjectInfo.update();
+			mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
 		}
 
 
@@ -729,7 +737,55 @@ int TEditor::replaceSelectedColor(int mx, int my){
 	}
 
 	if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET){
-
+		if(mGlobalSettings.bShowPixelType || mTileSet.mSelection.mSelected.size()){
+			int mOldColor = mColorSelected;
+			int tSel = searchRectsXY(mPalette.PixelAreas, mx, my);
+			if(tSel > -1){					
+				if(mTileSet.mSelection.mSelected.size()){
+					TEActionReplacePixelsSel* newAction = new TEActionReplacePixelsSel();
+					newAction->doAction(&mTileSet, mTileSet.mSelection, mTileSet.mSelectionAreaX, mTileSet.mSelectionAreaY, tSel, &mPalette);
+					if(!(newAction == mTileSet.mActionStack.mLastAction)){
+						mTileSet.mActionStack.mLastAction = newAction;
+						mTileSet.mActionStack.newActionGroup();
+						mTileSet.mActionStack.addSubActions(newAction->mSubActions);
+						mTileSet.mActionStack.redoClearStack();
+					}
+				} else {					
+					mTileSet.mActionStack.newActionGroup();
+					
+					TEActionReplacePixels* newAction;
+					bool bDidAction = false;
+					for(int tt = 0; tt < mTileSet.TTiles.size(); tt++){
+						std::vector<int> newSelection;
+						int cPixIndex = 0;
+						Tile* mTile =  mTileSet.TTiles[tt];
+						
+						for(int i = 0; i < (mGlobalSettings.TileSizeX *mGlobalSettings.TileSizeY); i++){
+							auto cPixel = mTile->getPixel(i);
+							if(cPixel == mOldColor){
+								newSelection.push_back(cPixIndex);
+							}
+							cPixIndex++;
+						}
+						if(newSelection.size()){
+							newAction = new TEActionReplacePixels();
+							newAction->doAction(mTile, newSelection, mOldColor, tSel, &mPalette);
+							//if(!(newAction == mTileSet.mActionStack.mLastAction)){							
+							mTileSet.mActionStack.addSubActions(newAction->mSubActions);
+							bDidAction = true;
+						
+							//}
+						}
+					}
+					if(bDidAction){
+						mTileSet.mActionStack.mLastAction = newAction;
+						mTileSet.mActionStack.redoClearStack();
+					} else {
+						mTileSet.mActionStack.dropLastGroup();
+					}
+				}
+			}
+		}
 	}
 
 
@@ -1031,6 +1087,32 @@ int TEditor::handleTileSetEdit(){
 		}
 	}
 
+
+	if((rightMouseButtonClicks && bLShiftIsDown) && !mGlobalSettings.mio->WantCaptureMouse){		
+		int tSel = -1;
+		tSel = searchRectsXY(mTileSet.EditPixelAreas, cx, cy);
+		if(tSel >-1){
+			mTileSet.mSelection.modifySelection(tSel);
+		}		
+	}
+
+	if(rightMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse  && !bLShiftIsDown){
+		int tSel = -1;
+		tSel = searchRectsXY(mTileSet.EditPixelAreas, cx, cy);
+		if(tSel >-1){
+			mColorSelectedTile->bPixelSelected = false;
+			int tindex;
+			int tTile;
+			tTile = mTileSet.mSelection.getTileIndex(tSel, mTileSet.mSelectionAreaX, mTileSet.mSelectionAreaY, tindex);
+			Tile *mTile = mTileSet.TTiles[tTile];
+			mColorSelected = (mTile->getPixel(tindex)+(mGlobalSettings.PaletteOffset*16));
+			mColorSelectedTile = mPalette.TPixels[mColorSelected];
+			mColorSelectedTile->bPixelSelected = true;
+			mTileSelectedTile->mSelection.cancelSelection();
+			mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor = true;
+		}
+	}
+
 	return 0;
 }
 
@@ -1324,7 +1406,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_s){
 					if(mCurMode == EMODE_MAP) mGlobalSettings.bShowTypeSelection = !mGlobalSettings.bShowTypeSelection;
-					if(mCurMode == EMODE_TILE) mGlobalSettings.bShowPixelType = !mGlobalSettings.bShowPixelType;					
+					if((mCurMode == EMODE_TILE) || (mCurMode == EMODE_TILESET)) mGlobalSettings.bShowPixelType = !mGlobalSettings.bShowPixelType;					
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_p){
 		  			if(mCurMode == EMODE_TILE) mGlobalSettings.bShowPixelGrid = !mGlobalSettings.bShowPixelGrid;

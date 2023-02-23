@@ -225,6 +225,18 @@ SDL_Rect TPixel::renderEdSel(int xpos, int ypos, int tscale, bool drawGrid){
 		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &CurrentArea);
 	}
 
+	if(bPixelSelected){
+		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.AltHighlightColor.r, mGlobalSettings.AltHighlightColor.g, mGlobalSettings.AltHighlightColor.b, 0xff); 
+		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &CurrentArea);
+		SDL_Rect sndRect = CurrentArea;
+		sndRect.x = sndRect.x-1;
+		sndRect.y = sndRect.y-1;
+		sndRect.w = sndRect.w+2;
+		sndRect.h = sndRect.h+2;
+
+		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &sndRect);
+    }
+
     return CurrentArea;
 }
 
@@ -1650,13 +1662,6 @@ int TileSet::renderEd(int xpos, int ypos){
 
 	int isOdd = TTiles.size() % mSelEdWidth;
 	int cRowNum = TTiles.size() / mSelEdWidth;
-
-	//int dummy = 1;
-
-	//std::cout << "Sel: " << mSelectionAreaX << "," << mSelectionAreaY << "," << mCurEdScale << std::endl;
-	//mSelection.resize(mSelEdWidth * mGlobalSettings.TileSizeX, mGlobalSettings.TileSizeY * (cRowNum + cPad), mCurEdScale, mCurEdScale, &dummy);
-	//mSelection.resize(mSelectionAreaX, mSelectionAreaY, mCurEdScale, mCurEdScale, &dummy);
-	//mSelection.resize(mSelectionAreaX, mSelectionAreaY, 1, 1, &mCurEdScale);
 	
 	SDL_Rect cBorder;
 		for(int i = 0; i < mSelEdWidth; i++){
