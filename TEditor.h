@@ -97,6 +97,7 @@ class TEditor{
 		int mTileMapScrollX = 0;
 		int mTileMapScrollY = 0;
 		int mTileSetScrollY = 0;
+		int mTileSetScrollX = 0;		
 		int applyScroll(int mx,int my, int amount, int xamount);
 		ImWinMouseState ImButtonsTileSet;		
 		ImWinMouseState ImButtonsPalette;		

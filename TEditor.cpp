@@ -229,7 +229,7 @@ int TEditor::render(){
 		mPalette.renderIm(100 + mGlobalSettings.CurrentEditor->mTileSet.mSelEdWidth * mGlobalSettings.CurrentEditor->mTileSet.mCurEdScale*mGlobalSettings.TileSizeX,50+mTopBar.mDialogHeight);			
 		
 		if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
-		mTileSet.renderEd(50,50+mTopBar.mDialogHeight);
+		mTileSet.renderEd(mTileSetScrollX + 50,mTileSetScrollY + 50+mTopBar.mDialogHeight);
 		mColorSelectedTile->bPixelSelected = true;
 
 		if(mActiveDialog){			
@@ -1061,30 +1061,56 @@ int TEditor::handleTileSetEdit(){
 		} 
 	}
 
-	if(leftMouseButtonDown && !bLShiftIsDown && !mGlobalSettings.mio->WantCaptureMouse){
-		int tSel = -1;		
-		tSel = mTileSet.mSelection.searchSelection(mTileSet.EditPixelAreas, cx, cy);
-		if(tSel > -1){
-			int tindex;
-			int ttile;
-			ttile = mTileSet.mSelection.getTileIndex(tSel, mTileSet.mSelectionAreaX, mTileSet.mSelectionAreaY,tindex);
-			
-			if(ttile > -1){
-				Tile* cSelectedTile = mTileSet.TTiles[ttile];
+	
 
-				TEActionReplacePixel *mCurAction = new TEActionReplacePixel();
-				mCurAction->doAction(cSelectedTile, tindex, cSelectedTile->getPixel(tindex), mColorSelected, &mPalette);
-				
-				if(!(*mCurAction == *mTileSet.mActionStack.mLastAction)){
-       				mTileSet.mActionStack.newActionGroup();	
-       				mTileSet.mActionStack.addAction(mCurAction);
-       				mTileSet.mActionStack.mLastAction = mCurAction;
-       				mTileSet.mActionStack.redoClearStack();
-       			}
-			}
+	if(leftMouseButtonDown && !bLShiftIsDown && !mGlobalSettings.mio->WantCaptureMouse){
+		if(bLCTRLisDown){
+			if(bTileSetGrapped){
+				mTileSetScrollX += rx;
+				mTileSetScrollY += ry;;
+			} else {
+				bTileSetGrapped = true;						
+			}				
+		} else {
+			int tSel = -1;		
+			tSel = mTileSet.mSelection.searchSelection(mTileSet.EditPixelAreas, cx, cy);
+			if(tSel > -1){
+				int tindex;
+				int ttile;
+				ttile = mTileSet.mSelection.getTileIndex(tSel, mTileSet.mSelectionAreaX, mTileSet.mSelectionAreaY,tindex);
 			
-			//std::cout << "TileSet: " << tindex << std::endl;
+				if(ttile > -1){
+					Tile* cSelectedTile = mTileSet.TTiles[ttile];
+
+					TEActionReplacePixel *mCurAction = new TEActionReplacePixel();
+					mCurAction->doAction(cSelectedTile, tindex, cSelectedTile->getPixel(tindex), mColorSelected, &mPalette);
+				
+					if(!(*mCurAction == *mTileSet.mActionStack.mLastAction)){
+       					mTileSet.mActionStack.newActionGroup();	
+       					mTileSet.mActionStack.addAction(mCurAction);
+       					mTileSet.mActionStack.mLastAction = mCurAction;
+       					mTileSet.mActionStack.redoClearStack();
+       				}
+				}			
+			}				
 		}
+	}
+
+	int tileSetWidthX = (mTileSet.mSelectionAreaX * mTileSet.mCurEdScale) +  mGlobalSettings.TopBarHeight;
+	int tileSetWidthY = (mTileSet.mSelectionAreaY * mTileSet.mCurEdScale) +  mGlobalSettings.TopBarHeight;
+
+	if(mTileSetScrollX > 0){mTileSetScrollX = 0;}
+	if(mTileSetScrollY > 0){mTileSetScrollY = 0;}
+	
+	if(mTileSetScrollX < -(tileSetWidthX - (mGlobalSettings.WindowWidth- 50))){mTileSetScrollX = -(tileSetWidthX - (mGlobalSettings.WindowWidth -50));}
+	if(mTileSetScrollY < -(tileSetWidthY - (mGlobalSettings.WindowHeight - 50- mGlobalSettings.TopBarHeight))){mTileSetScrollY = -(tileSetWidthY - (mGlobalSettings.WindowHeight -50 - mGlobalSettings.TopBarHeight));}
+	
+	if(tileSetWidthX < (mGlobalSettings.WindowWidth)){
+		mTileSetScrollX = 0;// -(tileSetWidthX - (mGlobalSettings.WindowWidth))/2;
+	}
+	
+	if(tileSetWidthY < (mGlobalSettings.WindowHeight-mGlobalSettings.TopBarHeight)){
+		mTileSetScrollY = 0;// -(tileSetWidthY - (mGlobalSettings.WindowHeight-mGlobalSettings.TopBarHeight))/2;
 	}
 
 
@@ -1226,6 +1252,7 @@ int TEditor::handleEvents(){
 	} else {		
 		leftMouseButtonDown = false;		
 		bTileMapGrapped = false;
+		bTileSetGrapped = false;
 	}
 
 	if(mButtonState & SDL_BUTTON(SDL_BUTTON_RIGHT)){
