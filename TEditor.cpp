@@ -227,7 +227,7 @@ int TEditor::render(){
 		mTopBar.render();
 
 		if(mCurrentBrushPixelTileSet){
-			mCurrentBrushPixelTileSet->getBrushSelection(cx, cy, mTileSelectedTile->PixelAreas);
+			mCurrentBrushPixelTileSet->getBrushSelection(cx, cy, mTileSet.EditPixelAreas);
 		}
 
 		mPalette.renderIm(100 + (mGlobalSettings.CurrentEditor->mTileSet.mCurEdScale * mGlobalSettings.CurrentEditor->mTileSet.mSelectionAreaX),50+mTopBar.mDialogHeight);			
@@ -282,10 +282,12 @@ int TEditor::setMode(int newMode){
 
 	if(newMode == EMODE_TILE){
 		mBrushesPixel.setBrushDeltas(mGlobalSettings.TilePixelSize, mGlobalSettings.TilePixelSize, &mGlobalSettings.mTileEdScale, mGlobalSettings.mTileEdScale);
+		mBrushesPixel.bIsShown = &bShowBrushesPixel;
 	}
 
 	if(newMode == EMODE_TILESET){
 		mBrushesPixel.setBrushDeltas(1, 1, &mTileSet.mCurEdScale, mGlobalSettings.mTileEdScale * mGlobalSettings.TilePixelSize);
+		mBrushesPixel.bIsShown = &bShowBrushesPixelTileSet;
 	}
 
 	mLastMode = mCurMode;
@@ -340,8 +342,25 @@ int TEditor::applyScroll(int mx,int my, int amount, int xamount){
 				if(amount > 0){mGlobalSettings.TileMapScale++; if(mGlobalSettings.TileMapScale > 10){mGlobalSettings.TileMapScale=10; }}	
 				if(amount < 0){mGlobalSettings.TileMapScale--; if(mGlobalSettings.TileMapScale < 1){mGlobalSettings.TileMapScale=1; }}
 		}
-	} else {
-	
+	} 
+
+	if(mCurMode == EMODE_TILESET){ 		
+		if(!mGlobalSettings.mio->WantCaptureMouse){
+			if(amount > 0){
+				mGlobalSettings.mTileSetEditScale++; 
+				mTileSet.bUpdateEditSelectionScale = true;
+				if(mGlobalSettings.mTileSetEditScale > 24){
+					mGlobalSettings.mTileSetEditScale = 24; 
+				}
+			}	
+			if(amount < 0){
+				mGlobalSettings.mTileSetEditScale--; 
+				mTileSet.bUpdateEditSelectionScale = true;
+				if(mGlobalSettings.mTileSetEditScale < 2){
+					mGlobalSettings.mTileSetEditScale = 2; 
+				}
+			}
+		}
 	}
 	
 	return 0;
@@ -1104,7 +1123,18 @@ int TEditor::handleTileSetEdit(){
 				bTileSetGrapped = true;						
 			}				
 		} else {
-			int tSel = -1;		
+			int tSel = -1;
+
+			if(mCurrentBrushPixelTileSet){
+				TEActionBrushPixelsTileSet* newAction = new TEActionBrushPixelsTileSet();
+				newAction->doAction(&mTileSet, *mCurrentBrushPixelTileSet, mTileSet.mSelectionAreaX, mTileSet.mSelectionAreaY,  &mPalette);
+				if(!(*newAction == *mTileSet.mActionStack.mLastAction)){								
+					mTileSet.mActionStack.mLastAction = newAction;
+					mTileSet.mActionStack.newActionGroup();
+					mTileSet.mActionStack.addSubActions(newAction->mSubActions);
+       				mTileSet.mActionStack.redoClearStack();
+				}
+		} else {
 			tSel = mTileSet.mSelection.searchSelection(mTileSet.EditPixelAreas, cx, cy);
 			if(tSel > -1){
 				int tindex;
@@ -1125,6 +1155,7 @@ int TEditor::handleTileSetEdit(){
        				}
 				}			
 			}				
+		}
 		}
 	}
 

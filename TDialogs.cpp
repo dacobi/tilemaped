@@ -230,7 +230,7 @@ int TBDialog::render(){
 					if(ImGui::SliderInt("Grid Width", &mGlobalSettings.mTileSetEditWidth, 2, 16)){
 						mGlobalSettings.CurrentEditor->mTileSet.bUpdateEditSelection = true;
 					}
-					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mTileSetEditScale, 2, 16)){
+					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mTileSetEditScale, 2, 24)){
 						mGlobalSettings.CurrentEditor->mTileSet.bUpdateEditSelectionScale = true;
 					}
 					ImGui::EndMenu();

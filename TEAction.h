@@ -231,6 +231,26 @@ class TEActionBrushPixels: public TEActionReplaceMany{
 		}
 };
 
+class TEActionBrushPixelsTileSet: public TEActionReplaceMany{
+	public:	
+		~TEActionBrushPixelsTileSet(){};		
+		std::vector<int> mNewValues;
+		int UUID;
+		TileSet *mTileSet;
+		TPalette* mPalette;
+		void doAction(TileSet* cTileSet, TBrush &mBrush, int mAreaX, int mAreaY, TPalette* cPalette);	
+		
+		virtual bool doCompare(const TEAction& rhs){
+			const TEActionBrushPixelsTileSet* mrhs =  dynamic_cast<const TEActionBrushPixelsTileSet*>(&rhs); 
+			if(mrhs){
+				if((mNewValues == mrhs->mNewValues) && (UUID ==mrhs->UUID )){ // Not testing mOldValue
+					return compareSelection((TEActionReplaceMany*)mrhs);
+				}
+			}	
+			 return false;
+		}
+};
+
 
 
 class TEActionAddTile: public TEAction{

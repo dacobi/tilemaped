@@ -1298,7 +1298,7 @@ void Tile::renderEd(int xpos, int ypos, TPalette* tpal){
 					if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel->findInSelection((j+(i*mGlobalSettings.TileSizeX))) != -1){
 						int findex = mGlobalSettings.CurrentEditor->mCurrentBrushPixel->findInSelection((j+(i*mGlobalSettings.TileSizeX)));
 						if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel->mBrushElements[findex] != -1){
-							tpal->renderTileEd(xpos + (mGlobalSettings.TilePixelSize * mGlobalSettings.mTileEdScale)*j, ypos + (mGlobalSettings.TilePixelSize * mGlobalSettings.mTileEdScale)*i, mGlobalSettings.CurrentEditor->mCurrentBrushPixel->mBrushElements[findex]); 			
+							tpal->renderTileEd(xpos + (mGlobalSettings.TilePixelSize * mGlobalSettings.mTileEdScale)*j, ypos + (mGlobalSettings.TilePixelSize * mGlobalSettings.mTileEdScale)*i, mGlobalSettings.CurrentEditor->mCurrentBrushPixel->mBrushElements[findex]); 							
 						}
 					}
 				}
@@ -1666,8 +1666,6 @@ int TileSet::renderEd(int xpos, int ypos){
 	SDL_Rect cBorder;
 		for(int i = 0; i < mSelEdWidth; i++){
 			for(int j = 0; j <  cRowNum; j++){
-				//TTiles[(j*mSelEdWidth)+i]->renderEdSel((xpos +  ((mCurEdScale*mGlobalSettings.TileSizeX))*i),ypos + (((mGlobalSettings.TileSizeY*mCurEdScale))*j), &mGlobalSettings.CurrentEditor->mPalette, mCurEdScale);
-				//updateEditAreas(TTiles[(j*mSelEdWidth)+i]->PixelAreas, i, j);
 					int cxpos = xpos +  (mCurEdScale*mGlobalSettings.TileSizeX)*i;
 					int cypos = ypos + (mGlobalSettings.TileSizeY*mCurEdScale)*j;
 
@@ -1689,10 +1687,7 @@ int TileSet::renderEd(int xpos, int ypos){
 		}	
 		if(isOdd){			
 			int i = mSelEdWidth;
-			for(int j = 0; j < isOdd; j++){
-				//TTiles[(i*cRowNum)+j]->renderEdSel((xpos+  ((mCurEdScale*mGlobalSettings.TileSizeX))*j),ypos + (((mGlobalSettings.TileSizeY*mCurEdScale))*cRowNum), &mGlobalSettings.CurrentEditor->mPalette, mCurEdScale);
-				//updateEditAreas(TTiles[(i*cRowNum)+j]->PixelAreas, j, cRowNum);
-
+			for(int j = 0; j < isOdd; j++){			
 					int cxpos = xpos +  (mCurEdScale*mGlobalSettings.TileSizeX)*j;
 					int cypos = ypos + (mGlobalSettings.TileSizeY*mCurEdScale)*cRowNum;
 
@@ -1712,6 +1707,52 @@ int TileSet::renderEd(int xpos, int ypos){
 			}
 		}
 
+		if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet && !mGlobalSettings.CurrentEditor->mBrushesPixel.bIsEditing){
+			if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->mSelected.size()){
+				for(int i = 0; i < mSelEdWidth; i++){
+					for(int j = 0; j <  cRowNum; j++){
+						int cxpos = xpos +  (mCurEdScale*mGlobalSettings.TileSizeX)*i;
+						int cypos = ypos + (mGlobalSettings.TileSizeY*mCurEdScale)*j;
+
+						for(int ii=0; ii < mGlobalSettings.TileSizeY; ii++){
+							for(int jj=0; jj < mGlobalSettings.TileSizeX; jj++){
+								if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->findInSelection(getXY(jj,ii, i, j)) != -1){
+									int findex = mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->findInSelection(getXY(jj,ii, i, j));
+									if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->mBrushElements[findex] != -1){
+										mGlobalSettings.CurrentEditor->mPalette.renderTileEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->mBrushElements[findex], mCurEdScale); 			//mGlobalSettings.TilePixelSize * 
+									}
+								}
+							}					
+						}								
+					}	
+				}
+		
+			if(isOdd){			
+				int i = mSelEdWidth;
+				for(int j = 0; j < isOdd; j++){			
+					int cxpos = xpos +  (mCurEdScale*mGlobalSettings.TileSizeX)*j;
+					int cypos = ypos + (mGlobalSettings.TileSizeY*mCurEdScale)*cRowNum;
+
+					for(int ii=0; ii < mGlobalSettings.TileSizeY; ii++){
+						for(int jj=0; jj < mGlobalSettings.TileSizeX; jj++){
+							if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->findInSelection(getXY(jj,ii, j, cRowNum)) != -1){
+									int findex = mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->findInSelection(getXY(jj,ii, j, cRowNum));
+									if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->mBrushElements[findex] != -1){
+										mGlobalSettings.CurrentEditor->mPalette.renderTileEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->mBrushElements[findex], mCurEdScale); 			//mGlobalSettings.TilePixelSize * 
+									}
+								}
+
+							//EditPixelAreas[getXY(jj,ii, j, cRowNum)] = mGlobalSettings.CurrentEditor->mPalette.renderTileEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, TTiles[(i*cRowNum)+j]->getPixel(jj+(ii*mGlobalSettings.TileSizeX)), mCurEdScale); 			//mGlobalSettings.TilePixelSize * 
+						}
+					}
+
+					
+			}
+		}
+
+			
+		}
+		}
 	
 
 	if(mSelection.bHasSelection){
