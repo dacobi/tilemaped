@@ -133,8 +133,16 @@ int TSettings::initSettings(){
 		return 1;
 	}
 
-    //SDL_WindowFlags window_flags = (SDL_WindowFlags)( 0);// SDL_WINDOW_SHOWN ); // SDL_WINDOW_RESIZABLE |
-	TWindow = SDL_CreateWindow( "Tilemaped", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WindowWidth, WindowHeight, SDL_WINDOW_SHOWN);
+    SDL_WindowFlags window_flags;
+		
+	if(!bRenderingD3D){
+		window_flags = (SDL_WindowFlags)( SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL );
+	} else {
+		window_flags = (SDL_WindowFlags)( SDL_WINDOW_SHOWN );
+	}
+
+
+	TWindow = SDL_CreateWindow( "Tilemaped", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WindowWidth, WindowHeight, window_flags);
 	if( TWindow == NULL ){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
 		return 1;
