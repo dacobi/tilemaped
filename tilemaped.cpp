@@ -148,8 +148,6 @@ int TSettings::initSettings(){
 		return 1;
 	}
 
-	//SDL_SetWindowSize(TWindow, WindowWidth, WindowHeight);
-
 	Uint32 mFlags = 0;
 
 	if(bSoftwareRendering){
@@ -171,7 +169,7 @@ int TSettings::initSettings(){
 		std::cout << "No VSYNC"<< std::endl;
 	}
 
-	TRenderer = SDL_CreateRenderer( TWindow, -1, mFlags);// SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+	TRenderer = SDL_CreateRenderer( TWindow, -1, mFlags);
 	if( TRenderer == NULL ){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
 		return 1;
@@ -180,7 +178,7 @@ int TSettings::initSettings(){
 	SDL_RendererInfo rendererInfo;
   	SDL_GetRendererInfo(TRenderer, &rendererInfo);
   	std::cout << "Renderer: " <<  rendererInfo.name << std::endl;
-	
+		
 	SDL_SetRenderDrawColor( TRenderer, mGlobalSettings.DefaultHighlightColor.r,mGlobalSettings.DefaultHighlightColor.g,mGlobalSettings.DefaultHighlightColor.b,0xff);
 
 	int imgFlags = IMG_INIT_PNG;
@@ -389,7 +387,7 @@ void printUsage(){
 		std::cout << "TilemapEd Version: " << Tilemaped_Version  << std::endl;
 		std::cout << std::endl;	
 		std::cout << "Command Line Usage:" << std::endl;
-		std::cout << "tilemaped [ --software --novsync ]" << std::endl;		
+		std::cout << "tilemaped [ --d3d, --software, --novsync ]" << std::endl;		
 		std::cout << "tilemaped -o <folder>" << std::endl;		
 		std::cout << "tilemaped -n <mapwidth> <mapheight> <tilewidth> <tileheight> <folder> [ -p <palette file> ]" << std::endl;
 		std::cout << "tilemaped -c <Gimp Palette> <palfile.bin>" << std::endl;		
@@ -596,10 +594,7 @@ int parseArgs(int argc, char *argv[]){
 int main( int argc, char* args[] )
 {
 	TEditor mEditor;
-	//std::stringstream mConvert;
-	//int nTileSize = 0;
-	//int nMapSizeX = 0;
-	//int nMapSizeY = 0;	
+	
 	bool mCreateNewProject=false;
 	bool bRunSoftware = false;
 	bool bNoVsync = false;
@@ -624,20 +619,20 @@ int main( int argc, char* args[] )
 		return 0;
 	}
 
-	if((argvals == 1) || (argvals == 8) || (argvals == 16) || (argvals == 24 ) || (argvals == 64)){
+	if(!(argvals & 0x2) && !(argvals & 0x4) ){ //|| (argvals == 16) || (argvals == 24 ) || (argvals == 64)){
 		mGlobalSettings.bRunningOCD = true;
 		bRunSoftware = argvals & 0x8;
 		bNoVsync = argvals & 0x10;
 		bRenderD3D = argvals & 0x40;
 	}
 
-	if((argvals == 2) || (argvals == 10) || (argvals == 18) || (argvals == 26) || (argvals == 66)){
+	if((argvals & 0x2)){ // || (argvals == 10) || (argvals == 18) || (argvals == 26) || (argvals == 66)){
 		bRunSoftware = argvals & 0x8;
 		bNoVsync = argvals & 0x10;
 		bRenderD3D = argvals & 0x40;
 	}
 
-	if((argvals == 4) || (argvals == 12) || (argvals == 20) || (argvals == 28) || (argvals == 68)){
+	if((argvals & 0x4)){ // || (argvals == 12) || (argvals == 20) || (argvals == 28) || (argvals == 68)){
 		mCreateNewProject = true;
 		bRunSoftware = argvals & 0x8;
 		bNoVsync = argvals & 0x10;
