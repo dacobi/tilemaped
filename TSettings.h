@@ -161,6 +161,8 @@ class TSettings{
 		int mSelectionMode = 1;
 		bool bSoftwareRendering = false;
 		bool bNoVSync = false;
+		bool bRenderingD3D = false;
+		
 };
 
 enum {

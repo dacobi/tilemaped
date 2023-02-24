@@ -133,14 +133,14 @@ int TSettings::initSettings(){
 		return 1;
 	}
 
-    SDL_WindowFlags window_flags = (SDL_WindowFlags)( 0);// SDL_WINDOW_SHOWN ); // SDL_WINDOW_RESIZABLE |
-	TWindow = SDL_CreateWindow( "Tilemaped", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WindowWidth, WindowHeight, window_flags);
+    //SDL_WindowFlags window_flags = (SDL_WindowFlags)( 0);// SDL_WINDOW_SHOWN ); // SDL_WINDOW_RESIZABLE |
+	TWindow = SDL_CreateWindow( "Tilemaped", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WindowWidth, WindowHeight, SDL_WINDOW_SHOWN);
 	if( TWindow == NULL ){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
 		return 1;
 	}
 
-	SDL_SetWindowSize(TWindow, WindowWidth, WindowHeight);
+	//SDL_SetWindowSize(TWindow, WindowWidth, WindowHeight);
 
 	Uint32 mFlags = 0;
 
@@ -149,7 +149,12 @@ int TSettings::initSettings(){
 		std::cout << "Software Rendering"<< std::endl;
 	} else {		
 		mFlags += SDL_RENDERER_ACCELERATED;
-		std::cout << "Accelerated Rendering"<< std::endl;
+		if(bRenderingD3D){
+			SDL_SetHint(SDL_HINT_RENDER_DRIVER, "direct3d");
+		} else {
+			SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+		}
+		std::cout << "Accelerated Rendering: "<< bRenderingD3D << std::endl;
 	}
 
 	if(!bNoVSync){
@@ -163,6 +168,10 @@ int TSettings::initSettings(){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
 		return 1;
 	}
+
+	SDL_RendererInfo rendererInfo;
+  	SDL_GetRendererInfo(TRenderer, &rendererInfo);
+  	std::cout << "Renderer: " <<  rendererInfo.name << std::endl;
 	
 	SDL_SetRenderDrawColor( TRenderer, mGlobalSettings.DefaultHighlightColor.r,mGlobalSettings.DefaultHighlightColor.g,mGlobalSettings.DefaultHighlightColor.b,0xff);
 
@@ -560,6 +569,10 @@ int parseArgs(int argc, char *argv[]){
 			argpos++;
 			if(!(returnval & 0x10)) returnval += 16;
 			continue;	
+		} else 	if(std::string(argv[argpos]) == "--d3d"){
+			argpos++;
+			if(!(returnval & 0x40))	returnval += 64;
+			continue;	
 		}
 		
 		looptime--;
@@ -582,6 +595,7 @@ int main( int argc, char* args[] )
 	bool mCreateNewProject=false;
 	bool bRunSoftware = false;
 	bool bNoVsync = false;
+	bool bRenderD3D = false;
 	
 	int argvals = parseArgs(argc, args);
 	
@@ -602,24 +616,28 @@ int main( int argc, char* args[] )
 		return 0;
 	}
 
-	if((argvals == 1) || (argvals == 8) || (argvals == 16) || (argvals == 24)){
+	if((argvals == 1) || (argvals == 8) || (argvals == 16) || (argvals == 24 ) || (argvals == 64)){
 		mGlobalSettings.bRunningOCD = true;
 		bRunSoftware = argvals & 0x8;
 		bNoVsync = argvals & 0x10;
+		bRenderD3D = argvals & 0x40;
 	}
 
-	if((argvals == 2) || (argvals == 10) || (argvals == 18) || (argvals == 26)){
+	if((argvals == 2) || (argvals == 10) || (argvals == 18) || (argvals == 26) || (argvals == 66)){
 		bRunSoftware = argvals & 0x8;
 		bNoVsync = argvals & 0x10;
+		bRenderD3D = argvals & 0x40;
 	}
 
-	if((argvals == 4) || (argvals == 12) || (argvals == 20) || (argvals == 28)){
+	if((argvals == 4) || (argvals == 12) || (argvals == 20) || (argvals == 28) || (argvals == 68)){
 		mCreateNewProject = true;
 		bRunSoftware = argvals & 0x8;
 		bNoVsync = argvals & 0x10;
+		bRenderD3D = argvals & 0x40;
 	}
 
 	mGlobalSettings.bSoftwareRendering = bRunSoftware;
+	mGlobalSettings.bRenderingD3D = bRenderD3D;
 	mGlobalSettings.bNoVSync = bNoVsync;
 
 	if( mGlobalSettings.initSettings() ){
