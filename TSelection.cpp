@@ -28,11 +28,8 @@ int TSelection::addToSelection(int item){
 int TSelection::removeFromSelection(int item){
     int tSel = findInSelection(item);
     if(tSel != -1){
-        mSelected.erase(mSelected.begin() + tSel);
-        //std::cout << "removing: " << item << std::endl;
+        mSelected.erase(mSelected.begin() + tSel);        
         return 0;
-    } else {
-        //std::cout << "NOT FOUND!: " << item << std::endl;
     }
     return 1;
 }
@@ -124,10 +121,8 @@ int TSelection::getSelection(std::vector<SDL_Rect> &sRects, SDL_Rect &cSel, int 
     int item = -1;
 
     for(int i = 0; i <= hStep; i++){
-        for(int j = 0; j <= wStep; j++){
-            //std::cout << "X: " << cStepX << " Y: " <<  cStepY  << std::endl;
-            if((item = searchSelection(sRects, cSel.x + cStepX, cSel.y + cStepY)) != -1){
-                //std::cout << "item: " << item << std::endl; 
+        for(int j = 0; j <= wStep; j++){            
+            if((item = searchSelection(sRects, cSel.x + cStepX, cSel.y + cStepY)) != -1){             
                 if(findInSelection(item) == -1){
                       addToSelection(item);                      
                 }
@@ -343,24 +338,14 @@ int TSelection::calcSelectionBorder(){
 
 int TBrush::configBrush(int nWidth, int nHeight, int bType, TBrushList* cParent){
     mBrushWidth = nWidth;
-    mBrushHeight = nHeight;
-    //mRenderScale = nRenderScale;
+    mBrushHeight = nHeight;    
     mParent = cParent;
     mBrushType = bType;
-    //if(bType == TBRUSH_TILE){
-    //    setBrushDeltas(mGlobalSettings.TileSizeX, mGlobalSettings.TileSizeY);
-    //} else if (bType == TBRUSH_PIXEL) {
-    //    setBrushDeltas(mGlobalSettings.TilePixelSize, mGlobalSettings.TilePixelSize);
-    //} else {
-    //    std::cout << "Error Creating Brush!" << std::endl;
-    //    return 1;
-    //} 
-
+     
     UUID = rand();
 
     mBrushElements.resize(mBrushWidth*mBrushHeight, -1);
     mElementProps.resize(mBrushWidth*mBrushHeight);
-
 
     return 0;
 }

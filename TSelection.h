@@ -67,12 +67,8 @@ class TBrush: public TSelection{
         int mBrushWidth = 1;
         int mBrushHeight = 1;
         int mLastClickX;
-        int mLastClickY;
-        //int mDeltaBaseX;
-        //int mDeltaBaseY;        
-        //int *mDeltaScaleY;
-        int mCursorPos=0;
-        //int mRenderScale;
+        int mLastClickY;        
+        int mCursorPos=0;        
         ImVec2 mWinSize;
         ImVec2 mWinPos;
         bool bIsSelected = false;
@@ -84,8 +80,7 @@ class TBrush: public TSelection{
         int prevElement();
         int nextLine();
         int prevLine();
-        int configBrush(int nWidth, int nHeight, int bType, TBrushList *cParent);
-        //int setBrushDeltas(int nDeltaX, int nDeltaY);
+        int configBrush(int nWidth, int nHeight, int bType, TBrushList *cParent);        
         int getBrushSelection(int bx, int by, std::vector<SDL_Rect> &sRects);
         int renderSelection();
         SDL_Rect renderIm(int xpos, int ypos);
@@ -125,8 +120,7 @@ class TBrushList{
         TBrush* getNextBrush();
         int addBrush(int sizex, int sizey);
         int addBrushElement(int element);
-        int removeBrush();
-        //int renderIm(int xpos, int ypos);
+        int removeBrush();        
         int renderIm();
         int saveToFile(std::string cBrushPath);
         int loadFromFile(std::string cBrushPath);
