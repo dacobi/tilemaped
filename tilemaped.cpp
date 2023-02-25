@@ -135,10 +135,10 @@ int TSettings::initSettings(){
 
     SDL_WindowFlags window_flags;
 		
-	if(!bRenderingD3D){
-		window_flags = (SDL_WindowFlags)( SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL );
-	} else {
+	if(bRenderingD3D || bSoftwareRendering){
 		window_flags = (SDL_WindowFlags)( SDL_WINDOW_SHOWN );
+	} else {		
+		window_flags = (SDL_WindowFlags)( SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL );
 	}
 
 
