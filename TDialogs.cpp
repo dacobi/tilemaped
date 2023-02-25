@@ -1109,14 +1109,14 @@ int ITSDialog::render(){
 
 	ImGui::Begin("Import TileSet", NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
     		
-	ImGui::Text("Import TileSet from project file, bitmap or RAW");
+	ImGui::Text("Import TileSet from Project file or PNG");
 	
 	mTextInput.render();
 
 	if (ImGui::Button("Choose TileSet File")){
 		Dialog::render();
 		ImGui::SetNextWindowSize(ImVec2(800, 600));
-    	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyTileSet", "Choose TileSet File", ".bin,.png,.data,.raw", ".");
+    	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyTileSet", "Choose TileSet File", ".bin,.png", ".");
 	}
   
   	// display
