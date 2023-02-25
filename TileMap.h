@@ -143,6 +143,7 @@ class TileSet{
 		Tile* createNewFromBuffer(std::vector<unsigned char> &newBuf, TPalette* tpal);
 		Tile* createNewFromFile(std::string newPAth, TPalette* tpal);
 		int importFile(std::string tpath,std::string tfile, TPalette* tpal);
+		int importPNG(SDL_Surface *cTiles, TPalette* tpal);
 		int importTileSet(std::string cTilePath, std::vector<Tile*> &cNewTiles);
 		void dropLastTile();
 		int deleteTile(int cDropTile);

@@ -1369,12 +1369,20 @@ int TileSet::importTileSet(std::string cTilePath, std::vector<Tile*> &cNewTiles)
 			return 1;
 		}
 
+		int mTileNum = TTiles.size();
+
 		SDL_Surface *newSurf = IMG_Load(cTilePath.c_str());
 		if(newSurf && (mGlobalSettings.TileSetBPP > 0x2)){
-			
+			if(importPNG(newSurf,  &mGlobalSettings.CurrentEditor->mPalette)){
+				std::cout << "Error Importing TileSet: " << cTilePath << std::endl;
+				return 1;
+			} else {
+				for(int i = mTileNum; i < TTiles.size(); i++){
+					cNewTiles.push_back(TTiles[i]);
+				}
+			}
 		} else {
-			fs::path cNewPath = cTilePath;
-			int mTileNum = TTiles.size();
+			fs::path cNewPath = cTilePath;			
 			if(importFile(cNewPath.parent_path().string(), cNewPath.filename().string(), &mGlobalSettings.CurrentEditor->mPalette)){
 				std::cout << "Error Importing TileSet: " << cTilePath << std::endl;
 				return 1;
@@ -1387,6 +1395,51 @@ int TileSet::importTileSet(std::string cTilePath, std::vector<Tile*> &cNewTiles)
 	}
 
 	return 0;
+}
+
+int TileSet::importPNG(SDL_Surface *newSurf, TPalette* tpal){
+	if(newSurf->format->BitsPerPixel == 8){
+		if(!(newSurf->w % mGlobalSettings.TileSizeX) && !(newSurf->h % mGlobalSettings.TileSizeY)){
+			int cTilesX,cTilesY;
+			cTilesX = newSurf->w / mGlobalSettings.TileSizeX;
+			cTilesY = newSurf->h / mGlobalSettings.TileSizeY;
+			
+			std::cout << "Import PNG: " << cTilesX << "," <<  cTilesY << std::endl;
+
+			std::vector<std::vector<unsigned char>> tbuffers;
+
+			tbuffers.resize(cTilesX*cTilesY);
+
+			for(auto &tbuf : tbuffers){
+				tbuf.resize((mGlobalSettings.TileSizeX*mGlobalSettings.TileSizeY) / mGlobalSettings.mTileBPPSize[mGlobalSettings.TileSetBPP],0);
+			}
+
+			Tile tmpTile;
+			int cBufIndex;
+			int cPixIndex;
+
+			for(int ii=0; ii < newSurf->h; ii++){
+				for(int jj=0; jj < newSurf->w; jj++){
+					cBufIndex = mSelection.getTileIndex((ii*newSurf->w)+jj, newSurf->w, newSurf->h, cPixIndex);					
+					tmpTile.setPixel(cPixIndex, ((unsigned char*)(newSurf->pixels))[(ii*newSurf->w)+jj], tbuffers[cBufIndex]);
+				}
+			}
+
+			for(auto &tbufl : tbuffers){
+				createNewFromBuffer(tbufl, tpal);
+			}
+
+			TileAreas.resize(TTiles.size());
+
+			resizeEdit();
+			
+			SDL_FreeSurface(newSurf);
+			return 0;
+		}
+	}
+			
+	SDL_FreeSurface(newSurf);
+	return 1;
 }
 
 Tile* TileSet::createNewFromBuffer(std::vector<unsigned char> &newBuf, TPalette* tpal){
