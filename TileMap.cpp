@@ -1363,6 +1363,32 @@ Tile* TileSet::createNewFromFile(std::string newPath, TPalette* tpal){
 	return NULL;
 }
 
+int TileSet::importTileSet(std::string cTilePath, std::vector<Tile*> &cNewTiles){
+	if(fs::exists(fs::status(cTilePath))){
+		if(fs::is_directory(fs::status(cTilePath))){
+			return 1;
+		}
+
+		SDL_Surface *newSurf = IMG_Load(cTilePath.c_str());
+		if(newSurf && (mGlobalSettings.TileSetBPP > 0x2)){
+			
+		} else {
+			fs::path cNewPath = cTilePath;
+			int mTileNum = TTiles.size();
+			if(importFile(cNewPath.parent_path().string(), cNewPath.filename().string(), &mGlobalSettings.CurrentEditor->mPalette)){
+				std::cout << "Error Importing TileSet: " << cTilePath << std::endl;
+				return 1;
+			} else {
+				for(int i = mTileNum; i < TTiles.size(); i++){
+					cNewTiles.push_back(TTiles[i]);
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
 Tile* TileSet::createNewFromBuffer(std::vector<unsigned char> &newBuf, TPalette* tpal){
 
 	Tile *newTile = new Tile();
@@ -1419,13 +1445,86 @@ void TileSet::appendTile(Tile* addTile){
 	resizeEdit();
 }
 
-int TileSet::loadFromFolder(std::string path, TPalette* tpal){ 
+int TileSet::importFile(std::string tpath,std::string tfile, TPalette* tpal){
+	fs::path cTileFile;
+	int ntiles=0;
+
+	if(fs::is_directory(fs::status(tpath))){
+		cTileFile = tpath + DIRDEL + tfile;
+	} else {
+		std::cout << "Folder Not Found: " << tpath << std::endl;
+		return 1;		
+	}
+
+	if(!fs::exists(fs::status(cTileFile))){
+		std::cout << "File Not Found: " << cTileFile << std::endl;
+		return 1;
+	}
+
+	std::ifstream infile(cTileFile, std::ios::binary );
+
+	std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
+
+	int magic1 = tbuffer[0];
+    int magic2 = tbuffer[1];
+
+	int twidth;
+    int theight;
+
+	if( (magic1 == 0x0) ||(magic1 == 0x1) ||(magic1 == 0x10) ||(magic1 == 0x11)  ){
+		twidth = ((magic1 & 0xf0) >> 4);
+		theight = (magic1 & 0x0f);
+	} else {
+		std::cout << "Error in Tile File: " << cTileFile << std::endl;
+		return 1;	
+	}
+
+	if((mTileSizeIn[twidth] != mGlobalSettings.TileSizeX) || (mTileSizeIn[theight] != mGlobalSettings.TileSizeY)){
+		std::cout << "Wrong Tile Size: " << cTileFile << std::endl;
+		return 1;	
+	}
+
+	if((magic2 != mGlobalSettings.TileSetBPP) ){
+		std::cout << "Wrong Tile BPP: " << cTileFile << std::endl;
+		return 1;	
+	}
+
+	int tmpTileSize = ((mGlobalSettings.TileSizeX * mGlobalSettings.TileSizeY)/mGlobalSettings.mTileBPPSize[mGlobalSettings.TileSetBPP]);
+
+	tbuffer.erase(tbuffer.begin());
+	tbuffer.erase(tbuffer.begin());
+
+	if(tbuffer.size() % tmpTileSize){
+		std::cout << "Error in Tile File: " << cTileFile << std::endl;
+		return 1;
+	}
+
+	ntiles = tbuffer.size() / tmpTileSize;
+
+	Tile *mTile;
+
+	for(int tCount = 0; tCount < ntiles; tCount++){
+		mTile = new Tile();
+		std::vector<unsigned char>::const_iterator first = tbuffer.begin() + (tCount * tmpTileSize);
+		std::vector<unsigned char>::const_iterator last = tbuffer.begin() + ((tCount * tmpTileSize) + (tmpTileSize));
+		std::vector<unsigned char> tbuffer2(first, last);
+		mTile->loadFromBuffer(tbuffer2 ,tpal);
+		TTiles.push_back(mTile);
+	}
+
+	TileAreas.resize(TTiles.size());
+	resizeEdit();
+
+	return 0;
+}
+
+int TileSet::loadFromFile(std::string path,std::string filename, TPalette* tpal){ 
 
 	fs::path cTileFile;
 	int ntiles=0;
 
 	if(fs::is_directory(fs::status(path))){
-		cTileFile = path + DIRDEL + "tiles.bin";
+		cTileFile = path + DIRDEL + filename;
 	} else {
 		std::cout << "Folder Not Found: " << path << std::endl;
 		return 1;		
@@ -1579,7 +1678,7 @@ void TileSet::resizeEdit(){
 	}
 	
 	mSelection.clearSelection();	
-	mSelection.init(mSelectionAreaX , mSelectionAreaY, 1, 1, &mCurEdScale);
+	mSelection.init(mSelectionAreaX , mSelectionAreaY, 1, 1, &mCurEdScale);	
 }
 
 int TileSet::getXY(int xpos, int ypos, int cxpos, int cypos){
@@ -1881,6 +1980,7 @@ int TileMap::createNew(){
 
 	return 0;
 }
+
 
 int TileMap::loadFromFile(std::string path, std::string filename){
     	DataPath = path; 	

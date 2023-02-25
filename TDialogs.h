@@ -100,6 +100,12 @@ class ITDialog: public SADialog{
 		virtual void recieveInput(int mKey);		
 };
 
+class ITSDialog: public ITDialog{
+	public:				
+		virtual int render();
+		virtual void recieveInput(int mKey);		
+};
+
 class RNDialog: public ITDialog{
 	public:
 		int mNumber = 0;

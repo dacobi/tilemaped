@@ -240,6 +240,10 @@ TEActionAddTile::~TEActionAddTile(){
 	mNewTile->freeTexture();
 }
 
+TEActionAddTiles::~TEActionAddTiles(){	
+	mNewTile->freeTexture();
+}
+
 		
 
 void TEActionAddTile::doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles){
@@ -254,6 +258,31 @@ void TEActionAddTile::doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles
 	mEditor->mTileSelectedTile = mNewTile;
 	mNewTile->bIsSelected = true;
 	TEActionType=ACTION_TILENEW;	
+}
+
+void TEActionAddTiles::doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles){
+	mTiles = cTiles;
+	mNewTile = cNewTile;
+	mEditor = cEditor;
+
+	mEditor->mTileSelectedTile->bIsSelected = false;
+	mEditor->mTileSelectedTile = mTiles->TTiles[0];
+	mEditor->mTileSelectedTile->bIsSelected = true;
+	mEditor->mMapSelectedTile = 0;
+
+	//mOldMapTile = mEditor->mMapSelectedTile;
+	//mEditor->mMapSelectedTile = mTiles->TTiles.size()-1;
+	for(int i = 0; i < mTiles->TTiles.size(); i++){
+		if(mTiles->TTiles[i] == mNewTile){
+			mTileIndex = i;			
+		}
+	}
+	//mTileIndex = mTiles->TTiles.size()-1;
+	//mOldTile = mEditor->mTileSelectedTile;
+	//mOldTile->bIsSelected = false;
+	//mEditor->mTileSelectedTile = mNewTile;
+	//mNewTile->bIsSelected = true;
+	TEActionType=ACTION_TILESNEW;	
 }
 
 void TEActionDropTile::doAction(Tile* cDroppedTile, TEditor* cEditor, TileSet *cTiles){
@@ -291,6 +320,34 @@ void TEActionDropTile::undo(){
 	//mEditor->mTileSelectedTile->bIsSelected = true;
 	//mEditor->mMapSelectedTile = mTiles->TTiles.size()-1;
 }
+
+void TEActionAddTiles::undo(){
+	//mTiles->dropLastTile();
+
+	mEditor->mTileSelectedTile->bIsSelected = false;
+	mEditor->mTileSelectedTile = mTiles->TTiles[0];
+	mEditor->mTileSelectedTile->bIsSelected = true;
+	mEditor->mMapSelectedTile = 0;
+
+	for(int i = 0; i < mTiles->TTiles.size(); i++){
+		if(mTiles->TTiles[i] == mNewTile){
+			mTileIndex = i;			
+		}
+	}
+	mTiles->removeTile(mTileIndex);
+}
+
+void TEActionAddTiles::redo(){
+	mEditor->mTileSelectedTile->bIsSelected = false;
+	mEditor->mTileSelectedTile = mTiles->TTiles[0];
+	mEditor->mTileSelectedTile->bIsSelected = true;
+	mEditor->mMapSelectedTile = 0;
+	
+	mTiles->appendTile(mNewTile);
+	mTileIndex = mTiles->TTiles.size()-1;
+	
+}
+
 
 void TEActionAddTile::undo(){
 	//mTiles->dropLastTile();
@@ -380,12 +437,13 @@ void TEActionUndoStack::redoClearStack(){
 	if(mRedoStack.size()){		
 		for(auto *dGroup : mRedoStack){
 			for(auto *dAction: dGroup->mActions){
-				TEActionAddTile* ddAction = dynamic_cast<TEActionAddTile*>(dAction);
-				if(ddAction){
-					delete ddAction;					
-				} else {
+				//TEActionAddTile* ddAction = dynamic_cast<TEActionAddTile*>(dAction);
+				//TEActionAddTiles* dddAction = dynamic_cast<TEActionAddTiles*>(dAction);
+				//if(ddAction){
+				//	delete ddAction;					
+				//} else {
 					delete dAction;
-				}
+				//}
 			}		
 		}
 		mRedoStack.erase(mRedoStack.begin(), mRedoStack.end());
@@ -397,7 +455,8 @@ void TEActionUndoStack::undoClearStack(){
 		for(auto *dGroup : mUndoStack){
 			for(auto *dAction: dGroup->mActions){
 				TEActionAddTile* ddAction = dynamic_cast<TEActionAddTile*>(dAction);
-				if(!ddAction){
+				TEActionAddTiles* dddAction = dynamic_cast<TEActionAddTiles*>(dAction);
+				if(!ddAction && !dddAction){
 					delete dAction;
 				}
 			}		

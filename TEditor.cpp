@@ -53,6 +53,7 @@ void TEditor::initDialogs(){
 	mProjectInfo.mEditor = this;
 	mProjectInfo.init();
 	mOpenTileDialog.init();
+	mOpenTileSetDialog.init();
 	mInfoMessage.init();
 	mErrorMessage.setColorScheme(1);
 	mErrorMessage.init();
@@ -98,8 +99,8 @@ int TEditor::loadFromFolder(std::string path){
 
 	mPalette.initTPixels();
 			
-	if(mTileSet.loadFromFolder(path, &mPalette)){
-		std::cout << "Error loading tiles: " << path << std::endl;
+	if(mTileSet.loadFromFile(path,"tiles.bin", &mPalette)){
+		std::cout << "Error loading tiles: " << path << DIRDEL << "tiles.bin" << std::endl;
 		return 1;
 	}
 
@@ -587,6 +588,14 @@ int TEditor::activateSaveAsDialog(){
 int TEditor::activateOpenTileDialog(){
 	if(mCurMode == EMODE_MAP){
 		mActiveDialog = &mOpenTileDialog;
+		mActiveDialog->bDialogIsWatingForText = true;		
+	}
+	return 0;
+}
+
+int TEditor::activateOpenTileSetDialog(){
+	if(mCurMode == EMODE_MAP){
+		mActiveDialog = &mOpenTileSetDialog;
 		mActiveDialog->bDialogIsWatingForText = true;		
 	}
 	return 0;
@@ -1385,6 +1394,33 @@ int TEditor::handleEvents(){
 					return 0;
 				}
 				mGlobalSettings.mOpenTileState = 0;
+			}
+			if(mGlobalSettings.mOpenTileState == 2){
+				
+				mGlobalSettings.mOpenTileState = 0;
+				std::vector<Tile*> cNewTiles;
+				if(mTileSet.importTileSet(mGlobalSettings.mNewTilePath, cNewTiles)){
+					cancelActiveDialog();
+					showMessage("Error Importing TileSet", true);
+					return 0;
+				}
+
+				mActionStack.newActionGroup();
+				
+				for(auto cTile : cNewTiles){
+					TEActionAddTiles* newActionTile = new TEActionAddTiles();
+					newActionTile->doAction(cTile, this, &mTileSet);	       			
+	       			mActionStack.addAction(newActionTile);
+	       			mActionStack.mLastAction = newActionTile;	       			
+				}
+				
+
+				mActionStack.redoClearStack();
+				//mActionStack.undoClearStack();
+
+				cancelActiveDialog();
+				showMessage("TileSet Imported Successfully");
+				return 0;
 			}
 			cancelActiveDialog();
 			return 0;

@@ -270,6 +270,25 @@ class TEActionAddTile: public TEAction{
 		}
 };
 
+class TEActionAddTiles: public TEAction{
+	public:
+		~TEActionAddTiles();
+		Tile* mNewTile;
+		Tile* mOldTile;
+		TileSet *mTiles;
+		TEditor *mEditor;
+		int mOldMapTile;
+		int mTileIndex;
+		void doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles);	
+		virtual void undo();
+		virtual void redo();
+		virtual bool doCompare(const TEAction& rhs){
+			 return false;
+		}
+};
+
+
+
 
 class TEActionDropTile: public TEActionAddTile{
 	public:

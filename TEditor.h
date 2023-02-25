@@ -138,7 +138,7 @@ class TEditor{
 		SDialog mSaveDialog;
 		SADialog mSaveAsDialog;
 		ITDialog mOpenTileDialog;
-		//HDialog mHelpDialogMap;
+		ITSDialog mOpenTileSetDialog;
 		HDialog mHelpDialog;
 		PIDialog mProjectInfo;
 		MEDialog mInfoMessage;
@@ -158,6 +158,7 @@ class TEditor{
 		int showMessage(std::string cMessage, bool isError=false);
 		int activateSaveDialog();
 		int activateOpenTileDialog();
+		int activateOpenTileSetDialog();
 		int activateHelpDialog();
 		int activateQuitDialog();
 		int cancelActiveDialog();

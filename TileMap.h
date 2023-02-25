@@ -136,12 +136,14 @@ class TileSet{
 		int mSelectionAreaY;
 		int reCalculateScale();
 		SDL_Rect mTileSetBackGround;
-		int loadFromFolder(std::string tpath, TPalette* tpal);
+		int loadFromFile(std::string tpath,std::string tfile, TPalette* tpal);
 		int saveToFolder(std::string tpath);
 		Tile* createNew(TPalette* tpal);
 		Tile* createNewCopy(Tile* cCopyTile, TPalette* tpal);
 		Tile* createNewFromBuffer(std::vector<unsigned char> &newBuf, TPalette* tpal);
 		Tile* createNewFromFile(std::string newPAth, TPalette* tpal);
+		int importFile(std::string tpath,std::string tfile, TPalette* tpal);
+		int importTileSet(std::string cTilePath, std::vector<Tile*> &cNewTiles);
 		void dropLastTile();
 		int deleteTile(int cDropTile);
 		int removeTile(int cDropTile);
