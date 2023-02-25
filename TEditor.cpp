@@ -919,8 +919,8 @@ int TEditor::findSelMap(){
 							tSel = searchRectsXY(mTileMap.TileAreas,cx,cy);
 	       					if(tSel != -1){
 	       						mGlobalSettings.mSelectedTile = tSel;		  	
-	       						TEActionReplaceTile *mCurAction = new TEActionReplaceTile();
-	       						mCurAction->doAction(&mTileMap, tSel, mTileMap.getTile(tSel), mMapSelectedTile);
+	       						TEActionReplaceTileFlip *mCurAction = new TEActionReplaceTileFlip();
+	       						mCurAction->doAction(&mTileMap, tSel, mTileMap.getTile(tSel), mMapSelectedTile, mTileMap.getFlip(tSel), 0);
 	       			
 	       						if(!(*mCurAction == *mActionStack.mLastAction)){
 	       							mActionStack.newActionGroup();	
@@ -1297,13 +1297,11 @@ int TEditor::handleTileMap(){
 		tSel = searchRectsXY(mTileMap.TileAreas, cx, cy);
 	    if(tSel != -1){
 	    	mGlobalSettings.mSelectedTile = tSel;
-			mGlobalSettings.bShowSelectedTile = true;
-			if(mGlobalSettings.bShowTypeSelection){
-				mMapSelectedTile = mTileMap.getTile(tSel);
-   	 			mTileSelectedTile->bIsSelected = false;
-   	 			mTileSelectedTile = mTileSet.TTiles[mMapSelectedTile];
-   	 			mTileSelectedTile->bIsSelected = true;				
-			}		
+			mGlobalSettings.bShowSelectedTile = true;			
+			mMapSelectedTile = mTileMap.getTile(tSel);
+   	 		mTileSelectedTile->bIsSelected = false;
+   	 		mTileSelectedTile = mTileSet.TTiles[mMapSelectedTile];
+   	 		mTileSelectedTile->bIsSelected = true;							
 			mSelection.cancelSelection();
 		}
 	}

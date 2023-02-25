@@ -220,16 +220,16 @@ void TEActionReplaceTiles::doAction(TileMap* cTileMap, std::vector<int> &newSel,
 	if(mOldValue == -1){
 		for(auto &mSelElement : mSelection){
 			if(mSelElement > -1){ 	
-				TEActionReplaceTile* newAction = new TEActionReplaceTile();
-				newAction->doAction(mTileMap, mSelElement, mTileMap->getTile(mSelElement), mNewValue);
+				TEActionReplaceTileFlip* newAction = new TEActionReplaceTileFlip();
+				newAction->doAction(mTileMap, mSelElement, mTileMap->getTile(mSelElement), mNewValue, mTileMap->getFlip(mSelElement), 0);
 				mSubActions.push_back(newAction);
 			} 
 		}
 	} else {
 		for(auto &mSelElement : mSelection){
 			if(mSelElement > -1){ 	
-				TEActionReplaceTile* newAction = new TEActionReplaceTile();
-				newAction->doAction(mTileMap, mSelElement, mOldValue, mNewValue);
+				TEActionReplaceTileFlip* newAction = new TEActionReplaceTileFlip();
+				newAction->doAction(mTileMap, mSelElement, mOldValue, mNewValue, mTileMap->getFlip(mSelElement), 0);
 				mSubActions.push_back(newAction);
 			} 
 		}
