@@ -25,7 +25,9 @@ int TEditor::createNewProject(){
 	}
 
 	mPalette.initTPixels();
-	mTileMap.createNew();										
+	mTileMap = new TileMap();
+	mTileMap->createNew();
+	mTileMaps.push_back(mTileMap);								
 	mTileSet.createNew(&mPalette);
 
 	initDialogs();
@@ -54,6 +56,7 @@ void TEditor::initDialogs(){
 	mProjectInfo.init();
 	mOpenTileDialog.init();
 	mOpenTileSetDialog.init();
+	mOpenTileMapDialog.init();
 	mInfoMessage.init();
 	mErrorMessage.setColorScheme(1);
 	mErrorMessage.init();
@@ -86,6 +89,21 @@ void TEditor::initDialogs(){
 	
 }
 
+int TEditor::importTileMap(std::string cNewTileMap){
+	if(fs::exists(fs::status(cNewTileMap))){
+		TileMap* cNewMap = new TileMap();
+		fs::path cNewPath = cNewTileMap;
+		if(cNewMap->loadFromFile(cNewPath.parent_path().string(), cNewPath.filename().string())){
+			std::cout << "Error Importing TileMap: " << cNewTileMap << std::endl;
+			return 1;
+		}
+		mTileMaps.push_back(cNewMap);		
+		return 0;
+	}
+
+	return 1;
+}
+
 int TEditor::loadFromFolder(std::string path){
 
 	if(fs::exists(fs::status(path+DIRDEL+"pal.bin"))){
@@ -104,14 +122,46 @@ int TEditor::loadFromFolder(std::string path){
 		return 1;
 	}
 
-	if(mTileMap.loadFromFile(path, "map.bin")){
+	//TODO maybe
+
+	mTileMap = new TileMap();
+
+	if(mTileMap->loadFromFile(path, "map.bin")){
 		std::cout << "Error: can't read: " << path << DIRDEL << "map.bin" << std::endl;
 		return 1;
 	}
-	
+
+	mTileMaps.push_back(mTileMap);
+
+	fs::path cTileMaps;
+	int mMapNum = 0;
+	std::string cMapNum;
+	std::stringstream convert;
+
+	convert << mMapNum << std::endl;
+	convert >> cMapNum;
+
+	cTileMaps = std::string(path + DIRDEL + "map" + cMapNum + ".bin");
+
+	while(fs::exists(fs::status(cTileMaps))){
+		TileMap *newTileMap = new TileMap();
+		if(newTileMap->loadFromFile(cTileMaps.parent_path().string(), cTileMaps.filename().string())){
+			std::cout << "Error: can't read: " << cTileMaps.parent_path().string() << DIRDEL << cTileMaps.filename().string() << std::endl;
+			return 1;
+		}
+		mTileMaps.push_back(newTileMap);
+		mMapNum++;
+		convert << mMapNum << std::endl;
+		convert >> cMapNum;
+
+		cTileMaps = std::string(path + DIRDEL + "map" + cMapNum + ".bin");
+	}
+
 	mGlobalSettings.ProjectPath = path;
 	
 	initDialogs();
+
+	switchTileMap(0);
 
 	if(fs::exists(fs::status(path+DIRDEL+"tbrushes.dat"))){
 		mBrushesTile.loadFromFile(path+DIRDEL+"tbrushes.dat");
@@ -138,13 +188,50 @@ int TEditor::saveToFolder(std::string path){
 	}
 	
 	mTileSet.saveToFolder(path);
-	mTileMap.saveToFolder(path);
+	//TODO maybe
+	mTileMaps[0]->saveToFolder(path, "map.bin");
+	if(mTileMaps.size() > 1){
+		
+		int mMapNum = 0;
+		std::string cTileMap;
+		std::string cMapNum;
+		std::stringstream convert;
+
+		for(int i = 1; i < mTileMaps.size(); i++){
+			convert << mMapNum << std::endl;
+			convert >> cMapNum;
+			cTileMap = "map" + cMapNum + ".bin";
+			mTileMaps[i]->saveToFolder(path, cTileMap);
+			mMapNum++;
+		}
+	}
 	mPalette.saveToFolder(path);
 
 	mBrushesTile.saveToFile(path + DIRDEL + "tbrushes.dat");
 	mBrushesPixel.saveToFile(path + DIRDEL + "pbrushes.dat");
 
 	return 0;
+}
+
+int TEditor::switchTileMap(int cTileMap){
+	if((cTileMap > -1) &&  (cTileMap < mTileMaps.size())){
+		mTileMap->mMapSelectedTile = mMapSelectedTile;
+		mTileMap->TileMapScale = mGlobalSettings.TileMapScale;
+		mTileMap->mTileMapScrollX = mTileMapScrollX;
+		mTileMap->mTileMapScrollY = mTileMapScrollY;
+		mTileMap = mTileMaps[cTileMap];
+		mMapSelectedTile = mTileMap->mMapSelectedTile;
+		mTileSelectedTile->bIsSelected = false;
+		mTileSelectedTile = mTileSet.TTiles[mMapSelectedTile];
+		mTileSelectedTile->bIsSelected = true;
+		mGlobalSettings.TileMapWidth = mTileMap->TileMapWidth;
+		mGlobalSettings.TileMapHeight = mTileMap->TileMapHeight;
+		mTileMapScrollX = mTileMap->mTileMapScrollX;
+		mTileMapScrollY = mTileMap->mTileMapScrollY;
+		mGlobalSettings.TileMapScale = mTileMap->TileMapScale;
+		return 0;
+	}
+	return 1;
 }
 
 int TEditor::render(){
@@ -154,11 +241,11 @@ int TEditor::render(){
 
 		
  		if(!mGlobalSettings.bShowTypeSelection) mTileSelectedTile->bIsSelected = false;		
-		mTileMap.render(mTileMapScrollX,mGlobalSettings.TopBarHeight+mTileMapScrollY,&mTileSet);
+		mTileMap->render(mTileMapScrollX,mGlobalSettings.TopBarHeight+mTileMapScrollY,&mTileSet);
 		mTileSelectedTile->bIsSelected = true;
 
 		if(mCurrentBrushTile){
-			mCurrentBrushTile->getBrushSelection(cx, cy, mTileMap.TileAreas);
+			mCurrentBrushTile->getBrushSelection(cx, cy, mTileMap->TileAreas);
 		}
 
 		if(mActiveDialog){			
@@ -307,9 +394,18 @@ int TEditor::switchMode(){
 	return setMode(mLastMode);
 }
 
+int TEditor::selectTilesMap(TileMap* cTileMap, std::vector<int> &cNewSelection, int cTileType){
+	for(int i = 0; i < (cTileMap->TileMapHeight*cTileMap->TileMapWidth); i++){
+		if(cTileMap->getTile(i) == cTileType){
+			cNewSelection.push_back(i);
+		}
+	}
+	return cNewSelection.size();
+}
+
 int TEditor::selectTiles(std::vector<int> &cNewSelection, int cTileType){
 	for(int i = 0; i < (mGlobalSettings.TileMapHeight*mGlobalSettings.TileMapWidth); i++){
-		if(mTileMap.getTile(i) == cTileType){
+		if(mTileMap->getTile(i) == cTileType){
 			cNewSelection.push_back(i);
 		}
 	}
@@ -381,8 +477,22 @@ void TEditor::dropLastActionGroup(){
 
 
 void TEditor::undoLastActionGroup(){
-	if(mCurMode == EMODE_MAP){		
-		mActionStack.undoLastActionGroup();
+	if(mCurMode == EMODE_MAP){
+		TEActionGroup *mGroup;
+		bool bMapSwitch = false;
+		if(mActionStack.mUndoStack.size()){
+			mGroup = *(mActionStack.mUndoStack.end()-1);
+			if(mGroup->mActions.size()){
+				if(mGroup->mActions[0]->checkTileMap()){
+					switchTileMap(mGroup->mActions[0]->getTileMap());
+					bMapSwitch = true;
+				}
+			}
+		}
+		
+		if(!bMapSwitch){
+			mActionStack.undoLastActionGroup();
+		}
 	}
 	if(mCurMode == EMODE_TILE){
 		mTileSelectedTile->mActionStack.undoLastActionGroup();
@@ -394,7 +504,21 @@ void TEditor::undoLastActionGroup(){
 
 void TEditor::redoLastActionGroup(){
 if(mCurMode == EMODE_MAP){
-		mActionStack.redoLastActionGroup();
+		TEActionGroup *mGroup;
+		bool bMapSwitch = false;
+		if(mActionStack.mRedoStack.size()){
+			mGroup = *(mActionStack.mRedoStack.end()-1);
+			if(mGroup->mActions.size()){
+				if(mGroup->mActions[0]->checkTileMap()){
+					switchTileMap(mGroup->mActions[0]->getTileMap());
+					bMapSwitch = true;
+				}
+			}
+		}
+		
+		if(!bMapSwitch){
+			mActionStack.redoLastActionGroup();
+		}		
 	}
 	if(mCurMode == EMODE_TILE){
 		mTileSelectedTile->mActionStack.redoLastActionGroup();
@@ -463,10 +587,19 @@ int TEditor::dropUnusedTiles(){
 	mMapSelectedTile = 0;
 	mTileSelectedTile = mTileSet.TTiles[0];
 
-	for(int i = 0; i < mTileSet.TTiles.size(); i++){		
-		if(selectTiles(tmpTiles, i) == 0){
+	//TODO maybe	
+	for(int i = 0; i < mTileSet.TTiles.size(); i++){	
+
+		int cTileCount = 0;
+
+		for(auto *cMap : mTileMaps){
+			cTileCount += selectTilesMap(cMap, tmpTiles, i);
+		}
+
+		if(cTileCount == 0){
 			cUnused.insert(i);			
 		}
+
 		tmpTiles.erase(tmpTiles.begin(), tmpTiles.end());
 	}
 	
@@ -481,7 +614,10 @@ int TEditor::dropUnusedTiles(){
 
 int TEditor::dropUnusedTile(int cDropTile){	
 			
-	mTileMap.removeTile(cDropTile);
+	//TODO maybe
+	for(auto * cTileMap : mTileMaps){
+		cTileMap->removeTile(cDropTile);
+	}
 	mTileSet.deleteTile(cDropTile);
 
 	return 0;
@@ -588,6 +724,14 @@ int TEditor::activateSaveAsDialog(){
 int TEditor::activateOpenTileDialog(){
 	if(mCurMode == EMODE_MAP){
 		mActiveDialog = &mOpenTileDialog;
+		mActiveDialog->bDialogIsWatingForText = true;		
+	}
+	return 0;
+}
+
+int TEditor::activateOpenTileMapDialog(){
+	if(mCurMode == EMODE_MAP){
+		mActiveDialog = &mOpenTileMapDialog;
 		mActiveDialog->bDialogIsWatingForText = true;		
 	}
 	return 0;
@@ -726,14 +870,14 @@ int TEditor::toggleSelectedTile(){
 int TEditor::flipSelectedTile(){
 	if(mCurMode == EMODE_MAP){
 		if(mGlobalSettings.mSelectedTile > -1){
-			int cTileFlipOld = mTileMap.getFlip(mGlobalSettings.mSelectedTile);			
+			int cTileFlipOld = mTileMap->getFlip(mGlobalSettings.mSelectedTile);			
 			int cTileFlip = cTileFlipOld + 1;
 			if(cTileFlip > 3){cTileFlip = 0;}
 
 			/**/
 
 				TEActionReplaceTileFlip *mCurAction = new TEActionReplaceTileFlip();
-	       		mCurAction->doAction(&mTileMap, mGlobalSettings.mSelectedTile, mTileMap.getTile(mGlobalSettings.mSelectedTile), mTileMap.getTile(mGlobalSettings.mSelectedTile),cTileFlipOld, cTileFlip);
+	       		mCurAction->doAction(mTileMap, mGlobalSettings.mSelectedTile, mTileMap->getTile(mGlobalSettings.mSelectedTile), mTileMap->getTile(mGlobalSettings.mSelectedTile),cTileFlipOld, cTileFlip);
 	       			
 	       		if(!(*mCurAction == *mActionStack.mLastAction)){
 	       			mActionStack.newActionGroup();	
@@ -860,7 +1004,7 @@ int TEditor::replaceSelectedTiles(int mx, int my){
 		tSel = searchRectsXY(mTileSet.TileAreas, mx, my);
 		if(tSel != -1){ 
 			TEActionReplaceTiles* newAction = new TEActionReplaceTiles();
-			newAction->doAction(&mTileMap, mSelection.mSelected, -1, tSel);
+			newAction->doAction(mTileMap, mSelection.mSelected, -1, tSel);
 			if(!(newAction == mActionStack.mLastAction)){
 				mActionStack.mLastAction = newAction;
 				mActionStack.newActionGroup();
@@ -876,7 +1020,7 @@ int TEditor::replaceSelectedTiles(int mx, int my){
 			std::vector<int> newSelection;
 			if(selectTiles(newSelection, mMapSelectedTile)){
 				TEActionReplaceTiles* newAction = new TEActionReplaceTiles();
-				newAction->doAction(&mTileMap, newSelection, mMapSelectedTile, tSel);
+				newAction->doAction(mTileMap, newSelection, mMapSelectedTile, tSel);
 				if(!(newAction == mActionStack.mLastAction)){
 					mActionStack.mLastAction = newAction;
 					mActionStack.newActionGroup();
@@ -908,7 +1052,7 @@ int TEditor::findSelMap(){
 					
 						if(mCurrentBrushTile){							
 							TEActionBrushTiles* newAction = new TEActionBrushTiles();
-							newAction->doAction(&mTileMap, *mCurrentBrushTile);							
+							newAction->doAction(mTileMap, *mCurrentBrushTile);							
 							if(!(*newAction == *mActionStack.mLastAction)){							
 								mActionStack.mLastAction = newAction;
 								mActionStack.newActionGroup();
@@ -916,11 +1060,11 @@ int TEditor::findSelMap(){
        							mActionStack.redoClearStack();
 							}							
 						} else {
-							tSel = searchRectsXY(mTileMap.TileAreas,cx,cy);
+							tSel = searchRectsXY(mTileMap->TileAreas,cx,cy);
 	       					if(tSel != -1){
 	       						mGlobalSettings.mSelectedTile = tSel;		  	
 	       						TEActionReplaceTileFlip *mCurAction = new TEActionReplaceTileFlip();
-	       						mCurAction->doAction(&mTileMap, tSel, mTileMap.getTile(tSel), mMapSelectedTile, mTileMap.getFlip(tSel), 0);
+	       						mCurAction->doAction(mTileMap, tSel, mTileMap->getTile(tSel), mMapSelectedTile, mTileMap->getFlip(tSel), 0);
 	       			
 	       						if(!(*mCurAction == *mActionStack.mLastAction)){
 	       							mActionStack.newActionGroup();	
@@ -1285,7 +1429,7 @@ int TEditor::handleTileMap(){
 
 	if((rightMouseButtonClicks && bLShiftIsDown) && !mGlobalSettings.mio->WantCaptureMouse){
 		int tSel = -1;
-		tSel = searchRectsXY(mTileMap.TileAreas, cx, cy);
+		tSel = searchRectsXY(mTileMap->TileAreas, cx, cy);
 	    if(tSel != -1){	    	
 			mGlobalSettings.bShowSelectedTile = false;
 			mSelection.modifySelection(tSel);
@@ -1294,11 +1438,11 @@ int TEditor::handleTileMap(){
 		int tSel = -1;
 
 		if(rightMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse && !bLShiftIsDown){
-		tSel = searchRectsXY(mTileMap.TileAreas, cx, cy);
+		tSel = searchRectsXY(mTileMap->TileAreas, cx, cy);
 	    if(tSel != -1){
 	    	mGlobalSettings.mSelectedTile = tSel;
 			mGlobalSettings.bShowSelectedTile = true;			
-			mMapSelectedTile = mTileMap.getTile(tSel);
+			mMapSelectedTile = mTileMap->getTile(tSel);
    	 		mTileSelectedTile->bIsSelected = false;
    	 		mTileSelectedTile = mTileSet.TTiles[mMapSelectedTile];
    	 		mTileSelectedTile->bIsSelected = true;							
@@ -1315,7 +1459,7 @@ int TEditor::handleTileMap(){
 		}
 	} else {
 		if(mSelection.bIsSelecting){
-			mSelection.confirmSelection(mTileMap.TileAreas, mGlobalSettings.TileSizeX * mGlobalSettings.TileMapScale,  mGlobalSettings.TileSizeY * mGlobalSettings.TileMapScale);
+			mSelection.confirmSelection(mTileMap->TileAreas, mGlobalSettings.TileSizeX * mGlobalSettings.TileMapScale,  mGlobalSettings.TileSizeY * mGlobalSettings.TileMapScale);
 		} else {
 			findSelMap();
 		}
@@ -1420,6 +1564,27 @@ int TEditor::handleEvents(){
 				showMessage("TileSet Imported Successfully");
 				return 0;
 			}
+			if(mGlobalSettings.mOpenTileMapState == 1){
+				
+				mGlobalSettings.mOpenTileMapState = 0;
+				if(importTileMap(mGlobalSettings.mNewTileMapPath)){
+					cancelActiveDialog();
+					showMessage("Error Importing TileMap", true);
+					return 0;
+				}
+
+										
+				mActionStack.redoClearStack();
+				mActionStack.undoClearStack();
+
+				cancelActiveDialog();
+				showMessage("TileMap Imported Successfully");
+
+				switchTileMap(mTileMaps.size()-1);
+
+				return 0;
+			}
+
 			cancelActiveDialog();
 			return 0;
 		}

@@ -2073,8 +2073,11 @@ int TileMap::loadFromFile(std::string path, std::string filename){
 	if((twidth * theight * 2) == tbuffer.size()){
 		FileData.resize(twidth * theight * 2);
 		FileData = tbuffer;
-		mGlobalSettings.TileMapHeight = theight;
-		mGlobalSettings.TileMapWidth = twidth;
+		//TODO
+		//mGlobalSettings.TileMapHeight = theight;
+		//mGlobalSettings.TileMapWidth = twidth;
+		TileMapHeight = theight;
+		TileMapWidth = twidth;
 		TileAreas.resize(twidth * theight);
 		
 	} else {
@@ -2088,13 +2091,13 @@ int TileMap::loadFromFile(std::string path, std::string filename){
     return 0;
 }
 
-int TileMap::saveToFolder(std::string tpath){
-   	std::ofstream outfile(tpath+DIRDEL+"map.bin", std::ios::binary );
+int TileMap::saveToFolder(std::string tpath, std::string tfile){
+   	std::ofstream outfile(tpath+DIRDEL+tfile, std::ios::binary );
 
 	std::vector<unsigned char> obuffer;
 
-	obuffer.push_back(mTilemapSizesOut[mGlobalSettings.TileMapWidth]);
-	obuffer.push_back(mTilemapSizesOut[mGlobalSettings.TileMapHeight]);
+	obuffer.push_back(mTilemapSizesOut[TileMapWidth]);
+	obuffer.push_back(mTilemapSizesOut[TileMapHeight]);
 
 	obuffer.insert(obuffer.end(), FileData.begin(), FileData.end());
 
@@ -2103,6 +2106,24 @@ int TileMap::saveToFolder(std::string tpath){
 
 	return 0;
 }
+
+std::string TileMap::getMapSize(){
+	std::string cMapSize;
+	std::stringstream convert;
+	std::string cMapWidth;
+	std::string cMapHeight;
+
+	convert << TileMapWidth << std::endl;
+	convert >> cMapWidth;
+
+	convert << TileMapHeight << std::endl;
+	convert >> cMapHeight;
+	
+	cMapSize = cMapWidth + "x" + cMapHeight;
+
+	return cMapSize;
+}
+
 
 int TileMap::removeTile(int cDropTile){
 	for(int i = 0; i < (mGlobalSettings.TileMapHeight*mGlobalSettings.TileMapWidth); i++){

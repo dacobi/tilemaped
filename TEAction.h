@@ -12,6 +12,8 @@ class TEAction{
 		virtual void redo();
 		bool operator==(const TEAction& rhs){ if(TEActionType == rhs.TEActionType){return this->doCompare(rhs);} else {return false;}}
 		virtual bool doCompare(const TEAction& rhs){return false;}
+		virtual bool checkTileMap();
+		virtual int getTileMap();
 };
 
 
@@ -78,6 +80,8 @@ class TEActionReplaceTile: public TEAction{
 		void doAction(TileMap *cTileMap, int mCurTile, int mOld, int mNew);	
 		virtual void undo();
 		virtual void redo();
+		virtual bool checkTileMap();
+		virtual int getTileMap();
 		virtual bool doCompare(const TEAction& rhs){
 			const TEActionReplaceTile* mrhs =  dynamic_cast<const TEActionReplaceTile*>(&rhs); 
 			if(mrhs){
@@ -97,6 +101,8 @@ class TEActionReplaceTileFlip: public TEActionReplaceTile{
 		void doAction(TileMap *cTileMap, int mCurTile, int mOld, int mNew, int cFlipOld, int cFlipNew);	
 		virtual void undo();
 		virtual void redo();
+		virtual bool checkTileMap();
+		virtual int getTileMap();
 		virtual bool doCompare(const TEAction& rhs){
 			const TEActionReplaceTileFlip* mrhs =  dynamic_cast<const TEActionReplaceTileFlip*>(&rhs); 
 			if(mrhs){

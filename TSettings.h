@@ -99,6 +99,8 @@ class TSettings{
 		int mProjectOpenState = 0;
 		bool bRunningOCD = false;
 		int mOpenTileState = 0;
+		int mOpenTileMapState = 0;
+		std::string mNewTileMapPath = "";
 		int mDeleteUnusedTilesState = 0;
 		int mPaletteUpdateState = 0;
 		std::string mNewTilePath = "";				

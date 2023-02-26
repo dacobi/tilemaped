@@ -58,9 +58,11 @@ class TEditor{
 		void shutdown();
 		TPalette mPalette;
 		TileSet mTileSet;
-		TileMap mTileMap;
+		TileMap *mTileMap;
+		std::vector<TileMap*> mTileMaps;
+		int switchTileMap(int cTileMap);
 		TBDialog mTopBar;
-		int mMapSelectedTile;
+		int mMapSelectedTile=0;
 		Tile* mTileSelectedTile = NULL;
 		int mColorSelected;
 		TPixel* mColorSelectedTile;
@@ -127,6 +129,7 @@ class TEditor{
 		int searchRectsXY(std::vector<SDL_Rect> &sRects, int mx, int my);
 		int searchRects(std::vector<SDL_Rect> &sRects);
 		int selectTiles(std::vector<int> &cNewSelection, int cTileType);
+		int selectTilesMap(TileMap* cTileMap, std::vector<int> &cNewSelection, int cTileType);
 		int toggleSelectedTile();		
 		TEActionUndoStack mActionStack;		
 		void undoLastActionGroup();
@@ -139,6 +142,7 @@ class TEditor{
 		SADialog mSaveAsDialog;
 		ITDialog mOpenTileDialog;
 		ITSDialog mOpenTileSetDialog;
+		ITMDialog mOpenTileMapDialog;
 		HDialog mHelpDialog;
 		PIDialog mProjectInfo;
 		MEDialog mInfoMessage;
@@ -148,6 +152,7 @@ class TEditor{
 		QDialog mQuitDialog;
 		PUDialog mPaletteUpdate;
 		PODialog mPaletteOffset;
+		int importTileMap(std::string cNewTileMap);
 		Tile* createNewTile();
 		Tile* createNewTileCopy(Tile* cCopyTile);
 		Tile* createNewTileFromFile(std::string newTilePath);
@@ -159,6 +164,7 @@ class TEditor{
 		int activateSaveDialog();
 		int activateOpenTileDialog();
 		int activateOpenTileSetDialog();
+		int activateOpenTileMapDialog();
 		int activateHelpDialog();
 		int activateQuitDialog();
 		int cancelActiveDialog();

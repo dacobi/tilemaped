@@ -172,6 +172,13 @@ class TileMap{
 	public:
 		std::string DataPath;
 		std::string DataFile;
+		int TileMapHeight=32;
+		int TileMapWidth=32;
+		int mMapSelectedTile=0;	
+		int TileMapScale=3;
+		int mTileMapScrollX = 0;
+		int mTileMapScrollY = 0;
+		std::string getMapSize();
 		std::vector<unsigned char> FileData;
 		int getTile(int cTile);
 		int setTile(int cTile, int cTileVal);
@@ -183,7 +190,7 @@ class TileMap{
 		std::vector<SDL_Rect> TileAreas;
 		int removeTile(int cDropTile);
 		int loadFromFile(std::string path, std::string filename);
-		int saveToFolder(std::string tpath);
+		int saveToFolder(std::string tpath, std::string tfile);
 		int createNew();
 		int render(int xpos,int ypos,TileSet* mTiles);
 		std::map<int,int> mTilemapSizesIn = {{0,32},{1,64},{2,128},{3,256}};

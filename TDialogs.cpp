@@ -133,6 +133,9 @@ int TBDialog::render(){
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import TileSet")).c_str())){
 						mGlobalSettings.CurrentEditor->activateOpenTileSetDialog();		  			
 					}
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import TileMap")).c_str())){
+						mGlobalSettings.CurrentEditor->activateOpenTileMapDialog();		  			
+					}
 
 					ImGui::EndMenu();
 				}
@@ -150,10 +153,30 @@ int TBDialog::render(){
 
 		if (ImGui::BeginMenu("View"))
 		{
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Tilemap")).c_str())){
-				//mGlobalSettings.CurrentEditor->mCurMode = EMODE_MAP;
+			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
+				if(mGlobalSettings.CurrentEditor->mTileMaps.size() > 1){
+					if(ImGui::BeginMenu((std::string(mGlobalSettings.mWindow + " Tilemaps")).c_str())){
+						int nMap=0;
+						for(auto *cMap : mGlobalSettings.CurrentEditor->mTileMaps){
+							if(ImGui::MenuItem(cMap->getMapSize().c_str())){				
+								mGlobalSettings.CurrentEditor->switchTileMap(nMap);
+							}
+							nMap++;
+						}
+						ImGui::EndMenu();
+					}
+				} else {
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Tilemap")).c_str())){				
+						mGlobalSettings.CurrentEditor->setMode(EMODE_MAP);
+					}
+				}
+			} else {
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Tilemap")).c_str())){				
 				mGlobalSettings.CurrentEditor->setMode(EMODE_MAP);
 			}
+			}
+
+			
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Tile")).c_str())){
 				//mGlobalSettings.CurrentEditor->mCurMode = EMODE_TILE;
 				mGlobalSettings.CurrentEditor->setMode(EMODE_TILE);
@@ -1154,6 +1177,78 @@ int ITSDialog::render(){
 }
 
 
+void ITMDialog::recieveInput(int mKey){
+	if(mKey == SDLK_y){
+		if(mTextInput.bInputIsAccepted){
+			bInputIsAccept=true;	
+			bDialogIsWatingForText = false;
+			mGlobalSettings.mOpenTileMapState = 1;
+			mGlobalSettings.mNewTileMapPath = mTextInput.mDialogTextMain;
+		}		
+	}
+
+	if(mKey == SDLK_n){
+		bInputIsCancel=true;
+	}		
+	if(mKey == SDLK_TAB){
+		mTextInput.autoComplete();		
+	}
+}
+
+
+int ITMDialog::render(){	
+	
+	Dialog::render();
+
+	ImGui::Begin("Import TileMap", NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
+    		
+	ImGui::Text("Import TileMap from Project file");
+	ImGui::Text("Undo Stack will be cleared!");
+	
+	mTextInput.render();
+
+	if (ImGui::Button("Choose TileMap File")){
+		Dialog::render();
+		ImGui::SetNextWindowSize(ImVec2(800, 600));
+    	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyTileMap", "Choose TileMap File", ".bin", ".");
+	}
+  
+  	// display
+  	if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKeyTileMap")){
+    	// action if OK
+    	if (ImGuiFileDialog::Instance()->IsOk()){
+      		std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+      		std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+	  		mTextInput.mDialogTextMain = filePathName;
+			mTextInput.checkCurrentText();			
+			if(mTextInput.bInputIsAccepted){
+				recieveInput(SDLK_y);
+			}
+      		// action
+    	}    
+    // close
+    	ImGuiFileDialog::Instance()->Close();
+  	}
+
+    if (ImGui::Button("Import")){
+		if(mTextInput.bInputIsAccepted){
+			recieveInput(SDLK_y);					
+		}				
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("Cancel")){
+		bInputIsCancel=true;
+	}		
+	        
+    ImGui::End();
+	
+	return 0;
+}
+
+
+
 void TIDialog::init(){
 	
 	mCursorTime += mGlobalSettings.getTicks();
@@ -1488,7 +1583,7 @@ void PIDialog::update(){
 	curtile = mEditor->mMapSelectedTile;
 	tilenum = mEditor->mTileSet.TTiles.size();
 	
-	int cTileFlip = mEditor->mTileMap.getFlip(mGlobalSettings.mSelectedTile);
+	int cTileFlip = mEditor->mTileMap->getFlip(mGlobalSettings.mSelectedTile);
 
 	fliph = (cTileFlip & 0x1) ? 1 : 0;
 	flipv = (cTileFlip & 0x2) ? 1 : 0;

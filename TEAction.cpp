@@ -10,6 +10,13 @@ void TEAction::undo(){
 
 }
 
+bool TEAction::checkTileMap(){
+	return false;
+}
+int TEAction::getTileMap(){
+	return 0;
+}
+
 void TEActionReplaceTile::undo(){
 	mTileMap->setTile(mCurrentTile, mOldValue);
 	mTileMap->setOffset(mCurrentTile, mOldOffset);
@@ -48,6 +55,22 @@ void TEActionReplacePixel::redo(){
 	mCurrentTile->updateTexture(mCurrentPalette);
 }
 
+bool TEActionReplaceTileFlip::checkTileMap(){
+	if(mTileMap == mGlobalSettings.CurrentEditor->mTileMap){
+		return false;
+	}
+	return true;
+}
+int TEActionReplaceTileFlip::getTileMap(){
+	int cTileMap = -1;
+	for(int i = 0; i < mGlobalSettings.CurrentEditor->mTileMaps.size(); i++){
+		if(mTileMap == mGlobalSettings.CurrentEditor->mTileMaps[i]){
+			cTileMap = i;
+		}
+	}
+	return cTileMap;
+}
+
 void TEActionReplaceTileFlip::doAction(TileMap *cTileMap, int mCurTile, int mOld, int mNew, int cFlipOld, int cFlipNew){
 	mTileMap = cTileMap;
 	mCurrentTile = mCurTile;
@@ -61,6 +84,22 @@ void TEActionReplaceTileFlip::doAction(TileMap *cTileMap, int mCurTile, int mOld
 	mTileMap->setFlip(mCurrentTile, mNewFlip);
 	mTileMap->setOffset(mCurrentTile, mNewOffset);
 	TEActionType=ACTION_TILEFLIP;
+}
+
+bool TEActionReplaceTile::checkTileMap(){
+	if(mTileMap == mGlobalSettings.CurrentEditor->mTileMap){
+		return false;
+	}
+	return true;
+}
+int TEActionReplaceTile::getTileMap(){
+	int cTileMap = -1;
+	for(int i = 0; i < mGlobalSettings.CurrentEditor->mTileMaps.size(); i++){
+		if(mTileMap == mGlobalSettings.CurrentEditor->mTileMaps[i]){
+			cTileMap = i;
+		}
+	}
+	return cTileMap;
 }
 
 
