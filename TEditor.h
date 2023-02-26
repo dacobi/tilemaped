@@ -153,6 +153,7 @@ class TEditor{
 		PUDialog mPaletteUpdate;
 		PODialog mPaletteOffset;
 		int importTileMap(std::string cNewTileMap);
+		int importTileMap(std::string cNewTileMap, int cTileOffset);
 		Tile* createNewTile();
 		Tile* createNewTileCopy(Tile* cCopyTile);
 		Tile* createNewTileFromFile(std::string newTilePath);

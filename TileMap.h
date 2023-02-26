@@ -190,6 +190,7 @@ class TileMap{
 		std::vector<SDL_Rect> TileAreas;
 		int removeTile(int cDropTile);
 		int loadFromFile(std::string path, std::string filename);
+		int loadFromFileOffset(std::string path, std::string filename, int cTileOffset);
 		int saveToFolder(std::string tpath, std::string tfile);
 		int createNew();
 		int render(int xpos,int ypos,TileSet* mTiles);

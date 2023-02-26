@@ -107,7 +107,10 @@ class ITSDialog: public ITDialog{
 };
 
 class ITMDialog: public ITDialog{
-	public:				
+	public:	
+		bool bUseOffset = false;
+		int mTileOffset = 1;
+		virtual void cancel();
 		virtual int render();
 		virtual void recieveInput(int mKey);		
 };

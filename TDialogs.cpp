@@ -1033,6 +1033,7 @@ int ITDialog::render(){
 	ImGui::Begin("Import Tile", NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
     		
 	ImGui::Text("Import Tile from bitmap or RAW");
+	
 
 	mTextInput.render();
 
@@ -1107,6 +1108,8 @@ void ITDialog::recieveInput(int mKey){
 	}
 }
 
+
+
 void ITSDialog::recieveInput(int mKey){
 	if(mKey == SDLK_y){
 		if(mTextInput.bInputIsAccepted){
@@ -1176,13 +1179,25 @@ int ITSDialog::render(){
 	return 0;
 }
 
+void ITMDialog::cancel(){
+		Dialog::cancel();
+		mTextInput.mTextColor =  mGlobalSettings.DefaultTextColor;
+		mTextInput.mDialogTextMain = "";
+		bUseOffset = false;
+		mTileOffset = 1;
+}
 
 void ITMDialog::recieveInput(int mKey){
 	if(mKey == SDLK_y){
 		if(mTextInput.bInputIsAccepted){
 			bInputIsAccept=true;	
 			bDialogIsWatingForText = false;
-			mGlobalSettings.mOpenTileMapState = 1;
+			if(bUseOffset && (mTileOffset > 1)){
+				mGlobalSettings.mOpenTileMapState = 2;
+				mGlobalSettings.mNewTileMapOffset = mTileOffset - 1;
+			} else {
+				mGlobalSettings.mOpenTileMapState = 1;
+			}
 			mGlobalSettings.mNewTileMapPath = mTextInput.mDialogTextMain;
 		}		
 	}
@@ -1204,6 +1219,13 @@ int ITMDialog::render(){
     		
 	ImGui::Text("Import TileMap from Project file");
 	ImGui::Text("Undo Stack will be cleared!");
+
+	ImGui::Checkbox("Use Tile Offset", &bUseOffset);
+
+	if(bUseOffset){
+		int mMax = mGlobalSettings.CurrentEditor->mTileSet.TTiles.size();
+		ImGui::SliderInt("Tile Offset", &mTileOffset, 1, mMax);
+	}
 	
 	mTextInput.render();
 

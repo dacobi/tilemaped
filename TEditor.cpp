@@ -89,6 +89,31 @@ void TEditor::initDialogs(){
 	
 }
 
+int TEditor::importTileMap(std::string cNewTileMap, int cTileOffset){
+		if(fs::exists(fs::status(cNewTileMap))){
+		TileMap* cNewMap = new TileMap();
+		fs::path cNewPath = cNewTileMap;
+		if(cNewMap->loadFromFileOffset(cNewPath.parent_path().string(), cNewPath.filename().string(), cTileOffset)){
+			std::cout << "Error Importing TileMap: " << cNewTileMap << std::endl;
+			return 1;
+		}
+		for(int i = 0; i < cNewMap->TileMapHeight; i++){
+			for(int j = 0; j < cNewMap->TileMapWidth; j++){
+				if(cNewMap->getTile((i * cNewMap->TileMapWidth) + j) >= mTileSet.TTiles.size()){
+					std::cout << "Error Importing TileMap, Tiles out of bound: " << cNewTileMap << std::endl;
+					return 2;
+				}
+			}
+		}
+
+		mTileMaps.push_back(cNewMap);		
+		return 0;
+	}
+
+	return 1;
+}
+
+
 int TEditor::importTileMap(std::string cNewTileMap){
 	if(fs::exists(fs::status(cNewTileMap))){
 		TileMap* cNewMap = new TileMap();
@@ -1578,6 +1603,34 @@ int TEditor::handleEvents(){
 				mGlobalSettings.mOpenTileMapState = 0;
 				int cretval = 0;
 				if((cretval = importTileMap(mGlobalSettings.mNewTileMapPath))){
+					cancelActiveDialog();
+					if(cretval == 2){
+						showMessage("Error Importing TileMap, Tiles are out of bound", true);
+					} else {
+						showMessage("Error Importing TileMap", true);
+					}
+					
+					return 0;
+				}
+
+										
+				mActionStack.redoClearStack();
+				mActionStack.undoClearStack();
+
+				cancelActiveDialog();
+				showMessage("TileMap Imported Successfully");
+
+				switchTileMap(mTileMaps.size()-1);
+
+				return 0;
+			}
+
+			if(mGlobalSettings.mOpenTileMapState == 2){
+				
+				mGlobalSettings.mOpenTileMapState = 0;
+				int cretval = 0;
+				std::cout << "Importing TileMap with offset: " << mGlobalSettings.mNewTileMapOffset << std::endl;
+				if((cretval = importTileMap(mGlobalSettings.mNewTileMapPath, mGlobalSettings.mNewTileMapOffset))){
 					cancelActiveDialog();
 					if(cretval == 2){
 						showMessage("Error Importing TileMap, Tiles are out of bound", true);

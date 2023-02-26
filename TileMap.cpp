@@ -2034,6 +2034,21 @@ int TileMap::createNew(){
 	return 0;
 }
 
+int TileMap::loadFromFileOffset(std::string path, std::string filename, int cTileOffset){
+	int retval = loadFromFile(path, filename);
+
+	if(retval){
+		return 1;
+	}
+
+	for(int i = 0; i < TileMapHeight; i++){
+		for(int j = 0; j < TileMapWidth; j++){
+			setTile((i * TileMapWidth) + j, cTileOffset + getTile((i * TileMapWidth) + j));
+		}
+	}
+
+	return 0;
+}
 
 int TileMap::loadFromFile(std::string path, std::string filename){
     	DataPath = path; 	
