@@ -848,6 +848,8 @@ int CTMDialog::render(){
 		int mMax = mGlobalSettings.CurrentEditor->mTileSet.TTiles.size();
 		ImGui::SliderInt("Initial Tile Value", &toffset, 1, mMax);
 
+		ImGui::Text("Undo Stack will be cleared");  
+
 		if (ImGui::Button("Create")){
 			recieveInput(SDLK_y);
 		}
