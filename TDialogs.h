@@ -164,6 +164,18 @@ class CPDialog: public Dialog{
 };
 
 
+class CTMDialog: public Dialog{
+	public:				
+		virtual void init();				
+		virtual void cancel();
+		virtual void recieveInput(int mKey);				
+		virtual int render();
+		int tmapx=32;
+		int tmapy=32;
+		int toffset=1;		
+};
+
+
 class OCDialog: public Dialog{
 	public:
 		virtual void init();		

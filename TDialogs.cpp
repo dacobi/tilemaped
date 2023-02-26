@@ -154,7 +154,7 @@ int TBDialog::render(){
 		if (ImGui::BeginMenu("View"))
 		{
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
-				if(mGlobalSettings.CurrentEditor->mTileMaps.size() > 1){
+				//if(mGlobalSettings.CurrentEditor->mTileMaps.size() > 1){
 					if(ImGui::BeginMenu((std::string(mGlobalSettings.mWindow + " Tilemaps")).c_str())){
 						int nMap=0;
 						for(auto *cMap : mGlobalSettings.CurrentEditor->mTileMaps){
@@ -163,17 +163,22 @@ int TBDialog::render(){
 							}
 							nMap++;
 						}
+ 
+						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Create Tilemap")).c_str())){				
+							mGlobalSettings.CurrentEditor->activateNewTileMapDialog();
+						}		
+						
 						ImGui::EndMenu();
 					}
-				} else {
-					if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Tilemap")).c_str())){				
-						mGlobalSettings.CurrentEditor->setMode(EMODE_MAP);
-					}
-				}
+				//} else {
+				//	if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Tilemap")).c_str())){				
+				//		mGlobalSettings.CurrentEditor->setMode(EMODE_MAP);
+				//	}
+				//}
 			} else {
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Tilemap")).c_str())){				
-				mGlobalSettings.CurrentEditor->setMode(EMODE_MAP);
-			}
+					mGlobalSettings.CurrentEditor->setMode(EMODE_MAP);
+				}
 			}
 
 			
@@ -776,6 +781,18 @@ void OCDialog::recieveInput(int mKey){
 	}
 }
 
+
+void CTMDialog::init(){
+	mDialogTextMain = mGlobalSettings.mFile + " Create New TileMap";	
+}
+
+void CTMDialog::cancel(){
+		Dialog::cancel();
+		tmapx = 32;
+		tmapy = 32;
+		toffset = 1;
+}
+
 void CPDialog::init(){
 	mDialogTextMain = mGlobalSettings.mFile + " Create New Project";	
 		
@@ -801,6 +818,65 @@ void CPDialog::init(){
 	mActiveInput = &mReadPath;
 	mActiveInput->bIsInputActive = true;
 
+}
+
+int CTMDialog::render(){
+	
+	Dialog::render();
+
+
+	ImGui::Begin(mDialogTextMain.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
+    		
+		ImGui::Text("TileMap Width & Height");  
+			
+		ImGui::RadioButton("W: 32", &tmapx, 32);
+		ImGui::SameLine();
+		ImGui::RadioButton("W: 64", &tmapx, 64);
+		ImGui::SameLine();
+		ImGui::RadioButton("W: 128", &tmapx, 128);
+		ImGui::SameLine();
+		ImGui::RadioButton("W: 256", &tmapx, 256);
+
+		ImGui::RadioButton("H: 32", &tmapy, 32);
+		ImGui::SameLine();
+		ImGui::RadioButton("H: 64", &tmapy, 64);
+		ImGui::SameLine();
+		ImGui::RadioButton("H: 128", &tmapy, 128);
+		ImGui::SameLine();
+		ImGui::RadioButton("H: 256", &tmapy, 256);
+
+		int mMax = mGlobalSettings.CurrentEditor->mTileSet.TTiles.size();
+		ImGui::SliderInt("Initial Tile Value", &toffset, 1, mMax);
+
+		if (ImGui::Button("Create")){
+			recieveInput(SDLK_y);
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel")){
+			recieveInput(SDLK_n);
+		}		
+            
+     ImGui::End();
+
+	return 0;
+}
+
+void CTMDialog::recieveInput(int mKey){
+	
+	if(mKey == SDLK_y){		
+		bInputIsAccept=true;	
+		bDialogIsWatingForText = false;		
+		mGlobalSettings.mNewTileMapState = 1;		
+		mGlobalSettings.mNewTileMapOffset = toffset - 1;
+		mGlobalSettings.mNewTileMapX = tmapx;
+		mGlobalSettings.mNewTileMapY = tmapy;
+	}		
+	
+	if(mKey == SDLK_n){
+		bInputIsCancel=true;
+	}			
 }
 
 int CPDialog::render(){
@@ -1628,6 +1704,12 @@ void PIDialog::update(){
 
 	Flip = "FlipH: "+cFlipH + " FlipV: " + cFlipV;
 	
+	convert << mGlobalSettings.TileMapWidth << std::endl;
+	convert >> cMapWidth;
+
+	convert << mGlobalSettings.TileMapHeight << std::endl;
+	convert >> cMapHeight;
+
 	std::string cTileX,cTileY;
 	int cx,cy;
 	

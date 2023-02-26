@@ -143,6 +143,7 @@ class TEditor{
 		ITDialog mOpenTileDialog;
 		ITSDialog mOpenTileSetDialog;
 		ITMDialog mOpenTileMapDialog;
+		CTMDialog mNewTileMapDialog;
 		HDialog mHelpDialog;
 		PIDialog mProjectInfo;
 		MEDialog mInfoMessage;
@@ -153,6 +154,7 @@ class TEditor{
 		PUDialog mPaletteUpdate;
 		PODialog mPaletteOffset;
 		int importTileMap(std::string cNewTileMap);
+		int createTileMap(int nMapX, int nMapy, int nTileValue);
 		int importTileMap(std::string cNewTileMap, int cTileOffset);
 		Tile* createNewTile();
 		Tile* createNewTileCopy(Tile* cCopyTile);
@@ -166,6 +168,7 @@ class TEditor{
 		int activateOpenTileDialog();
 		int activateOpenTileSetDialog();
 		int activateOpenTileMapDialog();
+		int activateNewTileMapDialog();
 		int activateHelpDialog();
 		int activateQuitDialog();
 		int cancelActiveDialog();

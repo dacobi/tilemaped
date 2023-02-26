@@ -57,6 +57,7 @@ void TEditor::initDialogs(){
 	mOpenTileDialog.init();
 	mOpenTileSetDialog.init();
 	mOpenTileMapDialog.init();
+	mNewTileMapDialog.init();
 	mInfoMessage.init();
 	mErrorMessage.setColorScheme(1);
 	mErrorMessage.init();
@@ -87,6 +88,28 @@ void TEditor::initDialogs(){
 	//tmpBrush.configBrush(8,2,TBRUSH_TILE);
 	//mCurBrush = &tmpBrush;
 	
+}
+
+int TEditor::createTileMap(int nMapX, int nMapY, int nTileValue){
+
+	TileMap* cNewMap = new TileMap();
+
+	cNewMap->FileData.resize(nMapX * nMapY * 2, 0);
+	cNewMap->TileAreas.resize(nMapX * nMapY);
+	cNewMap->TileMapWidth = nMapX;
+	cNewMap->TileMapHeight = nMapY;
+
+	for(int i = 0; i < cNewMap->TileMapHeight; i++){
+		for(int j = 0; j < cNewMap->TileMapWidth; j++){
+			cNewMap->setTile((i * cNewMap->TileMapWidth) + j, nTileValue);
+		}
+	}
+
+	mTileMaps.push_back(cNewMap);
+
+	switchTileMap(mTileMaps.size()-1);
+
+	return 0;
 }
 
 int TEditor::importTileMap(std::string cNewTileMap, int cTileOffset){
@@ -759,6 +782,13 @@ int TEditor::activateOpenTileDialog(){
 	if(mCurMode == EMODE_MAP){
 		mActiveDialog = &mOpenTileDialog;
 		mActiveDialog->bDialogIsWatingForText = true;		
+	}
+	return 0;
+}
+
+int TEditor::activateNewTileMapDialog(){
+	if(mCurMode == EMODE_MAP){
+		mActiveDialog = &mNewTileMapDialog;		
 	}
 	return 0;
 }
@@ -1647,6 +1677,24 @@ int TEditor::handleEvents(){
 
 				cancelActiveDialog();
 				showMessage("TileMap Imported Successfully");
+
+				switchTileMap(mTileMaps.size()-1);
+
+				return 0;
+			}
+
+
+			if(mGlobalSettings.mNewTileMapState == 1){
+				
+				mGlobalSettings.mNewTileMapState = 0;
+
+				createTileMap(mGlobalSettings.mNewTileMapX, mGlobalSettings.mNewTileMapY, mGlobalSettings.mNewTileMapOffset);				
+										
+				mActionStack.redoClearStack();
+				mActionStack.undoClearStack();
+
+				cancelActiveDialog();
+				showMessage("TileMap Created Successfully");
 
 				switchTileMap(mTileMaps.size()-1);
 

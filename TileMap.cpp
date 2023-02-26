@@ -2028,6 +2028,8 @@ int TileMap::createNew(){
 
 	FileData.resize(mGlobalSettings.TileMapWidth * mGlobalSettings.TileMapHeight * 2, 0);
 	TileAreas.resize(mGlobalSettings.TileMapWidth * mGlobalSettings.TileMapHeight);
+	TileMapHeight = mGlobalSettings.TileMapHeight;
+	TileMapWidth = mGlobalSettings.TileMapWidth;
 	//mSelectionBorder.resize(mGlobalSettings.TileMapWidth * mGlobalSettings.TileMapHeight, 0);
 	//mSelectionEdges.resize(mGlobalSettings.TileMapWidth * mGlobalSettings.TileMapHeight, 0);
 
