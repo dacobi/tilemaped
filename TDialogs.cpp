@@ -1538,6 +1538,7 @@ void HDialog::init(){
 	mHelpTextTileSet = mGlobalSettings.mHelpTextTileSet;
 	mHelpTextGeneral = mGlobalSettings.mHelpText;
 	mHelpTextPalette = mGlobalSettings.mHelpTextPalette;
+	mHelpTextImport = mGlobalSettings.mHelpTextImport;
 }
 
 void HDialog::recieveInput(int mKey){
@@ -1604,6 +1605,16 @@ int HDialog::render(){
 		ImGui::PushFont(mGlobalSettings.SFont);
 		for(int i = 0; i < mHelpTextPalette.size(); i++){
 			ImGui::BulletText("%s", mHelpTextPalette[i].c_str());
+		}
+		ImGui::PopFont();
+	}
+
+	ImGui::Separator();
+
+	if(ImGui::CollapsingHeader("Import")){
+		ImGui::PushFont(mGlobalSettings.SFont);
+		for(int i = 0; i < mHelpTextImport.size(); i++){
+			ImGui::BulletText("%s", mHelpTextImport[i].c_str());
 		}
 		ImGui::PopFont();
 	}

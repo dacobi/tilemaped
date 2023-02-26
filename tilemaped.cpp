@@ -380,6 +380,10 @@ void TSettings::initHelpText(){
 	mHelpTextPalette.push_back("COPY COLOR: Press (RIGHT MOUSE BUTTON) on a Color to copy its value to the selected Color.");
 	mHelpTextPalette.push_back("IMPORT: Select <Import Palette> in the Edit menu to import a palette file.\nGimp palettes and Tilemaped palettes are supported.");
 	mHelpTextPalette.push_back("APPLY/CANCEL: Press <Apply Changes> to update the Project Palette.\nPress <Cancel Changes> to revert the Palette Editor to the Project Palette.");
+
+	mHelpTextImport.push_back("TILE: Tiles can be imported, for Tile BPP 8 and 4, from 8 BPP PNGs and RAW.\nIf BPP is 4 pixel values for PNG will be \"pixelvalue % 16\"");
+	mHelpTextImport.push_back("TILESET: TileSets can be imported from Project file or PNG.\nProject files must have the same BPP as current project.\nPNGs must have Width and Hight where \"Width % TileSize\" equals zero.\nFor BPP of 4 pixel values for PNG will be \"pixelvalue % 16\"."); 
+	mHelpTextImport.push_back("TILEMAP: TileMaps can be imported from Project files. A Tile value offset can be specified.\nThe final TileMap must not have any Tile values larger than the current TileSet.");
 }
 
 void printUsage(){
