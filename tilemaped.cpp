@@ -12,7 +12,7 @@
 #include <sstream>
 #include <cstdlib>
 
-#define MAPPIMAGE
+//#define MAPPIMAGE
 
 #include "version.h"
 
