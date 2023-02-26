@@ -1558,7 +1558,7 @@ int MEDialog::render(){
 
 	Dialog::render();
 
-	ImGui::Begin("Message");                         
+	ImGui::Begin("Message", NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
 		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(mTextColor.r, mTextColor.g, mTextColor.b, 255));
 		ImGui::Text("%s", mDialogTextMain.c_str());
 		ImGui::PopStyleColor();

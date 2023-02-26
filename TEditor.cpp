@@ -97,6 +97,15 @@ int TEditor::importTileMap(std::string cNewTileMap){
 			std::cout << "Error Importing TileMap: " << cNewTileMap << std::endl;
 			return 1;
 		}
+		for(int i = 0; i < cNewMap->TileMapHeight; i++){
+			for(int j = 0; j < cNewMap->TileMapWidth; j++){
+				if(cNewMap->getTile((i * cNewMap->TileMapWidth) + j) >= mTileSet.TTiles.size()){
+					std::cout << "Error Importing TileMap, Tiles out of bound: " << cNewTileMap << std::endl;
+					return 2;
+				}
+			}
+		}
+
 		mTileMaps.push_back(cNewMap);		
 		return 0;
 	}
@@ -1567,9 +1576,15 @@ int TEditor::handleEvents(){
 			if(mGlobalSettings.mOpenTileMapState == 1){
 				
 				mGlobalSettings.mOpenTileMapState = 0;
-				if(importTileMap(mGlobalSettings.mNewTileMapPath)){
+				int cretval = 0;
+				if((cretval = importTileMap(mGlobalSettings.mNewTileMapPath))){
 					cancelActiveDialog();
-					showMessage("Error Importing TileMap", true);
+					if(cretval == 2){
+						showMessage("Error Importing TileMap, Tiles are out of bound", true);
+					} else {
+						showMessage("Error Importing TileMap", true);
+					}
+					
 					return 0;
 				}
 
