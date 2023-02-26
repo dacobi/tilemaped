@@ -16,7 +16,6 @@ class TEAction{
 		virtual int getTileMap();
 };
 
-
 class TEActionUndoStack{
 	public:
 		TEActionUndoStack();
@@ -50,15 +49,6 @@ class TEActionReplaceMany: public TEAction{
 		std::vector<TEAction*> mSubActions;
 		
 		bool compareSelection(TEActionReplaceMany *mCmp){
-
-			//if(mSelection.size() == mCmp->mSelection.size()){
-			//	for(int i = 0; i < mSelection.size(); i++){
-			//		if(mSelection[i] != mCmp->mSelection[i]){
-			//			return false;
-			//		}
-			//	}
-			//	return true;
-			//}
 
 			if(mSelection == mCmp->mSelection){
 				return true;
@@ -135,7 +125,6 @@ class TEActionReplacePixel: public TEAction{
 			 return false;
 		}
 };
-
 
 class TEActionReplacePixels: public TEActionReplaceMany{
 	public:
@@ -257,8 +246,6 @@ class TEActionBrushPixelsTileSet: public TEActionReplaceMany{
 		}
 };
 
-
-
 class TEActionAddTile: public TEAction{
 	public:
 		~TEActionAddTile();
@@ -291,18 +278,6 @@ class TEActionAddTiles: public TEAction{
 		virtual bool doCompare(const TEAction& rhs){
 			 return false;
 		}
-};
-
-
-
-
-class TEActionDropTile: public TEActionAddTile{
-	public:
-		~TEActionDropTile(){}
-		void doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles);	
-		virtual void undo();
-		virtual void redo();
-
 };
 
 #endif

@@ -1102,46 +1102,41 @@ int TEditor::replaceSelectedTiles(int mx, int my){
 int TEditor::findSelMap(){
 
 	int tSel = -1;
-
-		if(leftMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
-			
-			if(bLCTRLisDown){
-						if(bTileMapGrapped){
-							mTileMapScrollX += rx;
-							mTileMapScrollY += ry;;
-						} else {
-							bTileMapGrapped = true;						
-						}				
-				} else {					
-					
-						if(mCurrentBrushTile){							
-							TEActionBrushTiles* newAction = new TEActionBrushTiles();
-							newAction->doAction(mTileMap, *mCurrentBrushTile);							
-							if(!(*newAction == *mActionStack.mLastAction)){							
-								mActionStack.mLastAction = newAction;
-								mActionStack.newActionGroup();
-								mActionStack.addSubActions(newAction->mSubActions);
-       							mActionStack.redoClearStack();
-							}							
-						} else {
-							tSel = searchRectsXY(mTileMap->TileAreas,cx,cy);
-	       					if(tSel != -1){
-	       						mGlobalSettings.mSelectedTile = tSel;		  	
-	       						TEActionReplaceTileFlip *mCurAction = new TEActionReplaceTileFlip();
-	       						mCurAction->doAction(mTileMap, tSel, mTileMap->getTile(tSel), mMapSelectedTile, mTileMap->getFlip(tSel), 0);
+	if(leftMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){			
+		if(bLCTRLisDown){
+			if(bTileMapGrapped){
+				mTileMapScrollX += rx;
+				mTileMapScrollY += ry;;
+			} else {
+				bTileMapGrapped = true;						
+			}				
+		} else {										
+			if(mCurrentBrushTile){							
+				TEActionBrushTiles* newAction = new TEActionBrushTiles();
+				newAction->doAction(mTileMap, *mCurrentBrushTile);							
+				if(!(*newAction == *mActionStack.mLastAction)){							
+					mActionStack.mLastAction = newAction;
+					mActionStack.newActionGroup();
+					mActionStack.addSubActions(newAction->mSubActions);
+    				mActionStack.redoClearStack();
+				}							
+			} else {
+				tSel = searchRectsXY(mTileMap->TileAreas,cx,cy);
+	   			if(tSel != -1){
+	   				mGlobalSettings.mSelectedTile = tSel;		  	
+	   				TEActionReplaceTileFlip *mCurAction = new TEActionReplaceTileFlip();
+	   				mCurAction->doAction(mTileMap, tSel, mTileMap->getTile(tSel), mMapSelectedTile, mTileMap->getFlip(tSel), 0);
 	       			
-	       						if(!(*mCurAction == *mActionStack.mLastAction)){
-	       							mActionStack.newActionGroup();	
-	       							mActionStack.addAction(mCurAction);
-	       							mActionStack.mLastAction = mCurAction;
-	       							mActionStack.redoClearStack();
-	       						}
-	       					}
-						}
-	      			}
-		    
-		}
-
+	   				if(!(*mCurAction == *mActionStack.mLastAction)){
+	   					mActionStack.newActionGroup();	
+	   					mActionStack.addAction(mCurAction);
+	   					mActionStack.mLastAction = mCurAction;
+	   					mActionStack.redoClearStack();
+	   				}
+	   			}
+			}
+	    }		    
+	}
 	return 0;
 }
 
@@ -1152,59 +1147,55 @@ int TEditor::handleTile(){
 
 int TEditor::findSelTile(){
 
-		if(leftMouseButtonDown && bLShiftIsDown &&!mGlobalSettings.mio->WantCaptureMouse){
-			if(!mTileSelectedTile->mSelection.bIsSelecting){
-				mTileSelectedTile->mSelection.startSelection(cx, cy);	
-			} else {
-				mTileSelectedTile->mSelection.updateSelection(cx, cy);
-			}
-	
+	if(leftMouseButtonDown && bLShiftIsDown &&!mGlobalSettings.mio->WantCaptureMouse){
+		if(!mTileSelectedTile->mSelection.bIsSelecting){
+			mTileSelectedTile->mSelection.startSelection(cx, cy);	
 		} else {
-
+			mTileSelectedTile->mSelection.updateSelection(cx, cy);
+		}
+	
+	} else {		
+		if(mTileSelectedTile->mSelection.bIsSelecting){
+			mTileSelectedTile->mSelection.confirmSelection(mTileSelectedTile->PixelAreas, mGlobalSettings.TilePixelSize * mGlobalSettings.mTileEdScale, mGlobalSettings.TilePixelSize * mGlobalSettings.mTileEdScale);
+		}
 		
-			if(mTileSelectedTile->mSelection.bIsSelecting){
-				mTileSelectedTile->mSelection.confirmSelection(mTileSelectedTile->PixelAreas, mGlobalSettings.TilePixelSize * mGlobalSettings.mTileEdScale, mGlobalSettings.TilePixelSize * mGlobalSettings.mTileEdScale);
-			}
-		
+		if(leftMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
+			int tSel = -1;
 
-			if(leftMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
-				int tSel = -1;
+			if(mCurrentBrushPixel){
+				TEActionBrushPixels* newAction = new TEActionBrushPixels();
+				newAction->doAction(mTileSelectedTile, *mCurrentBrushPixel, &mPalette);
+				if(!(*newAction == *mTileSelectedTile->mActionStack.mLastAction)){								
+					mTileSelectedTile->mActionStack.mLastAction = newAction;
+					mTileSelectedTile->mActionStack.newActionGroup();
+					mTileSelectedTile->mActionStack.addSubActions(newAction->mSubActions);
+       				mTileSelectedTile->mActionStack.redoClearStack();
+				}
+			} else {
+				tSel = searchRectsXY(mTileSelectedTile->PixelAreas, cx, cy);
+				if(tSel != -1){
 
-				if(mCurrentBrushPixel){
-					TEActionBrushPixels* newAction = new TEActionBrushPixels();
-							newAction->doAction(mTileSelectedTile, *mCurrentBrushPixel, &mPalette);
-							if(!(*newAction == *mTileSelectedTile->mActionStack.mLastAction)){								
-								mTileSelectedTile->mActionStack.mLastAction = newAction;
-								mTileSelectedTile->mActionStack.newActionGroup();
-								mTileSelectedTile->mActionStack.addSubActions(newAction->mSubActions);
-       							mTileSelectedTile->mActionStack.redoClearStack();
-							}
-				} else {
-
-					tSel = searchRectsXY(mTileSelectedTile->PixelAreas, cx, cy);
-					if(tSel != -1){
-
-       					TEActionReplacePixel *mCurAction = new TEActionReplacePixel();
-						mCurAction->doAction(mTileSelectedTile, tSel, mTileSelectedTile->getPixel(tSel), mColorSelected, &mPalette);
+					TEActionReplacePixel *mCurAction = new TEActionReplacePixel();
+					mCurAction->doAction(mTileSelectedTile, tSel, mTileSelectedTile->getPixel(tSel), mColorSelected, &mPalette);
 				
-						if(!(*mCurAction == * mTileSelectedTile->mActionStack.mLastAction)){
-       						mTileSelectedTile->mActionStack.newActionGroup();	
-       						mTileSelectedTile->mActionStack.addAction(mCurAction);
-       						mTileSelectedTile->mActionStack.mLastAction = mCurAction;
-       						mTileSelectedTile->mActionStack.redoClearStack();
-       					}
-					}
+					if(!(*mCurAction == * mTileSelectedTile->mActionStack.mLastAction)){
+   						mTileSelectedTile->mActionStack.newActionGroup();	
+   						mTileSelectedTile->mActionStack.addAction(mCurAction);
+   						mTileSelectedTile->mActionStack.mLastAction = mCurAction;
+   						mTileSelectedTile->mActionStack.redoClearStack();
+   					}
 				}
 			}
 		}
+	}
 
-		if((rightMouseButtonClicks && bLShiftIsDown) && !mGlobalSettings.mio->WantCaptureMouse){		
-			int tSel = -1;
-			tSel = searchRectsXY(mTileSelectedTile->PixelAreas, cx, cy);
-			if(tSel >-1){
-				mTileSelectedTile->mSelection.modifySelection(tSel);
-			}		
-		}
+	if((rightMouseButtonClicks && bLShiftIsDown) && !mGlobalSettings.mio->WantCaptureMouse){		
+		int tSel = -1;
+		tSel = searchRectsXY(mTileSelectedTile->PixelAreas, cx, cy);
+		if(tSel >-1){
+			mTileSelectedTile->mSelection.modifySelection(tSel);
+		}		
+	}
 
 	if(rightMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse  && !bLShiftIsDown){
 		int tSel = -1;
@@ -1386,13 +1377,12 @@ int TEditor::handleTileSetEdit(){
 	if(mTileSetScrollY < -(tileSetWidthY - (mGlobalSettings.WindowHeight - 50- mGlobalSettings.TopBarHeight))){mTileSetScrollY = -(tileSetWidthY - (mGlobalSettings.WindowHeight -50 - mGlobalSettings.TopBarHeight));}
 	
 	if(tileSetWidthX < (mGlobalSettings.WindowWidth)){
-		mTileSetScrollX = 0;// -(tileSetWidthX - (mGlobalSettings.WindowWidth))/2;
+		mTileSetScrollX = 0;
 	}
 	
 	if(tileSetWidthY < (mGlobalSettings.WindowHeight-mGlobalSettings.TopBarHeight)){
-		mTileSetScrollY = 0;// -(tileSetWidthY - (mGlobalSettings.WindowHeight-mGlobalSettings.TopBarHeight))/2;
+		mTileSetScrollY = 0;
 	}
-
 
 	if((rightMouseButtonClicks && bLShiftIsDown) && !mGlobalSettings.mio->WantCaptureMouse){		
 		int tSel = -1;
@@ -1466,15 +1456,14 @@ int TEditor::handleBrushes(){
 int TEditor::handleTileSet(){
 
 	if(ImButtonsTileSet.mLeft.bButtonIsDown){ 
-			int tSel = -1;
-			tSel = searchRectsXY(mTileSet.TileAreas, ImButtonsTileSet.mLeft.mMousePos.x, ImButtonsTileSet.mLeft.mMousePos.y);
-					if(tSel != -1){
-   	 				mMapSelectedTile = tSel;
-   	 				mTileSelectedTile->bIsSelected = false;
-   	 				mTileSelectedTile = mTileSet.TTiles[tSel];
-   	 				mTileSelectedTile->bIsSelected = true;
-			}		
-
+		int tSel = -1;
+		tSel = searchRectsXY(mTileSet.TileAreas, ImButtonsTileSet.mLeft.mMousePos.x, ImButtonsTileSet.mLeft.mMousePos.y);
+		if(tSel != -1){
+   	 		mMapSelectedTile = tSel;
+   	 		mTileSelectedTile->bIsSelected = false;
+   	 		mTileSelectedTile = mTileSet.TTiles[tSel];
+   	 		mTileSelectedTile->bIsSelected = true;
+		}		
 	}
 	if(ImButtonsTileSet.mRight.bButtonIsDown && mBrushesTile.bIsEditing){
 		int tSel = -1;		
@@ -1483,7 +1472,6 @@ int TEditor::handleTileSet(){
 	} else if(ImButtonsTileSet.mRight.bButtonIsDown && (mGlobalSettings.bShowTypeSelection || mSelection.mSelected.size())){
 		replaceSelectedTiles(ImButtonsTileSet.mRight.mMousePos.x ,ImButtonsTileSet.mRight.mMousePos.y);
 	}
-
 
 	return 0;
 }
@@ -1502,17 +1490,17 @@ int TEditor::handleTileMap(){
 		int tSel = -1;
 
 		if(rightMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse && !bLShiftIsDown){
-		tSel = searchRectsXY(mTileMap->TileAreas, cx, cy);
-	    if(tSel != -1){
-	    	mGlobalSettings.mSelectedTile = tSel;
-			mGlobalSettings.bShowSelectedTile = true;			
-			mMapSelectedTile = mTileMap->getTile(tSel);
-   	 		mTileSelectedTile->bIsSelected = false;
-   	 		mTileSelectedTile = mTileSet.TTiles[mMapSelectedTile];
-   	 		mTileSelectedTile->bIsSelected = true;							
-			mSelection.cancelSelection();
+			tSel = searchRectsXY(mTileMap->TileAreas, cx, cy);
+	    	if(tSel != -1){
+	    		mGlobalSettings.mSelectedTile = tSel;
+				mGlobalSettings.bShowSelectedTile = true;			
+				mMapSelectedTile = mTileMap->getTile(tSel);
+   	 			mTileSelectedTile->bIsSelected = false;
+   	 			mTileSelectedTile = mTileSet.TTiles[mMapSelectedTile];
+   	 			mTileSelectedTile->bIsSelected = true;							
+				mSelection.cancelSelection();
+			}
 		}
-	}
 	}
 
 	if(leftMouseButtonDown && bLShiftIsDown && !mGlobalSettings.mio->WantCaptureMouse){
@@ -1564,20 +1552,17 @@ int TEditor::handleEvents(){
 		if(mActiveDialog->bInputIsAccept){
 			if(mGlobalSettings.mDeleteUnusedTilesState){
 				dropUnusedTiles();
-				mGlobalSettings.mDeleteUnusedTilesState = 0;
-				//return 0;
+				mGlobalSettings.mDeleteUnusedTilesState = 0;				
 			}
 			if(mGlobalSettings.mProjectSaveState == 1){
 				if(saveToFolder(mGlobalSettings.ProjectPath)){					
 					showMessage("Error Creating Project Folder!", true);
 				} 
-				mGlobalSettings.mProjectSaveState = 0;				
-				//return 0;
+				mGlobalSettings.mProjectSaveState = 0;								
 			}
 			if(mGlobalSettings.mPaletteUpdateState == 1){
 				updatePalette();
-				mGlobalSettings.mPaletteUpdateState = 0;
-				//return 0;
+				mGlobalSettings.mPaletteUpdateState = 0;				
 			}
 			if(mGlobalSettings.mOpenTileState == 1){
 				Tile* newTile = createNewTileFromFile(mGlobalSettings.mNewTilePath);
@@ -1622,8 +1607,7 @@ int TEditor::handleEvents(){
 				
 
 				mActionStack.redoClearStack();
-				//mActionStack.undoClearStack();
-
+				
 				cancelActiveDialog();
 				showMessage("TileSet Imported Successfully");
 				return 0;
@@ -1770,9 +1754,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 			}
 			break;
 		case SDL_QUIT:
-			activateQuitDialog();		
-	  		//bEditorRunning = false;
-  			//std::cout << "Shutting Down..." << std::endl;
+			activateQuitDialog();			  		
   			break;
 			
 	  	case SDL_KEYDOWN:
@@ -1981,9 +1963,12 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	mErrorMessage.bUpdateWinPos = true;
 	mQuitDialog.bUpdateWinPos = true;
 	mPaletteUpdate.bUpdateWinPos = true;
-	mSaveDialog.bUpdateWinPos = true;;
-	mSaveAsDialog.bUpdateWinPos = true;;
-	mOpenTileDialog.bUpdateWinPos = true;;
+	mSaveDialog.bUpdateWinPos = true;
+	mSaveAsDialog.bUpdateWinPos = true;
+	mOpenTileDialog.bUpdateWinPos = true;
+	mOpenTileSetDialog.bUpdateWinPos = true;
+	mOpenTileMapDialog.bUpdateWinPos = true;
+	mNewTileMapDialog.bUpdateWinPos = true;
 
 	return 0;
 }

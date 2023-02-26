@@ -23,8 +23,7 @@ class TTexture{
 		unsigned char getPixel(int pindex);
 		unsigned char getPixel(int pindex, int poffset);
 		int setPixel(int pindex, unsigned char pcolor);
-		int setPixel(int pindex, unsigned char pcolor, std::vector<unsigned char> &tBuf);
-		//int setAllPixels(unsigned char tcolor, TPalette* tpal);
+		int setPixel(int pindex, unsigned char pcolor, std::vector<unsigned char> &tBuf);		
 		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderEx(int xpos, int ypos, int tscale, SDL_RendererFlip flip);
 		void renderEd(int xpos, int ypos, TPalette* tpal);
@@ -64,8 +63,7 @@ class TPalette : public Dialog{
 		int saveToFile(std::string palPath);
 		int importGimpPalette(std::string palPath);
 		int importPaletteEdit(std::string palPath);
-		bool bImportingPalette = false;
-		//int testPaletteFile(std::string palPath);
+		bool bImportingPalette = false;		
 		std::vector<TPixel*> TPixels;
 		std::vector<TPixel*> TPixelsEdit;
 		std::vector<SDL_Rect> PixelAreas;
@@ -101,8 +99,7 @@ class Tile: public TTexture{
 		SDL_Rect render(int xpos, int ypos, int tscale, TileProperties tProps);
 		void renderEd(int xpos, int ypos, TPalette* tpal);
 		void renderEdSel(int xpos, int ypos, TPalette* tpal, int cScale);
-		static int renderSelection(SDL_Rect &sRect, SDL_Color sColor);
-		//int renderSelection();
+		static int renderSelection(SDL_Rect &sRect, SDL_Color sColor);		
 		int updateTexture(TPalette* tpal);
 		int loadFromFile(std::string filename,TPalette* tpal);
 		int loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal);	
@@ -111,8 +108,7 @@ class Tile: public TTexture{
 		int rotatel();
 		bool bIsSelected = false;
 		TEActionUndoStack mActionStack;
-		TSelection mSelection;
-		//SDL_Rect mRect;
+		TSelection mSelection;		
 };	
 
 class TileSet{
@@ -196,8 +192,7 @@ class TileMap{
 		int render(int xpos,int ypos,TileSet* mTiles);
 		std::map<int,int> mTilemapSizesIn = {{0,32},{1,64},{2,128},{3,256}};
 		std::map<int,int> mTilemapSizesOut = {{32,0},{64,1},{128,2},{256,3}};
-		SDL_Rect mBorder;        
-		//bool bHasSelection = false;		
+		SDL_Rect mBorder;        		
 };
 
 #endif

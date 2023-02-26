@@ -4,7 +4,6 @@
 #include "TEditor.h"
 #include <SDL.h>
 #include "ImGuiFileDialog.h"
-//#include "TSelection.h"
 
 extern TSettings mGlobalSettings;
 
@@ -20,8 +19,6 @@ int TTexture::loadFromFile(std::string filename,TPalette* tpal){
     initTexture();
     std::ifstream infile(filename, std::ios::binary );
 
-    //FileData.resize(mGlobalSettings.TileSizeX * mGlobalSettings.TileSizeY);
-
     std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
     FileData = tbuffer;
 
@@ -31,7 +28,7 @@ int TTexture::loadFromFile(std::string filename,TPalette* tpal){
 
 int TTexture::loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal){
 	initTexture();
-    //FileData.resize(mGlobalSettings.TileSizeX * mGlobalSettings.TileSizeY);
+
 	FileData = cTileBuf;
 	updateTexture(tpal);
 	return 0;
@@ -408,8 +405,6 @@ int TPalette::importPaletteEdit(std::string palPath){
 
 	std::ifstream infile(palPath, std::ios::binary );
     std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
-
-	//mGlobalSettings.ProjectPalette = tbuffer;
 
 	int magic1,magic2;
 
@@ -1986,8 +1981,7 @@ int TileSet::renderIm(int ypos, int mScroll){
 	if(mCurColumns > 0){
 		for(int i = 0; i < cRowNum; i++){
 			for(int j = 0; j < mCurColumns; j++){
-				TileAreas[(i * mCurColumns) + j] = TTiles[(i*mCurColumns) + j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSizeY*mCurTileScale)+mColSpace)*i), mCurTileScale,true,true);				
-				//std::cout << "Rendering: " <<  i << "," << j << std::endl;
+				TileAreas[(i * mCurColumns) + j] = TTiles[(i*mCurColumns) + j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSizeY*mCurTileScale)+mColSpace)*i), mCurTileScale,true,true);								
 				if((mCurColumns > 1) && (j < (mCurColumns-1))){					
 					ImGui::SameLine();
 				} 
@@ -1997,8 +1991,7 @@ int TileSet::renderIm(int ypos, int mScroll){
 		if(isOdd){			
 			int i = mCurColumns;
 			for(int j = 0; j < isOdd; j++){
-				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSizeY*mCurTileScale)+mColSpace)*cRowNum), mCurTileScale,true,true);
-				//std::cout << "Rendering: " <<  i << "," << j << std::endl;
+				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSizeY*mCurTileScale)+mColSpace)*cRowNum), mCurTileScale,true,true);				
 				if((j < (isOdd-1))){
 					ImGui::SameLine();
 				}
@@ -2030,9 +2023,7 @@ int TileMap::createNew(){
 	TileAreas.resize(mGlobalSettings.TileMapWidth * mGlobalSettings.TileMapHeight);
 	TileMapHeight = mGlobalSettings.TileMapHeight;
 	TileMapWidth = mGlobalSettings.TileMapWidth;
-	//mSelectionBorder.resize(mGlobalSettings.TileMapWidth * mGlobalSettings.TileMapHeight, 0);
-	//mSelectionEdges.resize(mGlobalSettings.TileMapWidth * mGlobalSettings.TileMapHeight, 0);
-
+	
 	return 0;
 }
 
@@ -2090,9 +2081,7 @@ int TileMap::loadFromFile(std::string path, std::string filename){
 	if((twidth * theight * 2) == tbuffer.size()){
 		FileData.resize(twidth * theight * 2);
 		FileData = tbuffer;
-		//TODO
-		//mGlobalSettings.TileMapHeight = theight;
-		//mGlobalSettings.TileMapWidth = twidth;
+		//TODO maybe		
 		TileMapHeight = theight;
 		TileMapWidth = twidth;
 		TileAreas.resize(twidth * theight);
@@ -2101,9 +2090,6 @@ int TileMap::loadFromFile(std::string path, std::string filename){
 		std::cout << "TileMap File Error!" << std::endl;
 		return 1;
 	}
-
-//	mSelectionBorder.resize(mGlobalSettings.TileMapWidth * mGlobalSettings.TileMapHeight, 0);
-//	mSelectionEdges.resize(mGlobalSettings.TileMapWidth * mGlobalSettings.TileMapHeight, 0);
 
     return 0;
 }
@@ -2238,14 +2224,12 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 	if(mGlobalSettings.CurrentEditor->mCurrentBrushTile && !mGlobalSettings.CurrentEditor->mBrushesTile.bIsEditing){
 		if(mGlobalSettings.CurrentEditor->mCurrentBrushTile->mSelected.size()){
 			for(int i=0; i < mGlobalSettings.TileMapHeight; i++){
-				for(int j=0; j < mGlobalSettings.TileMapWidth; j++){
-					//if(mGlobalSettings.CurrentEditor->mCurrentBrushTile->findInSelection((j+(i*mGlobalSettings.TileMapWidth))) != -1){						
+				for(int j=0; j < mGlobalSettings.TileMapWidth; j++){					
 					if(mGlobalSettings.CurrentEditor->mCurrentBrushTile->isInSelection((j+(i*mGlobalSettings.TileMapWidth)))){						
 						int findex = mGlobalSettings.CurrentEditor->mCurrentBrushTile->findInSelection((j+(i*mGlobalSettings.TileMapWidth)));
 						if(mGlobalSettings.CurrentEditor->mCurrentBrushTile->mBrushElements[findex] != -1){
 							mTiles->TTiles[mGlobalSettings.CurrentEditor->mCurrentBrushTile->mBrushElements[findex]]->render(xpos + (mGlobalSettings.TileSizeX * j * mGlobalSettings.TileMapScale), ypos + (mGlobalSettings.TileSizeY * i * mGlobalSettings.TileMapScale), mGlobalSettings.TileMapScale, mGlobalSettings.CurrentEditor->mCurrentBrushTile->getElementProps(findex));			
-						}
-						//Tile::renderSelection(TileAreas[j+(i*mGlobalSettings.TileMapWidth)], mGlobalSettings.DefaultHighlightColor);
+						}						
 					}
 				}
 			}

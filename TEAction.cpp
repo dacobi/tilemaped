@@ -102,7 +102,6 @@ int TEActionReplaceTile::getTileMap(){
 	return cTileMap;
 }
 
-
 void TEActionReplaceTile::doAction(TileMap *cTileMap, int mCurTile, int mOld, int mNew){
 	mTileMap = cTileMap;
 	mCurrentTile = mCurTile;
@@ -173,7 +172,6 @@ void TEActionBrushPixelsTileSet::doAction(TileSet* cTileSet, TBrush &mBrush, int
 	}
 }
 
-
 void TEActionReplacePixelsSel::doAction(TileSet *cTileSet, TSelection &mSelect, int mAreaX, int mAreaY, int cNewColor, TPalette* mPal){
 	mNewValue = cNewColor;
 	mCurrentPalette = mPal;
@@ -206,11 +204,7 @@ void TEActionBrushTiles::doAction(TileMap* cTileMap, TBrush &mBrush){
 	int eindex = 0;
 
 	for(auto &mSelElement : mSelection){
-		if(mSelElement > -1){ 	
-			/*	
-			if(std::count(mSelection.begin(), mSelection.end(), mSelElement) > 1){
-				std::cout << "Wooooops" << std::endl;
-			}*/	
+		if(mSelElement > -1){ 				
 			if(mNewValues[eindex] != -1){
 				TEActionReplaceTileFlip* newAction = new TEActionReplaceTileFlip();			
 				newAction->doAction(mTileMap, mSelElement, mTileMap->getTile(mSelElement), mNewValues[eindex], mTileMap->getFlip(mSelElement), mBrush.getElementFlip(eindex));				
@@ -237,7 +231,6 @@ void TEActionReplacePixels::doAction(Tile* mCurTile, std::vector<int> &newSel,in
 			}
 		}
 	} else {
-
 		for(auto &mSelElement : mSelection){
 			if(mSelElement > -1){ 
 				TEActionReplacePixel* newAction = new TEActionReplacePixel();
@@ -283,8 +276,6 @@ TEActionAddTiles::~TEActionAddTiles(){
 	mNewTile->freeTexture();
 }
 
-		
-
 void TEActionAddTile::doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles){
 	mTiles = cTiles;
 	mNewTile = cNewTile;
@@ -308,61 +299,17 @@ void TEActionAddTiles::doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTile
 	mEditor->mTileSelectedTile = mTiles->TTiles[0];
 	mEditor->mTileSelectedTile->bIsSelected = true;
 	mEditor->mMapSelectedTile = 0;
-
-	//mOldMapTile = mEditor->mMapSelectedTile;
-	//mEditor->mMapSelectedTile = mTiles->TTiles.size()-1;
+	
 	for(int i = 0; i < mTiles->TTiles.size(); i++){
 		if(mTiles->TTiles[i] == mNewTile){
 			mTileIndex = i;			
 		}
 	}
-	//mTileIndex = mTiles->TTiles.size()-1;
-	//mOldTile = mEditor->mTileSelectedTile;
-	//mOldTile->bIsSelected = false;
-	//mEditor->mTileSelectedTile = mNewTile;
-	//mNewTile->bIsSelected = true;
+
 	TEActionType=ACTION_TILESNEW;	
 }
 
-void TEActionDropTile::doAction(Tile* cDroppedTile, TEditor* cEditor, TileSet *cTiles){
-	mTiles = cTiles;
-	mNewTile = cDroppedTile;
-	mEditor = cEditor;
-	
-	//mOldMapTile = mEditor->mMapSelectedTile;	
-	//mOldTile = mEditor->mTileSelectedTile;
-
-	mNewTile->bIsSelected = false;
-
-	mEditor->mMapSelectedTile = 0;
-	mEditor->mTileSelectedTile = mTiles->TTiles[0];
-	
-	TEActionType=ACTION_TILEDROP;	
-}
-
-void TEActionDropTile::redo(){
-	mTiles->dropLastTile();
-	mNewTile->bIsSelected = false;
-
-	mEditor->mMapSelectedTile = 0;
-	mEditor->mTileSelectedTile = mTiles->TTiles[0];
-	//mEditor->mTileSelectedTile->bIsSelected = false;
-	//mEditor->mTileSelectedTile = mOldTile;
-	//mEditor->mTileSelectedTile->bIsSelected = true;	
-	//mEditor->mMapSelectedTile = mOldMapTile;
-}
-
-void TEActionDropTile::undo(){
-	mTiles->appendTile(mNewTile);
-	//mEditor->mTileSelectedTile->bIsSelected = false;
-	//mEditor->mTileSelectedTile = mNewTile;
-	//mEditor->mTileSelectedTile->bIsSelected = true;
-	//mEditor->mMapSelectedTile = mTiles->TTiles.size()-1;
-}
-
 void TEActionAddTiles::undo(){
-	//mTiles->dropLastTile();
-
 	mEditor->mTileSelectedTile->bIsSelected = false;
 	mEditor->mTileSelectedTile = mTiles->TTiles[0];
 	mEditor->mTileSelectedTile->bIsSelected = true;
@@ -388,8 +335,7 @@ void TEActionAddTiles::redo(){
 }
 
 
-void TEActionAddTile::undo(){
-	//mTiles->dropLastTile();
+void TEActionAddTile::undo(){	
 	mTiles->removeTile(mTileIndex);
 	mEditor->mTileSelectedTile->bIsSelected = false;
 	mEditor->mTileSelectedTile = mOldTile;
@@ -475,14 +421,8 @@ void TEActionUndoStack::redoLastActionGroup(){
 void TEActionUndoStack::redoClearStack(){	
 	if(mRedoStack.size()){		
 		for(auto *dGroup : mRedoStack){
-			for(auto *dAction: dGroup->mActions){
-				//TEActionAddTile* ddAction = dynamic_cast<TEActionAddTile*>(dAction);
-				//TEActionAddTiles* dddAction = dynamic_cast<TEActionAddTiles*>(dAction);
-				//if(ddAction){
-				//	delete ddAction;					
-				//} else {
-					delete dAction;
-				//}
+			for(auto *dAction: dGroup->mActions){				
+				delete dAction;				
 			}		
 		}
 		mRedoStack.erase(mRedoStack.begin(), mRedoStack.end());
