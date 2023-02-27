@@ -1866,10 +1866,12 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 		  			createNewTile();
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F4){	  				
-					activateOpenTileDialog();		  			
+					//activateOpenTileDialog();
+					createNewTileCopy(mGlobalSettings.CurrentEditor->mTileSelectedTile);
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F5){	  									
-					createNewTileCopy(mTileSelectedTile);
+					//createNewTileCopy(mTileSelectedTile);
+					rotateTileLeft();
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F6){	  									
 					rotateTile();

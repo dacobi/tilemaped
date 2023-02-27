@@ -251,16 +251,16 @@ int TBDialog::render(){
 				//if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Tile (F4)")).c_str())){
 				//	mGlobalSettings.CurrentEditor->activateOpenTileDialog();		  			
 				//}
-				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Tile (F5)")).c_str())){
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Tile (F4)")).c_str())){
 					mGlobalSettings.CurrentEditor->createNewTileCopy(mGlobalSettings.CurrentEditor->mTileSelectedTile);
 				}
 
-				if(mGlobalSettings.TileSizeX == mGlobalSettings.TileSizeY){
+				if(mGlobalSettings.TileSizeX == mGlobalSettings.TileSizeY){					
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Tile Left (F5)")).c_str())){
+						mGlobalSettings.CurrentEditor->rotateTileLeft();
+					}
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Tile Right (F6)")).c_str())){
 						mGlobalSettings.CurrentEditor->rotateTile();
-					}
-					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Tile Left")).c_str())){
-						mGlobalSettings.CurrentEditor->rotateTileLeft();
 					}
 				}
 
