@@ -145,7 +145,7 @@ int TBDialog::render(){
 
 
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mExit + " Quit")).c_str())){
-				mGlobalSettings.CurrentEditor->bEditorRunning = false;
+				mGlobalSettings.CurrentEditor->activateQuitDialog();					
 			}
 
 			ImGui::EndMenu();
