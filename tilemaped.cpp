@@ -359,7 +359,7 @@ void TSettings::initHelpText(){
 	mHelpTextMap.push_back("PLACE TILE: To place a Tile in the TileMap press (LEFT MOUSE BUTTON) to select\na Tile in the TileSet and then (LEFT MOUSE BUTTON) to place it in the TileMap.");
 	mHelpTextMap.push_back("SELECT TILE: Press (RIGHT MOUSE BUTTON) to select a Tile in the TileMap.\nPress (S) to show all Tiles of the Selected Tile Type.\nPress (RIGHT MOUSE BUTTON) on a Tile in the TileSet\nto replace all selected Tiles in the TileMap.");
 	mHelpTextMap.push_back("SCROLL/SCALE: Use (MOUSE SCROLL WHEEL) to scale the TileMap and Scroll the TileSet.\nHold (LEFT CONTROL) and (LEFT MOUSE BUTTON) to move the TileMap.");	
-	mHelpTextMap.push_back("TILESET: Press (F3) to create an empty Tile. Press (F4) to create a copy of the selected Tile.\nPress (F5) to Rotate Tile Left .\nPress (F6) to Rotate Tile Right. Press (F7) to remove all unused Tiles.");	
+	mHelpTextMap.push_back("TILESET: Press (F3) to create an empty Tile. Press (F4) to create a copy of the selected Tile.\nPress (F5) to Rotate Tile Left. Press (F6) to Rotate Tile Right.\nSelect \"Remove Unused Tiles\" in the Edit menu to remove Tiles not used in any TileMap.");	
 	mHelpTextMap.push_back("FLIP TILE: Press (F) to flip the selected Tile.");
 	mHelpTextMap.push_back("PALETTE OFFSET: Tiles from the TileSet will have the current Palette Offset.");
 
@@ -376,9 +376,9 @@ void TSettings::initHelpText(){
 	mHelpTextPalette.push_back("IMPORT: Select <Import Palette> in the Edit menu to import a palette file.\nGimp palettes and Tilemaped palettes are supported.");
 	mHelpTextPalette.push_back("APPLY/CANCEL: Press <Apply Changes> to update the Project Palette.\nPress <Cancel Changes> to revert the Palette Editor to the Project Palette.");
 
-	mHelpTextImport.push_back("TILE: Tiles can be imported, for Tile BPP 8 and 4, from 8 BPP PNGs and RAW.\nIf BPP is 4 pixel values for PNG will be \"pixelvalue % 16\"");
-	mHelpTextImport.push_back("TILESET: TileSets can be imported from Project file or PNG.\nProject files must have the same BPP as current project.\nPNGs must have Width and Hight where \"Width % TileSize\" equals zero.\nFor BPP of 4 pixel values for PNG will be \"pixelvalue % 16\"."); 
-	mHelpTextImport.push_back("TILEMAP: TileMaps can be imported from Project files. A Tile value offset can be specified.\nThe final TileMap must not have any Tile values larger than the current TileSet.");
+	mHelpTextImport.push_back("TILE: Tiles can be imported from PNG and RAW, when BPP is 8 or 4.\nPNGs must have BPP 8 and Height/Width equal to TileSizeX/TileSizeY.\nRAW binary files must have filesize of (TileSizeX*TileSizeY) divided by pixels pr byte.\nIf BPP is 4, Tile pixel values from PNG will be \"pixelvalue % 16\"");
+	mHelpTextImport.push_back("TILESET: TileSets can be imported from Project file or PNG.\nProject files must have the same BPP as current project.\nPNGs must have Width and Height where \"Width % TileSizeX\" equals zero.\nIf BPP is 4, Tile pixel values from PNG will be \"pixelvalue % 16\"."); 
+	mHelpTextImport.push_back("TILEMAP: TileMaps can be imported from Project files. A Tile value offset can be specified.\nThe final TileMap must not have any Tile values larger than the current TileSet.\nTo Import an existing TileMap with its TileSet, first Import the TileSet.\nThen open Project Info and take note of the Tile number of the first Tile in the TileSet.\nThen Import the TileMap with Tile offset set to the given Tile number.");
 }
 
 void printUsage(){
