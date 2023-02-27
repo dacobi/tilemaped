@@ -174,6 +174,7 @@ class TileMap{
 		int TileMapScale=3;
 		int mTileMapScrollX = 0;
 		int mTileMapScrollY = 0;
+		void init();
 		std::string getMapSize();
 		std::vector<unsigned char> FileData;
 		int getTile(int cTile);
@@ -192,7 +193,8 @@ class TileMap{
 		int render(int xpos,int ypos,TileSet* mTiles);
 		std::map<int,int> mTilemapSizesIn = {{0,32},{1,64},{2,128},{3,256}};
 		std::map<int,int> mTilemapSizesOut = {{32,0},{64,1},{128,2},{256,3}};
-		SDL_Rect mBorder;        		
+		SDL_Rect mBorder;     
+		TSelection mSelection;   		
 };
 
 #endif

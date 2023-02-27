@@ -74,6 +74,13 @@ class RTDialog: public SDialog{
 		virtual void recieveInput(int mKey);
 };
 
+
+class RTSDialog: public RTDialog{
+	public:
+		virtual void init();
+		virtual void recieveInput(int mKey);
+};
+
 class PUDialog: public SDialog{
 	public:
 		virtual void init();

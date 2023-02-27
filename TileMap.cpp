@@ -2016,6 +2016,9 @@ int TileSet::renderIm(int ypos, int mScroll){
 return 0;
 }
 
+void TileMap::init(){
+	mSelection.init(TileMapWidth, TileMapHeight, mGlobalSettings.TileSizeX, mGlobalSettings.TileSizeY, &mGlobalSettings.TileMapScale);
+}
 
 int TileMap::createNew(){
 
@@ -2024,6 +2027,8 @@ int TileMap::createNew(){
 	TileMapHeight = mGlobalSettings.TileMapHeight;
 	TileMapWidth = mGlobalSettings.TileMapWidth;
 	
+	init();
+
 	return 0;
 }
 
@@ -2090,6 +2095,8 @@ int TileMap::loadFromFile(std::string path, std::string filename){
 		std::cout << "TileMap File Error!" << std::endl;
 		return 1;
 	}
+
+	init();
 
     return 0;
 }
@@ -2245,8 +2252,8 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer,mGlobalSettings.DefaultGUIBorderColor.r,mGlobalSettings.DefaultGUIBorderColor.g,mGlobalSettings.DefaultGUIBorderColor.b, 0xff);
 	SDL_RenderDrawRect(mGlobalSettings.TRenderer, &mBorder);
 
-	if(mGlobalSettings.CurrentEditor->mSelection.bHasSelection){
-		mGlobalSettings.CurrentEditor->mSelection.renderSelection(xpos, ypos);
+	if(mGlobalSettings.CurrentEditor->mTileMap->mSelection.bHasSelection){
+		mGlobalSettings.CurrentEditor->mTileMap->mSelection.renderSelection(xpos, ypos);
 	}
 
 	return 0;

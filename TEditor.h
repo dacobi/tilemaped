@@ -115,7 +115,7 @@ class TEditor{
 		bool bShowBrushesTile = false;
 		bool bShowBrushesPixel = false;
 		bool bShowBrushesPixelTileSet = false;		
-		TSelection mSelection;
+		//TSelection mSelection;
 		TBrush *mCurrentBrushTile = NULL;
 		TBrush *mCurrentBrushPixel = NULL;
 		TBrush *mCurrentBrushPixelTileSet = NULL;
@@ -148,6 +148,7 @@ class TEditor{
 		PIDialog mProjectInfo;
 		MEDialog mInfoMessage;
 		RTDialog mRemoveUnused;
+		RTSDialog mRemoveSelUnused;
 		MEDialog mErrorMessage;
 		RNDialog mInputNumber;
 		QDialog mQuitDialog;
@@ -177,6 +178,7 @@ class TEditor{
 		int activatePaletteEdit();
 		int activatePaletteUpdate();
 		int activateDropUnusedTiles();
+		int activateDropUnusedTile();
 		int activateBrushes();
 		int activateBrush();
 		int rx,ry;

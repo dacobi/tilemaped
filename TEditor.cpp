@@ -63,6 +63,7 @@ void TEditor::initDialogs(){
 	mErrorMessage.init();
 
 	mRemoveUnused.init();
+	mRemoveSelUnused.init();
 
 	mPaletteUpdate.init();
 
@@ -73,8 +74,6 @@ void TEditor::initDialogs(){
 	if(mGlobalSettings.TileSetBPP < 0x8){
 		mGlobalSettings.bShowPaletteOffset = true;
 	}
-
-	mSelection.init(mGlobalSettings.TileMapWidth, mGlobalSettings.TileMapHeight, mGlobalSettings.TileSizeX, mGlobalSettings.TileSizeY, &mGlobalSettings.TileMapScale);
 
 	mBrushesTile.init("Tiles","Tile", TBRUSH_TILE, &bShowBrushesTile,mGlobalSettings.TileSizeX, mGlobalSettings.TileSizeY, &mGlobalSettings.TileMapScale, mGlobalSettings.TileMapScale, &mCurrentBrushTile);
 	mBrushesPixel.init("Pixels","Pixel", TBRUSH_PIXEL, &bShowBrushesPixel, mGlobalSettings.TilePixelSize, mGlobalSettings.TilePixelSize, &mGlobalSettings.mTileEdScale, mGlobalSettings.mTileEdScale, &mCurrentBrushPixel);
@@ -98,6 +97,8 @@ int TEditor::createTileMap(int nMapX, int nMapY, int nTileValue){
 	cNewMap->TileAreas.resize(nMapX * nMapY);
 	cNewMap->TileMapWidth = nMapX;
 	cNewMap->TileMapHeight = nMapY;
+
+	cNewMap->init();
 
 	for(int i = 0; i < cNewMap->TileMapHeight; i++){
 		for(int j = 0; j < cNewMap->TileMapWidth; j++){
@@ -321,7 +322,7 @@ int TEditor::render(){
 			mPaletteOffset.render(mProjectInfo.mDialogWidth,mGlobalSettings.TopBarHeight);
 		}
 
-		mSelection.renderSelection();	 
+		mTileMap->mSelection.renderSelection();	 
 
 		if(mCurrentBrushTile){
 			mCurrentBrushTile->renderSelection();
@@ -590,8 +591,27 @@ int TEditor::activateProjectInfo(){
 	return 0;
 }
 
+int TEditor::activateDropUnusedTile(){
+	if(mCurMode == EMODE_MAP){
+		int cTileCount = 0;
+		std::vector<int> tmpTiles;
+
+		for(auto *cMap : mTileMaps){
+			cTileCount += selectTilesMap(cMap, tmpTiles, mMapSelectedTile);
+		}
+
+		if(cTileCount > 0){
+			showMessage("Selected Tile is used in TileMap(s)");
+		} else {
+			mActiveDialog = &mRemoveSelUnused;
+		}
+	}
+	return 0;
+}
+
 int TEditor::activateDropUnusedTiles(){
 	if(mCurMode == EMODE_MAP){
+
 		mActiveDialog = &mRemoveUnused;
 	}
 	return 0;
@@ -857,13 +877,13 @@ int TEditor::handleSelection(int SELMODE){
 		switch (SELMODE)
 		{
 			case SELMODE_ALL:
-				mSelection.selectRange(0, mGlobalSettings.TileMapWidth *  mGlobalSettings.TileMapHeight);
+				mTileMap->mSelection.selectRange(0, mGlobalSettings.TileMapWidth *  mGlobalSettings.TileMapHeight);
 			break;
 			case SELMODE_NONE:
-				mSelection.clearSelection();
+				mTileMap->mSelection.clearSelection();
 			break;
 			case SELMODE_INVERT:
-				mSelection.invertSelection(0, mGlobalSettings.TileMapWidth *  mGlobalSettings.TileMapHeight);
+				mTileMap->mSelection.invertSelection(0, mGlobalSettings.TileMapWidth *  mGlobalSettings.TileMapHeight);
 			break;
 			default:
 			break;
@@ -1063,12 +1083,12 @@ int TEditor::replaceSelectedColor(int mx, int my){
 
 int TEditor::replaceSelectedTiles(int mx, int my){
 	
-	if(mSelection.mSelected.size()){
+	if(mTileMap->mSelection.mSelected.size()){
 		int tSel = -1;		
 		tSel = searchRectsXY(mTileSet.TileAreas, mx, my);
 		if(tSel != -1){ 
 			TEActionReplaceTiles* newAction = new TEActionReplaceTiles();
-			newAction->doAction(mTileMap, mSelection.mSelected, -1, tSel);
+			newAction->doAction(mTileMap, mTileMap->mSelection.mSelected, -1, tSel);
 			if(!(newAction == mActionStack.mLastAction)){
 				mActionStack.mLastAction = newAction;
 				mActionStack.newActionGroup();
@@ -1469,7 +1489,7 @@ int TEditor::handleTileSet(){
 		int tSel = -1;		
 		tSel = searchRectsXY(mTileSet.TileAreas, cx, cy);
 		mBrushesTile.addBrushElement(tSel);
-	} else if(ImButtonsTileSet.mRight.bButtonIsDown && (mGlobalSettings.bShowTypeSelection || mSelection.mSelected.size())){
+	} else if(ImButtonsTileSet.mRight.bButtonIsDown && (mGlobalSettings.bShowTypeSelection || mTileMap->mSelection.mSelected.size())){
 		replaceSelectedTiles(ImButtonsTileSet.mRight.mMousePos.x ,ImButtonsTileSet.mRight.mMousePos.y);
 	}
 
@@ -1484,7 +1504,7 @@ int TEditor::handleTileMap(){
 		tSel = searchRectsXY(mTileMap->TileAreas, cx, cy);
 	    if(tSel != -1){	    	
 			mGlobalSettings.bShowSelectedTile = false;
-			mSelection.modifySelection(tSel);
+			mTileMap->mSelection.modifySelection(tSel);
 		}
 	} else {
 		int tSel = -1;
@@ -1498,20 +1518,20 @@ int TEditor::handleTileMap(){
    	 			mTileSelectedTile->bIsSelected = false;
    	 			mTileSelectedTile = mTileSet.TTiles[mMapSelectedTile];
    	 			mTileSelectedTile->bIsSelected = true;							
-				mSelection.cancelSelection();
+				mTileMap->mSelection.cancelSelection();
 			}
 		}
 	}
 
 	if(leftMouseButtonDown && bLShiftIsDown && !mGlobalSettings.mio->WantCaptureMouse){
-		if(!mSelection.bIsSelecting){
-			mSelection.startSelection(cx, cy);	
+		if(!mTileMap->mSelection.bIsSelecting){
+			mTileMap->mSelection.startSelection(cx, cy);	
 		} else {
-			mSelection.updateSelection(cx, cy);
+			mTileMap->mSelection.updateSelection(cx, cy);
 		}
 	} else {
-		if(mSelection.bIsSelecting){
-			mSelection.confirmSelection(mTileMap->TileAreas, mGlobalSettings.TileSizeX * mGlobalSettings.TileMapScale,  mGlobalSettings.TileSizeY * mGlobalSettings.TileMapScale);
+		if(mTileMap->mSelection.bIsSelecting){
+			mTileMap->mSelection.confirmSelection(mTileMap->TileAreas, mGlobalSettings.TileSizeX * mGlobalSettings.TileMapScale,  mGlobalSettings.TileSizeY * mGlobalSettings.TileMapScale);
 		} else {
 			findSelMap();
 		}
@@ -1550,8 +1570,23 @@ int TEditor::handleEvents(){
 
 	if(mActiveDialog){
 		if(mActiveDialog->bInputIsAccept){
-			if(mGlobalSettings.mDeleteUnusedTilesState){
+			if(mGlobalSettings.mDeleteUnusedTilesState == 1){
 				dropUnusedTiles();
+				mGlobalSettings.mDeleteUnusedTilesState = 0;				
+			}
+			if(mGlobalSettings.mDeleteUnusedTilesState == 2){
+				mActionStack.redoClearStack();	
+				mActionStack.undoClearStack();
+
+				mTileSelectedTile->bIsSelected = false;
+				
+				dropUnusedTile(mMapSelectedTile);
+
+				mMapSelectedTile = 0;
+				mTileSelectedTile = mTileSet.TTiles[0];
+
+				mTileSelectedTile->bIsSelected = true;
+
 				mGlobalSettings.mDeleteUnusedTilesState = 0;				
 			}
 			if(mGlobalSettings.mProjectSaveState == 1){
@@ -1877,7 +1912,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					rotateTile();
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F7){	  									
-					activateDropUnusedTiles();
+					//activateDropUnusedTiles();
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F12){	  				
 		  			activateSaveDialog();

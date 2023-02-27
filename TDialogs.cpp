@@ -264,7 +264,11 @@ int TBDialog::render(){
 					}
 				}
 
-				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Unused Tiles (F7)")).c_str())){
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Selected Tile")).c_str())){
+					mGlobalSettings.CurrentEditor->activateDropUnusedTile();
+				}
+
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Unused Tiles")).c_str())){
 					mGlobalSettings.CurrentEditor->activateDropUnusedTiles();
 				}
 				
@@ -366,6 +370,24 @@ void RTDialog::recieveInput(int mKey){
 	if(mKey == SDLK_y){
 		bInputIsAccept=true;
 		mGlobalSettings.mDeleteUnusedTilesState = 1;
+	}
+	if(mKey == SDLK_n){
+		bInputIsCancel=true;
+	}
+}
+
+void RTSDialog::init(){
+	mDialogTextMain = mGlobalSettings.mInfo +" Remove Selected Tile? Undo Stack will be cleared";
+	mDialogTextTitle = "Remove Selected Tile";
+	mDialogButtonAccept = "Remove";
+	mDialogButtonCancel = "Cancel";
+}
+
+void RTSDialog::recieveInput(int mKey){
+	
+	if(mKey == SDLK_y){
+		bInputIsAccept=true;
+		mGlobalSettings.mDeleteUnusedTilesState = 2;
 	}
 	if(mKey == SDLK_n){
 		bInputIsCancel=true;
