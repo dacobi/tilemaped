@@ -24,7 +24,7 @@ endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 	set(CMAKE_CXX_COMPILER "g++")
-	set(CMAKE_CXX_FLAGS "-std=c++17 -ggdb -Wall -Wno-sign-compare -Wno-unused-variable")
+	set(CMAKE_CXX_FLAGS "-std=c++17 -ggdb -O2 -Wall -Wno-sign-compare -Wno-unused-variable")
 	target_link_libraries(tilemaped ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_TTF_LIBRARIES})
 endif()
 
