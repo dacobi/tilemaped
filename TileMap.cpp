@@ -2068,6 +2068,8 @@ int TileMap::loadFromFileOffset(std::string path, std::string filename, int cTil
 int TileMap::loadFromFile(std::string path, std::string filename){
     	DataPath = path; 	
     	DataFile = filename;
+		
+		bIsSavedToFile = true;
 
     	std::ifstream infile(path+DIRDEL+filename, std::ios::binary );
     	
@@ -2130,6 +2132,8 @@ int TileMap::saveToFolder(std::string tpath, std::string tfile){
 
 	outfile.write((char*)obuffer.data(),obuffer.size());
 	outfile.close();
+
+	bIsSavedToFile = true;
 
 	return 0;
 }

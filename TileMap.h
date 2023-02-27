@@ -168,6 +168,7 @@ class TileMap{
 	public:
 		std::string DataPath;
 		std::string DataFile;
+		bool bIsSavedToFile = false;
 		int TileMapHeight=32;
 		int TileMapWidth=32;
 		int mMapSelectedTile=0;	

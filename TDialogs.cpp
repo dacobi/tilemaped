@@ -154,7 +154,7 @@ int TBDialog::render(){
 		if (ImGui::BeginMenu("View"))
 		{
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
-				//if(mGlobalSettings.CurrentEditor->mTileMaps.size() > 1){
+				
 					if(ImGui::BeginMenu((std::string(mGlobalSettings.mWindow + " Tilemaps")).c_str())){
 						int nMap=0;
 						for(auto *cMap : mGlobalSettings.CurrentEditor->mTileMaps){
@@ -167,6 +167,12 @@ int TBDialog::render(){
 						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Create Tilemap")).c_str())){				
 							mGlobalSettings.CurrentEditor->activateNewTileMapDialog();
 						}		
+
+						if(mGlobalSettings.CurrentEditor->mTileMaps.size() > 1){
+							if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Remove Tilemap")).c_str())){				
+								mGlobalSettings.CurrentEditor->activateRemoveTileMapDialog();
+							}	
+						}
 						
 						ImGui::EndMenu();
 					}
@@ -388,6 +394,25 @@ void RTSDialog::recieveInput(int mKey){
 	if(mKey == SDLK_y){
 		bInputIsAccept=true;
 		mGlobalSettings.mDeleteUnusedTilesState = 2;
+	}
+	if(mKey == SDLK_n){
+		bInputIsCancel=true;
+	}
+}
+
+
+void RTMDialog::init(){
+	mDialogTextMain = mGlobalSettings.mFile +" Remove TileMap? Undo Stack will be cleared";
+	mDialogTextTitle = "Remove TileMap";
+	mDialogButtonAccept = "Remove";
+	mDialogButtonCancel = "Cancel";
+}
+
+void RTMDialog::recieveInput(int mKey){
+	
+	if(mKey == SDLK_y){
+		bInputIsAccept=true;
+		mGlobalSettings.mDeleteTileMapState = 1;
 	}
 	if(mKey == SDLK_n){
 		bInputIsCancel=true;

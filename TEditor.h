@@ -147,6 +147,7 @@ class TEditor{
 		HDialog mHelpDialog;
 		PIDialog mProjectInfo;
 		MEDialog mInfoMessage;
+		RTMDialog mRemoveTileMap;
 		RTDialog mRemoveUnused;
 		RTSDialog mRemoveSelUnused;
 		MEDialog mErrorMessage;
@@ -170,6 +171,7 @@ class TEditor{
 		int activateOpenTileSetDialog();
 		int activateOpenTileMapDialog();
 		int activateNewTileMapDialog();
+		int activateRemoveTileMapDialog();
 		int activateHelpDialog();
 		int activateQuitDialog();
 		int cancelActiveDialog();

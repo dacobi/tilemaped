@@ -62,6 +62,7 @@ void TEditor::initDialogs(){
 	mErrorMessage.setColorScheme(1);
 	mErrorMessage.init();
 
+	mRemoveTileMap.init();
 	mRemoveUnused.init();
 	mRemoveSelUnused.init();
 
@@ -77,15 +78,6 @@ void TEditor::initDialogs(){
 
 	mBrushesTile.init("Tiles","Tile", TBRUSH_TILE, &bShowBrushesTile,mGlobalSettings.TileSizeX, mGlobalSettings.TileSizeY, &mGlobalSettings.TileMapScale, mGlobalSettings.TileMapScale, &mCurrentBrushTile);
 	mBrushesPixel.init("Pixels","Pixel", TBRUSH_PIXEL, &bShowBrushesPixel, mGlobalSettings.TilePixelSize, mGlobalSettings.TilePixelSize, &mGlobalSettings.mTileEdScale, mGlobalSettings.mTileEdScale, &mCurrentBrushPixel);
-
-	//mBrushesTile.mBrushType = TBRUSH_TILE;
-	//mBrushesTile.bIsShown = &bShowBrushesTile;
-	//mBrushesTile.mRenderScale = mGlobalSettings.TileMapScale;
-	//mBrushesTile.addBrush(8,2);
-	//mBrushesTile.addBrush(3,3);
-
-	//tmpBrush.configBrush(8,2,TBRUSH_TILE);
-	//mCurBrush = &tmpBrush;
 	
 }
 
@@ -95,20 +87,6 @@ int TEditor::createTileMap(int nMapX, int nMapY, int nTileValue){
 
 	cNewMap->createNew(nMapX, nMapY, nTileValue);
 
-/*
-	cNewMap->FileData.resize(nMapX * nMapY * 2, 0);
-	cNewMap->TileAreas.resize(nMapX * nMapY);
-	cNewMap->TileMapWidth = nMapX;
-	cNewMap->TileMapHeight = nMapY;
-
-	cNewMap->init();
-
-	for(int i = 0; i < cNewMap->TileMapHeight; i++){
-		for(int j = 0; j < cNewMap->TileMapWidth; j++){
-			cNewMap->setTile((i * cNewMap->TileMapWidth) + j, nTileValue);
-		}
-	}
-*/
 	mTileMaps.push_back(cNewMap);
 
 	switchTileMap(mTileMaps.size()-1);
@@ -132,6 +110,8 @@ int TEditor::importTileMap(std::string cNewTileMap, int cTileOffset){
 				}
 			}
 		}
+
+		cNewMap->bIsSavedToFile = false;
 
 		mTileMaps.push_back(cNewMap);		
 		return 0;
@@ -157,6 +137,8 @@ int TEditor::importTileMap(std::string cNewTileMap){
 				}
 			}
 		}
+
+		cNewMap->bIsSavedToFile = false;
 
 		mTileMaps.push_back(cNewMap);		
 		return 0;
@@ -251,13 +233,13 @@ int TEditor::saveToFolder(std::string path){
 	mTileSet.saveToFolder(path);
 	//TODO maybe
 	mTileMaps[0]->saveToFolder(path, "map.bin");
-	if(mTileMaps.size() > 1){
-		
-		int mMapNum = 0;
-		std::string cTileMap;
-		std::string cMapNum;
-		std::stringstream convert;
 
+	int mMapNum = 0;
+	std::string cTileMap;
+	std::string cMapNum;
+	std::stringstream convert;
+
+	if(mTileMaps.size() > 1){
 		for(int i = 1; i < mTileMaps.size(); i++){
 			convert << mMapNum << std::endl;
 			convert >> cMapNum;
@@ -266,6 +248,16 @@ int TEditor::saveToFolder(std::string path){
 			mMapNum++;
 		}
 	}
+
+	while(mGlobalSettings.mDeleteTileMapCount){
+		convert << mMapNum << std::endl;
+		convert >> cMapNum;
+		cTileMap = "map" + cMapNum + ".bin";
+		fs::remove(path + DIRDEL + cTileMap);
+		mGlobalSettings.mDeleteTileMapCount--;
+		mMapNum++;
+	}
+
 	mPalette.saveToFolder(path);
 
 	mBrushesTile.saveToFile(path + DIRDEL + "tbrushes.dat");
@@ -805,6 +797,15 @@ int TEditor::activateOpenTileDialog(){
 	if(mCurMode == EMODE_MAP){
 		mActiveDialog = &mOpenTileDialog;
 		mActiveDialog->bDialogIsWatingForText = true;		
+	}
+	return 0;
+}
+
+int TEditor::activateRemoveTileMapDialog(){
+	if(mCurMode == EMODE_MAP){
+		if(mTileMaps.size() > 1){
+			mActiveDialog = &mRemoveTileMap;
+		}
 	}
 	return 0;
 }
@@ -1721,6 +1722,39 @@ int TEditor::handleEvents(){
 				switchTileMap(mTileMaps.size()-1);
 
 				return 0;
+			}
+
+			if(mGlobalSettings.mDeleteTileMapState == 1){
+				
+				mGlobalSettings.mDeleteTileMapState = 0;
+											
+				int cDelTileMap = -1;
+				int i = 0;
+				for(auto * cTileMap : mTileMaps){
+					if(mTileMap == cTileMap){
+						cDelTileMap = i;
+					}
+					i++;
+				}
+
+				if(cDelTileMap != -1){
+			
+					mActionStack.redoClearStack();
+					mActionStack.undoClearStack();
+
+					if(mTileMap->bIsSavedToFile){
+						mGlobalSettings.mDeleteTileMapCount++;
+					}
+
+					mTileMaps.erase(mTileMaps.begin() + cDelTileMap);
+					
+					cancelActiveDialog();
+					showMessage("TileMap Removed Successfully");
+
+					switchTileMap(0);
+
+					return 0;
+				}
 			}
 
 			cancelActiveDialog();
