@@ -93,6 +93,9 @@ int TEditor::createTileMap(int nMapX, int nMapY, int nTileValue){
 
 	TileMap* cNewMap = new TileMap();
 
+	cNewMap->createNew(nMapX, nMapY, nTileValue);
+
+/*
 	cNewMap->FileData.resize(nMapX * nMapY * 2, 0);
 	cNewMap->TileAreas.resize(nMapX * nMapY);
 	cNewMap->TileMapWidth = nMapX;
@@ -105,7 +108,7 @@ int TEditor::createTileMap(int nMapX, int nMapY, int nTileValue){
 			cNewMap->setTile((i * cNewMap->TileMapWidth) + j, nTileValue);
 		}
 	}
-
+*/
 	mTileMaps.push_back(cNewMap);
 
 	switchTileMap(mTileMaps.size()-1);

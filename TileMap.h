@@ -190,6 +190,7 @@ class TileMap{
 		int loadFromFileOffset(std::string path, std::string filename, int cTileOffset);
 		int saveToFolder(std::string tpath, std::string tfile);
 		int createNew();
+		int createNew(int nWidth, int nHeight, int nSValue);
 		int render(int xpos,int ypos,TileSet* mTiles);
 		std::map<int,int> mTilemapSizesIn = {{0,32},{1,64},{2,128},{3,256}};
 		std::map<int,int> mTilemapSizesOut = {{32,0},{64,1},{128,2},{256,3}};

@@ -2020,6 +2020,23 @@ void TileMap::init(){
 	mSelection.init(TileMapWidth, TileMapHeight, mGlobalSettings.TileSizeX, mGlobalSettings.TileSizeY, &mGlobalSettings.TileMapScale);
 }
 
+int TileMap::createNew(int nWidth, int nHeight, int nSValue){
+	FileData.resize(nWidth * nHeight * 2, 0);
+	TileAreas.resize(nWidth * nHeight);
+	TileMapWidth = nWidth;
+	TileMapHeight = nHeight;
+
+	init();
+
+	for(int i = 0; i < TileMapHeight; i++){
+		for(int j = 0; j < TileMapWidth; j++){
+			setTile((i * TileMapWidth) + j, nSValue);
+		}
+	}
+
+	return 0;
+}
+
 int TileMap::createNew(){
 
 	FileData.resize(mGlobalSettings.TileMapWidth * mGlobalSettings.TileMapHeight * 2, 0);
