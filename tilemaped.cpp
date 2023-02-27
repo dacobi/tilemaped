@@ -14,6 +14,9 @@
 
 //#define MAPPIMAGE
 
+#define SCREEN_WIDTH 1900
+#define SCREEN_HEIGHT 1000
+
 #include "version.h"
 
 #ifdef MAPPIMAGE
@@ -138,8 +141,10 @@ int TSettings::initSettings(){
 		window_flags = (SDL_WindowFlags)( SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL );
 	}
 
+	WindowWidth = SCREEN_WIDTH;
+	WindowHeight = SCREEN_HEIGHT;
 
-	TWindow = SDL_CreateWindow( "Tilemaped", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WindowWidth, WindowHeight, window_flags);
+	TWindow = SDL_CreateWindow( "Tilemaped", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, window_flags);
 	if( TWindow == NULL ){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
 		return 1;
