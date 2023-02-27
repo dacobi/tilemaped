@@ -109,7 +109,7 @@ class TSettings{
 		int mPaletteUpdateState = 0;
 		std::string mNewTilePath = "";	
 		int mDeleteTileMapState = 0;			
-		int mDeleteTileMapCount = 0;			
+		int mTileMapFileCount = 0;			
 		bool bShowTypeSelection = false;
 		bool bShowPixelGrid = true;
 		bool bShowTileGrid = false;

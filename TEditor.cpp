@@ -200,6 +200,8 @@ int TEditor::loadFromFolder(std::string path){
 		cTileMaps = std::string(path + DIRDEL + "map" + cMapNum + ".bin");
 	}
 
+	mGlobalSettings.mTileMapFileCount = mTileMaps.size();
+
 	mGlobalSettings.ProjectPath = path;
 	
 	initDialogs();
@@ -249,12 +251,18 @@ int TEditor::saveToFolder(std::string path){
 		}
 	}
 
-	while(mGlobalSettings.mDeleteTileMapCount){
+	int mDeleteTileMapCount = mGlobalSettings.mTileMapFileCount - mTileMaps.size();
+
+	if(mDeleteTileMapCount < 0){
+		mDeleteTileMapCount = 0;
+	}
+
+	while(mDeleteTileMapCount){
 		convert << mMapNum << std::endl;
 		convert >> cMapNum;
 		cTileMap = "map" + cMapNum + ".bin";
 		fs::remove(path + DIRDEL + cTileMap);
-		mGlobalSettings.mDeleteTileMapCount--;
+		mDeleteTileMapCount--;
 		mMapNum++;
 	}
 
@@ -1741,10 +1749,6 @@ int TEditor::handleEvents(){
 			
 					mActionStack.redoClearStack();
 					mActionStack.undoClearStack();
-
-					if(mTileMap->bIsSavedToFile){
-						mGlobalSettings.mDeleteTileMapCount++;
-					}
 
 					mTileMaps.erase(mTileMaps.begin() + cDelTileMap);
 					
