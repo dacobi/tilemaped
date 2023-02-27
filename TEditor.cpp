@@ -266,6 +266,8 @@ int TEditor::saveToFolder(std::string path){
 		mMapNum++;
 	}
 
+	mGlobalSettings.mTileMapFileCount = mTileMaps.size();
+
 	mPalette.saveToFolder(path);
 
 	mBrushesTile.saveToFile(path + DIRDEL + "tbrushes.dat");
