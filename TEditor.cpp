@@ -530,7 +530,7 @@ int TEditor::setMode(int newMode){
 			height = lasty-firsty;
 			std::cout << "SEL Width: " << width <<  " Height: " << height << std::endl;
 			
-			mSelEdit.setSelection(&mTileMap->mSelection, width, height);
+			mSelEdit.setSelection(&mTileMap->mSelection, width+1, height+1);
 			mPalette.bUpdateWinPos = true;
     	} else {        	
 			showMessage("Selection is invalid");
