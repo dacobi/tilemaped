@@ -144,7 +144,7 @@ int TSettings::initSettings(){
 	WindowWidth = SCREEN_WIDTH;
 	WindowHeight = SCREEN_HEIGHT;
 
-	TWindow = SDL_CreateWindow( "Tilemaped", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, window_flags);
+	TWindow = SDL_CreateWindow( "TilemapEd", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, window_flags);
 	if( TWindow == NULL ){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
 		return 1;
@@ -356,7 +356,7 @@ int TSettings::runOCD(){
 
 void TSettings::initHelpText(){
 
-	mHelpText.push_back("WINDOWS: Tilemaped has 4 main windows which are TileMap Editor, Tile Editor\nPalette Editor and TileSet Editor. Select window in View menu and press (SPACE)\nto quickly switch back to the last active window.\nPress (F2) to view the Project Info dialog. When working with Tile BPPs\nlower than 8 the Palette Offset dialog can be shown/hidden in the View menu.");	
+	mHelpText.push_back("WINDOWS: TilemapEd has 4 main windows which are TileMap Editor, Tile Editor\nPalette Editor and TileSet Editor. Select window in View menu and press (SPACE)\nto quickly switch back to the last active window.\nPress (F2) to view the Project Info dialog. When working with Tile BPPs\nlower than 8 the Palette Offset dialog can be shown/hidden in the View menu.");	
 	mHelpText.push_back("UNDO: Most changes to TileMap and Tiles can be undone. Press (U) to undo\nand (R) to redo action. Some operations will clear the Undo Stack.\nIf you wish to keep an Action but undo previous Actions Press (D)\nto drop the Action from the Undo Stack.");
 	mHelpText.push_back("SELECTION: Tiles and Pixels can be selected using the mouse. Hold (LEFT SHIFT)\nand (LEFT MOUSE BUTTON) to select a range by dragging.\nHold (LEFT SHIFT) and press (RIGHT MOUSE BUTTON)\nto modify Selection on a Tile/Pixel basis.\nPress (A) to select All, (N) to select None and (I) to Invert selection.");
 	mHelpText.push_back("BRUSHES: Press (F8) to open the Brush List, then select <width> and <height>\nand Press <Add Brush>. Press (RIGHT MOUSE BUTTON) in TileSet or Palette to add Brush Elements.\nPress (F9) to activate (next) Brush and (F10) to drop selected Brush.");
@@ -378,7 +378,7 @@ void TSettings::initHelpText(){
 
 	mHelpTextPalette.push_back("CHANGE COLOR: Press (LEFT MOUSE BUTTON) to select a Color in the Palette Editor.\nUse RGB sliders or Press (LEFT MOUSE BUTTON) on the Pick Selected Color Box.");
 	mHelpTextPalette.push_back("COPY COLOR: Press (RIGHT MOUSE BUTTON) on a Color to copy its value to the selected Color.");
-	mHelpTextPalette.push_back("IMPORT: Select <Import Palette> in the Edit menu to import a palette file.\nGimp palettes and Tilemaped palettes are supported.");
+	mHelpTextPalette.push_back("IMPORT: Select <Import Palette> in the Edit menu to import a palette file.\nGimp palettes and TilemapEd palettes are supported.");
 	mHelpTextPalette.push_back("APPLY/CANCEL: Press <Apply Changes> to update the Project Palette.\nPress <Cancel Changes> to revert the Palette Editor to the Project Palette.");
 
 	mHelpTextImport.push_back("TILE: Tiles can be imported from PNG and RAW, when BPP is 8 or 4.\nPNGs must have BPP 8 and Height/Width equal to TileSizeX/TileSizeY.\nRAW binary files must have filesize of (TileSizeX*TileSizeY) divided by pixels pr byte.\nIf BPP is 4, Tile pixel values from PNG will be \"pixelvalue % 16\"");
@@ -427,6 +427,13 @@ void TSettings::printHelpText(){
 	std::cout << "Palette Editor:" << std::endl;	
 
 	for(const auto& cStr : mHelpTextPalette){
+		std::cout << cStr << std::endl;	
+	}
+
+	std::cout  << std::endl;		
+	std::cout << "Import:" << std::endl;	
+
+	for(const auto& cStr : mHelpTextImport){
 		std::cout << cStr << std::endl;	
 	}
 

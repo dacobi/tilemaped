@@ -716,7 +716,7 @@ int OCDialog::render(){
 			ImGui::EndMenu();
 		}
 
-		std::string mDialogTextWindow = "Tilemaped";
+		std::string mDialogTextWindow = "TilemapEd";
 
 		auto textWidth   = ImGui::CalcTextSize(mDialogTextWindow.c_str()).x;
 		ImGui::SetCursorPosX((mGlobalSettings.WindowWidth - textWidth) * 0.5f);
