@@ -18,6 +18,7 @@ class TEAction{
 		virtual bool doCompare(const TEAction& rhs){return false;}
 		virtual bool checkTileMap();
 		virtual int getTileMap();
+		virtual void swapTileValues(int tVal1, int tVal2);
 };
 
 class TEActionUndoStack{
@@ -71,6 +72,7 @@ class TEActionReplaceTile: public TEAction{
 		int mOldOffset;
 		int mNewOffset;
 		TileMap *mTileMap;
+		virtual void swapTileValues(int tVal1, int tVal2);
 		void doAction(TileMap *cTileMap, int mCurTile, int mOld, int mNew);	
 		virtual void undo();
 		virtual void redo();
@@ -92,6 +94,7 @@ class TEActionReplaceTileFlip: public TEActionReplaceTile{
 		~TEActionReplaceTileFlip(){};
 		int mOldFlip;
 		int mNewFlip;
+		virtual void swapTileValues(int tVal1, int tVal2);
 		void doAction(TileMap *cTileMap, int mCurTile, int mOld, int mNew, int cFlipOld, int cFlipNew);	
 		virtual void undo();
 		virtual void redo();

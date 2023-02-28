@@ -519,11 +519,7 @@ int TEditor::setMode(int newMode){
 		mBrushesPixel.bIsShown = &bShowBrushesPixelTileSet;
 	}
 
-	if(newMode == EMODE_SELEDIT){
-		//TODO
-		return 1;
-
-
+	if(newMode == EMODE_SELEDIT){		
 		int firstx, firsty, lastx, lasty;
 		int width, height;
 
@@ -865,9 +861,17 @@ int TEditor::swapTiles(int source, int target, bool bDoCopy){
 			//mTileSet.TTiles[target]->replaceWithBuffer(mTileSet.TTiles[source]->FileData, &mPalette);
 		} else {			
 			std::swap(mTileSet.TTiles[source], mTileSet.TTiles[target]);
+
+			mActionStack.redoClearStack();
+
 			if(mGlobalSettings.bTileSetOrderUpdateTileMap){
 				for(auto *cMap : mTileMaps){
 					cMap->swapTileValues(source, target);
+				}
+				for(auto *dGroup : mActionStack.mUndoStack){
+					for(auto *dAction: dGroup->mActions){
+						dAction->swapTileValues(source, target);
+					}
 				}
 			}
 			

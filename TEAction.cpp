@@ -10,6 +10,8 @@ void TEAction::undo(){
 
 }
 
+void TEAction::swapTileValues(int tVal1, int tVal2){}
+
 bool TEAction::checkTileMap(){
 	return false;
 }
@@ -61,6 +63,21 @@ bool TEActionReplaceTileFlip::checkTileMap(){
 	}
 	return true;
 }
+
+void TEActionReplaceTileFlip::swapTileValues(int tVal1, int tVal2){
+	if(mOldValue == tVal1){
+		mOldValue = tVal2;
+	} else if(mOldValue == tVal2){
+		mOldValue = tVal1;
+	}
+	if(mNewValue == tVal1){
+		mNewValue = tVal2;
+	} else if(mNewValue == tVal2){
+		mNewValue = tVal1;
+	}
+}
+
+
 int TEActionReplaceTileFlip::getTileMap(){
 	int cTileMap = -1;
 	for(int i = 0; i < mGlobalSettings.CurrentEditor->mTileMaps.size(); i++){
@@ -100,6 +117,19 @@ int TEActionReplaceTile::getTileMap(){
 		}
 	}
 	return cTileMap;
+}
+
+void TEActionReplaceTile::swapTileValues(int tVal1, int tVal2){
+	if(mOldValue == tVal1){
+		mOldValue = tVal2;
+	} else if(mOldValue == tVal2){
+		mOldValue = tVal1;
+	}
+	if(mNewValue == tVal1){
+		mNewValue = tVal2;
+	} else if(mNewValue == tVal2){
+		mNewValue = tVal1;
+	}
 }
 
 void TEActionReplaceTile::doAction(TileMap *cTileMap, int mCurTile, int mOld, int mNew){
