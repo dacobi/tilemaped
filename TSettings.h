@@ -115,6 +115,7 @@ class TSettings{
 		bool bShowPixelGrid = true;
 		bool bShowTileGrid = false;
 		bool bShowTilePixelGrid = true;
+		bool bTileSetOrderUpdateTileMap = true;
 		int mTileSetEditWidth = 4;
 		int mTileSetEditScale = 10;
 		//int mSelectionEditWidth = 4;

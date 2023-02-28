@@ -520,6 +520,10 @@ int TEditor::setMode(int newMode){
 	}
 
 	if(newMode == EMODE_SELEDIT){
+		//TODO
+		return 1;
+
+
 		int firstx, firsty, lastx, lasty;
 		int width, height;
 
@@ -845,9 +849,9 @@ Tile* TEditor::createNewTile(){
 	return NULL;
 }
 
-int TEditor::swapTiles(int source, int target){
+int TEditor::swapTiles(int source, int target, bool bDoCopy){
 	if(mCurMode == EMODE_MAP){
-		if(bLCTRLisDown){
+		if(bLCTRLisDown && bDoCopy){
 			TEActionReplaceTileSet* newAction = new TEActionReplaceTileSet();				
 			newAction->doAction(mTileSet.TTiles[target], mTileSet.TTiles[source]->FileData, this, &mTileSet);
       		mActionStack.newActionGroup();	
@@ -859,8 +863,14 @@ int TEditor::swapTiles(int source, int target){
 			//mMapSelectedTile = target;
 
 			//mTileSet.TTiles[target]->replaceWithBuffer(mTileSet.TTiles[source]->FileData, &mPalette);
-		} else {
+		} else {			
 			std::swap(mTileSet.TTiles[source], mTileSet.TTiles[target]);
+			if(mGlobalSettings.bTileSetOrderUpdateTileMap){
+				for(auto *cMap : mTileMaps){
+					cMap->swapTileValues(source, target);
+				}
+			}
+			
 			mMapSelectedTile = target;
 		}
 		return 0;
@@ -872,8 +882,9 @@ int TEditor::moveTileUp(){
 	if(mCurMode == EMODE_MAP){
 		if(mTileSelectedTile){
 			if(mMapSelectedTile > 0){
-				std::swap(mTileSet.TTiles[mMapSelectedTile], mTileSet.TTiles[mMapSelectedTile-1]);
-				mMapSelectedTile--;
+				//std::swap(mTileSet.TTiles[mMapSelectedTile], mTileSet.TTiles[mMapSelectedTile-1]);
+				swapTiles(mMapSelectedTile, mMapSelectedTile-1);
+				//mMapSelectedTile--;
 				return 0;
 			}
 		}
@@ -885,8 +896,9 @@ int TEditor::moveTileDown(){
 	if(mCurMode == EMODE_MAP){
 		if(mTileSelectedTile){
 			if(mMapSelectedTile < (mTileSet.TTiles.size()-1)){
-				std::swap(mTileSet.TTiles[mMapSelectedTile], mTileSet.TTiles[mMapSelectedTile+1]);
-				mMapSelectedTile++;
+				//std::swap(mTileSet.TTiles[mMapSelectedTile], mTileSet.TTiles[mMapSelectedTile+1]);
+				//mMapSelectedTile++;
+				swapTiles(mMapSelectedTile, mMapSelectedTile+1);
 				return 0;
 			}
 		}

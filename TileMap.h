@@ -146,7 +146,7 @@ class TileSet{
 		void dropLastTile();
 		int deleteTile(int cDropTile);
 		int removeTile(int cDropTile);
-		void appendTile(Tile* addTile);
+		void appendTile(Tile* addTile);		
 		int render(int ypos, int mScroll);
 		int renderEd(int xpos, int ypos);
 		int renderIm(int ypos, int mScroll);		
@@ -186,6 +186,7 @@ class TileMap{
 		int setFlip(int cTile, int cTileFlip);
 		int getOffset(int cTile);
 		int setOffset(int cTile, int cOffset);
+		void swapTileValues(int tVal1, int tVal2);
 		TileProperties getTileProp(int cTile);
 		std::vector<SDL_Rect> TileAreas;
 		int removeTile(int cDropTile);

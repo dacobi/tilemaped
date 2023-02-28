@@ -2061,7 +2061,7 @@ int TileSet::renderIm(int ypos, int mScroll){
 	}
 
 	if(bIsDragged){		
-		mGlobalSettings.CurrentEditor->swapTiles(mDragSource, mDragTarget);
+		mGlobalSettings.CurrentEditor->swapTiles(mDragSource, mDragTarget, true);
 	}
 
 	mGlobalSettings.CurrentEditor->ImButtonsTileSet.updateButtonStates();
@@ -2156,6 +2156,19 @@ int TileMap::loadFromFileOffset(std::string path, std::string filename, int cTil
 	}
 
 	return 0;
+}
+
+void TileMap::swapTileValues(int tVal1, int tVal2){
+	for(int i = 0; i < TileMapHeight; i++){
+		for(int j = 0; j < TileMapWidth; j++){
+			int tVal = getTile((i * TileMapWidth) + j);
+			if(tVal == tVal1){
+				setTile((i * TileMapWidth) + j,  tVal2);
+			} else if(tVal == tVal2) {
+				setTile((i * TileMapWidth) + j,  tVal1);
+			}			
+		}
+	}
 }
 
 int TileMap::loadFromFile(std::string path, std::string filename){

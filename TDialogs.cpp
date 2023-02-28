@@ -287,6 +287,13 @@ int TBDialog::render(){
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Unused Tiles")).c_str())){
 					mGlobalSettings.CurrentEditor->activateDropUnusedTiles();
 				}
+				if(ImGui::BeginMenu("Tile Reorder")){
+					
+					if(ImGui::MenuItem("Update TileMap(s)", NULL, &mGlobalSettings.bTileSetOrderUpdateTileMap)){
+						
+					}
+					ImGui::EndMenu();
+				}
 				
 			}
 
