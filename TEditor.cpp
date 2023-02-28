@@ -461,9 +461,9 @@ int TEditor::render(){
 
 		mPalette.renderIm(100 + (mGlobalSettings.CurrentEditor->mSelEdit.mCurEdScale * mGlobalSettings.CurrentEditor->mSelEdit.mSelectionAreaX),50+mTopBar.mDialogHeight);			
 		
-		//if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
+		if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
 		mSelEdit.renderEd(50,50+mTopBar.mDialogHeight);
-		//mColorSelectedTile->bPixelSelected = true;
+		mColorSelectedTile->bPixelSelected = true;
 
 		if(mActiveDialog){			
 			mActiveDialog->render();
@@ -528,13 +528,13 @@ int TEditor::setMode(int newMode){
 			width = lastx-firstx;
 			height = lasty-firsty;
 			if(bTileMapWasChanged || (firstx != mLastSelEditX) || (firsty != mLastSelEditY) || (width != mLastSelEditWidth)|| (height != mLastSelEditHeight) ){
-				
+				/*
 				for(auto &mSelElm : mTileMap->mSelection.mSelected){
 					if(mTileMap->getFlip(mSelElm)){
 						showMessage("Selection has flipped Tile(s)"); 
 						return 1;
 					}
-				}
+				}*/
 				
 				bTileMapWasChanged = false;
 
@@ -1147,6 +1147,10 @@ int TEditor::toggleSelectedTile(){
 	}
 	if(mCurMode == EMODE_TILESET){		
 		mGlobalSettings.bShowTileGrid = !mGlobalSettings.bShowTileGrid;
+		return 0;		
+	}
+	if(mCurMode == EMODE_SELEDIT){		
+		mGlobalSettings.bShowTileSelGrid = !mGlobalSettings.bShowTileSelGrid;
 		return 0;		
 	}
 	return 1;
@@ -2111,6 +2115,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			if(cEvent->key.keysym.sym == SDLK_p){
 		  			if(mCurMode == EMODE_TILE) mGlobalSettings.bShowPixelGrid = !mGlobalSettings.bShowPixelGrid;
 					if(mCurMode == EMODE_TILESET) mGlobalSettings.bShowTilePixelGrid = !mGlobalSettings.bShowTilePixelGrid;
+					if(mCurMode == EMODE_SELEDIT) mGlobalSettings.bShowTilePixelSelGrid = !mGlobalSettings.bShowTilePixelSelGrid;
 	  			}	  			  		
 	  			if(cEvent->key.keysym.sym == SDLK_LCTRL){
 	  				bLCTRLisDown = true;

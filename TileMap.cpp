@@ -658,7 +658,7 @@ SDL_Rect TPalette::renderSelEd(int xpos,int ypos, int tcolor, int cScale){
 	SDL_SetRenderDrawBlendMode(mGlobalSettings.TRenderer, SDL_BLENDMODE_BLEND);
 	int ccolor=0;
 	if(tcolor != 0) ccolor = tcolor;
-	return TPixels[ccolor]->renderEdSel(xpos, ypos, cScale,mGlobalSettings.bShowTilePixelGrid);	
+	return TPixels[ccolor]->renderEdSel(xpos, ypos, cScale,mGlobalSettings.bShowTilePixelSelGrid);	
 }
 
 SDL_Rect TPalette::renderTileEd(int xpos,int ypos, int tcolor, int cScale){
@@ -994,6 +994,41 @@ int TTexture::setPixel(int pindex, unsigned char pcolor){
 		FileData[cindex] = ccolor;
 	}
 	return 0;
+}
+
+unsigned char TTexture::getPixel(int pindex, int poffset, int tflip){
+	unsigned char tpix = 0;
+
+	int pIndexX;
+	int pIndexY;
+	int nindex;
+
+	pIndexX = pindex % mGlobalSettings.TileSizeX;
+	pIndexY = pindex / mGlobalSettings.TileSizeX;
+
+	if(tflip == 0){
+		tpix = getPixel(pindex);
+	}
+
+	if(tflip == 1){		
+		nindex = pindex - 2 * (pindex % mGlobalSettings.TileSizeX ) + mGlobalSettings.TileSizeX  - 1;
+		tpix = getPixel(nindex);
+	}
+
+	if(tflip == 2){				
+		nindex = (mGlobalSettings.TileSizeY - 1 - pindex / mGlobalSettings.TileSizeX) * mGlobalSettings.TileSizeX + pindex % mGlobalSettings.TileSizeX;
+		tpix = getPixel(nindex);
+	}
+
+	if(tflip == 3){
+		nindex =  (mGlobalSettings.TileSizeX *mGlobalSettings.TileSizeY ) - pindex - 1;
+		tpix = getPixel(nindex);
+	}
+
+	if(tpix == 0) return tpix;
+	tpix += (poffset*16);
+	return tpix;
+
 }
 
 unsigned char TTexture::getPixel(int pindex, int poffset){

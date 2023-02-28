@@ -1110,15 +1110,16 @@ int TSelectionEditor::renderEd(int xpos, int ypos){
 			for(int ii=0; ii < mGlobalSettings.TileSizeY; ii++){
 				for(int jj=0; jj < mGlobalSettings.TileSizeX; jj++){                    
                     if(mGlobalSettings.TileSetBPP < 0x8){
-                        EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mTileSet.TTiles[mGlobalSettings.CurrentEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])]->getPixel(jj+(ii*mGlobalSettings.TileSizeX)) + (16 * mGlobalSettings.CurrentEditor->mTileMap->getOffset(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])), mCurEdScale); 			
+                        EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mTileSet.TTiles[mGlobalSettings.CurrentEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])]->getPixel(jj+(ii*mGlobalSettings.TileSizeX), (16 * mGlobalSettings.CurrentEditor->mTileMap->getOffset(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])), mGlobalSettings.CurrentEditor->mTileMap->getFlip(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])) , mCurEdScale); 
                     } else {
-                        EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mTileSet.TTiles[mGlobalSettings.CurrentEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])]->getPixel(jj+(ii*mGlobalSettings.TileSizeX)), mCurEdScale); 			
+                        //EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mTileSet.TTiles[mGlobalSettings.CurrentEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])]->getPixel(jj+(ii*mGlobalSettings.TileSizeX)), mCurEdScale); 			
+                        EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mTileSet.TTiles[mGlobalSettings.CurrentEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])]->getPixel(jj+(ii*mGlobalSettings.TileSizeX), 0, mGlobalSettings.CurrentEditor->mTileMap->getFlip(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])) , mCurEdScale); 
                     }
 					
 				}
 			}
 			
-			if(mGlobalSettings.bShowTileGrid){				
+			if(mGlobalSettings.bShowTileSelGrid){				
 				cBorder.x = xpos + ((mCurEdScale*mGlobalSettings.TileSizeX)*i);
 				cBorder.y = ypos + ((mGlobalSettings.TileSizeY*mCurEdScale)*j);
 				cBorder.w = (mCurEdScale*mGlobalSettings.TileSizeX);
