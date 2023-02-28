@@ -60,6 +60,11 @@ class TEditor{
 		TileSet mTileSet;
 		TileMap *mTileMap;
 		TSelectionEditor mSelEdit;
+		int mLastSelEditX=0;
+		int mLastSelEditY=0;
+		int mLastSelEditWidth=0;
+		int mLastSelEditHeight=0;
+		bool bTileMapWasChanged = true;
 		std::vector<TileMap*> mTileMaps;
 		int switchTileMap(int cTileMap);
 		TBDialog mTopBar;

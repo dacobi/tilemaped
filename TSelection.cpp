@@ -1128,13 +1128,13 @@ int TSelectionEditor::renderEd(int xpos, int ypos){
 
 int TSelectionEditor::setSelection(TSelection* cNewSelection, int nWidth, int nHeight){
     //if(bTileMapWasChanged){
-        bTileMapWasChanged = false;
+        //bTileMapWasChanged = false;
 
         mCurrentSelection = cNewSelection;
         mSelectionWidth = nWidth;
         mSelectionHeight = nHeight;
 
-        std::cout << "SEL Width: " << mSelectionWidth <<  " Height: " << mSelectionHeight << std::endl;
+        //std::cout << "SEL Width: " << mSelectionWidth <<  " Height: " << mSelectionHeight << std::endl;
 
         resizeEdit();
     //}

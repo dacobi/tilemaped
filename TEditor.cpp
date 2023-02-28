@@ -332,7 +332,7 @@ int TEditor::switchTileMap(int cTileMap){
 		mTileMapScrollY = mTileMap->mTileMapScrollY;
 		mGlobalSettings.TileMapScale = mTileMap->TileMapScale;
 
-		mSelEdit.bTileMapWasChanged = true;
+		bTileMapWasChanged = true;
 		return 0;
 	}
 	return 1;
@@ -524,14 +524,29 @@ int TEditor::setMode(int newMode){
 		int width, height;
 
     	if(mTileMap->mSelection.isSelectionRectangular(firstx, firsty, lastx, lasty)){
-        	std::cout << "SEL is Rectangular" << std::endl;
-        	//std::cout << "SEL First: " << firstx << "," << firsty << " Last: " << lastx << "," << lasty << std::endl;
+			
 			width = lastx-firstx;
 			height = lasty-firsty;
-			std::cout << "SEL Width: " << width <<  " Height: " << height << std::endl;
+			if(bTileMapWasChanged || (firstx != mLastSelEditX) || (firsty != mLastSelEditY) || (width != mLastSelEditWidth)|| (height != mLastSelEditHeight) ){
+				
+				bTileMapWasChanged = false;
+
+				mLastSelEditX=firstx;
+				mLastSelEditY=firsty;
+				mLastSelEditWidth=width;
+				mLastSelEditHeight=height;
+
+				std::cout << "SEL is Rectangular" << std::endl;
+				std::cout << "SEL Width: " << width <<  " Height: " << height << std::endl;
+
+				mSelEdit.setSelection(&mTileMap->mSelection, width+1, height+1);
+				mPalette.bUpdateWinPos = true;
+			}
+        		
+        	//std::cout << "SEL First: " << firstx << "," << firsty << " Last: " << lastx << "," << lasty << std::endl;
 			
-			mSelEdit.setSelection(&mTileMap->mSelection, width+1, height+1);
-			mPalette.bUpdateWinPos = true;
+			
+			
     	} else {        	
 			showMessage("Selection is invalid");
 			return 1;
