@@ -276,6 +276,28 @@ TEActionAddTiles::~TEActionAddTiles(){
 	mNewTile->freeTexture();
 }
 
+
+void TEActionReplaceTileSet::undo(){ 
+	mTile->replaceWithBuffer(mOldBuf, &mEditor->mPalette);
+}
+
+void TEActionReplaceTileSet::redo(){ 
+	mTile->replaceWithBuffer(mTileBuf, &mEditor->mPalette);
+}
+
+TEActionReplaceTileSet::~TEActionReplaceTileSet(){}
+
+
+void TEActionReplaceTileSet::doAction(Tile* cTile, std::vector<unsigned char> &cTileBuf, TEditor* cEditor, TileSet *cTiles){
+	mTile = cTile;
+	mOldBuf = mTile->FileData;
+	mTileBuf = cTileBuf;
+	mTiles = cTiles;
+	mEditor = cEditor;
+	mTile->replaceWithBuffer(mTileBuf, &mEditor->mPalette);
+	TEActionType = ACTION_TILEREPLACE;
+}
+
 void TEActionAddTile::doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles){
 	mTiles = cTiles;
 	mNewTile = cNewTile;

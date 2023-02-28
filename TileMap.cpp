@@ -1168,13 +1168,37 @@ SDL_Rect Tile::render(int xpos, int ypos, int tscale, bool updateRect ,bool draw
 	return tmpRect;
 }
 
-SDL_Rect Tile::renderIm(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
+SDL_Rect Tile::renderIm(int xpos, int ypos, int mIndex, int &mDragAndDropped, int tscale, bool updateRect ,bool drawGrid){
 	SDL_Rect tmpRect;
 
+	//ImGui::Image
+
 	if(mGlobalSettings.TileSetBPP < 0x8){
-		ImGui::Image((ImTextureID)(intptr_t)TPOffset[mGlobalSettings.PaletteOffset], ImVec2(mGlobalSettings.TileSizeX * tscale, mGlobalSettings.TileSizeY * tscale));	
+		ImGui::ImageButton((ImTextureID)(intptr_t)TPOffset[mGlobalSettings.PaletteOffset], ImVec2(mGlobalSettings.TileSizeX * tscale, mGlobalSettings.TileSizeY * tscale));	
 	} else {
-		ImGui::Image((ImTextureID)(intptr_t)TileTex, ImVec2(mGlobalSettings.TileSizeX * tscale, mGlobalSettings.TileSizeY * tscale));
+		ImGui::ImageButton((ImTextureID)(intptr_t)TileTex, ImVec2(mGlobalSettings.TileSizeX * tscale, mGlobalSettings.TileSizeY * tscale));
+	}
+
+	int mode = 0;
+	int n = mIndex;
+
+	if(mGlobalSettings.CurrentEditor->bLCTRLisDown){
+		mode = 1;
+	}
+
+	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)){                    
+        ImGui::SetDragDropPayload("DND_TILE", &n, sizeof(int));
+        if (mode == 1) { ImGui::Text("Replace"); }                    
+        if (mode == 0) { ImGui::Text("Swap"); }
+        ImGui::EndDragDropSource();
+    }
+
+ 	if (ImGui::BeginDragDropTarget()){
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_TILE")){
+            IM_ASSERT(payload->DataSize == sizeof(int));
+            int payload_n = *(const int*)payload->Data;			
+			mDragAndDropped = payload_n;                     
+        }				
 	}
 
 	ImVec2 elmin = ImGui::GetItemRectMin();
@@ -1290,6 +1314,12 @@ void Tile::renderEd(int xpos, int ypos, TPalette* tpal){
 int Tile::loadFromFile(std::string filename,TPalette* tpal){ 
 	initTile();	
 	return TTexture::loadFromFile(filename,tpal);
+}
+
+int Tile::replaceWithBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal){
+	FileData = cTileBuf;
+	updateTexture(tpal);
+	return 0;
 }
 
 int Tile::loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal){ 
@@ -1986,10 +2016,20 @@ int TileSet::renderIm(int ypos, int mScroll){
 		mGlobalSettings.CurrentEditor->moveTileDown();
 	}
 
+	bool bIsDragged = false;
+	int mDragged = -1;
+	int mDragSource = 0;
+	int mDragTarget = 0;
+
 	if(mCurColumns > 0){
 		for(int i = 0; i < cRowNum; i++){
 			for(int j = 0; j < mCurColumns; j++){
-				TileAreas[(i * mCurColumns) + j] = TTiles[(i*mCurColumns) + j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSizeY*mCurTileScale)+mColSpace)*i), mCurTileScale,true,true);								
+				TileAreas[(i * mCurColumns) + j] = TTiles[(i*mCurColumns) + j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSizeY*mCurTileScale)+mColSpace)*i), (i*mCurColumns) + j, mDragged, mCurTileScale,true,true);								
+				if((mDragged > -1) && !bIsDragged){
+					bIsDragged = true;
+					mDragSource = mDragged;
+					mDragTarget = (i*mCurColumns) + j;
+				}
 				if((mCurColumns > 1) && (j < (mCurColumns-1))){					
 					ImGui::SameLine();
 				} 
@@ -1999,7 +2039,12 @@ int TileSet::renderIm(int ypos, int mScroll){
 		if(isOdd){			
 			int i = mCurColumns;
 			for(int j = 0; j < isOdd; j++){
-				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSizeY*mCurTileScale)+mColSpace)*cRowNum), mCurTileScale,true,true);				
+				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.TileSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.TileSizeY*mCurTileScale)+mColSpace)*cRowNum), (i*cRowNum)+j, mDragged,  mCurTileScale,true,true);				
+				if((mDragged > -1) && !bIsDragged){
+					bIsDragged = true;
+					mDragSource = mDragged;
+					mDragTarget = (i*cRowNum)+j;
+				}				
 				if((j < (isOdd-1))){
 					ImGui::SameLine();
 				}
@@ -2007,6 +2052,10 @@ int TileSet::renderIm(int ypos, int mScroll){
 
 		}
 		
+	}
+
+	if(bIsDragged){		
+		mGlobalSettings.CurrentEditor->swapTiles(mDragSource, mDragTarget);
 	}
 
 	mGlobalSettings.CurrentEditor->ImButtonsTileSet.updateButtonStates();

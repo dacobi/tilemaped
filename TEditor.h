@@ -167,6 +167,7 @@ class TEditor{
 		int rotateTileLeft();
 		int moveTileUp();
 		int moveTileDown();
+		int swapTiles(int source, int target);
 		int dropUnusedTiles();
 		int dropUnusedTile(int cDropTile);
 		int showMessage(std::string cMessage, bool isError=false);

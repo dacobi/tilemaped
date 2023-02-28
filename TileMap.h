@@ -95,7 +95,7 @@ class Tile: public TTexture{
 		std::vector<SDL_Texture*> TPOffset;		
 		std::vector<SDL_Rect> PixelAreas;		
 		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
-		SDL_Rect renderIm(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
+		SDL_Rect renderIm(int xpos, int ypos, int mIndex, int &mDragAndDropped, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect render(int xpos, int ypos, int tscale, TileProperties tProps);
 		void renderEd(int xpos, int ypos, TPalette* tpal);
 		void renderEdSel(int xpos, int ypos, TPalette* tpal, int cScale);
@@ -103,6 +103,7 @@ class Tile: public TTexture{
 		int updateTexture(TPalette* tpal);
 		int loadFromFile(std::string filename,TPalette* tpal);
 		int loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal);	
+		int replaceWithBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal);
 		int createNew(TPalette* tpal);
 		int rotater();
 		int rotatel();

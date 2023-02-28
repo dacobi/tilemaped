@@ -762,6 +762,26 @@ Tile* TEditor::createNewTile(){
 	return NULL;
 }
 
+int TEditor::swapTiles(int source, int target){
+	if(mCurMode == EMODE_MAP){
+		if(bLCTRLisDown){
+			TEActionReplaceTileSet* newAction = new TEActionReplaceTileSet();				
+			newAction->doAction(mTileSet.TTiles[target], mTileSet.TTiles[source]->FileData, this, &mTileSet);
+      		mActionStack.newActionGroup();	
+      		mActionStack.addAction(newAction);
+
+			mActionStack.mLastAction = newAction;
+       		mActionStack.redoClearStack();
+
+			//mTileSet.TTiles[target]->replaceWithBuffer(mTileSet.TTiles[source]->FileData, &mPalette);
+		} else {
+			std::swap(mTileSet.TTiles[source], mTileSet.TTiles[target]);
+		}
+		return 0;
+	}
+	return 1;
+}
+
 int TEditor::moveTileUp(){
 	if(mCurMode == EMODE_MAP){
 		if(mTileSelectedTile){

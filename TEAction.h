@@ -263,6 +263,22 @@ class TEActionAddTile: public TEAction{
 		}
 };
 
+class TEActionReplaceTileSet: public TEAction{
+	public:
+		~TEActionReplaceTileSet();
+		Tile* mTile;
+		std::vector<unsigned char> mTileBuf;
+		std::vector<unsigned char> mOldBuf;
+		TileSet *mTiles;
+		TEditor *mEditor;		
+		void doAction(Tile* cTile, std::vector<unsigned char> &cTileBuf, TEditor* cEditor, TileSet *cTiles);	
+		virtual void undo();
+		virtual void redo();
+		virtual bool doCompare(const TEAction& rhs){
+			 return false;
+		}
+};
+
 class TEActionAddTiles: public TEAction{
 	public:
 		~TEActionAddTiles();
