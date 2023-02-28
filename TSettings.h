@@ -117,6 +117,8 @@ class TSettings{
 		bool bShowTilePixelGrid = true;
 		int mTileSetEditWidth = 4;
 		int mTileSetEditScale = 10;
+		//int mSelectionEditWidth = 4;
+		int mSelectionEditScale = 10;
 		bool bShowPixelType = false;
 		bool bShowSelectedTile = true;
 		bool bShowProjectInfo = false;		
@@ -179,7 +181,8 @@ enum {
 	EMODE_MAP,
 	EMODE_TILE,
 	EMODE_PALED,
-	EMODE_TILESET
+	EMODE_TILESET,
+	EMODE_SELEDIT
 } emodes;
 
 enum {

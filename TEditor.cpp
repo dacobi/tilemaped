@@ -331,6 +331,8 @@ int TEditor::switchTileMap(int cTileMap){
 		mTileMapScrollX = mTileMap->mTileMapScrollX;
 		mTileMapScrollY = mTileMap->mTileMapScrollY;
 		mGlobalSettings.TileMapScale = mTileMap->TileMapScale;
+
+		mSelEdit.bTileMapWasChanged = true;
 		return 0;
 	}
 	return 1;
@@ -450,6 +452,43 @@ int TEditor::render(){
 		mTileSet.mSelection.renderSelection();	 
 	}
 
+	if(mCurMode == EMODE_SELEDIT){		
+		mTopBar.render();
+
+		//if(mCurrentBrushPixelTileSet){
+		//	mCurrentBrushPixelTileSet->getBrushSelection(cx, cy, mTileSet.EditPixelAreas);
+		//}
+
+		mPalette.renderIm(100 + (mGlobalSettings.CurrentEditor->mSelEdit.mCurEdScale * mGlobalSettings.CurrentEditor->mSelEdit.mSelectionAreaX),50+mTopBar.mDialogHeight);			
+		
+		//if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
+		mSelEdit.renderEd(50,50+mTopBar.mDialogHeight);
+		//mColorSelectedTile->bPixelSelected = true;
+
+		if(mActiveDialog){			
+			mActiveDialog->render();
+		}
+		if(mActiveMessage){			
+			mActiveMessage->render();
+		}
+
+		if(mGlobalSettings.bShowProjectInfo){
+			mProjectInfo.update();
+			mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
+		}
+
+		//if(mCurrentBrushPixelTileSet){
+		//	mCurrentBrushPixelTileSet->renderSelection();
+		//}
+
+		//if(bShowBrushesPixelTileSet){
+		//	mBrushesPixel.renderIm();
+		//}
+
+
+		mSelEdit.mSelection.renderSelection();	 
+	}
+
 	if(mCurMode == EMODE_PALED){
 		mTopBar.render();
 		mPalette.renderEditor(100,100);
@@ -478,6 +517,25 @@ int TEditor::setMode(int newMode){
 	if(newMode == EMODE_TILESET){
 		mBrushesPixel.setBrushDeltas(1, 1, &mTileSet.mCurEdScale, mGlobalSettings.mTileEdScale * mGlobalSettings.TilePixelSize);
 		mBrushesPixel.bIsShown = &bShowBrushesPixelTileSet;
+	}
+
+	if(newMode == EMODE_SELEDIT){
+		int firstx, firsty, lastx, lasty;
+		int width, height;
+
+    	if(mTileMap->mSelection.isSelectionRectangular(firstx, firsty, lastx, lasty)){
+        	std::cout << "SEL is Rectangular" << std::endl;
+        	//std::cout << "SEL First: " << firstx << "," << firsty << " Last: " << lastx << "," << lasty << std::endl;
+			width = lastx-firstx;
+			height = lasty-firsty;
+			std::cout << "SEL Width: " << width <<  " Height: " << height << std::endl;
+			
+			mSelEdit.setSelection(&mTileMap->mSelection, width, height);
+			mPalette.bUpdateWinPos = true;
+    	} else {        	
+			showMessage("Selection is invalid");
+			return 1;
+    	}
 	}
 
 	mLastMode = mCurMode;
@@ -702,6 +760,9 @@ int TEditor::dropUnusedTiles(){
 
 	mActionStack.redoClearStack();	
 	mActionStack.undoClearStack();
+
+	mTileSet.mActionStack.redoClearStack();
+	mTileSet.mActionStack.undoClearStack();
 
 	mTileSelectedTile->bIsSelected = false;
 
@@ -1679,6 +1740,8 @@ int TEditor::handleEvents(){
 			if(mGlobalSettings.mDeleteUnusedTilesState == 2){
 				mActionStack.redoClearStack();	
 				mActionStack.undoClearStack();
+				mTileSet.mActionStack.redoClearStack();
+				mTileSet.mActionStack.undoClearStack();
 
 				mTileSelectedTile->bIsSelected = false;
 				

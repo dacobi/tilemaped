@@ -2,6 +2,7 @@
 #define __TSELECTION__
 
 #include "TSettings.h"
+#include "TEAction.h"
 #include "TDialogs.h"
 
 enum{
@@ -125,6 +126,27 @@ class TBrushList{
         int renderIm();
         int saveToFile(std::string cBrushPath);
         int loadFromFile(std::string cBrushPath);
+};
+
+class TSelectionEditor{
+    public:
+        TSelection* mCurrentSelection;
+        TSelection mSelection;
+        int mSelectionWidth = 0;
+        int mSelectionHeight = 0;
+        std::vector<SDL_Rect> EditPixelAreas;	
+        bool bTileMapWasChanged = true;
+        int renderEd(int xpos, int ypos);
+        int setSelection(TSelection* cNewSelection, int nWidth, int nHeight);
+        void resizeEdit();
+        int getXY(int xpos, int ypos, int cxpos, int cypos);
+        bool bUpdateEditSelection = false;
+		bool bUpdateEditSelectionScale = false;
+        //int mSelEdWidth=4;
+		int mCurEdScale=10;
+		int mSelectionAreaX;
+		int mSelectionAreaY;
+        TEActionUndoStack mActionStack;
 };
 
 #endif

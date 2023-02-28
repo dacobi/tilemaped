@@ -90,6 +90,9 @@ void TBDialog::init(){
 		case EMODE_TILESET:
 			mDialogTextWindow += " TileSet Editor";
 		break;
+		case EMODE_SELEDIT:
+			mDialogTextWindow += " Selection Editor";
+		break;
 	};
 
 	mDialogTextProject = mGlobalSettings.mFile + " Project: " + mGlobalSettings.ProjectPath + "  " + mGlobalSettings.mInfo + " Info: F2";
@@ -112,6 +115,9 @@ int TBDialog::render(){
 		break;
 		case EMODE_TILESET:
 			mDialogTextWindow += " TileSet Editor";
+		break;
+		case EMODE_SELEDIT:
+			mDialogTextWindow += " Selection Editor";
 		break;
 	};
 
@@ -199,6 +205,10 @@ int TBDialog::render(){
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " TileSet")).c_str())){
 				//mGlobalSettings.CurrentEditor->activatePaletteEdit();
 				mGlobalSettings.CurrentEditor->setMode(EMODE_TILESET);
+			}
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Selection")).c_str())){
+				//mGlobalSettings.CurrentEditor->activatePaletteEdit();
+				mGlobalSettings.CurrentEditor->setMode(EMODE_SELEDIT);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Help Dialog (F1)")).c_str())){
 				mGlobalSettings.CurrentEditor->activateHelpDialog();

@@ -2,7 +2,11 @@
 #define __TEACTION__
 
 #include "TSettings.h"
-#include "TSelection.h"
+//#include "TSelection.h"
+class TSelection;
+class TBrushList;
+class TBrush;
+
 
 class TEAction{
 	public:

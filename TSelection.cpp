@@ -100,15 +100,6 @@ int TSelection::confirmSelection(std::vector<SDL_Rect> &sRects, int xdelta, int 
     getSelection(sRects, mCurSelection, xdelta, ydelta);    
     calcSelectionBorder();
 
-    int firstx, firsty, lastx, lasty;
-
-    if(isSelectionRectangular(firstx, firsty, lastx, lasty)){
-        std::cout << "SEL is Rectangular" << std::endl;
-        std::cout << "SEL First: " << firstx << "," << firsty << " Last: " << lastx << "," << lasty << std::endl;
-    } else {
-        std::cout << "SEL is NOT Rectangular" << std::endl;
-    }
-
     return 0;
 }
 
@@ -220,6 +211,10 @@ bool TSelection::isSelectionRectangular(int &cFirstX, int &cFirstY, int &cLastX,
     int mButtomLeftCornerY = 0;
     int mLastCornerX = 0;
     int mLastCornerY = 0;
+
+    if(mSelected.size() == 0){
+        return false;
+    }
 
     bool retval = false;
 
@@ -1085,4 +1080,88 @@ int TBrushList::loadFromFile(std::string cBrushPath){
     }
 
     return 0;
+}
+
+int TSelectionEditor::getXY(int xpos, int ypos, int cxpos, int cypos){
+	int index;
+	int lineL = mSelectionAreaX; 
+	int fullL = lineL * mGlobalSettings.TileSizeY;
+	index = xpos + (ypos * lineL) + (cxpos * mGlobalSettings.TileSizeX) + (cypos * fullL);		
+	return index;
+}
+
+
+int TSelectionEditor::renderEd(int xpos, int ypos){
+
+    if(bUpdateEditSelectionScale){
+		mCurEdScale = mGlobalSettings.mSelectionEditScale;
+	}
+
+    SDL_Rect cBorder;
+	for(int i = 0; i < mSelectionWidth; i++){
+		for(int j = 0; j <  mSelectionHeight; j++){
+			int cxpos = xpos +  (mCurEdScale*mGlobalSettings.TileSizeX)*i;
+			int cypos = ypos + (mGlobalSettings.TileSizeY*mCurEdScale)*j;
+
+			for(int ii=0; ii < mGlobalSettings.TileSizeY; ii++){
+				for(int jj=0; jj < mGlobalSettings.TileSizeX; jj++){
+                    //std::cout << "SEL Render: " << (j*mSelectionWidth)+i << "," << mCurrentSelection->mSelected[(j*mSelectionWidth)+i] << std::endl;
+					EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderTileEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mTileSet.TTiles[mGlobalSettings.CurrentEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])]->getPixel(jj+(ii*mGlobalSettings.TileSizeX)), mCurEdScale); 			
+				}
+			}
+			
+			if(mGlobalSettings.bShowTileGrid){				
+				cBorder.x = xpos + ((mCurEdScale*mGlobalSettings.TileSizeX)*i);
+				cBorder.y = ypos + ((mGlobalSettings.TileSizeY*mCurEdScale)*j);
+				cBorder.w = (mCurEdScale*mGlobalSettings.TileSizeX);
+				cBorder.h = (mCurEdScale*mGlobalSettings.TileSizeY);
+				Tile::renderSelection(cBorder, mGlobalSettings.DefaultHighlightColor);
+			}
+		}								
+	}
+
+    return 0;
+}
+
+int TSelectionEditor::setSelection(TSelection* cNewSelection, int nWidth, int nHeight){
+    //if(bTileMapWasChanged){
+        bTileMapWasChanged = false;
+
+        mCurrentSelection = cNewSelection;
+        mSelectionWidth = nWidth;
+        mSelectionHeight = nHeight;
+
+        std::cout << "SEL Width: " << mSelectionWidth <<  " Height: " << mSelectionHeight << std::endl;
+
+        resizeEdit();
+    //}
+
+    return 0;
+}
+
+void TSelectionEditor::resizeEdit(){
+
+SDL_Rect rEmpty;
+
+	rEmpty.x = 0;
+	rEmpty.y = 0;
+	rEmpty.w = 0;
+	rEmpty.h = 0;
+   
+	mSelectionAreaX = mSelectionWidth * mGlobalSettings.TileSizeX;
+	mSelectionAreaY = mGlobalSettings.TileSizeY * mSelectionHeight;
+	
+	EditPixelAreas.resize(mSelectionAreaX*mSelectionAreaY);
+
+	for(int i = 0; i <  EditPixelAreas.size(); i++){
+		EditPixelAreas[i].x = rEmpty.x;
+		EditPixelAreas[i].y = rEmpty.y;
+		EditPixelAreas[i].w = rEmpty.w;
+		EditPixelAreas[i].h = rEmpty.h;
+	}
+	
+	mSelection.clearSelection();	
+	mSelection.init(mSelectionAreaX , mSelectionAreaY, 1, 1, &mCurEdScale);	
+
+    
 }

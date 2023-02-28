@@ -59,6 +59,7 @@ class TEditor{
 		TPalette mPalette;
 		TileSet mTileSet;
 		TileMap *mTileMap;
+		TSelectionEditor mSelEdit;
 		std::vector<TileMap*> mTileMaps;
 		int switchTileMap(int cTileMap);
 		TBDialog mTopBar;
