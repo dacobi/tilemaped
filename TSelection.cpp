@@ -1134,6 +1134,11 @@ int TSelectionEditor::setSelection(TSelection* cNewSelection, int nWidth, int nH
         mSelectionWidth = nWidth;
         mSelectionHeight = nHeight;
 
+        std::sort(mCurrentSelection->mSelected.begin(), mCurrentSelection->mSelected.end(), [](int a, int b)
+                                  {
+                                      return a < b;
+                                  });
+
         //std::cout << "SEL Width: " << mSelectionWidth <<  " Height: " << mSelectionHeight << std::endl;
 
         resizeEdit();

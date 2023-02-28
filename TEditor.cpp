@@ -529,6 +529,14 @@ int TEditor::setMode(int newMode){
 			height = lasty-firsty;
 			if(bTileMapWasChanged || (firstx != mLastSelEditX) || (firsty != mLastSelEditY) || (width != mLastSelEditWidth)|| (height != mLastSelEditHeight) ){
 				
+				for(auto &mSelElm : mTileMap->mSelection.mSelected){
+					if(mTileMap->getFlip(mSelElm)){
+						showMessage("Selection has flipped Tile(s)"); 
+						return 1;
+					}
+				}
+				
+
 				bTileMapWasChanged = false;
 
 				mLastSelEditX=firstx;
@@ -538,6 +546,11 @@ int TEditor::setMode(int newMode){
 
 				std::cout << "SEL is Rectangular" << std::endl;
 				std::cout << "SEL Width: " << width <<  " Height: " << height << std::endl;
+
+				if(mTileMap->mSelection.mSelected.size() < ((width+1) * (height+1))){
+					showMessage("Selection is invalid", true);
+					return 1;		
+				}
 
 				mSelEdit.setSelection(&mTileMap->mSelection, width+1, height+1);
 				mPalette.bUpdateWinPos = true;
