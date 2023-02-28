@@ -101,6 +101,7 @@ class TSettings{
 		int mOpenTileState = 0;
 		int mOpenTileMapState = 0;
 		std::string mNewTileMapPath = "";
+		int mNewTileMapPaletteOffset = 0;
 		int mNewTileMapOffset = 0;
 		int mNewTileMapState = 0;
 		int mNewTileMapX = 0;

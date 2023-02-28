@@ -81,6 +81,19 @@ void TEditor::initDialogs(){
 	
 }
 
+int TEditor::createTileMap(int nMapX, int nMapY, int nTileValue, int cPaletteOffset){
+
+	TileMap* cNewMap = new TileMap();
+
+	cNewMap->createNew(nMapX, nMapY, nTileValue, cPaletteOffset);
+
+	mTileMaps.push_back(cNewMap);
+
+	switchTileMap(mTileMaps.size()-1);
+
+	return 0;
+}
+
 int TEditor::createTileMap(int nMapX, int nMapY, int nTileValue){
 
 	TileMap* cNewMap = new TileMap();
@@ -92,6 +105,32 @@ int TEditor::createTileMap(int nMapX, int nMapY, int nTileValue){
 	switchTileMap(mTileMaps.size()-1);
 
 	return 0;
+}
+
+int TEditor::importTileMap(std::string cNewTileMap, int cTileOffset, int cPaletteOffset){
+	if(fs::exists(fs::status(cNewTileMap))){
+		TileMap* cNewMap = new TileMap();
+		fs::path cNewPath = cNewTileMap;
+		if(cNewMap->loadFromFileOffset(cNewPath.parent_path().string(), cNewPath.filename().string(), cTileOffset, cPaletteOffset)){
+			std::cout << "Error Importing TileMap: " << cNewTileMap << std::endl;
+			return 1;
+		}
+		for(int i = 0; i < cNewMap->TileMapHeight; i++){
+			for(int j = 0; j < cNewMap->TileMapWidth; j++){
+				if(cNewMap->getTile((i * cNewMap->TileMapWidth) + j) >= mTileSet.TTiles.size()){
+					std::cout << "Error Importing TileMap, Tiles out of bound: " << cNewTileMap << std::endl;
+					return 2;
+				}
+			}
+		}
+
+		cNewMap->bIsSavedToFile = false;
+
+		mTileMaps.push_back(cNewMap);		
+		return 0;
+	}
+
+	return 1;
 }
 
 int TEditor::importTileMap(std::string cNewTileMap, int cTileOffset){
@@ -721,6 +760,32 @@ Tile* TEditor::createNewTile(){
 		}
 	}
 	return NULL;
+}
+
+int TEditor::moveTileUp(){
+	if(mCurMode == EMODE_MAP){
+		if(mTileSelectedTile){
+			if(mMapSelectedTile > 0){
+				std::swap(mTileSet.TTiles[mMapSelectedTile], mTileSet.TTiles[mMapSelectedTile-1]);
+				mMapSelectedTile--;
+				return 0;
+			}
+		}
+	}
+	return 1;
+}
+
+int TEditor::moveTileDown(){
+	if(mCurMode == EMODE_MAP){
+		if(mTileSelectedTile){
+			if(mMapSelectedTile < (mTileSet.TTiles.size()-1)){
+				std::swap(mTileSet.TTiles[mMapSelectedTile], mTileSet.TTiles[mMapSelectedTile+1]);
+				mMapSelectedTile++;
+				return 0;
+			}
+		}
+	}
+	return 1;
 }
 
 int TEditor::rotateTile(){
@@ -1665,7 +1730,15 @@ int TEditor::handleEvents(){
 				
 				mGlobalSettings.mOpenTileMapState = 0;
 				int cretval = 0;
-				if((cretval = importTileMap(mGlobalSettings.mNewTileMapPath))){
+
+				if(mGlobalSettings.TileSetBPP < 0x8){
+					cretval = importTileMap(mGlobalSettings.mNewTileMapPath, 0, mGlobalSettings.mNewTileMapPaletteOffset);
+				} else {
+				 	cretval = importTileMap(mGlobalSettings.mNewTileMapPath);
+				}
+
+
+				if(cretval){
 					cancelActiveDialog();
 					if(cretval == 2){
 						showMessage("Error Importing TileMap, Tiles are out of bound", true);
@@ -1693,7 +1766,14 @@ int TEditor::handleEvents(){
 				mGlobalSettings.mOpenTileMapState = 0;
 				int cretval = 0;
 				std::cout << "Importing TileMap with offset: " << mGlobalSettings.mNewTileMapOffset << std::endl;
-				if((cretval = importTileMap(mGlobalSettings.mNewTileMapPath, mGlobalSettings.mNewTileMapOffset))){
+
+				if(mGlobalSettings.TileSetBPP < 0x8){
+					cretval = importTileMap(mGlobalSettings.mNewTileMapPath, mGlobalSettings.mNewTileMapOffset, mGlobalSettings.mNewTileMapPaletteOffset);
+				} else {
+				 	cretval = importTileMap(mGlobalSettings.mNewTileMapPath, mGlobalSettings.mNewTileMapOffset);
+				}
+
+				if(cretval){
 					cancelActiveDialog();
 					if(cretval == 2){
 						showMessage("Error Importing TileMap, Tiles are out of bound", true);
@@ -1721,7 +1801,11 @@ int TEditor::handleEvents(){
 				
 				mGlobalSettings.mNewTileMapState = 0;
 
-				createTileMap(mGlobalSettings.mNewTileMapX, mGlobalSettings.mNewTileMapY, mGlobalSettings.mNewTileMapOffset);				
+				if(mGlobalSettings.TileSetBPP < 0x8){
+					createTileMap(mGlobalSettings.mNewTileMapX, mGlobalSettings.mNewTileMapY, mGlobalSettings.mNewTileMapOffset, mGlobalSettings.mNewTileMapPaletteOffset);				
+				} else {
+					createTileMap(mGlobalSettings.mNewTileMapX, mGlobalSettings.mNewTileMapY, mGlobalSettings.mNewTileMapOffset);				
+				}
 										
 				mActionStack.redoClearStack();
 				mActionStack.undoClearStack();

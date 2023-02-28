@@ -1976,7 +1976,15 @@ int TileSet::renderIm(int ypos, int mScroll){
 		ImGui::SetNextWindowSize(cWinSize, ImGuiCond_Once);
 	}
 
-	ImGui::Begin("TileSet");                         
+	ImGui::Begin("TileSet");    
+
+	if(ImGui::Button("Move Up")){
+		mGlobalSettings.CurrentEditor->moveTileUp();
+	}
+
+	if(ImGui::Button("Move Down")){
+		mGlobalSettings.CurrentEditor->moveTileDown();
+	}
 
 	if(mCurColumns > 0){
 		for(int i = 0; i < cRowNum; i++){
@@ -2020,6 +2028,20 @@ void TileMap::init(){
 	mSelection.init(TileMapWidth, TileMapHeight, mGlobalSettings.TileSizeX, mGlobalSettings.TileSizeY, &mGlobalSettings.TileMapScale);
 }
 
+
+int TileMap::createNew(int nWidth, int nHeight, int nSValue, int cPaletteOffset){
+
+	createNew(nWidth, nHeight, nSValue);
+
+	for(int i = 0; i < TileMapHeight; i++){
+		for(int j = 0; j < TileMapWidth; j++){
+			setOffset((i * TileMapWidth) + j, cPaletteOffset);
+		}
+	}
+
+	return 0;
+}
+
 int TileMap::createNew(int nWidth, int nHeight, int nSValue){
 	FileData.resize(nWidth * nHeight * 2, 0);
 	TileAreas.resize(nWidth * nHeight);
@@ -2045,6 +2067,22 @@ int TileMap::createNew(){
 	TileMapWidth = mGlobalSettings.TileMapWidth;
 	
 	init();
+
+	return 0;
+}
+
+int TileMap::loadFromFileOffset(std::string path, std::string filename, int cTileOffset, int cPaletteOffset){
+	int retval = loadFromFileOffset(path, filename, cTileOffset);
+
+	if(retval){
+		return 1;
+	}
+
+	for(int i = 0; i < TileMapHeight; i++){
+		for(int j = 0; j < TileMapWidth; j++){
+			setOffset((i * TileMapWidth) + j, cPaletteOffset);
+		}
+	}
 
 	return 0;
 }

@@ -157,12 +157,16 @@ class TEditor{
 		PODialog mPaletteOffset;
 		int importTileMap(std::string cNewTileMap);
 		int createTileMap(int nMapX, int nMapy, int nTileValue);
+		int createTileMap(int nMapX, int nMapy, int nTileValue, int cPaletteOffset);
 		int importTileMap(std::string cNewTileMap, int cTileOffset);
+		int importTileMap(std::string cNewTileMap, int cTileOffset, int cPaletteOffset);
 		Tile* createNewTile();
 		Tile* createNewTileCopy(Tile* cCopyTile);
 		Tile* createNewTileFromFile(std::string newTilePath);
 		int rotateTile();
 		int rotateTileLeft();
+		int moveTileUp();
+		int moveTileDown();
 		int dropUnusedTiles();
 		int dropUnusedTile(int cDropTile);
 		int showMessage(std::string cMessage, bool isError=false);

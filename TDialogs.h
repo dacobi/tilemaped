@@ -123,6 +123,7 @@ class ITMDialog: public ITDialog{
 	public:	
 		bool bUseOffset = false;
 		int mTileOffset = 1;
+		int mPaletteOffset = 0;
 		virtual void cancel();
 		virtual int render();
 		virtual void recieveInput(int mKey);		
@@ -186,6 +187,7 @@ class CTMDialog: public Dialog{
 		int tmapx=32;
 		int tmapy=32;
 		int toffset=1;		
+		int mPaletteOffset = 0;
 };
 
 

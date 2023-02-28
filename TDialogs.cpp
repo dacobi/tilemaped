@@ -838,6 +838,7 @@ void CTMDialog::cancel(){
 		tmapx = 32;
 		tmapy = 32;
 		toffset = 1;
+		mPaletteOffset = 0;
 }
 
 void CPDialog::init(){
@@ -895,6 +896,10 @@ int CTMDialog::render(){
 		int mMax = mGlobalSettings.CurrentEditor->mTileSet.TTiles.size();
 		ImGui::SliderInt("Initial Tile Value", &toffset, 1, mMax);
 
+		if(mGlobalSettings.TileSetBPP < 0x8){
+			ImGui::SliderInt("Initial Palette Offset", &mPaletteOffset, 0, 15);
+		}
+
 		ImGui::Text("Undo Stack will be cleared");  
 
 		if (ImGui::Button("Create")){
@@ -921,6 +926,7 @@ void CTMDialog::recieveInput(int mKey){
 		mGlobalSettings.mNewTileMapOffset = toffset - 1;
 		mGlobalSettings.mNewTileMapX = tmapx;
 		mGlobalSettings.mNewTileMapY = tmapy;
+		mGlobalSettings.mNewTileMapPaletteOffset = mPaletteOffset;
 	}		
 	
 	if(mKey == SDLK_n){
@@ -1310,6 +1316,7 @@ void ITMDialog::cancel(){
 		mTextInput.mDialogTextMain = "";
 		bUseOffset = false;
 		mTileOffset = 1;
+		mPaletteOffset = 0;
 }
 
 void ITMDialog::recieveInput(int mKey){
@@ -1317,9 +1324,10 @@ void ITMDialog::recieveInput(int mKey){
 		if(mTextInput.bInputIsAccepted){
 			bInputIsAccept=true;	
 			bDialogIsWatingForText = false;
+			mGlobalSettings.mNewTileMapPaletteOffset = mPaletteOffset;
 			if(bUseOffset && (mTileOffset > 1)){
 				mGlobalSettings.mOpenTileMapState = 2;
-				mGlobalSettings.mNewTileMapOffset = mTileOffset - 1;
+				mGlobalSettings.mNewTileMapOffset = mTileOffset - 1;				
 			} else {
 				mGlobalSettings.mOpenTileMapState = 1;
 			}
@@ -1350,6 +1358,10 @@ int ITMDialog::render(){
 	if(bUseOffset){
 		int mMax = mGlobalSettings.CurrentEditor->mTileSet.TTiles.size();
 		ImGui::SliderInt("Tile Offset", &mTileOffset, 1, mMax);
+	}
+
+	if(mGlobalSettings.TileSetBPP < 0x8){
+			ImGui::SliderInt("Palette Offset", &mPaletteOffset, 0, 15);
 	}
 	
 	mTextInput.render();
