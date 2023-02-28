@@ -99,6 +99,16 @@ int TSelection::confirmSelection(std::vector<SDL_Rect> &sRects, int xdelta, int 
     }
     getSelection(sRects, mCurSelection, xdelta, ydelta);    
     calcSelectionBorder();
+
+    int firstx, firsty, lastx, lasty;
+
+    if(isSelectionRectangular(firstx, firsty, lastx, lasty)){
+        std::cout << "SEL is Rectangular" << std::endl;
+        std::cout << "SEL First: " << firstx << "," << firsty << " Last: " << lastx << "," << lasty << std::endl;
+    } else {
+        std::cout << "SEL is NOT Rectangular" << std::endl;
+    }
+
     return 0;
 }
 
@@ -194,6 +204,101 @@ int TSelection::selectRange(int sstart, int send){
     }
     calcSelectionBorder();
     return 0;
+}
+
+bool TSelection::isSelectionRectangular(int &cFirstX, int &cFirstY, int &cLastX, int &cLastY){
+
+    bool bFirstCorner = false;
+    bool bLastCorner = false;
+    bool bIsOnFirstLine = false;
+    //bool bFirstLineDone = false;
+    bool bIsOnLastLine = false;
+    int mFirstCornerX = 0;
+    int mFirstCornerY = 0;
+    int mTopRightCornerX = 0;
+    int mTopRightCornerY = 0;
+    int mButtomLeftCornerX = 0;
+    int mButtomLeftCornerY = 0;
+    int mLastCornerX = 0;
+    int mLastCornerY = 0;
+
+    bool retval = false;
+
+    for(int i=0; i < mAreaY; i++){
+		for(int j=0; j < mAreaX; j++){
+			if(mSelectionEdges[getXY(j,i)]){
+                unsigned char edges = mSelectionEdges[getXY(j,i)];
+                if(bFirstCorner){
+                    if(bIsOnFirstLine){
+                        if((edges == 0x1) || (edges == 0x3)){
+                            if(edges == 0x3){
+                                mTopRightCornerX = j;
+                                mTopRightCornerY = i;
+                                bIsOnFirstLine = false;
+                                //bFirstLineDone = true;
+                            }
+                        } else {
+                            return false;
+                        }
+                    } else  if(bIsOnLastLine){
+                        if((edges == 0x4) || (edges == 0x6)){
+                            if(edges == 0x6){
+                                mLastCornerX = j;
+                                mLastCornerY = i;                                
+                                bLastCorner = true;
+                            }
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        if((edges == 0x8) || (edges == 0x2)|| (edges == 0xc)){
+                            if(edges == 0xc){
+                                bIsOnLastLine = true;
+                                mButtomLeftCornerX = j;
+                                mButtomLeftCornerY = i;
+                            }
+                        } else {
+                            return false;
+                        }
+                    }
+                } else {
+                    if(edges == (0x9)){
+                        bFirstCorner = true;
+                        bIsOnFirstLine = true;
+                        mFirstCornerX = j;
+                        mFirstCornerY = i;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+
+    
+    if(bFirstCorner && bLastCorner && (mFirstCornerX == mButtomLeftCornerX) && (mFirstCornerY == mTopRightCornerY) && (mLastCornerX == mTopRightCornerX) && (mLastCornerY == mButtomLeftCornerY)){
+        for(int i=0; i < mAreaY; i++){
+		    for(int j=0; j < mAreaX; j++){
+			    if(mSelectionBorder[getXY(j,i)]){
+                    if((j >= mFirstCornerX) && (j <= mLastCornerX) && (i >= mFirstCornerY) && (i <= mLastCornerY)){
+                        retval = true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }        
+    } else {
+        return false;
+    }
+
+    //std::cout << "SEL First: " << mFirstCornerX << "," << mFirstCornerY << " Last: " << mLastCornerX << "," << mLastCornerY << std::endl;
+    cFirstX = mFirstCornerX;
+    cFirstY = mFirstCornerY;
+    cLastX = mLastCornerX;
+    cLastY = mLastCornerY;
+
+    return retval;
 }
 
 int TSelection::renderSelection(int xpos, int ypos){	

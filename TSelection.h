@@ -44,6 +44,7 @@ class TSelection{
         int invertSelection(int sstart, int send);
         int selectRange(int sstart, int send);
    		int searchSelection(std::vector<SDL_Rect> &sRects, int mx, int my);
+        bool isSelectionRectangular(int &cFirstX, int &cFirstY, int &cLastX, int &cLastY);
         int getSelection(std::vector<SDL_Rect> &sRects, SDL_Rect &cSel, int xdelta, int ydelta);
         int getXY(int X,int Y);
         int getXYFromIndex(int index,int careax, int careay, int &mx, int &my);

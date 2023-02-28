@@ -2050,8 +2050,7 @@ int TileSet::renderIm(int ypos, int mScroll){
 				}
 			}
 
-		}
-		
+		}		
 	}
 
 	if(bIsDragged){		
