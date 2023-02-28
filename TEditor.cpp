@@ -536,7 +536,6 @@ int TEditor::setMode(int newMode){
 					}
 				}
 				
-
 				bTileMapWasChanged = false;
 
 				mLastSelEditX=firstx;
@@ -554,12 +553,7 @@ int TEditor::setMode(int newMode){
 
 				mSelEdit.setSelection(&mTileMap->mSelection, width+1, height+1);
 				mPalette.bUpdateWinPos = true;
-			}
-        		
-        	//std::cout << "SEL First: " << firstx << "," << firsty << " Last: " << lastx << "," << lasty << std::endl;
-			
-			
-			
+			}        		        									
     	} else {        	
 			showMessage("Selection is invalid");
 			return 1;

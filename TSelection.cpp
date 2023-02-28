@@ -1109,7 +1109,12 @@ int TSelectionEditor::renderEd(int xpos, int ypos){
 
 			for(int ii=0; ii < mGlobalSettings.TileSizeY; ii++){
 				for(int jj=0; jj < mGlobalSettings.TileSizeX; jj++){                    
-					EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderTileEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mTileSet.TTiles[mGlobalSettings.CurrentEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])]->getPixel(jj+(ii*mGlobalSettings.TileSizeX)), mCurEdScale); 			
+                    if(mGlobalSettings.TileSetBPP < 0x8){
+                        EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mTileSet.TTiles[mGlobalSettings.CurrentEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])]->getPixel(jj+(ii*mGlobalSettings.TileSizeX)) + (16 * mGlobalSettings.CurrentEditor->mTileMap->getOffset(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])), mCurEdScale); 			
+                    } else {
+                        EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mTileSet.TTiles[mGlobalSettings.CurrentEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])]->getPixel(jj+(ii*mGlobalSettings.TileSizeX)), mCurEdScale); 			
+                    }
+					
 				}
 			}
 			
@@ -1127,22 +1132,13 @@ int TSelectionEditor::renderEd(int xpos, int ypos){
 }
 
 int TSelectionEditor::setSelection(TSelection* cNewSelection, int nWidth, int nHeight){
-    //if(bTileMapWasChanged){
-        //bTileMapWasChanged = false;
+    mCurrentSelection = cNewSelection;
+    mSelectionWidth = nWidth;
+    mSelectionHeight = nHeight;
 
-        mCurrentSelection = cNewSelection;
-        mSelectionWidth = nWidth;
-        mSelectionHeight = nHeight;
+    std::sort(mCurrentSelection->mSelected.begin(), mCurrentSelection->mSelected.end(), [](int a, int b){return a < b;});
 
-        std::sort(mCurrentSelection->mSelected.begin(), mCurrentSelection->mSelected.end(), [](int a, int b)
-                                  {
-                                      return a < b;
-                                  });
-
-        //std::cout << "SEL Width: " << mSelectionWidth <<  " Height: " << mSelectionHeight << std::endl;
-
-        resizeEdit();
-    //}
+    resizeEdit();
 
     return 0;
 }

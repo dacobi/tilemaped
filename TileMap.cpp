@@ -654,6 +654,13 @@ int TPalette::initTPixels(){
 	return 0;
 }
 
+SDL_Rect TPalette::renderSelEd(int xpos,int ypos, int tcolor, int cScale){
+	SDL_SetRenderDrawBlendMode(mGlobalSettings.TRenderer, SDL_BLENDMODE_BLEND);
+	int ccolor=0;
+	if(tcolor != 0) ccolor = tcolor;
+	return TPixels[ccolor]->renderEdSel(xpos, ypos, cScale,mGlobalSettings.bShowTilePixelGrid);	
+}
+
 SDL_Rect TPalette::renderTileEd(int xpos,int ypos, int tcolor, int cScale){
 	SDL_SetRenderDrawBlendMode(mGlobalSettings.TRenderer, SDL_BLENDMODE_BLEND);
 	int ccolor=0;
