@@ -210,8 +210,7 @@ bool TSelection::isSelectionRectangular(int &cFirstX, int &cFirstY, int &cLastX,
 
     bool bFirstCorner = false;
     bool bLastCorner = false;
-    bool bIsOnFirstLine = false;
-    //bool bFirstLineDone = false;
+    bool bIsOnFirstLine = false;    
     bool bIsOnLastLine = false;
     int mFirstCornerX = 0;
     int mFirstCornerY = 0;
@@ -234,8 +233,7 @@ bool TSelection::isSelectionRectangular(int &cFirstX, int &cFirstY, int &cLastX,
                             if(edges == 0x3){
                                 mTopRightCornerX = j;
                                 mTopRightCornerY = i;
-                                bIsOnFirstLine = false;
-                                //bFirstLineDone = true;
+                                bIsOnFirstLine = false;                                
                             }
                         } else {
                             return false;
@@ -291,8 +289,7 @@ bool TSelection::isSelectionRectangular(int &cFirstX, int &cFirstY, int &cLastX,
     } else {
         return false;
     }
-
-    //std::cout << "SEL First: " << mFirstCornerX << "," << mFirstCornerY << " Last: " << mLastCornerX << "," << mLastCornerY << std::endl;
+    
     cFirstX = mFirstCornerX;
     cFirstY = mFirstCornerY;
     cLastX = mLastCornerX;

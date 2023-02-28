@@ -773,9 +773,12 @@ int TEditor::swapTiles(int source, int target){
 			mActionStack.mLastAction = newAction;
        		mActionStack.redoClearStack();
 
+			//mMapSelectedTile = target;
+
 			//mTileSet.TTiles[target]->replaceWithBuffer(mTileSet.TTiles[source]->FileData, &mPalette);
 		} else {
 			std::swap(mTileSet.TTiles[source], mTileSet.TTiles[target]);
+			mMapSelectedTile = target;
 		}
 		return 0;
 	}
