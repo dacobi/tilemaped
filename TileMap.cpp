@@ -2081,6 +2081,10 @@ int TileSet::renderIm(int ypos, int mScroll){
 	int mDragSource = 0;
 	int mDragTarget = 0;
 
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(mGlobalSettings.DefaultBGColor.r,mGlobalSettings.DefaultBGColor.g,mGlobalSettings.DefaultBGColor.b)));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(mGlobalSettings.DefaultBGColor.r,mGlobalSettings.DefaultBGColor.g,mGlobalSettings.DefaultBGColor.b)));
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(mGlobalSettings.DefaultBGColor.r,mGlobalSettings.DefaultBGColor.g,mGlobalSettings.DefaultBGColor.b)));
+
 	if(mCurColumns > 0){
 		for(int i = 0; i < cRowNum; i++){
 			for(int j = 0; j < mCurColumns; j++){
@@ -2112,6 +2116,8 @@ int TileSet::renderIm(int ypos, int mScroll){
 
 		}		
 	}
+
+	ImGui::PopStyleColor(3);
 
 	if(bIsDragged){		
 		mGlobalSettings.CurrentEditor->swapTiles(mDragSource, mDragTarget, true);

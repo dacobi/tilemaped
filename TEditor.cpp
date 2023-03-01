@@ -1608,16 +1608,8 @@ int TEditor::handleSelEdit(){
 		int tSel = -1;
 		tSel = searchRectsXY(mSelEdit.EditPixelAreas, cx, cy);
 		if(tSel >-1){
-			mColorSelectedTile->bPixelSelected = false;
-			/*int tindex;
-			int findex;
-			int tTile;
-			tTile = mSelEdit.mSelection.getTileIndex(tSel, mSelEdit.mSelectionAreaX, mSelEdit.mSelectionAreaY, tindex);
 			
-			Tile *mTile = mTileSet.TTiles[tTile];*/
-
-			//findex = mTile->getFlipIndex();
-
+			mColorSelectedTile->bPixelSelected = false;		
 			int tindex;
 			int ttile;
 			int stile;
