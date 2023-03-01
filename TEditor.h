@@ -82,6 +82,7 @@ class TEditor{
 		int handleEMMAp();
 		int handleTileSet();
 		int handleTileSetEdit();
+		int handleSelEdit();
 		int handleTileMap();
 		int handlePalette();
 		int handlePaletteEdit();
@@ -106,6 +107,8 @@ class TEditor{
 		int mTileMapScrollY = 0;
 		int mTileSetScrollY = 0;
 		int mTileSetScrollX = 0;		
+		int mSelEditScrollY = 0;
+		int mSelEditScrollX = 0;		
 		int applyScroll(int mx,int my, int amount, int xamount);
 		ImWinMouseState ImButtonsTileSet;		
 		ImWinMouseState ImButtonsPalette;		
@@ -118,13 +121,16 @@ class TEditor{
 		bool bLShiftIsDown = false;
 		bool bTileMapGrapped = false;
 		bool bTileSetGrapped = false;
+		bool bSelEditGrapped = false;
 		bool bShowBrushesTile = false;
 		bool bShowBrushesPixel = false;
 		bool bShowBrushesPixelTileSet = false;		
+		bool bShowBrushesPixelSelEdit = false;		
 		//TSelection mSelection;
 		TBrush *mCurrentBrushTile = NULL;
 		TBrush *mCurrentBrushPixel = NULL;
 		TBrush *mCurrentBrushPixelTileSet = NULL;
+		TBrush *mCurrentBrushPixelSelEdit = NULL;
 		//TBrush tmpBrush;
 		TBrushList mBrushesTile;
 		TBrushList mBrushesPixel;

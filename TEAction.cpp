@@ -177,6 +177,45 @@ void TEActionBrushPixels::doAction(Tile* cTile, TBrush &mBrush, TPalette* cPalet
 	}
 }
 
+
+void TEActionBrushPixelsSelEdit::doAction(TileMap* cTileMap, TileSet* cTileSet, std::vector<int> &mSelected, TBrush &mBrush, int mAreaX, int mAreaY, TPalette* cPalette){
+	UUID = mBrush.UUID;
+	mNewValues = mBrush.mBrushElements;
+	mSelection = mBrush.mSelected;
+	mTileMap = cTileMap;
+	mTileSet = cTileSet;
+	mPalette = cPalette;
+	TEActionType=ACTION_PIXELSSELEDIT;
+
+	int eindex = 0;
+
+	for(auto &mSelElement : mSelection){
+		if(mSelElement > -1){ 			
+
+			int ttindex;
+			int ttile;
+			int stile;
+			int mtile;
+			ttile = mTileSet->mSelection.getTileIndex(mSelElement, mAreaX, mAreaY,ttindex);
+			stile = mSelected[ttile];
+			mtile = mTileMap->getTile(stile);
+
+			if((mtile > -1) && (mNewValues[eindex] > -1)){
+				Tile* cSelectedTile = mTileSet->TTiles[mtile];
+				int tindex = cSelectedTile->getFlipIndex(ttindex, mTileMap->getFlip(stile));
+
+				//int tTile = mBrush.getTileIndex(mSelElement, mAreaX, mAreaY, tindex);
+				//Tile *mTile = mTileSet->TTiles[tTile];
+				TEActionReplacePixel* newAction = new TEActionReplacePixel();							
+				newAction->doAction(cSelectedTile, tindex, cSelectedTile->getPixel(tindex), mNewValues[eindex], mPalette);
+				mSubActions.push_back(newAction);			
+			}
+		}
+		eindex++;
+	}
+}
+
+
 void TEActionBrushPixelsTileSet::doAction(TileSet* cTileSet, TBrush &mBrush, int mAreaX, int mAreaY, TPalette* cPalette){
 	UUID = mBrush.UUID;
 	mNewValues = mBrush.mBrushElements;

@@ -252,6 +252,17 @@ int TBDialog::render(){
 				}
 			}
 
+			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SELEDIT){	
+				if(ImGui::MenuItem("Brushes (F8)", NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixelSelEdit)){                                                                         
+                }			
+				if(ImGui::MenuItem("Tile Grid (T)", NULL , &mGlobalSettings.bShowTileSelGrid)){										
+				}
+				if(ImGui::MenuItem("Pixel Grid (P)", NULL , &mGlobalSettings.bShowTilePixelSelGrid)){										
+				}
+				if(ImGui::MenuItem("Selected Color (S)", NULL , &mGlobalSettings.bShowPixelType)){										
+				}
+			}
+
 			ImGui::EndMenu();
 		}
 

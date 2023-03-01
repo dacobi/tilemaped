@@ -996,15 +996,33 @@ int TTexture::setPixel(int pindex, unsigned char pcolor){
 	return 0;
 }
 
+int TTexture::getFlipIndex(int pindex, int tflip){
+	int nindex = pindex;
+
+	if(tflip == 1){		
+		nindex = pindex - 2 * (pindex % mGlobalSettings.TileSizeX ) + mGlobalSettings.TileSizeX  - 1;	
+	}
+
+	if(tflip == 2){				
+		nindex = (mGlobalSettings.TileSizeY - 1 - pindex / mGlobalSettings.TileSizeX) * mGlobalSettings.TileSizeX + pindex % mGlobalSettings.TileSizeX;		
+	}
+
+	if(tflip == 3){
+		nindex =  (mGlobalSettings.TileSizeX *mGlobalSettings.TileSizeY ) - pindex - 1;		
+	}
+
+	return nindex;
+}
+
 unsigned char TTexture::getPixel(int pindex, int poffset, int tflip){
 	unsigned char tpix = 0;
 
-	int pIndexX;
-	int pIndexY;
+	//int pIndexX;
+	//int pIndexY;
 	int nindex;
 
-	pIndexX = pindex % mGlobalSettings.TileSizeX;
-	pIndexY = pindex / mGlobalSettings.TileSizeX;
+	//pIndexX = pindex % mGlobalSettings.TileSizeX;
+	//pIndexY = pindex / mGlobalSettings.TileSizeX;
 
 	if(tflip == 0){
 		tpix = getPixel(pindex);
