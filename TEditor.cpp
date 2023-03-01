@@ -1604,6 +1604,43 @@ int TEditor::handleSelEdit(){
 		}
 	}
 
+	if(rightMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse  && !bLShiftIsDown){
+		int tSel = -1;
+		tSel = searchRectsXY(mSelEdit.EditPixelAreas, cx, cy);
+		if(tSel >-1){
+			mColorSelectedTile->bPixelSelected = false;
+			/*int tindex;
+			int findex;
+			int tTile;
+			tTile = mSelEdit.mSelection.getTileIndex(tSel, mSelEdit.mSelectionAreaX, mSelEdit.mSelectionAreaY, tindex);
+			
+			Tile *mTile = mTileSet.TTiles[tTile];*/
+
+			//findex = mTile->getFlipIndex();
+
+			int tindex;
+			int ttile;
+			int stile;
+			int mtile;
+			ttile = mSelEdit.mSelection.getTileIndex(tSel, mSelEdit.mSelectionAreaX, mSelEdit.mSelectionAreaY,tindex);				
+			stile = mSelEdit.mCurrentSelection->mSelected[ttile];
+			mtile = mTileMap->getTile(stile);
+
+			if(mtile > -1){					
+				Tile* cSelectedTile = mTileSet.TTiles[mtile];
+				int findex = cSelectedTile->getFlipIndex(tindex, mTileMap->getFlip(stile));
+
+				mGlobalSettings.PaletteOffset = mTileMap->getOffset(stile);
+
+				mColorSelected = (cSelectedTile->getPixel(findex)+(mGlobalSettings.PaletteOffset*16));
+				mColorSelectedTile = mPalette.TPixels[mColorSelected];
+				mColorSelectedTile->bPixelSelected = true;
+				mTileSelectedTile->mSelection.cancelSelection();
+				mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor = true;
+			}
+		}
+	}
+
 	int selEditWidthX = (mSelEdit.mSelectionAreaX * mSelEdit.mCurEdScale) +  mGlobalSettings.TopBarHeight;
 	int selEditWidthY = (mSelEdit.mSelectionAreaY * mSelEdit.mCurEdScale) +  mGlobalSettings.TopBarHeight;
 
