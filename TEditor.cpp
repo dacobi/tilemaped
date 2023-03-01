@@ -1608,7 +1608,7 @@ int TEditor::handleSelEdit(){
 		int tSel = -1;
 		tSel = searchRectsXY(mSelEdit.EditPixelAreas, cx, cy);
 		if(tSel >-1){
-			
+
 			mColorSelectedTile->bPixelSelected = false;		
 			int tindex;
 			int ttile;
@@ -2000,7 +2000,7 @@ int TEditor::handleEvents(){
 				if(mGlobalSettings.TileSetBPP < 0x8){
 					cretval = importTileMap(mGlobalSettings.mNewTileMapPath, 0, mGlobalSettings.mNewTileMapPaletteOffset);
 				} else {
-				 	cretval = importTileMap(mGlobalSettings.mNewTileMapPath);
+				 	cretval = importTileMap(mGlobalSettings.mNewTileMapPath, 0, 0);
 				}
 
 
@@ -2036,7 +2036,7 @@ int TEditor::handleEvents(){
 				if(mGlobalSettings.TileSetBPP < 0x8){
 					cretval = importTileMap(mGlobalSettings.mNewTileMapPath, mGlobalSettings.mNewTileMapOffset, mGlobalSettings.mNewTileMapPaletteOffset);
 				} else {
-				 	cretval = importTileMap(mGlobalSettings.mNewTileMapPath, mGlobalSettings.mNewTileMapOffset);
+				 	cretval = importTileMap(mGlobalSettings.mNewTileMapPath, mGlobalSettings.mNewTileMapOffset, 0);
 				}
 
 				if(cretval){
