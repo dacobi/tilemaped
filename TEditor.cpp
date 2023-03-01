@@ -843,7 +843,7 @@ Tile* TEditor::createNewTile(){
 	if(mCurMode == EMODE_MAP){	
 	Tile* newTile = mTileSet.createNew(&mPalette);
 		if(newTile){
-				TEActionAddTile* newActionTile = new TEActionAddTile();				
+				TEActionAddTiles* newActionTile = new TEActionAddTiles();				
 				newActionTile->doAction(newTile, this, &mTileSet);
       			mActionStack.newActionGroup();	
       			mActionStack.addAction(newActionTile);
@@ -874,6 +874,7 @@ int TEditor::swapTiles(int source, int target, bool bDoCopy){
 		} else {			
 			std::swap(mTileSet.TTiles[source], mTileSet.TTiles[target]);
 
+			mActionStack.undoClearStack();
 			mActionStack.redoClearStack();
 
 			if(mGlobalSettings.bTileSetOrderUpdateTileMap){
@@ -946,7 +947,7 @@ Tile* TEditor::createNewTileCopy(Tile* cCopyTile){
 	if(mCurMode == EMODE_MAP){
 	Tile* newTile = mTileSet.createNewCopy(mTileSelectedTile,  &mPalette);
 		if(newTile){
-				TEActionAddTile* newActionTile = new TEActionAddTile();
+				TEActionAddTiles* newActionTile = new TEActionAddTiles();
 				
 				newActionTile->doAction(newTile, this, &mTileSet);
       			mActionStack.newActionGroup();	
@@ -1947,7 +1948,7 @@ int TEditor::handleEvents(){
 			if(mGlobalSettings.mOpenTileState == 1){
 				Tile* newTile = createNewTileFromFile(mGlobalSettings.mNewTilePath);
 				if(newTile){
-					TEActionAddTile* newActionTile = new TEActionAddTile();
+					TEActionAddTiles* newActionTile = new TEActionAddTiles();
 					newActionTile->doAction(newTile, this, &mTileSet);
 	       			mActionStack.newActionGroup();	
 	       			mActionStack.addAction(newActionTile);
@@ -2282,7 +2283,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 		  			redoLastActionGroup();
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_d){
-					dropLastActionGroup();	  		
+					//dropLastActionGroup();	  		
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_f){
 		  			flipSelectedTile();
