@@ -297,20 +297,20 @@ int TEditor::saveToFolder(std::string path){
 	cTileMaps = std::string(path + DIRDEL + "map" + cMapNum + ".bin");
 
 	while(fs::exists(fs::status(cTileMaps))){
-		std::string sBackupNum;
-		int cBackupNum = 0;
+		std::string cBackupNum;
+		int mBackupNum = 0;
 
-		convert << cBackupNum << std::endl;
-		convert >> sBackupNum;
+		convert << mBackupNum << std::endl;
+		convert >> cBackupNum;
 
-		while(fs::exists(fs::status(cTileMaps + cBackup + sBackupNum))){
-			cBackupNum++;
-			convert << cBackupNum << std::endl;
-			convert >> sBackupNum;
+		while(fs::exists(fs::status(cTileMaps + cBackup + cBackupNum))){
+			mBackupNum++;
+			convert << mBackupNum << std::endl;
+			convert >> cBackupNum;
 		}
 
 
-		fs::rename(cTileMaps, cTileMaps + cBackup + sBackupNum);
+		fs::rename(cTileMaps, cTileMaps + cBackup + cBackupNum);
 	
 		mMapNum++;
 		convert << mMapNum << std::endl;
@@ -318,23 +318,6 @@ int TEditor::saveToFolder(std::string path){
 
 		cTileMaps = std::string(path + DIRDEL + "map" + cMapNum + ".bin");
 	}
-
-/*
-	int mDeleteTileMapCount = mGlobalSettings.mTileMapFileCount - mTileMaps.size();
-
-	if(mDeleteTileMapCount < 0){
-		mDeleteTileMapCount = 0;
-	}
-
-	while(mDeleteTileMapCount){
-		convert << mMapNum << std::endl;
-		convert >> cMapNum;
-		cTileMap = "map" + cMapNum + ".bin";
-		fs::remove(path + DIRDEL + cTileMap);
-		mDeleteTileMapCount--;
-		mMapNum++;
-	}
-	*/
 
 	mGlobalSettings.mTileMapFileCount = mTileMaps.size();
 

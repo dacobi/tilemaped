@@ -202,10 +202,7 @@ void TEActionBrushPixelsSelEdit::doAction(TileMap* cTileMap, TileSet* cTileSet, 
 
 			if((mtile > -1) && (mNewValues[eindex] > -1)){
 				Tile* cSelectedTile = mTileSet->TTiles[mtile];
-				int tindex = cSelectedTile->getFlipIndex(ttindex, mTileMap->getFlip(stile));
-
-				//int tTile = mBrush.getTileIndex(mSelElement, mAreaX, mAreaY, tindex);
-				//Tile *mTile = mTileSet->TTiles[tTile];
+				int tindex = cSelectedTile->getFlipIndex(ttindex, mTileMap->getFlip(stile));				
 				TEActionReplacePixel* newAction = new TEActionReplacePixel();							
 				newAction->doAction(cSelectedTile, tindex, cSelectedTile->getPixel(tindex), mNewValues[eindex], mPalette);
 				mSubActions.push_back(newAction);			
