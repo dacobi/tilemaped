@@ -1,7 +1,7 @@
 # TilemapEd
 TilemapEd is a tilemap editor for the Commander X16 retro computer.
 
-(It's not currently complete, but is being worked on)
+The current state of the program is release candidate. Most features are present, but there's probably still many bugs.
 
 It uses C++17 and SDL2, SDL2_image and SDL2_ttf.
 
