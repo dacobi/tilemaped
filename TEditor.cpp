@@ -290,6 +290,36 @@ int TEditor::saveToFolder(std::string path){
 		}
 	}
 
+	std::string cTileMaps;
+	std::string cBackup = ".bak";	
+	convert << mMapNum << std::endl;
+	convert >> cMapNum;
+	cTileMaps = std::string(path + DIRDEL + "map" + cMapNum + ".bin");
+
+	while(fs::exists(fs::status(cTileMaps))){
+		std::string sBackupNum;
+		int cBackupNum = 0;
+
+		convert << cBackupNum << std::endl;
+		convert >> sBackupNum;
+
+		while(fs::exists(fs::status(cTileMaps + cBackup + sBackupNum))){
+			cBackupNum++;
+			convert << cBackupNum << std::endl;
+			convert >> sBackupNum;
+		}
+
+
+		fs::rename(cTileMaps, cTileMaps + cBackup + sBackupNum);
+	
+		mMapNum++;
+		convert << mMapNum << std::endl;
+		convert >> cMapNum;
+
+		cTileMaps = std::string(path + DIRDEL + "map" + cMapNum + ".bin");
+	}
+
+/*
 	int mDeleteTileMapCount = mGlobalSettings.mTileMapFileCount - mTileMaps.size();
 
 	if(mDeleteTileMapCount < 0){
@@ -304,6 +334,7 @@ int TEditor::saveToFolder(std::string path){
 		mDeleteTileMapCount--;
 		mMapNum++;
 	}
+	*/
 
 	mGlobalSettings.mTileMapFileCount = mTileMaps.size();
 
