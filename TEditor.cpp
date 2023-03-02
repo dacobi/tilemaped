@@ -27,8 +27,26 @@ int TEditor::createNewProject(){
 	mPalette.initTPixels();
 	mTileMap = new TileMap();
 	mTileMap->createNew();
-	mTileMaps.push_back(mTileMap);								
-	mTileSet.createNew(&mPalette);
+	mTileMaps.push_back(mTileMap);		
+
+	if(fs::exists(fs::status(mGlobalSettings.mNewTilePath))){
+		std::vector<Tile*> cNewTiles;
+		if(mTileSet.importTileSet(mGlobalSettings.mNewTilePath, cNewTiles)){
+			return 1;
+		}
+	} else if(mGlobalSettings.mNewTileSize){
+		if((mGlobalSettings.mNewTileSize == 4) || (mGlobalSettings.mNewTileSize == 8) || (mGlobalSettings.mNewTileSize == 16)){
+			mTileSet.mSelEdWidth = mGlobalSettings.mNewTileSize;
+			mGlobalSettings.mTileSetEditWidth = mGlobalSettings.mNewTileSize;
+			for(int i = 0; i < (mGlobalSettings.mNewTileSize*mGlobalSettings.mNewTileSize); i++){
+				mTileSet.createNew(&mPalette);		
+			}			
+		} else {
+			return 1;
+		}
+	} else {
+		mTileSet.createNew(&mPalette);
+	}
 
 	initDialogs();
 
@@ -907,10 +925,8 @@ int TEditor::swapTiles(int source, int target, bool bDoCopy){
 int TEditor::moveTileUp(){
 	if(mCurMode == EMODE_MAP){
 		if(mTileSelectedTile){
-			if(mMapSelectedTile > 0){
-				//std::swap(mTileSet.TTiles[mMapSelectedTile], mTileSet.TTiles[mMapSelectedTile-1]);
-				swapTiles(mMapSelectedTile, mMapSelectedTile-1);
-				//mMapSelectedTile--;
+			if(mMapSelectedTile > 0){				
+				swapTiles(mMapSelectedTile, mMapSelectedTile-1);				
 				return 0;
 			}
 		}
@@ -921,9 +937,7 @@ int TEditor::moveTileUp(){
 int TEditor::moveTileDown(){
 	if(mCurMode == EMODE_MAP){
 		if(mTileSelectedTile){
-			if(mMapSelectedTile < (mTileSet.TTiles.size()-1)){
-				//std::swap(mTileSet.TTiles[mMapSelectedTile], mTileSet.TTiles[mMapSelectedTile+1]);
-				//mMapSelectedTile++;
+			if(mMapSelectedTile < (mTileSet.TTiles.size()-1)){				
 				swapTiles(mMapSelectedTile, mMapSelectedTile+1);
 				return 0;
 			}
@@ -935,7 +949,7 @@ int TEditor::moveTileDown(){
 int TEditor::rotateTile(){
 	if(mCurMode == EMODE_MAP){
 		if(mTileSelectedTile){
-			Tile* newTile = new Tile(); //mTileSet.createNewCopy(mTileSelectedTile,  &mPalette);
+			Tile* newTile = new Tile(); 
 			newTile->loadFromBuffer(mTileSelectedTile->FileData, &mPalette);
 			newTile->rotater();
 			TEActionReplaceTileSet* newAction = new TEActionReplaceTileSet();				
@@ -953,10 +967,8 @@ int TEditor::rotateTile(){
 
 int TEditor::rotateTileLeft(){
 	if(mCurMode == EMODE_MAP){
-		if(mTileSelectedTile){
-			//mTileSelectedTile->rotatel();
-			//Tile* newTile = mTileSet.createNewCopy(mTileSelectedTile,  &mPalette);
-			Tile* newTile = new Tile(); //mTileSet.createNewCopy(mTileSelectedTile,  &mPalette);
+		if(mTileSelectedTile){			
+			Tile* newTile = new Tile();
 			newTile->loadFromBuffer(mTileSelectedTile->FileData, &mPalette);
 			newTile->rotatel();
 			TEActionReplaceTileSet* newAction = new TEActionReplaceTileSet();				

@@ -811,6 +811,9 @@ void OCDialog::recieveInput(int mKey){
 				mGlobalSettings.TileSizeX = mCreateProject.tilex;
 				mGlobalSettings.TileSizeY = mCreateProject.tiley;
 				mGlobalSettings.ProjectPath = mCreateProject.mReadPath.mDialogTextMain;
+				mGlobalSettings.mNewTilePath = mCreateProject.mReadTileSet.mDialogTextMain;
+				mGlobalSettings.mNewTileSize = mCreateProject.tilesetsize;
+
 
 				if(mCreateProject.bHasPalette){
 					if(mCreateProject.mReadPal.bInputIsAccepted){
@@ -874,9 +877,11 @@ void CPDialog::init(){
 		
 	mReadPath.mDialogTextMain = "newfolder";
 	mReadPal.mDialogTextMain = "";
+	mReadTileSet.mDialogTextMain = "";
 
 	mReadPath.mInputLabel = "Project Folder";
 	mReadPal.mInputLabel = "Palette File";
+	mReadTileSet.mInputLabel = "TileSet File";
 
 	mReadPath.bMustNotExist = true;
 	mReadPath.bAutoComplete = true;
@@ -884,12 +889,16 @@ void CPDialog::init(){
 	mReadPal.bMustBeFile = true;
 	mReadPal.bAutoComplete = true;
 
+	mReadTileSet.bMustBeFile = true;
+	mReadTileSet.bAutoComplete = true;
+
 	mReadPath.bInputIsAccepted = true;
 	mReadPal.bInputIsAccepted = true;
 
 
 	mReadPath.init();
 	mReadPal.init();
+	mReadTileSet.init();
 
 	mActiveInput = &mReadPath;
 	mActiveInput->bIsInputActive = true;
@@ -987,6 +996,7 @@ int CPDialog::render(){
 		ImGui::SameLine();
 		ImGui::RadioButton("H: 256", &tmapy, 256);
 
+		ImGui::Separator();
 
 		ImGui::Text("TileSize X/Y");  
 			
@@ -998,12 +1008,124 @@ int CPDialog::render(){
 		ImGui::SameLine();
 		ImGui::RadioButton("Y: 16", &tiley, 16);
 
-		ImGui::Text("Tile BPP");  
-		ImGui::RadioButton("BPP: 8", &tbpp, 8);
-		ImGui::SameLine();
-		ImGui::RadioButton("BPP: 4", &tbpp, 4);
-		ImGui::SameLine();
-		ImGui::RadioButton("BPP: 2", &tbpp, 2);
+		//int tilesettype = 0;
+		//int tilesetsize = 4;
+		//bool bHasPalette = false;
+		//bool bHasTileSet = false;
+
+		ImGui::Separator();
+
+		if(ImGui::Checkbox("Create/Import TileSet", &bHasTileSet)){
+			tbpp = 8;
+		}
+
+		if(bHasTileSet){
+			ImGui::Text("TileSet Type");  
+			ImGui::RadioButton("Project File", &tilesettype, 0);
+			ImGui::SameLine();
+			ImGui::RadioButton("Import PNG", &tilesettype, 1);
+			ImGui::SameLine();
+			ImGui::RadioButton("Empty TileSet", &tilesettype, 2);
+
+			ImGui::Separator();
+
+			switch (tilesettype)
+			{
+			case 0:
+				mReadTileSet.render();
+				if(mReadTileSet.bIsActive){
+					mActiveInput = &mReadTileSet;
+				}
+
+				if (ImGui::Button("Choose TileSet File")){
+					Dialog::render();
+					ImGui::SetNextWindowSize(ImVec2(800, 600));
+    				ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyNewfts", "Choose TileSet Project File", ".bin", ".");
+				}
+
+  				// display
+  				if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKeyNewfts")){
+    				// action if OK
+    				if (ImGuiFileDialog::Instance()->IsOk()){
+      						std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+      						std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+	  						mReadTileSet.mDialogTextMain = filePathName;
+			      			// action
+    				}    
+    			// close
+    			ImGuiFileDialog::Instance()->Close();
+	  			}
+
+				ImGui::Text("TileSet BPP");  
+				ImGui::RadioButton("BPP: 8", &tbpp, 8);
+				ImGui::SameLine();
+				ImGui::RadioButton("BPP: 4", &tbpp, 4);
+				ImGui::SameLine();
+				ImGui::RadioButton("BPP: 2", &tbpp, 2);
+				break;
+			case 1:
+				mReadTileSet.render();
+				if(mReadTileSet.bIsActive){
+					mActiveInput = &mReadTileSet;
+				}
+
+					
+
+				if (ImGui::Button("Choose TileSet PNG")){
+					Dialog::render();
+					ImGui::SetNextWindowSize(ImVec2(800, 600));
+    				ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyNewftspng", "Choose TileSet PNG", ".png", ".");
+				}
+
+  				// display
+  				if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKeyNewftspng")){
+    				// action if OK
+    				if (ImGuiFileDialog::Instance()->IsOk()){
+      						std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+      						std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+	  						mReadTileSet.mDialogTextMain = filePathName;
+			      			// action
+    				}    
+    			// close
+    			ImGuiFileDialog::Instance()->Close();
+	  			}
+				ImGui::Text("Imported Tile BPP");  
+					ImGui::RadioButton("BPP: 8", &tbpp, 8);
+					ImGui::SameLine();
+					ImGui::RadioButton("BPP: 4", &tbpp, 4);
+				
+				break;
+			case 2:
+				ImGui::Text("TileSet Initial Size");  
+				ImGui::RadioButton("4x4", &tilesetsize, 4);
+				ImGui::SameLine();
+				ImGui::RadioButton("8x8", &tilesetsize, 8);
+				ImGui::SameLine();
+				ImGui::RadioButton("16x16", &tilesetsize, 16);
+
+				ImGui::Text("Tile BPP");  
+				ImGui::RadioButton("BPP: 8", &tbpp, 8);
+				ImGui::SameLine();
+				ImGui::RadioButton("BPP: 4", &tbpp, 4);
+				ImGui::SameLine();
+				ImGui::RadioButton("BPP: 2", &tbpp, 2);
+
+				break;
+			
+			default:
+				break;
+			}
+
+		} else {
+			ImGui::Text("Tile BPP");  
+			ImGui::RadioButton("BPP: 8", &tbpp, 8);
+			ImGui::SameLine();
+			ImGui::RadioButton("BPP: 4", &tbpp, 4);
+			ImGui::SameLine();
+			ImGui::RadioButton("BPP: 2", &tbpp, 2);
+		}
+
+		ImGui::Separator();
 
 
 		mReadPath.render();
@@ -1031,6 +1153,8 @@ int CPDialog::render(){
     		ImGuiFileDialog::Instance()->Close();
   		}
 
+		ImGui::Separator();
+
 		ImGui::Checkbox("Use Palette", &bHasPalette);
 
 		if(bHasPalette){
@@ -1039,26 +1163,28 @@ int CPDialog::render(){
 				mActiveInput = &mReadPal;
 			}
 
-		if (ImGui::Button("Choose Palette File")){
-			Dialog::render();
-			ImGui::SetNextWindowSize(ImVec2(800, 600));
-    		ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyNewp", "Choose Palette", ".gpl,.bin", ".");
+			if (ImGui::Button("Choose Palette File")){
+				Dialog::render();
+				ImGui::SetNextWindowSize(ImVec2(800, 600));
+    			ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyNewp", "Choose Palette", ".gpl,.bin", ".");
+			}
+
+  			// display
+  			if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKeyNewp")){
+    			// action if OK
+    			if (ImGuiFileDialog::Instance()->IsOk()){
+      				std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+      				std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+	  				mReadPal.mDialogTextMain = filePathName;
+      				// action
+    			}
+    
+    			// close
+    			ImGuiFileDialog::Instance()->Close();
+  			}		
 		}
 
-  		// display
-  		if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKeyNewp")){
-    		// action if OK
-    		if (ImGuiFileDialog::Instance()->IsOk()){
-      			std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
-      			std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
-	  			mReadPal.mDialogTextMain = filePathName;
-      			// action
-    		}
-    
-    		// close
-    		ImGuiFileDialog::Instance()->Close();
-  		}
-		}
+		ImGui::Separator();
 
         if (ImGui::Button("Create")){
 			recieveInput(SDLK_y);

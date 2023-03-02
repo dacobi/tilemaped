@@ -163,6 +163,7 @@ class CPDialog: public Dialog{
 	public:		
 		TIDialog mReadPath;
 		TIDialog mReadPal;		
+		TIDialog mReadTileSet;		
 		TIDialog *mActiveInput;
 		bool bInputIsAccepted = false;
 		virtual void init();		
@@ -174,7 +175,10 @@ class CPDialog: public Dialog{
 		int tilex=16;
 		int tiley=16;
 		int tbpp=8;
+		int tilesettype = 0;
+		int tilesetsize = 0;
 		bool bHasPalette = false;
+		bool bHasTileSet = false;
 };
 
 
