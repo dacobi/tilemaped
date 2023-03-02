@@ -843,7 +843,7 @@ Tile* TEditor::createNewTile(){
 	if(mCurMode == EMODE_MAP){	
 	Tile* newTile = mTileSet.createNew(&mPalette);
 		if(newTile){
-				TEActionAddTiles* newActionTile = new TEActionAddTiles();				
+				TEActionAddTile* newActionTile = new TEActionAddTile();				
 				newActionTile->doAction(newTile, this, &mTileSet);
       			mActionStack.newActionGroup();	
       			mActionStack.addAction(newActionTile);
@@ -947,7 +947,7 @@ Tile* TEditor::createNewTileCopy(Tile* cCopyTile){
 	if(mCurMode == EMODE_MAP){
 	Tile* newTile = mTileSet.createNewCopy(mTileSelectedTile,  &mPalette);
 		if(newTile){
-				TEActionAddTiles* newActionTile = new TEActionAddTiles();
+				TEActionAddTile* newActionTile = new TEActionAddTile();
 				
 				newActionTile->doAction(newTile, this, &mTileSet);
       			mActionStack.newActionGroup();	
@@ -1948,7 +1948,7 @@ int TEditor::handleEvents(){
 			if(mGlobalSettings.mOpenTileState == 1){
 				Tile* newTile = createNewTileFromFile(mGlobalSettings.mNewTilePath);
 				if(newTile){
-					TEActionAddTiles* newActionTile = new TEActionAddTiles();
+					TEActionAddTile* newActionTile = new TEActionAddTile();
 					newActionTile->doAction(newTile, this, &mTileSet);
 	       			mActionStack.newActionGroup();	
 	       			mActionStack.addAction(newActionTile);

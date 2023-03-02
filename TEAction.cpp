@@ -424,11 +424,6 @@ void TEActionAddTiles::redo(){
 
 
 void TEActionAddTile::undo(){	
-	for(int i = 0; i < mTiles->TTiles.size(); i++){
-		if(mTiles->TTiles[i] == mNewTile){
-			mTileIndex = i;			
-		}
-	}
 	mTiles->removeTile(mTileIndex);
 	mEditor->mTileSelectedTile->bIsSelected = false;
 	mEditor->mTileSelectedTile = mOldTile;
