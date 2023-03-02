@@ -872,11 +872,20 @@ int TEditor::swapTiles(int source, int target, bool bDoCopy){
 
 			//mTileSet.TTiles[target]->replaceWithBuffer(mTileSet.TTiles[source]->FileData, &mPalette);
 		} else {			
-			std::swap(mTileSet.TTiles[source], mTileSet.TTiles[target]);
 
-			mActionStack.undoClearStack();
+
+			//std::swap(mTileSet.TTiles[source], mTileSet.TTiles[target]);
+
+			//mActionStack.undoClearStack();
+
+			TEActionSwapTiles* newAction = new TEActionSwapTiles();				
+			newAction->doAction(this, &mTileSet, source, target, mGlobalSettings.bTileSetOrderUpdateTileMap);
+      		mActionStack.newActionGroup();	
+      		mActionStack.addAction(newAction);
+			mActionStack.mLastAction = newAction;
 			mActionStack.redoClearStack();
 
+	/*
 			if(mGlobalSettings.bTileSetOrderUpdateTileMap){
 				for(auto *cMap : mTileMaps){
 					cMap->swapTileValues(source, target);
@@ -887,8 +896,8 @@ int TEditor::swapTiles(int source, int target, bool bDoCopy){
 					}
 				}
 			}
+	*/			
 			
-			mMapSelectedTile = target;
 		}
 		return 0;
 	}
@@ -926,7 +935,16 @@ int TEditor::moveTileDown(){
 int TEditor::rotateTile(){
 	if(mCurMode == EMODE_MAP){
 		if(mTileSelectedTile){
-			mTileSelectedTile->rotater();
+			Tile* newTile = new Tile(); //mTileSet.createNewCopy(mTileSelectedTile,  &mPalette);
+			newTile->loadFromBuffer(mTileSelectedTile->FileData, &mPalette);
+			newTile->rotater();
+			TEActionReplaceTileSet* newAction = new TEActionReplaceTileSet();				
+			newAction->doAction(mTileSelectedTile, newTile->FileData, this, &mTileSet);
+      		mActionStack.newActionGroup();	
+      		mActionStack.addAction(newAction);
+
+			mActionStack.mLastAction = newAction;
+       		mActionStack.redoClearStack();
 			return 0;
 		}
 	}
@@ -936,7 +954,19 @@ int TEditor::rotateTile(){
 int TEditor::rotateTileLeft(){
 	if(mCurMode == EMODE_MAP){
 		if(mTileSelectedTile){
-			mTileSelectedTile->rotatel();
+			//mTileSelectedTile->rotatel();
+			//Tile* newTile = mTileSet.createNewCopy(mTileSelectedTile,  &mPalette);
+			Tile* newTile = new Tile(); //mTileSet.createNewCopy(mTileSelectedTile,  &mPalette);
+			newTile->loadFromBuffer(mTileSelectedTile->FileData, &mPalette);
+			newTile->rotatel();
+			TEActionReplaceTileSet* newAction = new TEActionReplaceTileSet();				
+			newAction->doAction(mTileSelectedTile, newTile->FileData, this, &mTileSet);
+      		mActionStack.newActionGroup();	
+      		mActionStack.addAction(newAction);
+
+			mActionStack.mLastAction = newAction;
+       		mActionStack.redoClearStack();
+
 			return 0;
 		}
 	}

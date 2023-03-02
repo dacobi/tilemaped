@@ -364,6 +364,59 @@ void TEActionReplaceTileSet::doAction(Tile* cTile, std::vector<unsigned char> &c
 	TEActionType = ACTION_TILEREPLACE;
 }
 
+TEActionSwapTiles::~TEActionSwapTiles(){	
+
+}
+
+
+void TEActionSwapTiles::undo(){
+	std::swap(mTiles->TTiles[mTarget], mTiles->TTiles[mSource]);
+	
+	mEditor->mMapSelectedTile = mSource;
+
+	if(bUpdateTileMaps){
+		for(auto *cMap : mEditor->mTileMaps){
+			cMap->swapTileValues(mTarget, mSource);
+		}
+	}
+}
+
+void TEActionSwapTiles::redo(){
+	std::swap(mTiles->TTiles[mSource], mTiles->TTiles[mTarget]);
+
+	mEditor->mMapSelectedTile = mTarget;
+
+	if(bUpdateTileMaps){
+		for(auto *cMap : mEditor->mTileMaps){
+			cMap->swapTileValues(mSource, mTarget);
+		}
+	}	
+}
+
+void TEActionSwapTiles::doAction(TEditor* cEditor, TileSet *cTiles, int cSource, int cTarget, bool cUpdate){
+	mEditor = cEditor;
+	mTiles = cTiles;
+	mSource = cSource;
+	mTarget = cTarget;
+	bUpdateTileMaps = cUpdate;
+
+	TEActionType = ACTION_SWAPTILES;
+
+	//mOldSelTile = mEditor->mMapSelectedTile;
+
+
+	std::swap(mTiles->TTiles[mSource], mTiles->TTiles[mTarget]);
+
+	mEditor->mMapSelectedTile = mTarget;
+
+	if(bUpdateTileMaps){
+		for(auto *cMap : mEditor->mTileMaps){
+			cMap->swapTileValues(mSource, mTarget);
+		}
+	}
+
+}
+
 void TEActionAddTile::doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles){
 	mTiles = cTiles;
 	mNewTile = cNewTile;
