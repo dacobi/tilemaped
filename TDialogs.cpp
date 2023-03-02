@@ -811,9 +811,22 @@ void OCDialog::recieveInput(int mKey){
 				mGlobalSettings.TileSizeX = mCreateProject.tilex;
 				mGlobalSettings.TileSizeY = mCreateProject.tiley;
 				mGlobalSettings.ProjectPath = mCreateProject.mReadPath.mDialogTextMain;
-				mGlobalSettings.mNewTilePath = mCreateProject.mReadTileSet.mDialogTextMain;
-				mGlobalSettings.mNewTileSize = mCreateProject.tilesetsize;
 
+				if(mCreateProject.bHasTileSet){
+					switch (mCreateProject.tilesettype){
+						case 0:
+							mGlobalSettings.mNewTilePath = mCreateProject.mReadTileSet.mDialogTextMain;	
+						break;
+						case 1:
+							mGlobalSettings.mNewTilePath = mCreateProject.mReadTileSet.mDialogTextMain;	
+						break;
+						case 2:
+							mGlobalSettings.mNewTileSize = mCreateProject.tilesetsize;
+						break;				
+						default:
+						break;
+					}
+				}
 
 				if(mCreateProject.bHasPalette){
 					if(mCreateProject.mReadPal.bInputIsAccepted){
