@@ -1017,6 +1017,9 @@ int CPDialog::render(){
 
 		if(ImGui::Checkbox("Create/Import TileSet", &bHasTileSet)){
 			tbpp = 8;
+			if(!bHasTileSet){
+				tilesetsize = 0;
+			}	
 		}
 
 		if(bHasTileSet){
@@ -1032,6 +1035,8 @@ int CPDialog::render(){
 			switch (tilesettype)
 			{
 			case 0:
+				ImGui::Text("TileSet File must match Project BPP and TileSizeX/Y");  
+
 				mReadTileSet.render();
 				if(mReadTileSet.bIsActive){
 					mActiveInput = &mReadTileSet;

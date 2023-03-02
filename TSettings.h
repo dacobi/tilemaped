@@ -114,7 +114,7 @@ class TSettings{
 		int mTileMapFileCount = 0;			
 		bool bShowTypeSelection = false;
 		bool bShowPixelGrid = true;
-		bool bShowTileGrid = false;
+		bool bShowTileGrid = true;
 		bool bShowTilePixelGrid = true;
 		bool bShowTileSelGrid = true;
 		bool bShowTilePixelSelGrid = true;
