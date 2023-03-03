@@ -110,11 +110,11 @@ int Settings::load(std::string _filename){
 	std::string xpath = std::string(_filename.c_str());
 
 	
-	myDoc = xmlCtxtReadFile(ctxt, xpath.c_str(), NULL, NULL);
+	myDoc = xmlCtxtReadFile(ctxt, xpath.c_str(), NULL, 0);
 
-	if (myDoc == NULL){		
-		myDoc = xmlCtxtReadFile(ctxt, _filename.c_str(), NULL, NULL);
-	}
+	//if (myDoc == NULL){		
+	//	myDoc = xmlCtxtReadFile(ctxt, _filename.c_str(), NULL, NULL);
+	//}
 
 	//string xpath = string(getUserPath()) + string("config.xml");
 	//myDoc = xmlCtxtReadFile(ctxt, xpath.c_str(), NULL, NULL);
@@ -199,7 +199,8 @@ int Settings::writedefault(std::string _filename){
 	std::string tmpStr;
 	
 	xmlDocPtr myDoc;
-	xmlNodePtr myNode,keynode;
+	xmlNodePtr myNode = NULL;
+    xmlNodePtr keynode = NULL;
 	
 	xmlKeepBlanksDefault(0);
 	

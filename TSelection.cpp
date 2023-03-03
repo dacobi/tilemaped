@@ -1104,16 +1104,11 @@ int TSelectionEditor::renderEd(int xpos, int ypos){
 			int cxpos = xpos +  (mCurEdScale*mGlobalSettings.TileSizeX)*i;
 			int cypos = ypos + (mGlobalSettings.TileSizeY*mCurEdScale)*j;
 
-        //std::cout << "SEL Render: " << mGlobalSettings.CurrentEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i]) << std::endl;
-        //std::cout << "SEL: " << mCurrentSelection->mSelected[(j*mSelectionWidth)+i] << std::endl;
-        //std::cout << "INDEX: " << (j*mSelectionWidth)+i << std::endl;
-
 			for(int ii=0; ii < mGlobalSettings.TileSizeY; ii++){
 				for(int jj=0; jj < mGlobalSettings.TileSizeX; jj++){                    
                     if(mGlobalSettings.TileSetBPP < 0x8){
                         EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mTileSet.TTiles[mGlobalSettings.CurrentEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])]->getPixel(jj+(ii*mGlobalSettings.TileSizeX), (mGlobalSettings.CurrentEditor->mTileMap->getOffset(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])), mGlobalSettings.CurrentEditor->mTileMap->getFlip(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])) , mCurEdScale); 
-                    } else {
-                        //EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mTileSet.TTiles[mGlobalSettings.CurrentEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])]->getPixel(jj+(ii*mGlobalSettings.TileSizeX)), mCurEdScale); 			
+                    } else {                        
                         EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mTileSet.TTiles[mGlobalSettings.CurrentEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])]->getPixel(jj+(ii*mGlobalSettings.TileSizeX), 0, mGlobalSettings.CurrentEditor->mTileMap->getFlip(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])) , mCurEdScale); 
                     }
 					
