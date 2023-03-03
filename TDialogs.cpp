@@ -321,6 +321,16 @@ int TBDialog::render(){
 				
 			}
 
+			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SELEDIT){
+				if(ImGui::BeginMenu("Selection Edit")){					
+					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mSelectionEditScale, 2, 24)){
+						mGlobalSettings.CurrentEditor->mSelEdit.bUpdateEditSelectionScale = true;
+					}
+					ImGui::EndMenu();
+				}
+				
+			}
+
 			if(mGlobalSettings.CurrentEditor->mCurMode != EMODE_PALED){
 				if(ImGui::BeginMenu("Selection Mode")){
 					bool bIsAppend = mGlobalSettings.mSelectionMode;

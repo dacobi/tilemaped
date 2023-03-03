@@ -1095,6 +1095,7 @@ int TSelectionEditor::renderEd(int xpos, int ypos){
 
     if(bUpdateEditSelectionScale){
 		mCurEdScale = mGlobalSettings.mSelectionEditScale;
+        bUpdateEditSelectionScale = false;
 	}
 
     SDL_Rect cBorder;

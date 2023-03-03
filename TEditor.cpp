@@ -680,6 +680,25 @@ int TEditor::applyScroll(int mx,int my, int amount, int xamount){
 			}
 		}
 	}
+
+	if(mCurMode == EMODE_SELEDIT){ 		
+		if(!mGlobalSettings.mio->WantCaptureMouse){
+			if(amount > 0){
+				mGlobalSettings.mSelectionEditScale++; 
+				mSelEdit.bUpdateEditSelectionScale = true;
+				if(mGlobalSettings.mSelectionEditScale > 24){
+					mGlobalSettings.mSelectionEditScale = 24; 
+				}
+			}	
+			if(amount < 0){
+				mGlobalSettings.mSelectionEditScale--; 
+				mSelEdit.bUpdateEditSelectionScale = true;
+				if(mGlobalSettings.mSelectionEditScale < 2){
+					mGlobalSettings.mSelectionEditScale = 2; 
+				}
+			}
+		}
+	}
 	
 	return 0;
 }
