@@ -260,6 +260,17 @@ int TEditor::loadFromFolder(std::string path){
 	mGlobalSettings.mTileMapFileCount = mTileMaps.size();
 
 	mGlobalSettings.ProjectPath = path;
+
+	if(fs::exists(fs::status(path + DIRDEL + "settings.ini"))){
+		mGlobalSettings.ProjectSettings.load(path + DIRDEL + "settings.ini");		
+		mGlobalSettings.mSelectionMode = mGlobalSettings.ProjectSettings.Editor_SelectionAppend->getBool();
+		mGlobalSettings.bTileSetOrderUpdateTileMap = mGlobalSettings.ProjectSettings.TileSet_UpdateMaps->getBool();
+		mTileSet.mSelEdWidth = mGlobalSettings.ProjectSettings.TileSet_EditWidth->getInteger();
+		mGlobalSettings.mTileSetEditWidth = mTileSet.mSelEdWidth;
+		mTileSet.resizeEdit();		
+	}
+
+	
 	
 	initDialogs();
 
@@ -343,6 +354,13 @@ int TEditor::saveToFolder(std::string path){
 
 	mBrushesTile.saveToFile(path + DIRDEL + "tbrushes.dat");
 	mBrushesPixel.saveToFile(path + DIRDEL + "pbrushes.dat");
+
+
+	mGlobalSettings.ProjectSettings.Editor_SelectionAppend->ivalue = mGlobalSettings.mSelectionMode;
+ 	mGlobalSettings.ProjectSettings.TileSet_UpdateMaps->ivalue = mGlobalSettings.bTileSetOrderUpdateTileMap;
+ 	mGlobalSettings.ProjectSettings.TileSet_EditWidth->ivalue = mTileSet.mSelEdWidth;
+
+	mGlobalSettings.ProjectSettings.writedefault(path + DIRDEL + "settings.ini");
 
 	return 0;
 }

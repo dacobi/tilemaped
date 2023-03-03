@@ -22,6 +22,10 @@
 #include <cstdlib>
 #include <algorithm>
 
+#include <libxml/tree.h>
+#include <libxml/parser.h>
+#include <libxml/xmlmemory.h>
+
 
 class TTexture;
 class TTFTexture;
@@ -55,6 +59,8 @@ class TIDialog;
 class TBDialog;
 class MEDialog;
 
+
+
 namespace fs = std::filesystem;
 
 //#define DIRDEL "\"
@@ -67,13 +73,67 @@ public:
 	T x, y;
 };
 
+enum TKeyType{
+    type_float,
+    type_int,
+    type_string,
+	type_bool,
+    error
+};
+
+class sKey{
+public:
+	sKey(std::string _kname, TKeyType _ktype, double _value);
+	sKey(std::string _kname, TKeyType _ktype, std::string _value);
+	sKey(std::string _kname, TKeyType _ktype, int _value);
+	void sKeyEnable();
+	void sKeyDisable();
+	std::string getString();
+	int getInteger();
+	double getFloat();
+	bool getBool();
+	std::string kname;
+	TKeyType ktype;
+	bool bEnabled;
+	int ivalue;
+	double fvalue;
+	std::string svalue;
+	std::vector<int> optionvalue;
+	std::vector<std::string> optiontext;
+	void addOption(std::string text, int value);
+};
+
+class Settings{
+public:
+	Settings();
+	int load(std::string _filename);
+	bool bLoaded = false;
+	int writedefault(std::string _filename);
+	std::map<std::string,int> keyindex;
+	std::vector<sKey*> keys;
+	
+	sKey* createNewKey(std::string nKeyName, TKeyType nKeyType, double nKeyFloat);
+	sKey* createNewKey(std::string nKeyName, TKeyType nKeyType, std::string nKeyString);
+	sKey* createNewKey(std::string nKeyName, TKeyType nKeyType, int nKeyInteger);
+
+	sKey* getKey(std::string gKeyName);
+
+
+	sKey *Editor_SelectionAppend;
+	sKey *TileSet_UpdateMaps;
+	sKey *TileSet_EditWidth;
+	sKey *error_catch;
+};
+
+
 class TSettings{
 	public:
 		ImGuiIO *mio;
 		void shutdown();
 		TEditor* CurrentEditor;		
 		SDL_Renderer *TRenderer;
-		SDL_Window *TWindow;			
+		SDL_Window *TWindow;
+		Settings ProjectSettings;		
 		int WindowWidth=1900;
 		int WindowHeight=1000;
 		int TopBarHeight = 50;
