@@ -107,6 +107,8 @@ class TBrushList{
         int *mDeltaScale;
         bool bIsEditing = false;
         int mWinHeight = 600;
+        int mMaxX = 9;
+        int mMaxY = 9;
         int mDeltaBaseX;
         int mDeltaBaseY;        
         int mRenderScale;
@@ -134,8 +136,7 @@ class TSelectionEditor{
         TSelection mSelection;
         int mSelectionWidth = 0;
         int mSelectionHeight = 0;
-        std::vector<SDL_Rect> EditPixelAreas;	
-        bool bTileMapWasChanged = true;
+        std::vector<SDL_Rect> EditPixelAreas;	        
         int renderEd(int xpos, int ypos);
         int setSelection(TSelection* cNewSelection, int nWidth, int nHeight);
         void resizeEdit();

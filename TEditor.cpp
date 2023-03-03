@@ -434,7 +434,7 @@ int TEditor::render(){
 			mCurrentBrushPixel->getBrushSelection(cx, cy, mTileSelectedTile->PixelAreas);
 		}
 
-		mPalette.renderIm(100+mGlobalSettings.mTileEdScale*mGlobalSettings.TileSizeX*mGlobalSettings.TileSizeX,50+mTopBar.mDialogHeight);	
+		mPalette.renderIm(100+mGlobalSettings.mTileEdScale*mGlobalSettings.TileSizeX*mGlobalSettings.TilePixelSize,50+mTopBar.mDialogHeight);	
 		if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
 		mTileSelectedTile->renderEd(50,50+mTopBar.mDialogHeight,&mPalette);
 		mColorSelectedTile->bPixelSelected = true;

@@ -756,6 +756,16 @@ int TBrushList::init(std::string cTitle, std::string cType, int cBrushType, bool
     mCurrentBrush = cCurrentBrush;
     mDeltaBaseX = nDeltaX;
     mDeltaBaseY = nDeltaY;
+
+    if(mBrushType == TBRUSH_PIXEL){
+        if(mGlobalSettings.TileSizeX < 16){
+            mMaxX = 8;        
+        }
+        if(mGlobalSettings.TileSizeY < 16){
+            mMaxY = 8;        
+        }
+    }
+    
     return 0;
 }
 
@@ -894,8 +904,8 @@ int TBrushList::renderIm(){
 
     ImGui::Begin(cTitleType.c_str(), bIsShown);
 
-    ImGui::SliderInt("Brush Width", &mNewBrushX, 1, 9);
-    ImGui::SliderInt("Brush Height", &mNewBrushY, 1, 9);
+    ImGui::SliderInt("Brush Width", &mNewBrushX, 1, mMaxX);
+    ImGui::SliderInt("Brush Height", &mNewBrushY, 1, mMaxY);
 
     if(ImGui::Button("Add Brush")){
         addBrush(mNewBrushX, mNewBrushY);
