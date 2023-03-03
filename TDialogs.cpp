@@ -331,7 +331,7 @@ int TBDialog::render(){
 				
 			}
 
-			if(mGlobalSettings.CurrentEditor->mCurMode != EMODE_PALED){
+			if((mGlobalSettings.CurrentEditor->mCurMode != EMODE_PALED) && (mGlobalSettings.CurrentEditor->mCurMode != EMODE_SELEDIT)){
 				if(ImGui::BeginMenu("Selection Mode")){
 					bool bIsAppend = mGlobalSettings.mSelectionMode;
 					bool bIsReplace = !mGlobalSettings.mSelectionMode;
@@ -1777,6 +1777,7 @@ void HDialog::init(){
 	mHelpTextMap = mGlobalSettings.mHelpTextMap;
 	mHelpTextTile = mGlobalSettings.mHelpTextTile;
 	mHelpTextTileSet = mGlobalSettings.mHelpTextTileSet;
+	mHelpTextSelection = mGlobalSettings.mHelpTextSelection;
 	mHelpTextGeneral = mGlobalSettings.mHelpText;
 	mHelpTextPalette = mGlobalSettings.mHelpTextPalette;
 	mHelpTextImport = mGlobalSettings.mHelpTextImport;
@@ -1835,6 +1836,16 @@ int HDialog::render(){
 		ImGui::PushFont(mGlobalSettings.SFont);
 		for(int i = 0; i < mHelpTextTileSet.size(); i++){
 			ImGui::BulletText("%s", mHelpTextTileSet[i].c_str());
+		}
+		ImGui::PopFont();
+	}
+
+	ImGui::Separator();
+
+	if(ImGui::CollapsingHeader("Selection")){
+		ImGui::PushFont(mGlobalSettings.SFont);
+		for(int i = 0; i < mHelpTextSelection.size(); i++){
+			ImGui::BulletText("%s", mHelpTextSelection[i].c_str());
 		}
 		ImGui::PopFont();
 	}

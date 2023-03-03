@@ -376,6 +376,9 @@ void TSettings::initHelpText(){
 	mHelpTextTileSet.push_back("EDITOR: The TileSet Editor works much like the Tile Editor, only on the entire TileSet.\nYou can set the Tile Grid Width and Tile Scale in the Edit menu under \"TileSet Edit\".\nUse (LEFT CONTROL) and (LEFT MOUSE BUTTON) to Scroll the TileSet.");
 	mHelpTextTileSet.push_back("GRID: Press (P) to show Pixel Grid in TileSet Editor and Press (T) to show the Tile Grid.");
 
+	mHelpTextSelection.push_back("EDITOR: The Selection Editor works much like the TileSet Editor, only without Pixel selection.\nYou can set the Tile Scale in the Edit menu under \"Selection Edit\".\nUse (LEFT CONTROL) and (LEFT MOUSE BUTTON) to Scroll the Selection.");
+	mHelpTextSelection.push_back("GRID: Press (P) to show Pixel Grid in Selection Editor and Press (T) to show the Tile Grid.");
+
 	mHelpTextPalette.push_back("CHANGE COLOR: Press (LEFT MOUSE BUTTON) to select a Color in the Palette Editor.\nUse RGB sliders or Press (LEFT MOUSE BUTTON) on the Pick Selected Color Box.");
 	mHelpTextPalette.push_back("COPY COLOR: Press (RIGHT MOUSE BUTTON) on a Color to copy its value to the selected Color.");
 	mHelpTextPalette.push_back("IMPORT: Select <Import Palette> in the Edit menu to import a palette file.\nGimp palettes and TilemapEd palettes are supported.");
@@ -420,6 +423,20 @@ void TSettings::printHelpText(){
 	std::cout << "Tile Editor:" << std::endl;	
 	
 	for(const auto& cStr : mHelpTextTile){
+		std::cout << cStr << std::endl;	
+	}
+
+	std::cout  << std::endl;	
+	std::cout << "TileSet Editor:" << std::endl;	
+	
+	for(const auto& cStr : mHelpTextTileSet){
+		std::cout << cStr << std::endl;	
+	}
+
+	std::cout  << std::endl;	
+	std::cout << "Selection Editor:" << std::endl;	
+	
+	for(const auto& cStr : mHelpTextSelection){
 		std::cout << cStr << std::endl;	
 	}
 

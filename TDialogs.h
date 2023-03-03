@@ -211,12 +211,13 @@ class OCDialog: public Dialog{
 class HDialog: public SDialog{
 	public:
 		std::string	mHelpTitle;
-		std::vector<std::string> mHelpTextMap;		
+		std::vector<std::string> mHelpTextMap;
 		std::vector<std::string> mHelpTextTile;
-		std::vector<std::string> mHelpTextTileSet;		
+		std::vector<std::string> mHelpTextTileSet;
 		std::vector<std::string> mHelpTextPalette;
 		std::vector<std::string> mHelpTextImport;
-		std::vector<std::string> mHelpTextGeneral;				
+		std::vector<std::string> mHelpTextGeneral;
+		std::vector<std::string> mHelpTextSelection;
 		virtual void init();
 		virtual void recieveInput(int mKey);		
 		virtual int render();
