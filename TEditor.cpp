@@ -262,6 +262,7 @@ int TEditor::loadFromFolder(std::string path){
 	mGlobalSettings.ProjectPath = path;
 
 	if(fs::exists(fs::status(path + DIRDEL + "settings.ini"))){
+		std::cout << "Loading Settings" << std::endl;
 		mGlobalSettings.ProjectSettings.load(path + DIRDEL + "settings.ini");		
 		mGlobalSettings.mSelectionMode = mGlobalSettings.ProjectSettings.Editor_SelectionAppend->getBool();
 		mGlobalSettings.bTileSetOrderUpdateTileMap = mGlobalSettings.ProjectSettings.TileSet_UpdateMaps->getBool();
