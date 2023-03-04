@@ -424,7 +424,7 @@ void RTDialog::recieveInput(int mKey){
 }
 
 void RTSDialog::init(){
-	mDialogTextMain = mGlobalSettings.mInfo +" Remove Selected Tile? Undo Stack will be cleared."; // \nThis warning can be disabled under\n(Edit->TileSet Reordering->Warn before Tile Removal)
+	mDialogTextMain = mGlobalSettings.mInfo +" Remove Selected Tile? Undo Stack will be cleared."; 
 	mDialogTextTitle = "Remove Selected Tile";
 	mDialogButtonAccept = "Remove";
 	mDialogButtonCancel = "Cancel";

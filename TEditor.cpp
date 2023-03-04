@@ -709,23 +709,6 @@ int TEditor::applyScroll(int mx,int my, int amount, int xamount){
 	return 0;
 }
 
-/*
-void TEditor::dropLastActionGroup(){
-	if((mCurMode == EMODE_MAP) || (mCurMode == EMODE_SELEDIT)){		
-		mActionStack.dropLastGroup();
-	}
-	if(mCurMode == EMODE_TILE){
-		mTileSelectedTile->mActionStack.dropLastGroup();
-	}
-	if(mCurMode == EMODE_TILESET){
-		mTileSet.mActionStack.dropLastGroup();
-	}
-	if(mCurMode == EMODE_SELEDIT){
-		mSelEdit.mActionStack.dropLastGroup();
-	}
-}
-*/
-
 void TEditor::undoLastActionGroup(){
 	if((mCurMode == EMODE_MAP) || (mCurMode == EMODE_SELEDIT)){
 		TEActionGroup *mGroup;
