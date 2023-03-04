@@ -146,7 +146,7 @@ class TEditor{
 		TEActionUndoStack mActionStack;		
 		void undoLastActionGroup();
 		void redoLastActionGroup();
-		void dropLastActionGroup();
+		//void dropLastActionGroup();
 		int updatePalette();
 		Dialog *mActiveDialog = NULL;
 		Dialog *mActiveMessage = NULL;
@@ -183,6 +183,7 @@ class TEditor{
 		int dropUnusedTiles();
 		int dropUnusedTile(int cDropTile);
 		int showMessage(std::string cMessage, bool isError=false);
+		bool checkQuit();
 		int activateSaveDialog();
 		int activateOpenTileDialog();
 		int activateOpenTileSetDialog();
@@ -200,6 +201,7 @@ class TEditor{
 		int activateDropUnusedTile();
 		int activateBrushes();
 		int activateBrush();
+		int dropBrush();
 		int rx,ry;
 		int cx,cy;
 		int mButtonState;

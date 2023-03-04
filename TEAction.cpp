@@ -37,6 +37,28 @@ void TEActionReplacePixel::undo(){
 	mCurrentTile->updateTexture(mCurrentPalette);
 }
 
+void TEActionReplacePixel::redo(){	
+	mCurrentTile->setPixel(mCurrentPixel, mNewValue);
+	mCurrentTile->updateTexture(mCurrentPalette);
+}
+
+bool TEActionReplacePixel::checkTileMap(){
+	if(mCurrentTileMap == mGlobalSettings.CurrentEditor->mTileMap){
+		return false;
+	}
+	return true;
+}
+
+int TEActionReplacePixel::getTileMap(){
+	int cTileMap = -1;
+	for(int i = 0; i < mGlobalSettings.CurrentEditor->mTileMaps.size(); i++){
+		if(mCurrentTileMap == mGlobalSettings.CurrentEditor->mTileMaps[i]){
+			cTileMap = i;
+		}
+	}
+	return cTileMap;
+}
+
 void TEAction::redo(){}
 
 void TEActionReplaceTile::redo(){
@@ -50,11 +72,6 @@ void TEActionReplaceTileFlip::redo(){
 	mTileMap->setFlip(mCurrentTile, mNewFlip);
 	mTileMap->setOffset(mCurrentTile, mNewOffset);
 
-}
-
-void TEActionReplacePixel::redo(){	
-	mCurrentTile->setPixel(mCurrentPixel, mNewValue);
-	mCurrentTile->updateTexture(mCurrentPalette);
 }
 
 bool TEActionReplaceTileFlip::checkTileMap(){
@@ -146,6 +163,7 @@ void TEActionReplaceTile::doAction(TileMap *cTileMap, int mCurTile, int mOld, in
 
 void TEActionReplacePixel::doAction(Tile* mCurTile, int mCurPix, int mOld, int mNew, TPalette* mPal){
 	mCurrentTile = mCurTile;
+	mCurrentTileMap = mGlobalSettings.CurrentEditor->mTileMap;
 	mCurrentPixel = mCurPix;
 	mOldValue = mOld;
 	mNewValue = mNew;

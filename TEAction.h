@@ -115,6 +115,7 @@ class TEActionReplacePixel: public TEAction{
 	public:
 		~TEActionReplacePixel(){};
 		Tile* mCurrentTile;
+		TileMap* mCurrentTileMap;
 		int mCurrentPixel;
 		int mOldValue;
 		int mNewValue;
@@ -122,6 +123,8 @@ class TEActionReplacePixel: public TEAction{
 		void doAction(Tile* mCurTile, int mCurPix, int mOld, int mNew, TPalette* mPal);	
 		virtual void undo();
 		virtual void redo();
+		virtual bool checkTileMap();
+		virtual int getTileMap();
 		virtual bool doCompare(const TEAction& rhs){
 			const TEActionReplacePixel* mrhs =  dynamic_cast<const TEActionReplacePixel*>(&rhs); 
 			if(mrhs){
