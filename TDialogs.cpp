@@ -424,7 +424,7 @@ void RTDialog::recieveInput(int mKey){
 }
 
 void RTSDialog::init(){
-	mDialogTextMain = mGlobalSettings.mInfo +" Remove Selected Tile? Undo Stack will be cleared.\nThis warning can be disabled under\n(Edit->TileSet Reordering->Warn before Tile Removal)";
+	mDialogTextMain = mGlobalSettings.mInfo +" Remove Selected Tile? Undo Stack will be cleared."; // \nThis warning can be disabled under\n(Edit->TileSet Reordering->Warn before Tile Removal)
 	mDialogTextTitle = "Remove Selected Tile";
 	mDialogButtonAccept = "Remove";
 	mDialogButtonCancel = "Cancel";
@@ -437,8 +437,34 @@ void RTSDialog::recieveInput(int mKey){
 		mGlobalSettings.mDeleteUnusedTilesState = 2;
 	}
 	if(mKey == SDLK_n){
+		mGlobalSettings.bTileSetWarnBeforeDelete = true;
 		bInputIsCancel=true;
 	}
+}
+
+int RTSDialog::render(){
+    
+	Dialog::render();
+
+	ImGui::Begin(mDialogTextTitle.c_str(),NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
+    		
+		ImGui::Text("%s", mDialogTextMain.c_str()); 
+
+		ImGui::Checkbox("Show this warning", &mGlobalSettings.bTileSetWarnBeforeDelete);
+
+        if ( ImGui::Button(mDialogButtonAccept.c_str() )){ 
+			recieveInput(SDLK_y);				
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button(mDialogButtonCancel.c_str() )){ 
+			recieveInput(SDLK_n);				
+		}
+			            
+    ImGui::End();
+
+	return 0;
 }
 
 

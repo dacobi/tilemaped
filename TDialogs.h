@@ -78,6 +78,7 @@ class RTDialog: public SDialog{
 class RTSDialog: public RTDialog{
 	public:
 		virtual void init();
+		virtual int render();
 		virtual void recieveInput(int mKey);
 };
 
