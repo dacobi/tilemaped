@@ -80,11 +80,14 @@ Settings::Settings(){
 
     Editor_SelectionAppend = new sKey("Editor_SelectionAppend", type_bool, true);
 	TileSet_UpdateMaps = new sKey("TileSet_UpdateMaps", type_bool, true);
+	TileSet_WarnBeforeDelete = new sKey("TileSet_WarnBeforeDelete", type_bool, true);
 	TileSet_EditWidth = new sKey("TileSet_EditWidth", type_int, 4);
+	
 
 	keys.push_back(error_catch);
     keys.push_back(Editor_SelectionAppend);
     keys.push_back(TileSet_UpdateMaps);
+	keys.push_back(TileSet_WarnBeforeDelete);
     keys.push_back(TileSet_EditWidth);
 
     for(int i = 0; i < keys.size(); i++){

@@ -262,13 +262,17 @@ int TEditor::loadFromFolder(std::string path){
 	mGlobalSettings.ProjectPath = path;
 
 	if(fs::exists(fs::status(path + DIRDEL + "settings.ini"))){
-		std::cout << "Loading Settings" << std::endl;
-		mGlobalSettings.ProjectSettings.load(path + DIRDEL + "settings.ini");		
-		mGlobalSettings.mSelectionMode = mGlobalSettings.ProjectSettings.Editor_SelectionAppend->getBool();
-		mGlobalSettings.bTileSetOrderUpdateTileMap = mGlobalSettings.ProjectSettings.TileSet_UpdateMaps->getBool();
-		mTileSet.mSelEdWidth = mGlobalSettings.ProjectSettings.TileSet_EditWidth->getInteger();
-		mGlobalSettings.mTileSetEditWidth = mTileSet.mSelEdWidth;
-		mTileSet.resizeEdit();		
+		if(mGlobalSettings.ProjectSettings.load(path + DIRDEL + "settings.ini")){
+			std::cout << "Error Loading Settings" << std::endl;
+		} else {
+			std::cout << "Loading Settings" << std::endl;
+			mGlobalSettings.mSelectionMode = mGlobalSettings.ProjectSettings.Editor_SelectionAppend->getBool();
+			mGlobalSettings.bTileSetOrderUpdateTileMap = mGlobalSettings.ProjectSettings.TileSet_UpdateMaps->getBool();
+			mGlobalSettings.bTileSetWarnBeforeDelete = mGlobalSettings.ProjectSettings.TileSet_WarnBeforeDelete->getBool();
+			mTileSet.mSelEdWidth = mGlobalSettings.ProjectSettings.TileSet_EditWidth->getInteger();
+			mGlobalSettings.mTileSetEditWidth = mTileSet.mSelEdWidth;
+			mTileSet.resizeEdit();		
+		}
 	}
 
 	
@@ -359,6 +363,7 @@ int TEditor::saveToFolder(std::string path){
 
 	mGlobalSettings.ProjectSettings.Editor_SelectionAppend->ivalue = mGlobalSettings.mSelectionMode;
  	mGlobalSettings.ProjectSettings.TileSet_UpdateMaps->ivalue = mGlobalSettings.bTileSetOrderUpdateTileMap;
+	mGlobalSettings.ProjectSettings.TileSet_WarnBeforeDelete->ivalue = mGlobalSettings.bTileSetWarnBeforeDelete;
  	mGlobalSettings.ProjectSettings.TileSet_EditWidth->ivalue = mTileSet.mSelEdWidth;
 
 	mGlobalSettings.ProjectSettings.writedefault(path + DIRDEL + "settings.ini");
@@ -793,9 +798,26 @@ int TEditor::activateDropUnusedTile(){
 		}
 
 		if(cTileCount > 0){
-			showMessage("Selected Tile is used in TileMap(s)");
+			showMessage("Selected Tile is used in TileMap(s)\nReplace Tile in TileMap(s) before removal");
 		} else {
-			mActiveDialog = &mRemoveSelUnused;
+			if(mGlobalSettings.bTileSetWarnBeforeDelete){
+				mActiveDialog = &mRemoveSelUnused;
+			} else {
+				mActionStack.redoClearStack();	
+				mActionStack.undoClearStack();
+				mTileSet.mActionStack.redoClearStack();
+				mTileSet.mActionStack.undoClearStack();
+
+				mTileSelectedTile->bIsSelected = false;
+				
+				dropUnusedTile(mMapSelectedTile);
+
+				mMapSelectedTile = 0;
+				mTileSelectedTile = mTileSet.TTiles[0];
+
+				mTileSelectedTile->bIsSelected = true;				
+			}
+
 		}
 	}
 	return 0;
@@ -2422,8 +2444,8 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 				if(cEvent->key.keysym.sym == SDLK_F6){	  									
 					rotateTile();
 	  			}
-				if(cEvent->key.keysym.sym == SDLK_F7){	  									
-					//activateDropUnusedTiles();
+				if(cEvent->key.keysym.sym == SDLK_DELETE){	  									
+					activateDropUnusedTile();
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F12){	  				
 		  			activateSaveDialog();

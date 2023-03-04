@@ -365,7 +365,7 @@ void TSettings::initHelpText(){
 	mHelpTextMap.push_back("SELECT TILE: Press (RIGHT MOUSE BUTTON) to select a Tile in the TileMap.\nPress (S) to show all Tiles of the Selected Tile Type.\nPress (RIGHT MOUSE BUTTON) on a Tile in the TileSet\nto replace all selected Tiles in the TileMap.");
 	mHelpTextMap.push_back("SCROLL/SCALE: Use (MOUSE SCROLL WHEEL) to scale the TileMap and Scroll the TileSet.\nHold (LEFT CONTROL) and (LEFT MOUSE BUTTON) to move the TileMap.");	
 	mHelpTextMap.push_back("TILESET: Press (F3) to create an empty Tile. Press (F4) to create a copy of the selected Tile.\nPress (F5) to Rotate Tile Left. Press (F6) to Rotate Tile Right.\nSelect \"Remove Unused Tiles\" in the Edit menu to remove Tiles not used in any TileMap.\nTiles can be reordered using drag and drop or using the <Move Up>/<Move Down> buttons.\nHolding (LEFT CONTROL) while dragging will replace the Target Tile with a copy of the Source.");	
-	mHelpTextMap.push_back("FLIP TILE: Press (F) to flip the selected Tile.");
+	mHelpTextMap.push_back("FLIP TILE: Press (F) to cycle through flip values. Press (X) to flip the selected Tile Horizontally and (Y) to flip Vertically.");
 	mHelpTextMap.push_back("PALETTE OFFSET: Tiles from the TileSet will have the current Palette Offset.");
 
 	
@@ -373,10 +373,10 @@ void TSettings::initHelpText(){
 	mHelpTextTile.push_back("SELECT PIXEL: Press (RIGHT MOUSE BUTTON) to select a color in the Tile.\nPress (S) to show all Pixels of the Selected color.\nPress (RIGHT MOUSE BUTTON) on a color in the Palette\nto replace all selected Pixels in the Tile.");	
 	mHelpTextTile.push_back("GRID: Press (P) to show Pixel Grid in Tile Editor.");
 
-	mHelpTextTileSet.push_back("EDITOR: The TileSet Editor works much like the Tile Editor, only on the entire TileSet.\nYou can set the Tile Grid Width and Tile Scale in the Edit menu under \"TileSet Edit\".\nUse (LEFT CONTROL) and (LEFT MOUSE BUTTON) to Scroll the TileSet.");
+	mHelpTextTileSet.push_back("EDITOR: The TileSet Editor works much like the Tile Editor, only on the entire TileSet.\nYou can set the Tile Grid Width and Tile Scale in the Edit menu under \"TileSet Edit\" or Use (MOUSE WHEEL).\nUse (LEFT CONTROL) and (LEFT MOUSE BUTTON) to Scroll the TileSet.");
 	mHelpTextTileSet.push_back("GRID: Press (P) to show Pixel Grid in TileSet Editor and Press (T) to show the Tile Grid.");
 
-	mHelpTextSelection.push_back("EDITOR: The Selection Editor works much like the TileSet Editor, only without Pixel selection.\nYou can set the Tile Scale in the Edit menu under \"Selection Edit\".\nUse (LEFT CONTROL) and (LEFT MOUSE BUTTON) to Scroll the Selection.");
+	mHelpTextSelection.push_back("EDITOR: The Selection Editor works much like the TileSet Editor, only without Pixel selection.\nTo enter Selection Editor you must make a Rectangular Selection in a TilaMap of max 16x16 Tiles.\nThen choose Selection in the View menu.\nIf Selection is not a Rectangle of max 16x16 an Error Message will be shown.\nYou can set the Tile Scale in the Edit menu under \"Selection Edit\" or Use (MOUSE WHEEL).\nUse (LEFT CONTROL) and (LEFT MOUSE BUTTON) to Scroll the Selection.");
 	mHelpTextSelection.push_back("GRID: Press (P) to show Pixel Grid in Selection Editor and Press (T) to show the Tile Grid.");
 
 	mHelpTextPalette.push_back("CHANGE COLOR: Press (LEFT MOUSE BUTTON) to select a Color in the Palette Editor.\nUse RGB sliders or Press (LEFT MOUSE BUTTON) on the Pick Selected Color Box.");

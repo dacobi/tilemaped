@@ -121,6 +121,7 @@ public:
 
 	sKey *Editor_SelectionAppend;
 	sKey *TileSet_UpdateMaps;
+	sKey *TileSet_WarnBeforeDelete;
 	sKey *TileSet_EditWidth;
 	sKey *error_catch;
 };
@@ -179,6 +180,7 @@ class TSettings{
 		bool bShowTileSelGrid = true;
 		bool bShowTilePixelSelGrid = true;
 		bool bTileSetOrderUpdateTileMap = true;
+		bool bTileSetWarnBeforeDelete = true;
 		int mTileSetEditWidth = 4;
 		int mTileSetEditScale = 10;
 		//int mSelectionEditWidth = 4;
