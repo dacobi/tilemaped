@@ -1260,28 +1260,44 @@ int TEditor::toggleSelectedTile(){
 	return 1;
 }
 		
-int TEditor::flipSelectedTile(){
+int TEditor::flipSelectedTile(int cFlipMode){
 	if(mCurMode == EMODE_MAP){
 		if(mGlobalSettings.mSelectedTile > -1){
-			int cTileFlipOld = mTileMap->getFlip(mGlobalSettings.mSelectedTile);			
-			int cTileFlip = cTileFlipOld + 1;
-			if(cTileFlip > 3){cTileFlip = 0;}
+			int cTileFlipOld = mTileMap->getFlip(mGlobalSettings.mSelectedTile);
 
-			/**/
+			int cTileFlip = 0;
+			
+			if(cFlipMode == 0){
+			 	cTileFlip = cTileFlipOld + 1;
+				if(cTileFlip > 3){cTileFlip = 0;}				
+			}
 
-				TEActionReplaceTileFlip *mCurAction = new TEActionReplaceTileFlip();
-	       		mCurAction->doAction(mTileMap, mGlobalSettings.mSelectedTile, mTileMap->getTile(mGlobalSettings.mSelectedTile), mTileMap->getTile(mGlobalSettings.mSelectedTile),cTileFlipOld, cTileFlip);
+			if(cFlipMode == 1){
+				if(cTileFlipOld & 0x1){
+					cTileFlip = (cTileFlipOld & 0x2);
+				} else {
+					cTileFlip = (cTileFlipOld | 0x1);
+				}				
+			}
+
+			if(cFlipMode == 2){
+				if(cTileFlipOld & 0x2){
+					cTileFlip = (cTileFlipOld & 0x1);
+				} else {
+					cTileFlip = (cTileFlipOld | 0x2);
+				}				
+			}
+				
+			TEActionReplaceTileFlip *mCurAction = new TEActionReplaceTileFlip();
+	       	mCurAction->doAction(mTileMap, mGlobalSettings.mSelectedTile, mTileMap->getTile(mGlobalSettings.mSelectedTile), mTileMap->getTile(mGlobalSettings.mSelectedTile),cTileFlipOld, cTileFlip);
 	       			
-	       		if(!(*mCurAction == *mActionStack.mLastAction)){
-	       			mActionStack.newActionGroup();	
-	       			mActionStack.addAction(mCurAction);
-	       			mActionStack.mLastAction = mCurAction;
-	       			mActionStack.redoClearStack();
-	       		}
+	       	if(!(*mCurAction == *mActionStack.mLastAction)){
+	       		mActionStack.newActionGroup();	
+	       		mActionStack.addAction(mCurAction);
+	       		mActionStack.mLastAction = mCurAction;
+	       		mActionStack.redoClearStack();
+	       	}
 
-			/**/
-
-			//mTileMap.setFlip(mGlobalSettings.mSelectedTile, cTileFlip);
 			return 0;
 		}
 	}
@@ -2366,11 +2382,17 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					//dropLastActionGroup();	  		
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_f){
-		  			flipSelectedTile();
+		  			flipSelectedTile(0);
+	  			}
+				if(cEvent->key.keysym.sym == SDLK_x){
+		  			flipSelectedTile(1);
+	  			}
+				if(cEvent->key.keysym.sym == SDLK_y){
+		  			flipSelectedTile(2);
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_t){
 		  			toggleSelectedTile();
-	  			}
+	  			}				
 				if(cEvent->key.keysym.sym == SDLK_a){
 					handleSelection(SELMODE_ALL);
 				}

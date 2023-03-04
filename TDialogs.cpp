@@ -269,8 +269,8 @@ int TBDialog::render(){
 		if (ImGui::BeginMenu("Edit"))
 		{
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
-				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Flip Tile (F)")).c_str())){
-					mGlobalSettings.CurrentEditor->flipSelectedTile();
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Flip Tile (F) (X) (Y)")).c_str())){
+					mGlobalSettings.CurrentEditor->flipSelectedTile(0);
 				}
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " New Tile (F3)")).c_str())){
 					mGlobalSettings.CurrentEditor->createNewTile();

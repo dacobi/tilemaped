@@ -135,7 +135,7 @@ class TEditor{
 		TBrushList mBrushesTile;
 		TBrushList mBrushesPixel;
 		//bool bShowBrushListTile = false;
-		int flipSelectedTile();		
+		int flipSelectedTile(int cFlipMode);		
 		int replaceSelectedColor(int x, int y);
 		int replaceSelectedTiles(int x, int y);
 		int searchRectsXY(std::vector<SDL_Rect> &sRects, int mx, int my);
