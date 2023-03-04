@@ -2397,6 +2397,11 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			if(cEvent->key.keysym.sym == SDLK_u){
 					undoLastActionGroup();	  		
 	  			}
+				if(cEvent->key.keysym.sym == SDLK_z){
+					if(bLCTRLisDown){
+						undoLastActionGroup();
+					}
+	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_r){
 		  			redoLastActionGroup();
 	  			}

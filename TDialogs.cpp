@@ -298,7 +298,7 @@ int TBDialog::render(){
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Unused Tiles")).c_str())){
 					mGlobalSettings.CurrentEditor->activateDropUnusedTiles();
 				}
-				if(ImGui::BeginMenu("Tile Reordering")){
+				if(ImGui::BeginMenu("TileSet Reordering")){
 					
 					if(ImGui::MenuItem("Update TileMap(s)", NULL, &mGlobalSettings.bTileSetOrderUpdateTileMap)){
 						
@@ -366,7 +366,7 @@ int TBDialog::render(){
 				}
 			}
 		
-			if(ImGui::MenuItem("Undo (U)")){
+			if(ImGui::MenuItem("Undo (U) (CTRL + Z)")){
 				mGlobalSettings.CurrentEditor->undoLastActionGroup();	  		
 			}
 			if(ImGui::MenuItem("Redo (R)")){
@@ -424,7 +424,7 @@ void RTDialog::recieveInput(int mKey){
 }
 
 void RTSDialog::init(){
-	mDialogTextMain = mGlobalSettings.mInfo +" Remove Selected Tile? Undo Stack will be cleared.\nThis warning can be disabled under\n(Edit->Tile Reordering->Warn before Tile Removal)";
+	mDialogTextMain = mGlobalSettings.mInfo +" Remove Selected Tile? Undo Stack will be cleared.\nThis warning can be disabled under\n(Edit->TileSet Reordering->Warn before Tile Removal)";
 	mDialogTextTitle = "Remove Selected Tile";
 	mDialogButtonAccept = "Remove";
 	mDialogButtonCancel = "Cancel";
