@@ -106,9 +106,9 @@ public:
 class Settings{
 public:
 	Settings();
-	int load(std::string _filename);
+	int load(std::string filename);
 	bool bLoaded = false;
-	int writedefault(std::string _filename);
+	int writedefault(std::string filename);
 	std::map<std::string,int> keyindex;
 	std::vector<sKey*> keys;
 	
@@ -187,8 +187,7 @@ class TSettings{
 		bool bTileSetOrderUpdateTileMap = true;
 		bool bTileSetWarnBeforeDelete = true;
 		int mTileSetEditWidth = 4;
-		int mTileSetEditScale = 10;
-		//int mSelectionEditWidth = 4;
+		int mTileSetEditScale = 10;		
 		int mSelectionEditScale = 10;
 		bool bShowPixelType = false;
 		bool bShowSelectedTile = true;
@@ -276,7 +275,4 @@ enum {
 	ACTION_SWAPTILES
 } actions;
 
-
-
 #endif
-//TSettings mGlobalSettings;

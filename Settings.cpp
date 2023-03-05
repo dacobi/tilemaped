@@ -106,7 +106,7 @@ Settings::Settings(){
 		
 }
 
-int Settings::load(std::string _filename){
+int Settings::load(std::string filename){
 	if(bLoaded) return 0;
 
 	std::stringstream convert;
@@ -119,24 +119,9 @@ int Settings::load(std::string _filename){
 	xmlKeepBlanksDefault(0);
 	
 	ctxt = xmlNewParserCtxt();
-
-	std::string xpath = std::string(_filename.c_str());
-
 	
-	myDoc = xmlCtxtReadFile(ctxt, xpath.c_str(), NULL, 0);
-
-	//if (myDoc == NULL){		
-	//	myDoc = xmlCtxtReadFile(ctxt, _filename.c_str(), NULL, NULL);
-	//}
-
-	//string xpath = string(getUserPath()) + string("config.xml");
-	//myDoc = xmlCtxtReadFile(ctxt, xpath.c_str(), NULL, NULL);
-	//getConfigXmlPath();
-
-//	myDoc = NULL;
-    //XXX myDoc = xmlCtxtReadFile(ctxt,(string(getUserPath()) + string("/Documents/") + _filename).c_str(), NULL, XML_PARSE_DTDVALID);
-
-	
+	myDoc = xmlCtxtReadFile(ctxt, filename.c_str(), NULL, XML_PARSE_DTDVALID); // Was 0
+		
 	if (myDoc == NULL){
         return 1;
 	}
@@ -207,7 +192,7 @@ int Settings::load(std::string _filename){
 }
 
 
-int Settings::writedefault(std::string _filename){
+int Settings::writedefault(std::string filename){
 	std::stringstream convert;
 	std::string tmpStr;
 	
@@ -256,7 +241,7 @@ int Settings::writedefault(std::string _filename){
 	myDtd = xmlCreateIntSubset(myDoc, (const xmlChar *)"settings", (const xmlChar *)"-//EMPRETRO//DTD XML 1.0//Config//EN", (const xmlChar *)"http://kanhave.xyz//config.dtd"); 	
 	myDtd = xmlCreateIntSubset(myDoc, (const xmlChar *)"settings", (const xmlChar *)NULL, (const xmlChar *)"config.dtd"); 	
 	
-	if(xmlSaveFormatFile(_filename.c_str(), myDoc,1) == -1){
+	if(xmlSaveFormatFile(filename.c_str(), myDoc,1) == -1){
 		xmlFreeDoc(myDoc);
 		return 1;
 	}

@@ -2159,26 +2159,8 @@ int TEditor::handleEvents(){
 				dropUnusedTiles();
 				mGlobalSettings.mDeleteUnusedTilesState = 0;				
 			}
-			if(mGlobalSettings.mDeleteUnusedTilesState == 2){
-				
-				/*
-				mActionStack.redoClearStack();	
-				mActionStack.undoClearStack();
-				mTileSet.mActionStack.redoClearStack();
-				mTileSet.mActionStack.undoClearStack();
-
-				mTileSelectedTile->bIsSelected = false;
-				
-				dropUnusedTile(mMapSelectedTile);
-
-				mMapSelectedTile = 0;
-				mTileSelectedTile = mTileSet.TTiles[0];
-
-				mTileSelectedTile->bIsSelected = true;
-				*/
-
+			if(mGlobalSettings.mDeleteUnusedTilesState == 2){								
 				removeSelectedTile();				
-
 				mGlobalSettings.mDeleteUnusedTilesState = 0;				
 			}
 			if(mGlobalSettings.mProjectSaveState == 1){

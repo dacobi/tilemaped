@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    DTD for config.
+-->
+
+<!ELEMENT settings (keys+)>
+<!ELEMENT keys (setkeyi|setkeyb|setkeyf|setkeys)* >
+<!ELEMENT setkeyi EMPTY>
+<!ELEMENT setkeyb EMPTY>
+<!ELEMENT setkeyf EMPTY>
+<!ELEMENT setkeys EMPTY>
+<!ATTLIST setkeyi keyname CDATA #REQUIRED>
+<!ATTLIST setkeyb keyname CDATA #REQUIRED>
+<!ATTLIST setkeyf keyname CDATA #REQUIRED>
+<!ATTLIST setkeys keyname CDATA #REQUIRED>
+<!ATTLIST setkeyi keyvalue CDATA #REQUIRED>
+<!ATTLIST setkeyb keyvalue CDATA #REQUIRED>
+<!ATTLIST setkeyf keyvalue CDATA #REQUIRED>
+<!ATTLIST setkeys keyvalue CDATA #REQUIRED>
