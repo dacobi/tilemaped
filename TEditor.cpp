@@ -267,11 +267,21 @@ int TEditor::loadFromFolder(std::string path){
 		} else {
 			std::cout << "Loading Settings" << std::endl;
 			mGlobalSettings.mSelectionMode = mGlobalSettings.ProjectSettings.Editor_SelectionAppend->getBool();
+
+			mGlobalSettings.bShowPixelGrid = mGlobalSettings.ProjectSettings.Tile_ShowPixelGrid->getBool();
+			
+			mGlobalSettings.bShowTilePixelGrid = mGlobalSettings.ProjectSettings.TileSet_ShowPixelGrid->getBool();
+			mGlobalSettings.bShowTileGrid = mGlobalSettings.ProjectSettings.TileSet_ShowTileGrid->getBool();
+			
 			mGlobalSettings.bTileSetOrderUpdateTileMap = mGlobalSettings.ProjectSettings.TileSet_UpdateMaps->getBool();
 			mGlobalSettings.bTileSetWarnBeforeDelete = mGlobalSettings.ProjectSettings.TileSet_WarnBeforeDelete->getBool();
+			
 			mTileSet.mSelEdWidth = mGlobalSettings.ProjectSettings.TileSet_EditWidth->getInteger();
 			mGlobalSettings.mTileSetEditWidth = mTileSet.mSelEdWidth;
 			mTileSet.resizeEdit();		
+
+			mGlobalSettings.bShowTilePixelSelGrid = mGlobalSettings.ProjectSettings.SelectionEdit_ShowPixelGrid->getBool();
+			mGlobalSettings.bShowTileSelGrid = mGlobalSettings.ProjectSettings.SelectionEdit_ShowTileGrid->getBool();
 		}
 	}
 
@@ -362,9 +372,18 @@ int TEditor::saveToFolder(std::string path){
 
 
 	mGlobalSettings.ProjectSettings.Editor_SelectionAppend->ivalue = mGlobalSettings.mSelectionMode;
+
+	mGlobalSettings.ProjectSettings.Tile_ShowPixelGrid->ivalue = mGlobalSettings.bShowPixelGrid;
+
+	mGlobalSettings.ProjectSettings.TileSet_ShowPixelGrid->ivalue = mGlobalSettings.bShowTilePixelGrid;
+	mGlobalSettings.ProjectSettings.TileSet_ShowTileGrid->ivalue = mGlobalSettings.bShowTileGrid;
+
  	mGlobalSettings.ProjectSettings.TileSet_UpdateMaps->ivalue = mGlobalSettings.bTileSetOrderUpdateTileMap;
 	mGlobalSettings.ProjectSettings.TileSet_WarnBeforeDelete->ivalue = mGlobalSettings.bTileSetWarnBeforeDelete;
  	mGlobalSettings.ProjectSettings.TileSet_EditWidth->ivalue = mTileSet.mSelEdWidth;
+
+	mGlobalSettings.ProjectSettings.SelectionEdit_ShowPixelGrid->ivalue = mGlobalSettings.bShowTilePixelSelGrid;
+	mGlobalSettings.ProjectSettings.SelectionEdit_ShowTileGrid->ivalue = mGlobalSettings.bShowTileSelGrid;
 
 	mGlobalSettings.ProjectSettings.writedefault(path + DIRDEL + "settings.ini");
 
@@ -605,7 +624,7 @@ int TEditor::setMode(int newMode){
 			mBrushesPixel.bIsShown = &bShowBrushesPixelSelEdit;
 
     	} else {        	
-			showMessage("Selection is invalid");
+			showMessage("Selection is invalid\nMust be Rectangle of Min 2x2 and Max 16x16 Tiles");
 			bTileMapWasChanged = true;
 			return 1;
     	}
@@ -1476,6 +1495,52 @@ int TEditor::replaceSelectedColor(int mx, int my){
 		}
 	}
 
+	if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SELEDIT){
+		if(mGlobalSettings.bShowPixelType){
+			int mOldColor = mColorSelected;
+			int tSel = searchRectsXY(mPalette.PixelAreas, mx, my);
+			if(tSel > -1){									
+				mActionStack.newActionGroup();
+					
+				TEActionReplacePixels* newAction;
+				bool bDidAction = false;
+
+				std::vector mSelectedTiles = mSelEdit.mCurrentSelection->mSelected;
+
+				std::sort( mSelectedTiles.begin(), mSelectedTiles.end() );
+				mSelectedTiles.erase( std::unique( mSelectedTiles.begin(), mSelectedTiles.end() ), mSelectedTiles.end() );
+
+				for(int tt = 0; tt < mSelectedTiles.size(); tt++){
+					std::vector<int> newSelection;
+					int cPixIndex = 0;
+					Tile* mTile = mTileSet.TTiles[mTileMap->getTile(mSelectedTiles[tt])];
+						
+					for(int i = 0; i < (mGlobalSettings.TileSizeX *mGlobalSettings.TileSizeY); i++){
+						auto cPixel = mTile->getPixel(i);
+						if(cPixel == mOldColor){
+							newSelection.push_back(cPixIndex);
+						}
+							cPixIndex++;
+						}
+						if(newSelection.size()){
+							newAction = new TEActionReplacePixels();
+							newAction->doAction(mTile, newSelection, mOldColor, tSel, &mPalette);
+							//if(!(newAction == mTileSet.mActionStack.mLastAction)){							
+							mActionStack.addSubActions(newAction->mSubActions);
+							bDidAction = true;
+						
+							//}
+						}
+				}
+				if(bDidAction){
+					mActionStack.mLastAction = newAction;
+					mActionStack.redoClearStack();
+				} else {
+					mActionStack.dropLastGroup();
+				}
+			}			
+		}
+	}
 
 	return 0;
 }

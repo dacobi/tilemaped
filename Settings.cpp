@@ -79,16 +79,26 @@ Settings::Settings(){
 	error_catch = new sKey("error_catch", type_int, 0);
 
     Editor_SelectionAppend = new sKey("Editor_SelectionAppend", type_bool, true);
+	Tile_ShowPixelGrid = new sKey("Tile_ShowPixelGrid", type_bool, true);
+	TileSet_ShowPixelGrid = new sKey("TileSet_ShowPixelGrid", type_bool, true);
+	TileSet_ShowTileGrid = new sKey("TileSet_ShowTileGrid", type_bool, true);
 	TileSet_UpdateMaps = new sKey("TileSet_UpdateMaps", type_bool, true);
 	TileSet_WarnBeforeDelete = new sKey("TileSet_WarnBeforeDelete", type_bool, true);
 	TileSet_EditWidth = new sKey("TileSet_EditWidth", type_int, 4);
+	SelectionEdit_ShowPixelGrid = new sKey("SelectionEdit_ShowPixelGrid", type_bool, true);
+	SelectionEdit_ShowTileGrid = new sKey("SelectionEdit_ShowTileGrid", type_bool, true);
 	
 
 	keys.push_back(error_catch);
     keys.push_back(Editor_SelectionAppend);
+	keys.push_back(Tile_ShowPixelGrid);
+	keys.push_back(TileSet_ShowPixelGrid);
+	keys.push_back(TileSet_ShowTileGrid);
     keys.push_back(TileSet_UpdateMaps);
 	keys.push_back(TileSet_WarnBeforeDelete);
     keys.push_back(TileSet_EditWidth);
+	keys.push_back(SelectionEdit_ShowPixelGrid);
+	keys.push_back(SelectionEdit_ShowTileGrid);
 
     for(int i = 0; i < keys.size(); i++){
 		keyindex[keys[i]->kname] = i;

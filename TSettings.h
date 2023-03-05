@@ -120,9 +120,14 @@ public:
 
 
 	sKey *Editor_SelectionAppend;
+	sKey *Tile_ShowPixelGrid;
+	sKey *TileSet_ShowPixelGrid;
+	sKey *TileSet_ShowTileGrid;	
 	sKey *TileSet_UpdateMaps;
 	sKey *TileSet_WarnBeforeDelete;
 	sKey *TileSet_EditWidth;
+	sKey *SelectionEdit_ShowPixelGrid;
+	sKey *SelectionEdit_ShowTileGrid;
 	sKey *error_catch;
 };
 
