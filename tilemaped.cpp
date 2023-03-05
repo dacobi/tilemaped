@@ -356,15 +356,15 @@ int TSettings::runOCD(){
 
 void TSettings::initHelpText(){
 
-	mHelpText.push_back("WINDOWS: TilemapEd has 5 main windows which are TileMap Editor, Tile Editor\nPalette Editor, TileSet Editor and Selection Editor.\nSelect window in View menu and press (SPACE) to quickly switch back to the last active window.\nPress (F2) to view the Project Info dialog. When working with Tile BPPs\nlower than 8 the Palette Offset dialog can be shown/hidden in the View menu.");	
-	mHelpText.push_back("UNDO: Most changes to TileMap and Tiles can be undone. Press (U) to undo\nand (R) to redo action. Some operations will clear the Undo Stack.");
+	mHelpText.push_back("WINDOWS: TilemapEd has 5 main windows which are TileMap Editor, Tile Editor\nPalette Editor, TileSet Editor and Selection Editor.\nSelect Window in View menu and press (SPACE) to quickly switch back to the last active window.\nPress (F2) to view the Project Info dialog. When working with Tile BPPs\nlower than 8 the Palette Offset dialog can be shown/hidden in the View menu.");	
+	mHelpText.push_back("UNDO: Most changes to TileMap(s) and Tiles can be undone. Press (U) to undo\nand (R) to redo action. Some operations will clear the Undo Stack.");
 	mHelpText.push_back("SELECTION: Tiles and Pixels can be selected using the mouse. Hold (LEFT SHIFT)\nand (LEFT MOUSE BUTTON) to select a range by dragging.\nHold (LEFT SHIFT) and press (RIGHT MOUSE BUTTON)\nto modify Selection on a Tile/Pixel basis.\nPress (A) to select All, (N) to select None and (I) to Invert selection.");
 	mHelpText.push_back("BRUSHES: Press (F8) to open the Brush List, then select <width> and <height>\nand Press <Add Brush>. Press (RIGHT MOUSE BUTTON) in TileSet or Palette to add Brush Elements.\nPress (F9) to activate (next) Brush and (F10) to drop selected Brush.");
 
 	mHelpTextMap.push_back("PLACE TILE: To place a Tile in the TileMap press (LEFT MOUSE BUTTON) to select\na Tile in the TileSet and then (LEFT MOUSE BUTTON) to place it in the TileMap.");
 	mHelpTextMap.push_back("SELECT TILE: Press (RIGHT MOUSE BUTTON) to select a Tile in the TileMap.\nPress (S) to show all Tiles of the Selected Tile Type.\nPress (RIGHT MOUSE BUTTON) on a Tile in the TileSet\nto replace all selected Tiles in the TileMap.");
 	mHelpTextMap.push_back("SCROLL/SCALE: Use (MOUSE SCROLL WHEEL) to scale the TileMap and Scroll the TileSet.\nHold (LEFT CONTROL) and (LEFT MOUSE BUTTON) to move the TileMap.");	
-	mHelpTextMap.push_back("TILESET: Press (F3) to create an empty Tile. Press (F4) to create a copy of the selected Tile.\nPress (F5) to Rotate Tile Left. Press (F6) to Rotate Tile Right.\nSelect \"Remove Unused Tiles\" in the Edit menu to remove Tiles not used in any TileMap.\nTiles can be reordered using drag and drop or using the <Move Up>/<Move Down> buttons.\nHolding (LEFT CONTROL) while dragging will replace the Target Tile with a copy of the Source.");
+	mHelpTextMap.push_back("TILESET: Press (F3) to create an empty Tile. Press (F4) to create a copy of the selected Tile.\nPress (F5) to Rotate Tile Left. Press (F6) to Rotate Tile Right.\nPress (DEL) to Remove the Selected Tile if it's not used in any TileMap.\nOr Select \"Remove Unused Tiles\" in the Edit menu to remove all Tiles not used in any TileMap.\nTiles can be reordered using drag and drop or using the <Move Up>/<Move Down> buttons.\nHolding (LEFT CONTROL) while dragging will replace the Target Tile with a copy of the Source.");
 	mHelpTextMap.push_back("FLIP TILE: Press (F) to cycle through flip values. Press (X) to flip the selected Tile\nHorizontally and (Y) to flip Vertically.");
 	mHelpTextMap.push_back("PALETTE OFFSET: Tiles from the TileSet will have the current Palette Offset.");
 
