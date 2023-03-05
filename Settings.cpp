@@ -134,6 +134,7 @@ int Settings::load(std::string filename){
 		std::cout << "Settings are Valid" << std::endl;
 	} else {
 		std::cout << "Settings are INVALID" << std::endl;
+		xmlFreeDoc(myDoc);
 		return 1;
 	}
 
