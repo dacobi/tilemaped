@@ -788,6 +788,23 @@ int TEditor::activateProjectInfo(){
 	return 0;
 }
 
+int TEditor::removeSelectedTile(){
+	mActionStack.redoClearStack();	
+	mActionStack.undoClearStack();
+	mTileSet.mActionStack.redoClearStack();
+	mTileSet.mActionStack.undoClearStack();
+
+	mTileSelectedTile->bIsSelected = false;
+				
+	dropUnusedTile(mMapSelectedTile);
+
+	mMapSelectedTile = 0;
+	mTileSelectedTile = mTileSet.TTiles[0];
+
+	mTileSelectedTile->bIsSelected = true;				
+	return 0;
+}
+
 int TEditor::activateDropUnusedTile(){
 	if(mCurMode == EMODE_MAP){
 		int cTileCount = 0;
@@ -803,19 +820,7 @@ int TEditor::activateDropUnusedTile(){
 			if(mGlobalSettings.bTileSetWarnBeforeDelete){
 				mActiveDialog = &mRemoveSelUnused;
 			} else {
-				mActionStack.redoClearStack();	
-				mActionStack.undoClearStack();
-				mTileSet.mActionStack.redoClearStack();
-				mTileSet.mActionStack.undoClearStack();
-
-				mTileSelectedTile->bIsSelected = false;
-				
-				dropUnusedTile(mMapSelectedTile);
-
-				mMapSelectedTile = 0;
-				mTileSelectedTile = mTileSet.TTiles[0];
-
-				mTileSelectedTile->bIsSelected = true;				
+				removeSelectedTile();
 			}
 
 		}
@@ -2155,6 +2160,8 @@ int TEditor::handleEvents(){
 				mGlobalSettings.mDeleteUnusedTilesState = 0;				
 			}
 			if(mGlobalSettings.mDeleteUnusedTilesState == 2){
+				
+				/*
 				mActionStack.redoClearStack();	
 				mActionStack.undoClearStack();
 				mTileSet.mActionStack.redoClearStack();
@@ -2168,6 +2175,9 @@ int TEditor::handleEvents(){
 				mTileSelectedTile = mTileSet.TTiles[0];
 
 				mTileSelectedTile->bIsSelected = true;
+				*/
+
+				removeSelectedTile();				
 
 				mGlobalSettings.mDeleteUnusedTilesState = 0;				
 			}

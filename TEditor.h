@@ -182,6 +182,7 @@ class TEditor{
 		int swapTiles(int source, int target, bool bDoCopy = false);
 		int dropUnusedTiles();
 		int dropUnusedTile(int cDropTile);
+		int removeSelectedTile();
 		int showMessage(std::string cMessage, bool isError=false);
 		bool checkQuit();
 		int activateSaveDialog();
