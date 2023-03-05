@@ -1,4 +1,5 @@
 #include "TSettings.h"
+#include "configdtd.h"
 
 sKey::sKey(std::string _kname, TKeyType _ktype, double _value){
 	kname = _kname;
@@ -116,12 +117,26 @@ int Settings::load(std::string filename){
 	xmlDocPtr myDoc;
 	xmlNodePtr myNode, tmpNode;
 	xmlParserCtxtPtr ctxt;
+	xmlValidCtxtPtr mctxt;
 	xmlKeepBlanksDefault(0);
 	
 	ctxt = xmlNewParserCtxt();
 	
-	myDoc = xmlCtxtReadFile(ctxt, filename.c_str(), NULL, XML_PARSE_DTDVALID); // Was 0
+	myDoc = xmlCtxtReadFile(ctxt, filename.c_str(), NULL, 0); //XML_PARSE_DTDVALID
+
+	mctxt = xmlNewValidCtxt();
 		
+	xmlParserInputBufferPtr buf = xmlParserInputBufferCreateMem(configdtd, strlen(configdtd), XML_CHAR_ENCODING_NONE);
+	xmlDtdPtr myDtd = xmlIOParseDTD(NULL, buf, XML_CHAR_ENCODING_NONE);
+	//xmlFreeParserInputBuffer(buf);
+
+	if(xmlValidateDtd(mctxt, myDoc, myDtd)){
+		std::cout << "Settings are Valid" << std::endl;
+	} else {
+		std::cout << "Settings are INVALID" << std::endl;
+		return 1;
+	}
+
 	if (myDoc == NULL){
         return 1;
 	}
@@ -239,7 +254,7 @@ int Settings::writedefault(std::string filename){
 	
 	xmlDtdPtr myDtd;
 	myDtd = xmlCreateIntSubset(myDoc, (const xmlChar *)"settings", (const xmlChar *)"-//EMPRETRO//DTD XML 1.0//Config//EN", (const xmlChar *)"http://kanhave.xyz//config.dtd"); 	
-	myDtd = xmlCreateIntSubset(myDoc, (const xmlChar *)"settings", (const xmlChar *)NULL, (const xmlChar *)"config.dtd"); 	
+	//myDtd = xmlCreateIntSubset(myDoc, (const xmlChar *)"settings", (const xmlChar *)"-//EMPRETRO//DTD XML 1.0//Config//EN", (const xmlChar *) std::string(fs::current_path().string() + "config.dtd").c_str()); 	
 	
 	if(xmlSaveFormatFile(filename.c_str(), myDoc,1) == -1){
 		xmlFreeDoc(myDoc);
