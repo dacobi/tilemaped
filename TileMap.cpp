@@ -1879,7 +1879,7 @@ int TileSet::renderEd(int xpos, int ypos){
 					cBorder.w = (mCurEdScale*mGlobalSettings.TileSizeX);
 					cBorder.h = (mCurEdScale*mGlobalSettings.TileSizeY);
 					Tile::renderSelection(cBorder, mGlobalSettings.DefaultHighlightColor);
-				}
+				}				
 			}								
 		}	
 		if(isOdd){			

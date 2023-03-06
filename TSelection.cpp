@@ -1148,6 +1148,30 @@ int TSelectionEditor::renderEd(int xpos, int ypos){
 				cBorder.h = (mCurEdScale*mGlobalSettings.TileSizeY);
 				Tile::renderSelection(cBorder, mGlobalSettings.DefaultHighlightColor);
 			}
+
+
+            //Brush render
+
+			if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit && !mGlobalSettings.CurrentEditor->mBrushesPixel.bIsEditing){
+				if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit->mSelected.size()){						
+					for(int ii=0; ii < mGlobalSettings.TileSizeY; ii++){
+						for(int jj=0; jj < mGlobalSettings.TileSizeX; jj++){					
+							if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit->findInSelection(getXY(jj,ii, i, j)) != -1){
+							    int findex = mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit->findInSelection(getXY(jj,ii, i, j));
+							    if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit->mBrushElements[findex] != -1){							
+                                    if(mGlobalSettings.TileSetBPP < 0x8){
+                                        mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit->mBrushElements[findex] + (16 * (mGlobalSettings.CurrentEditor->mTileMap->getOffset(mCurrentSelection->mSelected[(j*mSelectionWidth)+i]))), mCurEdScale); 
+                                    } else {                        
+                                        mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit->mBrushElements[findex] , mCurEdScale); 
+                                    }
+							    }
+						    }
+					    }
+				    }												
+			    }
+			}
+
+			//Brush render end
 		}								
 	}
 
