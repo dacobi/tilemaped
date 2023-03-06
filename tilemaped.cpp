@@ -392,7 +392,7 @@ void TSettings::initHelpText(){
 
 void printUsage(){
 		std::cout << std::endl;	
-		std::cout << "TilemapEd Version: " << Tilemaped_Version  << std::endl;
+		std::cout << "TilemapEd Version: " << TilemapEd_Version  << std::endl;
 		std::cout << std::endl;	
 		std::cout << "Command Line Usage:" << std::endl;
 		std::cout << "tilemaped [ --d3d, --software, --novsync ]" << std::endl;		
