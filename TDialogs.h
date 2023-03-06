@@ -2,7 +2,7 @@
 #define __TDIALOGS__
 
 #include "TSettings.h"
-#include "TTFTexture.h"
+//#include "TTFTexture.h"
 
 extern TSettings mGlobalSettings;
 

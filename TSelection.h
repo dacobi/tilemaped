@@ -93,8 +93,7 @@ class TBrush: public TSelection{
         TileProperties getElementProps(int element);
         int getElementFlip(int element);
         int setElementFlip(int element, int cFlip);
-        
-
+        void swapBrushElements(int eVal1, int eVal2);        
 };
 
 class TBrushList{
@@ -122,6 +121,7 @@ class TBrushList{
         TBrush **mCurrentBrush;
         TBrush* getBrush();
         TBrush* getNextBrush();
+        void swapBrushElements(int eVal1, int eVal2);
         int addBrush(int sizex, int sizey);
         int addBrushElement(int element);
         int removeBrush();        

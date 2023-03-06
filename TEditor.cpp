@@ -968,6 +968,8 @@ int TEditor::swapTiles(int source, int target, bool bDoCopy){
 			mActionStack.mLastAction = newAction;
 			mActionStack.redoClearStack();
 
+			mBrushesTile.swapBrushElements(source, target);
+
 	/*
 			if(mGlobalSettings.bTileSetOrderUpdateTileMap){
 				for(auto *cMap : mTileMaps){

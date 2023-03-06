@@ -28,7 +28,7 @@
 
 
 class TTexture;
-class TTFTexture;
+//class TTFTexture;
 class TPixel; 
 class TPalette;
 class Tile;

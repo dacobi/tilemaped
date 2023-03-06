@@ -746,6 +746,22 @@ int TBrush::readFromFile(std::ifstream &infile){
     return 0;
 }
 
+void TBrush::swapBrushElements(int eVal1, int eVal2){
+    for(int i = 0; i < mBrushElements.size(); i++){
+        if(mBrushElements[i] == eVal1){
+			mBrushElements[i] = eVal2;
+		} else if(mBrushElements[i] == eVal2) {
+			mBrushElements[i] = eVal1;
+		}			
+    }
+}
+
+void TBrushList::swapBrushElements(int eVal1, int eVal2){
+    for(int i = 0; i < mBrushes.size(); i++){
+        mBrushes[i]->swapBrushElements(eVal1, eVal2);
+    }
+}
+
 int TBrushList::init(std::string cTitle, std::string cType, int cBrushType, bool *cIsShown, int nDeltaX, int nDeltaY, int *cDeltaScale, int cRenderScale, TBrush **cCurrentBrush){
     mTitle = cTitle;
     mType = cType;

@@ -28,7 +28,7 @@
 namespace fs = std::filesystem;
 
 class TTexture;
-class TTFTexture;
+//class TTFTexture;
 class TPixel; 
 class TPalette;
 class Tile;
@@ -61,7 +61,7 @@ class MEDialog;
 
 #include "TSettings.h"
 #include "TEAction.h"
-#include "TTFTexture.h"
+//#include "TTFTexture.h"
 #include "TileMap.h"
 #include "TEditor.h"
 #include "TDialogs.h"
@@ -189,10 +189,10 @@ int TSettings::initSettings(){
 		return 1;
  	}
 	
- 	TTF_Init();
-	TFont =  TTF_OpenFont(NERDFONT,20);
+ 	//TTF_Init();
+	//TFont =  TTF_OpenFont(NERDFONT,20);
 
-	
+	/*
 	if(TFont == NULL){
 		std::cout << "SDL_TTF Error: " << TTF_GetError() << std::endl;
 		return 1;
@@ -211,6 +211,7 @@ int TSettings::initSettings(){
 	
 	TTF_SetFontStyle(LFont, TTF_STYLE_UNDERLINE);
 	TTF_SetFontStyle(UFont, TTF_STYLE_UNDERLINE);
+	*/
 	
 	SDL_SetWindowResizable(TWindow, SDL_TRUE);
 
