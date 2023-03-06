@@ -950,17 +950,8 @@ int TEditor::swapTiles(int source, int target, bool bDoCopy){
 
 			mActionStack.mLastAction = newAction;
        		mActionStack.redoClearStack();
-
-			//mMapSelectedTile = target;
-
-			//mTileSet.TTiles[target]->replaceWithBuffer(mTileSet.TTiles[source]->FileData, &mPalette);
+			
 		} else {			
-
-
-			//std::swap(mTileSet.TTiles[source], mTileSet.TTiles[target]);
-
-			//mActionStack.undoClearStack();
-
 			TEActionSwapTiles* newAction = new TEActionSwapTiles();				
 			newAction->doAction(this, &mTileSet, source, target, mGlobalSettings.bTileSetOrderUpdateTileMap);
       		mActionStack.newActionGroup();	
@@ -969,20 +960,7 @@ int TEditor::swapTiles(int source, int target, bool bDoCopy){
 			mActionStack.redoClearStack();
 
 			mBrushesTile.swapBrushElements(source, target);
-
-	/*
-			if(mGlobalSettings.bTileSetOrderUpdateTileMap){
-				for(auto *cMap : mTileMaps){
-					cMap->swapTileValues(source, target);
-				}
-				for(auto *dGroup : mActionStack.mUndoStack){
-					for(auto *dAction: dGroup->mActions){
-						dAction->swapTileValues(source, target);
-					}
-				}
-			}
-	*/			
-			
+						
 		}
 		return 0;
 	}
