@@ -117,6 +117,8 @@ void Settings::close(){
 	TileSet_EditWidth->ivalue = 4;
 	SelectionEdit_ShowPixelGrid->ivalue = true;
 	SelectionEdit_ShowTileGrid->ivalue = true;
+
+	bLoaded = false;
 }
 
 int Settings::load(std::string filename){

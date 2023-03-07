@@ -764,57 +764,54 @@ int main( int argc, char* args[] )
 
 		while( mEditor.bEditorRunning || mGlobalSettings.bRunningOCD){
 
-		if(mGlobalSettings.bRunningOCD){			
-			mGlobalSettings.runOCD(mGlobalSettings.mOpenCreateProjectState);
+			if(mGlobalSettings.bRunningOCD){			
+				mGlobalSettings.runOCD(mGlobalSettings.mOpenCreateProjectState);
 			
-			mGlobalSettings.mOpenCreateProjectState = 0;
+				mGlobalSettings.mOpenCreateProjectState = 0;
 
-			if(mGlobalSettings.mProjectOpenState == 1){
-				if(mEditor.loadFromFolder(mGlobalSettings.ProjectPath)){
+				if(mGlobalSettings.mProjectOpenState == 1){
+					if(mEditor.loadFromFolder(mGlobalSettings.ProjectPath)){
+						mEditor.bEditorRunning = false;
+						//return 1;
+					}
+					mEditor.bEditorRunning = true;
+				} else if(mGlobalSettings.mProjectOpenState == 2){
+					if(mEditor.createNewProject()){
+						mEditor.bEditorRunning = false;
+					}
+					mEditor.bEditorRunning = true;
+				} else {
 					mEditor.bEditorRunning = false;
-					//return 1;
 				}
-				mEditor.bEditorRunning = true;
-			} else if(mGlobalSettings.mProjectOpenState == 2){
-				if(mEditor.createNewProject()){
-					mEditor.bEditorRunning = false;
-				}
-				mEditor.bEditorRunning = true;
-			} else {
-				mEditor.bEditorRunning = false;
-			}
+			} 
 
-		} 
-
-		while( mEditor.bEditorRunning ){
+			while( mEditor.bEditorRunning ){
 
 				
-			SDL_SetRenderDrawColor(  mGlobalSettings.TRenderer, mGlobalSettings.DefaultBGColor.r,  mGlobalSettings.DefaultBGColor.g,  mGlobalSettings.DefaultBGColor.b, 0xff); 
-			SDL_RenderClear( mGlobalSettings.TRenderer );
+				SDL_SetRenderDrawColor(  mGlobalSettings.TRenderer, mGlobalSettings.DefaultBGColor.r,  mGlobalSettings.DefaultBGColor.g,  mGlobalSettings.DefaultBGColor.b, 0xff); 
+				SDL_RenderClear( mGlobalSettings.TRenderer );
 
-        	ImGui_ImplSDLRenderer_NewFrame();
-        	ImGui_ImplSDL2_NewFrame();
-        	ImGui::NewFrame();
+        		ImGui_ImplSDLRenderer_NewFrame();
+        		ImGui_ImplSDL2_NewFrame();
+        		ImGui::NewFrame();
 
-			mEditor.render();
-			ImGui::Render();                
+				mEditor.render();
+				ImGui::Render();                
 						
-        	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
+        		ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
  
-			SDL_RenderPresent( mGlobalSettings.TRenderer );
+				SDL_RenderPresent( mGlobalSettings.TRenderer );
 
-			while( SDL_PollEvent( &e ) != 0 ){
-				ImGui_ImplSDL2_ProcessEvent(&e);
-				mEditor.handleEvents(&e);
-				
+				while( SDL_PollEvent( &e ) != 0 ){
+					ImGui_ImplSDL2_ProcessEvent(&e);
+					mEditor.handleEvents(&e);				
+				}
+				mEditor.handleEvents();
 			}
-			mEditor.handleEvents();
+
+			//mEditor.shutdown();
+			mEditor.closeProject();
 		}
-
-		//mEditor.shutdown();
-		mEditor.closeProject();
-
-	}
 
 		mGlobalSettings.shutdown();		
 	}
