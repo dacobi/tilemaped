@@ -518,7 +518,8 @@ int TPalette::importGimpPalette(std::string palPath){
     	}
 		
 		mGlobalSettings.ProjectPalette = tbuffer;
-
+		TPaletteEdit = TPalette;
+		
 		return 0;
 	}
 	std::cout << "Not Gimp palette!" << std::endl;

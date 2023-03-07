@@ -367,6 +367,7 @@ int TSettings::runOCD(int mode){
 
 		if(mOpenCreate.bInputIsCancel){
 			bRunningOCD = false;
+			mProjectOpenState = 0;
 		}
 
 		SDL_SetRenderDrawColor( TRenderer, DefaultBGColor.r,  DefaultBGColor.g,  DefaultBGColor.b, 0xff); 
@@ -771,8 +772,7 @@ int main( int argc, char* args[] )
 
 				if(mGlobalSettings.mProjectOpenState == 1){
 					if(mEditor.loadFromFolder(mGlobalSettings.ProjectPath)){
-						mEditor.bEditorRunning = false;
-						//return 1;
+						mEditor.bEditorRunning = false;						
 					}
 					mEditor.bEditorRunning = true;
 				} else if(mGlobalSettings.mProjectOpenState == 2){
@@ -807,9 +807,7 @@ int main( int argc, char* args[] )
 					mEditor.handleEvents(&e);				
 				}
 				mEditor.handleEvents();
-			}
-
-			//mEditor.shutdown();
+			}			
 			mEditor.closeProject();
 		}
 

@@ -130,10 +130,10 @@ int TBDialog::render(){
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Save As (F11)")).c_str())){
 				mGlobalSettings.CurrentEditor->activateSaveAsDialog();
 			}
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Open")).c_str())){
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Open")).c_str())){
 				mGlobalSettings.CurrentEditor->activateOpenCreateDialog(1);
 			}
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Create")).c_str())){
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Create")).c_str())){
 				mGlobalSettings.CurrentEditor->activateOpenCreateDialog(2);
 			}
 
