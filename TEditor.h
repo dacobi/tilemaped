@@ -56,6 +56,7 @@ class ImWinMouseState{
 class TEditor{
 	public:
 		void shutdown();
+		void closeProject();
 		TPalette mPalette;
 		TileSet mTileSet;
 		TileMap *mTileMap;
@@ -161,6 +162,7 @@ class TEditor{
 		MEDialog mErrorMessage;
 		RNDialog mInputNumber;
 		QDialog mQuitDialog;
+		CCPDialog mCloseProjectDialog;
 		PUDialog mPaletteUpdate;
 		PODialog mPaletteOffset;
 		int importTileMap(std::string cNewTileMap);
@@ -189,6 +191,7 @@ class TEditor{
 		int activateRemoveTileMapDialog();
 		int activateHelpDialog();
 		int activateQuitDialog();
+		int activateOpenCreateDialog(int mode);
 		int cancelActiveDialog();
 		int activateSaveAsDialog();
 		int activateProjectInfo();

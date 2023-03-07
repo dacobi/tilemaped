@@ -130,6 +130,13 @@ int TBDialog::render(){
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Save As (F11)")).c_str())){
 				mGlobalSettings.CurrentEditor->activateSaveAsDialog();
 			}
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Open")).c_str())){
+				mGlobalSettings.CurrentEditor->activateOpenCreateDialog(1);
+			}
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Create")).c_str())){
+				mGlobalSettings.CurrentEditor->activateOpenCreateDialog(2);
+			}
+
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mFile + " Import")).c_str())){
@@ -2152,6 +2159,43 @@ int QDialog::render(){
 			ImGui::Text("Any unsaved progress will be lost   "); 
 
             if (ImGui::Button("Quit")){
+				recieveInput(SDLK_y);
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Cancel")){
+				recieveInput(SDLK_n);
+			}
+            
+        ImGui::End();
+	
+	return 0;
+}
+
+void CCPDialog::recieveInput(int mKey){
+	
+	if(mKey == SDLK_y){
+		std::cout << "Closing Project" << std::endl;
+		bInputIsAccept=true;		
+		mGlobalSettings.CurrentEditor->bEditorRunning = false;
+		mGlobalSettings.bRunningOCD = true;
+	}
+	if(mKey == SDLK_n){
+		mGlobalSettings.mOpenCreateProjectState = 0;
+		bInputIsCancel=true;
+	}
+}
+
+int CCPDialog::render(){
+    
+	Dialog::render();
+
+	ImGui::Begin("Close Project?", NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
+    		
+			ImGui::Text("Close Current Project? Any unsaved progress will be lost"); 
+
+            if (ImGui::Button("Close")){
 				recieveInput(SDLK_y);
 			}
 

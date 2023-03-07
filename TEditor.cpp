@@ -3,6 +3,77 @@
 
 extern TSettings mGlobalSettings;
 
+void TEditor::closeProject(){
+
+	mActionStack.redoClearStack();
+	mActionStack.undoClearStack();
+
+	mTileSet.mActionStack.redoClearStack();
+	mTileSet.mActionStack.undoClearStack();
+
+	mTileSet.close();
+
+	mBrushesPixel.close();
+	mBrushesTile.close();
+	
+	for(auto *cMap : mTileMaps){
+		delete cMap;
+	}
+
+	mTileMaps.clear();	
+	mTileMap = NULL;
+
+	mLastSelEditX=0;
+	mLastSelEditY=0;
+	mLastSelEditWidth=0;
+	mLastSelEditHeight=0;
+	bTileMapWasChanged = true;			
+	mMapSelectedTile=0;
+	mTileSelectedTile = NULL;
+	mColorSelected = 0;
+	mColorSelectedTile = NULL;
+	mColorSelectedEdit = 0;
+	mColorSelectedTileEdit = NULL;
+	mLastPixelOffset = 0;
+	
+	mCurMode = EMODE_MAP;
+	mLastMode = EMODE_TILE;
+	mouseSelX=0;
+	mouseSelY=0;
+	mTileMapScrollX = 0;
+	mTileMapScrollY = 0;
+	mTileSetScrollY = 0;
+	mTileSetScrollX = 0;		
+	mSelEditScrollY = 0;
+	mSelEditScrollX = 0;		
+
+	leftMouseButtonDown = false;		
+	rightMouseButtonDown = false;
+	leftMouseButtonClicks = 0;
+	rightMouseButtonClicks = 0;
+	bLCTRLisDown = false;
+	bLShiftIsDown = false;
+	bTileMapGrapped = false;
+	bTileSetGrapped = false;
+	bSelEditGrapped = false;
+	bShowBrushesTile = false;
+	bShowBrushesPixel = false;
+	bShowBrushesPixelTileSet = false;		
+	bShowBrushesPixelSelEdit = false;				
+
+	mCurrentBrushTile = NULL;
+	mCurrentBrushPixel = NULL;
+	mCurrentBrushPixelTileSet = NULL;
+	mCurrentBrushPixelSelEdit = NULL;		
+
+	mActiveDialog = NULL;
+	mActiveMessage = NULL;
+
+	mGlobalSettings.close();
+
+	bEditorRunning=false;
+}
+
 void TEditor::shutdown(){
 	mTileSet.shutdown();
 }
@@ -957,10 +1028,7 @@ int TEditor::swapTiles(int source, int target, bool bDoCopy){
       		mActionStack.newActionGroup();	
       		mActionStack.addAction(newAction);
 			mActionStack.mLastAction = newAction;
-			mActionStack.redoClearStack();
-
-			mBrushesTile.swapBrushElements(source, target);
-						
+			mActionStack.redoClearStack();						
 		}
 		return 0;
 	}
@@ -1112,6 +1180,12 @@ bool TEditor::checkQuit(){
     }
 
 	return false;
+}
+
+int TEditor::activateOpenCreateDialog(int mode){
+	mGlobalSettings.mOpenCreateProjectState = mode;
+	mActiveDialog = &mCloseProjectDialog;
+	return 0;
 }
 
 int TEditor::activateQuitDialog(){

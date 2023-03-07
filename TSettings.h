@@ -109,6 +109,7 @@ public:
 	int load(std::string filename);
 	bool bLoaded = false;
 	int writedefault(std::string filename);
+	void close();
 	std::map<std::string,int> keyindex;
 	std::vector<sKey*> keys;
 	
@@ -136,6 +137,7 @@ class TSettings{
 	public:
 		ImGuiIO *mio;
 		void shutdown();
+		void close();
 		TEditor* CurrentEditor;		
 		SDL_Renderer *TRenderer;
 		SDL_Window *TWindow;
@@ -163,6 +165,7 @@ class TSettings{
 		bool bProjectHasPalette = false;
 		int mProjectSaveState = 0;
 		int mProjectOpenState = 0;
+		int mOpenCreateProjectState = 0;
 		bool bRunningOCD = false;
 		int mOpenTileState = 0;
 		int mOpenTileMapState = 0;
@@ -195,9 +198,9 @@ class TSettings{
 		bool bShowHelpDialog = false;		
 		int mSelectedTile = 0;
 		int mTileEdScale = 4;
-		TTF_Font *TFont;
-		TTF_Font *UFont;
-		TTF_Font *LFont;
+		//TTF_Font *TFont;
+		//TTF_Font *UFont;
+		//TTF_Font *LFont;
 		ImFont* DFont;
 		ImFont* SFont;
 		SDL_Color DefaultBGColor = {0xc0,0xc0,0xc0,0xff};
@@ -232,7 +235,7 @@ class TSettings{
 		int initTicks();
 		int updateTicks();
 		int getTicks();
-		int runOCD();
+		int runOCD(int mode=0);
 		std::string mWindow = "\uf2d0";
 		std::string mFloppy = "\ue240"; //Floppy disk		
 		std::string mPrompt = "\uf120"; //Prompt

@@ -275,5 +275,11 @@ class QDialog: public Dialog{
 		virtual void recieveInput(int mKey);
 };
 
+class CCPDialog: public QDialog{
+	public:
+		virtual int render();
+		virtual void recieveInput(int mKey);
+};
+
 
 #endif

@@ -107,6 +107,18 @@ Settings::Settings(){
 		
 }
 
+void Settings::close(){
+	Editor_SelectionAppend->ivalue = true;
+	Tile_ShowPixelGrid->ivalue = true;
+	TileSet_ShowPixelGrid->ivalue = true;
+	TileSet_ShowTileGrid->ivalue = true;
+	TileSet_UpdateMaps->ivalue = true;
+	TileSet_WarnBeforeDelete->ivalue = true;
+	TileSet_EditWidth->ivalue = 4;
+	SelectionEdit_ShowPixelGrid->ivalue = true;
+	SelectionEdit_ShowTileGrid->ivalue = true;
+}
+
 int Settings::load(std::string filename){
 	if(bLoaded) return 0;
 

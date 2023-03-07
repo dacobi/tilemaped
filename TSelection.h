@@ -128,6 +128,7 @@ class TBrushList{
         int renderIm();
         int saveToFile(std::string cBrushPath);
         int loadFromFile(std::string cBrushPath);
+        void close();
 };
 
 class TSelectionEditor{

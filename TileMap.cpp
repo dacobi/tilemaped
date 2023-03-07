@@ -577,6 +577,10 @@ int TPalette::loadFromFile(std::string filename){
 		}
 	}
 
+	if(TPalette.size()){
+		TPalette.clear();
+	}
+
 	std::ifstream infile(filename, std::ios::binary );
     std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
 
@@ -618,6 +622,10 @@ int TPalette::loadFromFile(std::string filename){
 }
 
 int TPalette::initPalette(){
+	if(TPalette.size()){
+		TPalette.clear();
+	}
+
 	for(int i = 0; i < 256; i++){
 		SDL_Color tmpcol;
 		tmpcol.r = palette[i][0];
@@ -645,6 +653,10 @@ int TPalette::updateTPixels(){
 }
 
 int TPalette::initTPixels(){
+	if(TPixels.size()){
+		TPixels.clear();
+	}
+
 	TPixel *tmptpix;
 	for(int i = 0; i < 256; i++){
 		tmptpix = new TPixel;
@@ -1388,6 +1400,13 @@ int Tile::loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal){
 	initTexture();
 	updateTexture(tpal);
 	return 0;
+}
+
+void TileSet::close(){
+	for(auto *dTile: TTiles){
+		dTile->freeTexture();
+	}
+	TTiles.clear();
 }
 
 void TileSet::shutdown(){

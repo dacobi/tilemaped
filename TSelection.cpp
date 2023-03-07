@@ -1068,6 +1068,13 @@ int TBrushList::saveToFile(std::string cBrushPath){
     return 0;
 }
 
+void TBrushList::close(){
+    mSelectedBrush = 0;
+    while(mBrushes.size()){
+		removeBrush();
+	}
+}
+
 int TBrushList::loadFromFile(std::string cBrushPath){
 
     std::string tmpStr,tmpStr2;

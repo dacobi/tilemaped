@@ -282,15 +282,82 @@ int TSettings::getTicks(){
 	return mCurrentTick - mLastTick;
 }
 
+void TSettings::close(){	
+
+	TileSetDefaultScale=10;
+	TileMapScale=3;
+	TileMapHeight=128;
+	TileMapWidth=128;		
+	TileSizeX=16;
+	TileSizeY=16;
+	TileSetBPP=8;
+	TilePixelSize=16;	
+	PaletteOffset=0;
+	bShowPaletteOffset = false;
+	TileRenderSize=16;
+	PaletteScale=2;
+	ProjectPath = "";
+	ProjectPalettePath = "";	
+	bProjectHasPalette = false;
+	mProjectSaveState = 0;
+	mProjectOpenState = 0;	
+	mOpenTileState = 0;
+	mOpenTileMapState = 0;
+	mNewTileMapPath = "";
+	mNewTileMapPaletteOffset = 0;
+	mNewTileMapOffset = 0;
+	mNewTileMapState = 0;
+	mNewTileMapX = 0;
+	mNewTileMapY = 0;
+	mDeleteUnusedTilesState = 0;
+	mPaletteUpdateState = 0;
+	mNewTilePath = "";
+	mNewTileSize = 0;
+	mDeleteTileMapState = 0;			
+	mTileMapFileCount = 0;			
+	bShowTypeSelection = false;
+	bShowPixelGrid = true;
+	bShowTileGrid = true;
+	bShowTilePixelGrid = true;
+	bShowTileSelGrid = true;
+	bShowTilePixelSelGrid = true;
+	bTileSetOrderUpdateTileMap = true;
+	bTileSetWarnBeforeDelete = true;
+	mTileSetEditWidth = 4;
+	mTileSetEditScale = 10;		
+	mSelectionEditScale = 10;
+	bShowPixelType = false;
+	bShowSelectedTile = true;
+	bShowProjectInfo = false;		
+	bShowHelpDialog = false;		
+	mSelectedTile = 0;
+	mTileEdScale = 4;
+	mSelectionMode = 1;
+
+	ProjectSettings.close();
+}
+
 void TSettings::shutdown(){	
 	SDL_DestroyRenderer(TRenderer);
 	std::cout << "SDL_DestroyRenderer(TSettings::TRenderer)" << std::endl;
 }
 
-int TSettings::runOCD(){
+int TSettings::runOCD(int mode){
 
 	OCDialog mOpenCreate;
 	mOpenCreate.init();
+
+	if(mode == 1){
+		mOpenCreate.bSubDialogActive = true;
+		mOpenCreate.bSubDialogIsOpen = true;
+		mOpenCreate.bDialogIsWatingForText = true;				
+	}
+
+	if(mode == 2){
+		mOpenCreate.bSubDialogActive = true;
+		mOpenCreate.bSubDialogIsCreate = true;
+		mOpenCreate.bDialogIsWatingForText = true;				
+	}
 
 	while( bRunningOCD ){
 
@@ -678,24 +745,9 @@ int main( int argc, char* args[] )
 	else
 	{	
 		mGlobalSettings.CurrentEditor = &mEditor;
+		SDL_Event e;
 
-		if(mGlobalSettings.bRunningOCD){			
-			mGlobalSettings.runOCD();
-			
-			if(mGlobalSettings.mProjectOpenState == 1){
-				if(mEditor.loadFromFolder(mGlobalSettings.ProjectPath)){
-					return 1;
-				}
-
-			} else if(mGlobalSettings.mProjectOpenState == 2){
-				if(mEditor.createNewProject()){
-					mEditor.bEditorRunning = false;
-				}
-			} else {
-				mEditor.bEditorRunning = false;
-			}
-
-		} else {
+		if(!mGlobalSettings.bRunningOCD) {
 
 			if(mCreateNewProject){
 				if(mEditor.createNewProject()){
@@ -709,7 +761,30 @@ int main( int argc, char* args[] )
 		
 		}
 
-		SDL_Event e;
+
+		while( mEditor.bEditorRunning || mGlobalSettings.bRunningOCD){
+
+		if(mGlobalSettings.bRunningOCD){			
+			mGlobalSettings.runOCD(mGlobalSettings.mOpenCreateProjectState);
+			
+			mGlobalSettings.mOpenCreateProjectState = 0;
+
+			if(mGlobalSettings.mProjectOpenState == 1){
+				if(mEditor.loadFromFolder(mGlobalSettings.ProjectPath)){
+					mEditor.bEditorRunning = false;
+					//return 1;
+				}
+				mEditor.bEditorRunning = true;
+			} else if(mGlobalSettings.mProjectOpenState == 2){
+				if(mEditor.createNewProject()){
+					mEditor.bEditorRunning = false;
+				}
+				mEditor.bEditorRunning = true;
+			} else {
+				mEditor.bEditorRunning = false;
+			}
+
+		} 
 
 		while( mEditor.bEditorRunning ){
 
@@ -736,7 +811,11 @@ int main( int argc, char* args[] )
 			mEditor.handleEvents();
 		}
 
-		mEditor.shutdown();
+		//mEditor.shutdown();
+		mEditor.closeProject();
+
+	}
+
 		mGlobalSettings.shutdown();		
 	}
 	return 0;

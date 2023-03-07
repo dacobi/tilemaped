@@ -118,6 +118,7 @@ class Tile: public TTexture{
 class TileSet{
 	public:
 		void shutdown();
+		void close();
 		std::string DataPath;
 		std::vector<Tile*> TTiles;
 		std::vector<SDL_Rect> TileAreas;
