@@ -1145,6 +1145,11 @@ int TEditor::showMessage(std::string cMessage, bool isError){
 
 bool TEditor::checkQuit(){
 	if(mCurMode == EMODE_MAP){
+		if(bShowCollisionEditor){
+			bShowCollisionEditor = false;
+			return true;
+		}
+
 		if(bShowBrushesTile){
 			bShowBrushesTile = false;
 			return true;
