@@ -333,10 +333,7 @@ int TBDialog::render(){
 						
 					}
 					ImGui::EndMenu();
-				}
-
-				
-				
+				}								
 			}
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET){
@@ -2244,8 +2241,8 @@ void CCPDialog::recieveInput(int mKey){
 		mGlobalSettings.bRunningOCD = true;
 	}
 	if(mKey == SDLK_n){
-		//mGlobalSettings.mOpenCreateProjectState = 0;
-		mGlobalSettings.mEditorState = ESTATE_NONE;
+		mGlobalSettings.mOpenCreateProjectState = ESTATE_NONE;
+		//mGlobalSettings.mEditorState = ESTATE_NONE;
 		bInputIsCancel=true;
 	}
 }
