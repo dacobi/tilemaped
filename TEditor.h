@@ -160,6 +160,7 @@ class TEditor{
 		PIDialog mProjectInfo;
 		MEDialog mInfoMessage;
 		RTMDialog mRemoveTileMap;
+		RCMDialog mRemoveColMap;
 		RTDialog mRemoveUnused;
 		RTSDialog mRemoveSelUnused;
 		MEDialog mErrorMessage;

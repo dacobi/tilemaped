@@ -201,6 +201,8 @@ class TileMap{
 		int createNew();
 		int createNew(int nWidth, int nHeight, int nSValue);
 		int createNew(int nWidth, int nHeight, int nSValue, int cPaletteOffset);
+		int createCollisionMap();
+		int removeCollisionMap();
 		int render(int xpos,int ypos,TileSet* mTiles);
 		std::map<int,int> mTilemapSizesIn = {{0,32},{1,64},{2,128},{3,256}};
 		std::map<int,int> mTilemapSizesOut = {{32,0},{64,1},{128,2},{256,3}};

@@ -305,6 +305,25 @@ int TBDialog::render(){
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Unused Tiles")).c_str())){
 					mGlobalSettings.CurrentEditor->activateDropUnusedTiles();
 				}
+
+				if(ImGui::BeginMenu((std::string(mGlobalSettings.mFile + " CollisionMap")).c_str())){
+				
+					if(mGlobalSettings.CurrentEditor->mTileMap->bHasCollisionMap){
+						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Edit")).c_str())){				
+								mGlobalSettings.CurrentEditor->activateColMapDialog();
+							}
+						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Remove")).c_str())){											
+								mGlobalSettings.CurrentEditor->removeColMapDialog();
+							}
+					} else {
+						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Create")).c_str())){				
+								mGlobalSettings.CurrentEditor->activateColMapDialog(true);
+						}
+					}
+
+					ImGui::EndMenu();
+				}
+
 				if(ImGui::BeginMenu("TileSet Reordering")){
 					
 					if(ImGui::MenuItem("Update TileMap(s)", NULL, &mGlobalSettings.bTileSetOrderUpdateTileMap)){
@@ -316,18 +335,7 @@ int TBDialog::render(){
 					ImGui::EndMenu();
 				}
 
-				if(mGlobalSettings.CurrentEditor->mTileMap->bHasCollisionMap){
-					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Edit CollisionMap")).c_str())){				
-							mGlobalSettings.CurrentEditor->activateColMapDialog();
-						}
-					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Remove CollisionMap")).c_str())){											
-							mGlobalSettings.CurrentEditor->removeColMapDialog();
-						}
-				} else {
-					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Create CollisionMap")).c_str())){				
-							mGlobalSettings.CurrentEditor->activateColMapDialog(true);
-					}
-				}
+				
 				
 			}
 
@@ -503,6 +511,25 @@ void RTMDialog::recieveInput(int mKey){
 		bInputIsAccept=true;
 		//mGlobalSettings.mDeleteTileMapState = 1;
 		mGlobalSettings.mEditorState = ESTATE_TILEMAPDELETE;
+	}
+	if(mKey == SDLK_n){
+		bInputIsCancel=true;
+	}
+}
+
+void RCMDialog::init(){
+	mDialogTextMain = mGlobalSettings.mFile +" Remove CollisionMap for current TileMap?";
+	mDialogTextTitle = "Remove CollisionMap";
+	mDialogButtonAccept = "Remove";
+	mDialogButtonCancel = "Cancel";
+}
+
+void RCMDialog::recieveInput(int mKey){
+	
+	if(mKey == SDLK_y){
+		bInputIsAccept=true;
+		//mGlobalSettings.mDeleteTileMapState = 1;
+		mGlobalSettings.mEditorState = ESTATE_COLMAPREMOVE;
 	}
 	if(mKey == SDLK_n){
 		bInputIsCancel=true;

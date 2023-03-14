@@ -2235,6 +2235,25 @@ int TileMap::createNew(){
 	return 0;
 }
 
+int TileMap::createCollisionMap(){
+	if(bHasCollisionMap){
+		return 1;
+	}
+	
+	bHasCollisionMap = true;
+	mColMap.createNew(this);
+
+	return 0;
+}
+int TileMap::removeCollisionMap(){
+	if(bHasCollisionMap){
+		bHasCollisionMap = false;
+		mColMap.MapData.clear();
+		return 0;
+	}
+	return 1;
+}
+
 int TileMap::loadFromFileOffset(std::string path, std::string filename, int cTileOffset, int cPaletteOffset){
 	int retval = loadFromFileOffset(path, filename, cTileOffset);
 

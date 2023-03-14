@@ -153,6 +153,8 @@ void TEditor::initDialogs(){
 	mErrorMessage.setColorScheme(1);
 	mErrorMessage.init();
 
+	mRemoveColMap.init();
+
 	mRemoveTileMap.init();
 	mRemoveUnused.init();
 	mRemoveSelUnused.init();
@@ -1253,20 +1255,23 @@ int TEditor::activateOpenTileMapDialog(){
 }
 
 int TEditor::removeColMapDialog(){
-	mTileMap->bHasCollisionMap = false;
-	mTileMap->mColMap.MapData.clear();
+	if(mCurMode == EMODE_MAP){
+		mActiveDialog = &mRemoveColMap;
+	}
 	return 0;
 }
 
 int TEditor::activateColMapDialog(bool bCreateColMap){
-	if(bCreateColMap){
-		mTileMap->bHasCollisionMap = true;
-		mTileMap->mColMap.createNew(mTileMap);
+	if(bCreateColMap){		
+		mTileMap->createCollisionMap();
 	}
 
-	bShowCollisionEditor = true;
+	mTileMap->mColMap.checkSize();
+	
 	mColMapEdit.TileAreas.resize(mGlobalSettings.CurrentEditor->mTileSet.TTiles.size());
 	mColMapEdit.mCollisionValue = mTileMap->mColMap.MapData[mColMapEdit.mSelectedTile];
+
+	bShowCollisionEditor = true;
 
 	return 0;
 }
@@ -2146,8 +2151,7 @@ int TEditor::handleColEdit(){
 		if(tSel > -1){
 			mColMapEdit.mSelectedTile = tSel;
 			mColMapEdit.mCollisionValue = mTileMap->mColMap.MapData[tSel];
-		}		
-		std::cout << "ColEdit" << std::endl;
+		}				
 	}
 
 	return 0;
@@ -2251,7 +2255,12 @@ int TEditor::handleEvents(){
 
 	if(mActiveDialog){
 		if(mActiveDialog->bInputIsAccept){
-			//if(mGlobalSettings.mDeleteUnusedTilesState == 1){
+
+			if(mGlobalSettings.mEditorState == ESTATE_COLMAPREMOVE){
+				cancelActiveDialog();
+				mGlobalSettings.mEditorState = ESTATE_NONE;
+				mTileMap->removeCollisionMap();				
+			}			
 			if(mGlobalSettings.mEditorState == ESTATE_TILEDELETEALL){				
 				dropUnusedTiles();
 				//mGlobalSettings.mDeleteUnusedTilesState = 0;				
