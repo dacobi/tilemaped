@@ -2390,11 +2390,20 @@ int TileMap::saveToFolder(std::string tpath, std::string tfile){
 	bIsSavedToFile = true;
 
 	
-	if(bHasCollisionMap){
-		std::string cColMapPrefix;
-		cColMapPrefix = tfile.substr(0,tfile.find("."));
-		
+	std::string cColMapPrefix;
+	cColMapPrefix = tfile.substr(0,tfile.find("."));
+
+	if(bHasCollisionMap){				
 		mColMap.saveToFolder(tpath, cColMapPrefix);		
+	} else {
+		fs::path cColDat = tpath + DIRDEL + "col" + cColMapPrefix + ".dat";
+		if(fs::exists(fs::status(cColDat))){
+			fs::remove(cColDat);
+		}
+		fs::path cColBin = tpath + DIRDEL + "col" + cColMapPrefix + ".bin";
+		if(fs::exists(fs::status(cColBin))){
+			fs::remove(cColBin);
+		}
 	}
 	return 0;
 }
