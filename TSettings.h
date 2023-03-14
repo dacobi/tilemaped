@@ -58,6 +58,7 @@ class PIDialog;
 class TIDialog;
 class TBDialog;
 class MEDialog;
+class TCollisionMap;
 
 
 
@@ -163,20 +164,21 @@ class TSettings{
 		std::string ProjectPalettePath = "";
 		std::vector<unsigned char> ProjectPalette;
 		bool bProjectHasPalette = false;
-		int mProjectSaveState = 0;
-		int mProjectOpenState = 0;
+		int mEditorState = 0;
+		//int mProjectSaveState = 0;
+		//int mProjectOpenState = 0;
 		int mOpenCreateProjectState = 0;
 		bool bRunningOCD = false;
-		int mOpenTileState = 0;
-		int mOpenTileMapState = 0;
+		//int mOpenTileState = 0;
+		//int mOpenTileMapState = 0;
 		std::string mNewTileMapPath = "";
 		int mNewTileMapPaletteOffset = 0;
 		int mNewTileMapOffset = 0;
 		int mNewTileMapState = 0;
 		int mNewTileMapX = 0;
 		int mNewTileMapY = 0;
-		int mDeleteUnusedTilesState = 0;
-		int mPaletteUpdateState = 0;
+		//int mDeleteUnusedTilesState = 0;
+		//int mPaletteUpdateState = 0;
 		std::string mNewTilePath = "";
 		int mNewTileSize = 0;
 		int mDeleteTileMapState = 0;			
@@ -258,6 +260,36 @@ enum {
 	EMODE_TILESET,
 	EMODE_SELEDIT
 } emodes;
+
+/*
+		int mProjectSaveState = 0;
+		int mProjectOpenState = 0;
+		int mOpenCreateProjectState = 0;		
+		int mOpenTileState = 0;
+		int mOpenTileMapState = 0;		
+		int mDeleteUnusedTilesState = 0;
+		int mPaletteUpdateState = 0;		
+		int mDeleteTileMapState = 0;			
+*/
+
+enum {
+	ESTATE_NONE,	
+	ESTATE_PROJECTSAVE,	
+	ESTATE_PROJECTCREATE,	
+	ESTATE_PROJECTOPEN,	
+	ESTATE_PROJECTCLOSE,
+	ESTATE_TILEIMPORT,
+	ESTATE_TILECREATE,
+	ESTATE_TILEDELETE,
+	ESTATE_TILEDELETEALL,
+	ESTATE_TILESETIMPORT,
+	ESTATE_TILEMAPIMPORT,
+	ESTATE_TILEMAPIMPORTOFFSET,
+	ESTATE_TILEMAPCREATE,
+	ESTATE_TILEMAPDELETE,
+	ESTATE_PALETTEUPDATE,
+} estates;
+
 
 enum {
 	ACTION_EMPTY,

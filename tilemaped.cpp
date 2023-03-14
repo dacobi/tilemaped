@@ -299,18 +299,21 @@ void TSettings::close(){
 	ProjectPath = "";
 	ProjectPalettePath = "";	
 	bProjectHasPalette = false;
-	mProjectSaveState = 0;
-	mProjectOpenState = 0;	
-	mOpenTileState = 0;
-	mOpenTileMapState = 0;
+
+	mEditorState = 0;
+
+	//mProjectSaveState = 0;
+	//mProjectOpenState = 0;	
+	//mOpenTileState = 0;
+	//mOpenTileMapState = 0;
 	mNewTileMapPath = "";
 	mNewTileMapPaletteOffset = 0;
 	mNewTileMapOffset = 0;
 	mNewTileMapState = 0;
 	mNewTileMapX = 0;
 	mNewTileMapY = 0;
-	mDeleteUnusedTilesState = 0;
-	mPaletteUpdateState = 0;
+	//mDeleteUnusedTilesState = 0;
+	//mPaletteUpdateState = 0;
 	mNewTilePath = "";
 	mNewTileSize = 0;
 	mDeleteTileMapState = 0;			
@@ -347,13 +350,13 @@ int TSettings::runOCD(int mode){
 	OCDialog mOpenCreate;
 	mOpenCreate.init();
 
-	if(mode == 1){
+	if(mode == ESTATE_PROJECTOPEN){
 		mOpenCreate.bSubDialogActive = true;
 		mOpenCreate.bSubDialogIsOpen = true;
 		mOpenCreate.bDialogIsWatingForText = true;				
 	}
 
-	if(mode == 2){
+	if(mode == ESTATE_PROJECTCREATE){
 		mOpenCreate.bSubDialogActive = true;
 		mOpenCreate.bSubDialogIsCreate = true;
 		mOpenCreate.bDialogIsWatingForText = true;				
@@ -361,13 +364,14 @@ int TSettings::runOCD(int mode){
 
 	while( bRunningOCD ){
 
-		if((mProjectOpenState == 1) || ( mProjectOpenState == 2)){
+		if((mEditorState == ESTATE_PROJECTOPEN) || ( mEditorState == ESTATE_PROJECTCREATE)){
 			bRunningOCD = false;
 		}
 
 		if(mOpenCreate.bInputIsCancel){
 			bRunningOCD = false;
-			mProjectOpenState = 0;
+			//mProjectOpenState = 0;
+			mEditorState = ESTATE_NONE;
 		}
 
 		SDL_SetRenderDrawColor( TRenderer, DefaultBGColor.r,  DefaultBGColor.g,  DefaultBGColor.b, 0xff); 
@@ -766,16 +770,16 @@ int main( int argc, char* args[] )
 		while( mEditor.bEditorRunning || mGlobalSettings.bRunningOCD){
 
 			if(mGlobalSettings.bRunningOCD){			
-				mGlobalSettings.runOCD(mGlobalSettings.mOpenCreateProjectState);
+				mGlobalSettings.runOCD(mGlobalSettings.mOpenCreateProjectState); //);
 			
-				mGlobalSettings.mOpenCreateProjectState = 0;
+				mGlobalSettings.mOpenCreateProjectState = ESTATE_NONE;
 
-				if(mGlobalSettings.mProjectOpenState == 1){
+				if(mGlobalSettings.mEditorState == ESTATE_PROJECTOPEN){
 					if(mEditor.loadFromFolder(mGlobalSettings.ProjectPath)){
 						mEditor.bEditorRunning = false;						
 					}
 					mEditor.bEditorRunning = true;
-				} else if(mGlobalSettings.mProjectOpenState == 2){
+				} else if(mGlobalSettings.mEditorState == ESTATE_PROJECTCREATE){
 					if(mEditor.createNewProject()){
 						mEditor.bEditorRunning = false;
 					}

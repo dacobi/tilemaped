@@ -1241,6 +1241,36 @@ SDL_Rect Tile::render(int xpos, int ypos, int tscale, bool updateRect ,bool draw
 	return tmpRect;
 }
 
+SDL_Rect Tile::renderImCol(int xpos, int ypos, int mIndex, int tscale, bool bColEditSelected){
+SDL_Rect tmpRect;
+
+	//ImGui::Image
+
+	if(mGlobalSettings.TileSetBPP < 0x8){
+		ImGui::ImageButton((ImTextureID)(intptr_t)TPOffset[mGlobalSettings.PaletteOffset], ImVec2(mGlobalSettings.TileSizeX * tscale, mGlobalSettings.TileSizeY * tscale) , ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));	
+	} else {
+		ImGui::ImageButton((ImTextureID)(intptr_t)TileTex, ImVec2(mGlobalSettings.TileSizeX * tscale, mGlobalSettings.TileSizeY * tscale), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
+	}
+
+	ImVec2 elmin = ImGui::GetItemRectMin();
+	ImVec2 elmax = ImGui::GetItemRectMax();
+
+	tmpRect.x = elmin.x;
+	tmpRect.y = elmin.y;
+	tmpRect.w = elmax.x - elmin.x;
+	tmpRect.h = elmax.y - elmin.y;
+	
+	ImDrawList *tList = ImGui::GetWindowDrawList();
+
+	if(bColEditSelected){		
+		tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor);
+	} else {
+		tList->AddRect(elmin, elmax, mGlobalSettings.ImHighLightColor);
+	}
+
+	return tmpRect;
+}
+
 SDL_Rect Tile::renderIm(int xpos, int ypos, int mIndex, int &mDragAndDropped, int tscale, bool updateRect ,bool drawGrid){
 	SDL_Rect tmpRect;
 
@@ -2248,9 +2278,13 @@ void TileMap::swapTileValues(int tVal1, int tVal2){
 			}			
 		}
 	}
+
+	if(bHasCollisionMap){
+		mColMap.swapTileValues(tVal1, tVal2);
+	}
 }
 
-int TileMap::loadFromFile(std::string path, std::string filename){
+int TileMap::loadFromFile(std::string path, std::string filename, bool bLoadColMap){
     	DataPath = path; 	
     	DataFile = filename;
 		
@@ -2302,6 +2336,22 @@ int TileMap::loadFromFile(std::string path, std::string filename){
 
 	init();
 
+	if(bLoadColMap){
+		
+		std::string cColMapPath;
+		cColMapPath = path + DIRDEL + "col" + filename.substr(0,filename.find(".")) + ".dat";
+		std::cout << "Load ColMap: " << cColMapPath  << std::endl;		
+		if(fs::exists(fs::status(cColMapPath))){	
+			std::cout << "ColMap Found" << std::endl;
+			if(mColMap.loadFromFile(cColMapPath)){
+				return 1;
+			} else {
+				bHasCollisionMap = true;
+				std::cout << "ColMap True" << std::endl;
+			}
+		}
+	}
+
     return 0;
 }
 
@@ -2320,6 +2370,13 @@ int TileMap::saveToFolder(std::string tpath, std::string tfile){
 
 	bIsSavedToFile = true;
 
+	
+	if(bHasCollisionMap){
+		std::string cColMapPrefix;
+		cColMapPrefix = tfile.substr(0,tfile.find("."));
+		
+		mColMap.saveToFolder(tpath, cColMapPrefix);		
+	}
 	return 0;
 }
 
@@ -2348,6 +2405,11 @@ int TileMap::removeTile(int cDropTile){
 			setTile(i, cTile-1);
 		}
 	}
+
+	if(bHasCollisionMap){
+		mColMap.removeTile(cDropTile);
+	}
+
 	return 0;
 }
 

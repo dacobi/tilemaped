@@ -5,7 +5,7 @@
 #include "TEAction.h"
 #include "TDialogs.h"
 #include "TSelection.h"
-
+#include "TCollision.h"
 
 class TTexture{
 	public:
@@ -99,6 +99,7 @@ class Tile: public TTexture{
 		std::vector<SDL_Rect> PixelAreas;		
 		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderIm(int xpos, int ypos, int mIndex, int &mDragAndDropped, int tscale=1, bool updateRect=false ,bool drawGrid=false);
+		SDL_Rect renderImCol(int xpos, int ypos, int mIndex, int tscale, bool bColEditSelected);
 		SDL_Rect render(int xpos, int ypos, int tscale, TileProperties tProps);
 		void renderEd(int xpos, int ypos, TPalette* tpal);
 		void renderEdSel(int xpos, int ypos, TPalette* tpal, int cScale);
@@ -193,7 +194,7 @@ class TileMap{
 		TileProperties getTileProp(int cTile);
 		std::vector<SDL_Rect> TileAreas;
 		int removeTile(int cDropTile);
-		int loadFromFile(std::string path, std::string filename);
+		int loadFromFile(std::string path, std::string filename, bool bLoadColMap = false);
 		int loadFromFileOffset(std::string path, std::string filename, int cTileOffset);
 		int loadFromFileOffset(std::string path, std::string filename, int cTileOffset, int cPaletteOffset);
 		int saveToFolder(std::string tpath, std::string tfile);
@@ -204,7 +205,9 @@ class TileMap{
 		std::map<int,int> mTilemapSizesIn = {{0,32},{1,64},{2,128},{3,256}};
 		std::map<int,int> mTilemapSizesOut = {{32,0},{64,1},{128,2},{256,3}};
 		SDL_Rect mBorder;     
-		TSelection mSelection;   		
+		TSelection mSelection; 
+		bool bHasCollisionMap = false;
+		TCollisionMap mColMap;
 };
 
 #endif

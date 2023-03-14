@@ -59,7 +59,9 @@ void TEditor::closeProject(){
 	bShowBrushesTile = false;
 	bShowBrushesPixel = false;
 	bShowBrushesPixelTileSet = false;		
-	bShowBrushesPixelSelEdit = false;				
+	bShowBrushesPixelSelEdit = false;			
+
+	bShowCollisionEditor = false;	
 
 	mCurrentBrushTile = NULL;
 	mCurrentBrushPixel = NULL;
@@ -297,7 +299,7 @@ int TEditor::loadFromFolder(std::string path){
 
 	mTileMap = new TileMap();
 
-	if(mTileMap->loadFromFile(path, "map.bin")){
+	if(mTileMap->loadFromFile(path, "map.bin", true)){
 		std::cout << "Error: can't read: " << path << DIRDEL << "map.bin" << std::endl;
 		return 1;
 	}
@@ -316,7 +318,7 @@ int TEditor::loadFromFolder(std::string path){
 
 	while(fs::exists(fs::status(cTileMaps))){
 		TileMap *newTileMap = new TileMap();
-		if(newTileMap->loadFromFile(cTileMaps.parent_path().string(), cTileMaps.filename().string())){
+		if(newTileMap->loadFromFile(cTileMaps.parent_path().string(), cTileMaps.filename().string(), true)){
 			std::cout << "Error: can't read: " << cTileMaps.parent_path().string() << DIRDEL << cTileMaps.filename().string() << std::endl;
 			return 1;
 		}
@@ -479,6 +481,7 @@ int TEditor::switchTileMap(int cTileMap){
 		mGlobalSettings.TileMapScale = mTileMap->TileMapScale;
 
 		bTileMapWasChanged = true;
+		bShowCollisionEditor = false;
 		return 0;
 	}
 	return 1;
@@ -522,6 +525,10 @@ int TEditor::render(){
 
 		if(bShowBrushesTile){
 			mBrushesTile.renderIm();
+		}
+
+		if(bShowCollisionEditor){
+			mColMapEdit.render(mTileMap);
 		}
 	}
 	
@@ -1184,6 +1191,7 @@ bool TEditor::checkQuit(){
 
 int TEditor::activateOpenCreateDialog(int mode){
 	mGlobalSettings.mOpenCreateProjectState = mode;
+	//mGlobalSettings.mEditorState = mode;
 	mActiveDialog = &mCloseProjectDialog;
 	return 0;
 }
@@ -1241,6 +1249,25 @@ int TEditor::activateOpenTileMapDialog(){
 		mActiveDialog = &mOpenTileMapDialog;
 		mActiveDialog->bDialogIsWatingForText = true;		
 	}
+	return 0;
+}
+
+int TEditor::removeColMapDialog(){
+	mTileMap->bHasCollisionMap = false;
+	mTileMap->mColMap.MapData.clear();
+	return 0;
+}
+
+int TEditor::activateColMapDialog(bool bCreateColMap){
+	if(bCreateColMap){
+		mTileMap->bHasCollisionMap = true;
+		mTileMap->mColMap.createNew(mTileMap);
+	}
+
+	bShowCollisionEditor = true;
+	mColMapEdit.TileAreas.resize(mGlobalSettings.CurrentEditor->mTileSet.TTiles.size());
+	mColMapEdit.mCollisionValue = mTileMap->mColMap.MapData[mColMapEdit.mSelectedTile];
+
 	return 0;
 }
 
@@ -2111,6 +2138,21 @@ int TEditor::handleBrushes(){
 	return 0;
 }
 
+int TEditor::handleColEdit(){
+
+	if(ImButtonsColEdit.mLeft.bButtonIsDown){
+		int tSel = -1;		
+		tSel = searchRectsXY(mColMapEdit.TileAreas, cx, cy);
+		if(tSel > -1){
+			mColMapEdit.mSelectedTile = tSel;
+			mColMapEdit.mCollisionValue = mTileMap->mColMap.MapData[tSel];
+		}		
+		std::cout << "ColEdit" << std::endl;
+	}
+
+	return 0;
+}
+
 int TEditor::handleTileSet(){
 
 	if(ImButtonsTileSet.mLeft.bButtonIsDown){ 
@@ -2209,25 +2251,34 @@ int TEditor::handleEvents(){
 
 	if(mActiveDialog){
 		if(mActiveDialog->bInputIsAccept){
-			if(mGlobalSettings.mDeleteUnusedTilesState == 1){
+			//if(mGlobalSettings.mDeleteUnusedTilesState == 1){
+			if(mGlobalSettings.mEditorState == ESTATE_TILEDELETEALL){				
 				dropUnusedTiles();
-				mGlobalSettings.mDeleteUnusedTilesState = 0;				
+				//mGlobalSettings.mDeleteUnusedTilesState = 0;				
+				mGlobalSettings.mEditorState = ESTATE_NONE;				
 			}
-			if(mGlobalSettings.mDeleteUnusedTilesState == 2){								
+			//if(mGlobalSettings.mDeleteUnusedTilesState == 2){								
+				if(mGlobalSettings.mEditorState == ESTATE_TILEDELETE){				
 				removeSelectedTile();				
-				mGlobalSettings.mDeleteUnusedTilesState = 0;				
+				//mGlobalSettings.mDeleteUnusedTilesState = 0;				
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
 			}
-			if(mGlobalSettings.mProjectSaveState == 1){
+			//if(mGlobalSettings.mProjectSaveState == 1){
+				if(mGlobalSettings.mEditorState == ESTATE_PROJECTSAVE){				
 				if(saveToFolder(mGlobalSettings.ProjectPath)){					
 					showMessage("Error Creating Project Folder!", true);
 				} 
-				mGlobalSettings.mProjectSaveState = 0;								
+				//mGlobalSettings.mProjectSaveState = 0;								
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
 			}
-			if(mGlobalSettings.mPaletteUpdateState == 1){
+			//if(mGlobalSettings.mPaletteUpdateState == 1){
+				if(mGlobalSettings.mEditorState == ESTATE_PALETTEUPDATE){				
 				updatePalette();
-				mGlobalSettings.mPaletteUpdateState = 0;				
+				//mGlobalSettings.mPaletteUpdateState = 0;				
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
 			}
-			if(mGlobalSettings.mOpenTileState == 1){
+			//if(mGlobalSettings.mOpenTileState == 1){
+			if(mGlobalSettings.mEditorState == ESTATE_TILEIMPORT){				
 				Tile* newTile = createNewTileFromFile(mGlobalSettings.mNewTilePath);
 				if(newTile){
 					TEActionAddTile* newActionTile = new TEActionAddTile();
@@ -2237,21 +2288,26 @@ int TEditor::handleEvents(){
 	       			mActionStack.mLastAction = newActionTile;
 	       			mActionStack.redoClearStack();
 
-					mGlobalSettings.mOpenTileState = 0;
+					//mGlobalSettings.mOpenTileState = 0;
+					mGlobalSettings.mEditorState = ESTATE_NONE;	
 					cancelActiveDialog();
 					showMessage("Tile Loaded Successfully");
 					return 0;
 				} else {
-					mGlobalSettings.mOpenTileState = 0;
+					//mGlobalSettings.mOpenTileState = 0;
+					mGlobalSettings.mEditorState = ESTATE_NONE;	
 					cancelActiveDialog();
 					showMessage("Error Loading Tile!", true);					
 					return 0;
 				}
-				mGlobalSettings.mOpenTileState = 0;
+				//mGlobalSettings.mOpenTileState = 0;
 			}
-			if(mGlobalSettings.mOpenTileState == 2){
+
+			//if(mGlobalSettings.mOpenTileState == 2){
+			if(mGlobalSettings.mEditorState == ESTATE_TILESETIMPORT){				
 				
-				mGlobalSettings.mOpenTileState = 0;
+				//mGlobalSettings.mOpenTileState = 0;
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
 				std::vector<Tile*> cNewTiles;
 				if(mTileSet.importTileSet(mGlobalSettings.mNewTilePath, cNewTiles)){
 					cancelActiveDialog();
@@ -2275,9 +2331,11 @@ int TEditor::handleEvents(){
 				showMessage("TileSet Imported Successfully");
 				return 0;
 			}
-			if(mGlobalSettings.mOpenTileMapState == 1){
+			//if(mGlobalSettings.mOpenTileMapState == 1){
+			if(mGlobalSettings.mEditorState == ESTATE_TILEMAPIMPORT){				
 				
-				mGlobalSettings.mOpenTileMapState = 0;
+				//mGlobalSettings.mOpenTileMapState = 0;
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
 				int cretval = 0;
 
 				if(mGlobalSettings.TileSetBPP < 0x8){
@@ -2310,9 +2368,11 @@ int TEditor::handleEvents(){
 				return 0;
 			}
 
-			if(mGlobalSettings.mOpenTileMapState == 2){
+			//if(mGlobalSettings.mOpenTileMapState == 2){
+			if(mGlobalSettings.mEditorState == ESTATE_TILEMAPIMPORTOFFSET){				
 				
-				mGlobalSettings.mOpenTileMapState = 0;
+				//mGlobalSettings.mOpenTileMapState = 0;
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
 				int cretval = 0;
 				std::cout << "Importing TileMap with offset: " << mGlobalSettings.mNewTileMapOffset << std::endl;
 
@@ -2346,9 +2406,12 @@ int TEditor::handleEvents(){
 			}
 
 
-			if(mGlobalSettings.mNewTileMapState == 1){
+			//if(mGlobalSettings.mNewTileMapState == 1){
+				if(mGlobalSettings.mEditorState == ESTATE_TILEMAPCREATE){				
 				
-				mGlobalSettings.mNewTileMapState = 0;
+				//mGlobalSettings.mNewTileMapState = 0;
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
+
 
 				if(mGlobalSettings.TileSetBPP < 0x8){
 					createTileMap(mGlobalSettings.mNewTileMapX, mGlobalSettings.mNewTileMapY, mGlobalSettings.mNewTileMapOffset, mGlobalSettings.mNewTileMapPaletteOffset);				
@@ -2367,9 +2430,13 @@ int TEditor::handleEvents(){
 				return 0;
 			}
 
-			if(mGlobalSettings.mDeleteTileMapState == 1){
+			//if(mGlobalSettings.mDeleteTileMapState == 1){
+			if(mGlobalSettings.mEditorState == ESTATE_TILEMAPDELETE){				
+
 				
-				mGlobalSettings.mDeleteTileMapState = 0;
+				//mGlobalSettings.mDeleteTileMapState = 0;
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
+
 											
 				int cDelTileMap = -1;
 				int i = 0;
@@ -2408,6 +2475,9 @@ int TEditor::handleEvents(){
 	} else {		
 			if(mCurMode == EMODE_MAP){
 				handleBrushes();
+				if(bShowCollisionEditor){
+					handleColEdit();
+				}
 				handleEMMAp();
 			}
 			if(mCurMode == EMODE_TILE){

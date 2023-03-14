@@ -89,7 +89,8 @@ class TEditor{
 		int handlePaletteEdit();
 		int handleTile();
 		int handleEMTile();
-		int handleBrushes();	
+		int handleBrushes();
+		int handleColEdit();	
 		int findSelMap();
 		int findSelTile();
 		int resizeWindowEvent(SDL_Event* event);
@@ -114,6 +115,7 @@ class TEditor{
 		ImWinMouseState ImButtonsTileSet;		
 		ImWinMouseState ImButtonsPalette;		
 		ImWinMouseState ImButtonsBrushes;		
+		ImWinMouseState ImButtonsColEdit;		
 		bool leftMouseButtonDown = false;		
 		bool rightMouseButtonDown = false;
 		int leftMouseButtonClicks = 0;
@@ -132,7 +134,8 @@ class TEditor{
 		TBrush *mCurrentBrushPixelTileSet = NULL;
 		TBrush *mCurrentBrushPixelSelEdit = NULL;		
 		TBrushList mBrushesTile;
-		TBrushList mBrushesPixel;		
+		TBrushList mBrushesPixel;
+		bool bShowCollisionEditor = false;	
 		int flipSelectedTile(int cFlipMode);		
 		int replaceSelectedColor(int x, int y);
 		int replaceSelectedTiles(int x, int y);
@@ -165,6 +168,7 @@ class TEditor{
 		CCPDialog mCloseProjectDialog;
 		PUDialog mPaletteUpdate;
 		PODialog mPaletteOffset;
+		TCollisionMapEditor mColMapEdit;
 		int importTileMap(std::string cNewTileMap);
 		int createTileMap(int nMapX, int nMapy, int nTileValue);
 		int createTileMap(int nMapX, int nMapy, int nTileValue, int cPaletteOffset);
@@ -189,6 +193,8 @@ class TEditor{
 		int activateOpenTileMapDialog();
 		int activateNewTileMapDialog();
 		int activateRemoveTileMapDialog();
+		int activateColMapDialog(bool bCreateColMap=false);
+		int removeColMapDialog();
 		int activateHelpDialog();
 		int activateQuitDialog();
 		int activateOpenCreateDialog(int mode);
