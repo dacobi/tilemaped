@@ -430,7 +430,20 @@ int TEditor::saveToFolder(std::string path){
 
 
 		fs::rename(cTileMaps, cTileMaps + cBackup + cBackupNum);
-	
+
+		std::string cColMapPrefix;
+		cColMapPrefix = "map" + cMapNum;
+
+		fs::path cColDat = path + DIRDEL + "col" + cColMapPrefix + ".dat";
+		if(fs::exists(fs::status(cColDat))){
+			fs::remove(cColDat);
+		}
+		
+		fs::path cColBin = path + DIRDEL + "col" + cColMapPrefix + ".bin";
+		if(fs::exists(fs::status(cColBin))){
+			fs::remove(cColBin);
+		}
+					
 		mMapNum++;
 		convert << mMapNum << std::endl;
 		convert >> cMapNum;
