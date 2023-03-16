@@ -1210,8 +1210,7 @@ bool TEditor::checkQuit(){
 }
 
 int TEditor::activateOpenCreateDialog(int mode){
-	mGlobalSettings.mOpenCreateProjectState = mode;
-	//mGlobalSettings.mEditorState = mode;
+	mGlobalSettings.mOpenCreateProjectState = mode;	
 	mActiveDialog = &mCloseProjectDialog;
 	return 0;
 }
@@ -2289,33 +2288,30 @@ int TEditor::handleEvents(){
 				cancelActiveDialog();
 				mGlobalSettings.mEditorState = ESTATE_NONE;
 				mTileMap->removeCollisionMap();				
-			}			
-			if(mGlobalSettings.mEditorState == ESTATE_TILEDELETEALL){				
-				dropUnusedTiles();
-				//mGlobalSettings.mDeleteUnusedTilesState = 0;				
-				mGlobalSettings.mEditorState = ESTATE_NONE;				
 			}
-			//if(mGlobalSettings.mDeleteUnusedTilesState == 2){								
-				if(mGlobalSettings.mEditorState == ESTATE_TILEDELETE){				
-				removeSelectedTile();				
-				//mGlobalSettings.mDeleteUnusedTilesState = 0;				
+
+			if(mGlobalSettings.mEditorState == ESTATE_TILEDELETEALL){				
+				dropUnusedTiles();				
+				mGlobalSettings.mEditorState = ESTATE_NONE;				
+			}			
+
+			if(mGlobalSettings.mEditorState == ESTATE_TILEDELETE){				
+				removeSelectedTile();							
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
 			}
-			//if(mGlobalSettings.mProjectSaveState == 1){
-				if(mGlobalSettings.mEditorState == ESTATE_PROJECTSAVE){				
+
+			if(mGlobalSettings.mEditorState == ESTATE_PROJECTSAVE){				
 				if(saveToFolder(mGlobalSettings.ProjectPath)){					
 					showMessage("Error Creating Project Folder!", true);
-				} 
-				//mGlobalSettings.mProjectSaveState = 0;								
+				} 				
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
-			}
-			//if(mGlobalSettings.mPaletteUpdateState == 1){
-				if(mGlobalSettings.mEditorState == ESTATE_PALETTEUPDATE){				
-				updatePalette();
-				//mGlobalSettings.mPaletteUpdateState = 0;				
+			}			
+
+			if(mGlobalSettings.mEditorState == ESTATE_PALETTEUPDATE){				
+				updatePalette();			
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
-			}
-			//if(mGlobalSettings.mOpenTileState == 1){
+			}			
+
 			if(mGlobalSettings.mEditorState == ESTATE_TILEIMPORT){				
 				Tile* newTile = createNewTileFromFile(mGlobalSettings.mNewTilePath);
 				if(newTile){
@@ -2325,26 +2321,21 @@ int TEditor::handleEvents(){
 	       			mActionStack.addAction(newActionTile);
 	       			mActionStack.mLastAction = newActionTile;
 	       			mActionStack.redoClearStack();
-
-					//mGlobalSettings.mOpenTileState = 0;
+			
 					mGlobalSettings.mEditorState = ESTATE_NONE;	
 					cancelActiveDialog();
 					showMessage("Tile Loaded Successfully");
 					return 0;
-				} else {
-					//mGlobalSettings.mOpenTileState = 0;
+				} else {					
 					mGlobalSettings.mEditorState = ESTATE_NONE;	
 					cancelActiveDialog();
 					showMessage("Error Loading Tile!", true);					
 					return 0;
-				}
-				//mGlobalSettings.mOpenTileState = 0;
-			}
+				}				
+			}			
 
-			//if(mGlobalSettings.mOpenTileState == 2){
 			if(mGlobalSettings.mEditorState == ESTATE_TILESETIMPORT){				
-				
-				//mGlobalSettings.mOpenTileState = 0;
+							
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
 				std::vector<Tile*> cNewTiles;
 				if(mTileSet.importTileSet(mGlobalSettings.mNewTilePath, cNewTiles)){
@@ -2369,10 +2360,9 @@ int TEditor::handleEvents(){
 				showMessage("TileSet Imported Successfully");
 				return 0;
 			}
-			//if(mGlobalSettings.mOpenTileMapState == 1){
+			
 			if(mGlobalSettings.mEditorState == ESTATE_TILEMAPIMPORT){				
-				
-				//mGlobalSettings.mOpenTileMapState = 0;
+								
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
 				int cretval = 0;
 
@@ -2405,11 +2395,9 @@ int TEditor::handleEvents(){
 
 				return 0;
 			}
-
-			//if(mGlobalSettings.mOpenTileMapState == 2){
+			
 			if(mGlobalSettings.mEditorState == ESTATE_TILEMAPIMPORTOFFSET){				
-				
-				//mGlobalSettings.mOpenTileMapState = 0;
+								
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
 				int cretval = 0;
 				std::cout << "Importing TileMap with offset: " << mGlobalSettings.mNewTileMapOffset << std::endl;
@@ -2442,14 +2430,10 @@ int TEditor::handleEvents(){
 
 				return 0;
 			}
-
-
-			//if(mGlobalSettings.mNewTileMapState == 1){
-				if(mGlobalSettings.mEditorState == ESTATE_TILEMAPCREATE){				
-				
-				//mGlobalSettings.mNewTileMapState = 0;
+			
+			if(mGlobalSettings.mEditorState == ESTATE_TILEMAPCREATE){				
+							
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
-
 
 				if(mGlobalSettings.TileSetBPP < 0x8){
 					createTileMap(mGlobalSettings.mNewTileMapX, mGlobalSettings.mNewTileMapY, mGlobalSettings.mNewTileMapOffset, mGlobalSettings.mNewTileMapPaletteOffset);				
@@ -2467,14 +2451,10 @@ int TEditor::handleEvents(){
 
 				return 0;
 			}
-
-			//if(mGlobalSettings.mDeleteTileMapState == 1){
+			
 			if(mGlobalSettings.mEditorState == ESTATE_TILEMAPDELETE){				
-
 				
-				//mGlobalSettings.mDeleteTileMapState = 0;
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
-
 											
 				int cDelTileMap = -1;
 				int i = 0;
@@ -2504,12 +2484,14 @@ int TEditor::handleEvents(){
 			cancelActiveDialog();
 			return 0;
 		}
+	
 		if(mActiveDialog->bInputIsCancel){
 			cancelActiveDialog();
 			return 0;
 		}
 		
 		return 0;
+
 	} else {		
 			if(mCurMode == EMODE_MAP){
 				handleBrushes();

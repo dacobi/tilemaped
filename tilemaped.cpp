@@ -301,19 +301,13 @@ void TSettings::close(){
 	bProjectHasPalette = false;
 
 	mEditorState = 0;
-
-	//mProjectSaveState = 0;
-	//mProjectOpenState = 0;	
-	//mOpenTileState = 0;
-	//mOpenTileMapState = 0;
+	
 	mNewTileMapPath = "";
 	mNewTileMapPaletteOffset = 0;
 	mNewTileMapOffset = 0;
 	mNewTileMapState = 0;
 	mNewTileMapX = 0;
 	mNewTileMapY = 0;
-	//mDeleteUnusedTilesState = 0;
-	//mPaletteUpdateState = 0;
 	mNewTilePath = "";
 	mNewTileSize = 0;
 	mDeleteTileMapState = 0;			

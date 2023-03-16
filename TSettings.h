@@ -28,7 +28,6 @@
 
 
 class TTexture;
-//class TTFTexture;
 class TPixel; 
 class TPalette;
 class Tile;
@@ -164,21 +163,15 @@ class TSettings{
 		std::string ProjectPalettePath = "";
 		std::vector<unsigned char> ProjectPalette;
 		bool bProjectHasPalette = false;
-		int mEditorState = 0;
-		//int mProjectSaveState = 0;
-		//int mProjectOpenState = 0;
+		int mEditorState = 0;		
 		int mOpenCreateProjectState = 0;
-		bool bRunningOCD = false;
-		//int mOpenTileState = 0;
-		//int mOpenTileMapState = 0;
+		bool bRunningOCD = false;		
 		std::string mNewTileMapPath = "";
 		int mNewTileMapPaletteOffset = 0;
 		int mNewTileMapOffset = 0;
 		int mNewTileMapState = 0;
 		int mNewTileMapX = 0;
-		int mNewTileMapY = 0;
-		//int mDeleteUnusedTilesState = 0;
-		//int mPaletteUpdateState = 0;
+		int mNewTileMapY = 0;		
 		std::string mNewTilePath = "";
 		int mNewTileSize = 0;
 		int mDeleteTileMapState = 0;			
@@ -199,10 +192,7 @@ class TSettings{
 		bool bShowProjectInfo = false;		
 		bool bShowHelpDialog = false;		
 		int mSelectedTile = 0;
-		int mTileEdScale = 4;
-		//TTF_Font *TFont;
-		//TTF_Font *UFont;
-		//TTF_Font *LFont;
+		int mTileEdScale = 4;		
 		ImFont* DFont;
 		ImFont* SFont;
 		SDL_Color DefaultBGColor = {0xc0,0xc0,0xc0,0xff};
@@ -260,17 +250,6 @@ enum {
 	EMODE_TILESET,
 	EMODE_SELEDIT
 } emodes;
-
-/*
-		int mProjectSaveState = 0;
-		int mProjectOpenState = 0;
-		int mOpenCreateProjectState = 0;		
-		int mOpenTileState = 0;
-		int mOpenTileMapState = 0;		
-		int mDeleteUnusedTilesState = 0;
-		int mPaletteUpdateState = 0;		
-		int mDeleteTileMapState = 0;			
-*/
 
 enum {
 	ESTATE_NONE,	
