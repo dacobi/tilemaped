@@ -438,7 +438,7 @@ int TEditor::saveToFolder(std::string path){
 		if(fs::exists(fs::status(cColDat))){
 			fs::remove(cColDat);
 		}
-		
+
 		fs::path cColBin = path + DIRDEL + "col" + cColMapPrefix + ".bin";
 		if(fs::exists(fs::status(cColBin))){
 			fs::remove(cColBin);
@@ -2164,11 +2164,22 @@ int TEditor::handleBrushes(){
 int TEditor::handleColEdit(){
 
 	if(ImButtonsColEdit.mLeft.bButtonIsDown){
+		if(ImButtonsColEdit.mLeft.mMousePos.y < mColMapEdit.mColMapOffset) {return 0;}
 		int tSel = -1;		
-		tSel = searchRectsXY(mColMapEdit.TileAreas, cx, cy);
-		if(tSel > -1){
+		tSel = searchRectsXY(mColMapEdit.TileAreas, ImButtonsColEdit.mLeft.mMousePos.x, ImButtonsColEdit.mLeft.mMousePos.y);
+		if((tSel > -1)){
 			mColMapEdit.mSelectedTile = tSel;
 			mColMapEdit.mCollisionValue = mTileMap->mColMap.MapData[tSel];
+		}				
+	}
+
+	if(ImButtonsColEdit.mRight.bButtonIsDown){
+		if(ImButtonsColEdit.mRight.mMousePos.y < mColMapEdit.mColMapOffset) {return 0;}
+		int tSel = -1;		
+		tSel = searchRectsXY(mColMapEdit.TileAreas, ImButtonsColEdit.mRight.mMousePos.x, ImButtonsColEdit.mRight.mMousePos.y);
+		if((tSel > -1)){			
+			mColMapEdit.mSelectedTile = tSel;
+			mTileMap->mColMap.MapData[tSel] = mColMapEdit.mCollisionValue;
 		}				
 	}
 

@@ -2362,7 +2362,7 @@ int TileMap::loadFromFile(std::string path, std::string filename, bool bLoadColM
 		std::cout << "Load ColMap: " << cColMapPath  << std::endl;		
 		if(fs::exists(fs::status(cColMapPath))){	
 			std::cout << "ColMap Found" << std::endl;
-			if(mColMap.loadFromFile(cColMapPath)){
+			if(mColMap.loadFromFile(cColMapPath, this)){
 				return 1;
 			} else {
 				bHasCollisionMap = true;

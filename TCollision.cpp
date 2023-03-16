@@ -7,10 +7,7 @@ extern TSettings mGlobalSettings;
 int TCollisionMap::createNew(TileMap *cTileMap){
     mTileMap = cTileMap;
     MapData.resize(mGlobalSettings.CurrentEditor->mTileSet.TTiles.size(), 0);
-
-            //std::vector<unsigned char> FileData;
-        //std::vector<unsigned char> ;
-        return 0;
+    return 0;
 }
 
 int TCollisionMap::checkSize(){
@@ -31,7 +28,7 @@ int TCollisionMap::checkSize(){
 
 
 
-int TCollisionMap::loadFromFile(std::string filename){
+int TCollisionMap::loadFromFile(std::string filename, TileMap *cTileMap){
 
     std::string tmpStr,tmpStr2;
     int tmpInt,tmpInt2,tmpInt3;
@@ -51,7 +48,8 @@ int TCollisionMap::loadFromFile(std::string filename){
         for(int i = 0; i < tmpInt; i++){                                    
             convert >> tmpInt2;
             MapData.push_back(tmpInt2);
-        }
+        }        
+        mTileMap = cTileMap;
         return 0;
     }
 
@@ -64,6 +62,8 @@ int TCollisionMap::saveToFolder(std::string tpath, std::string tprefix){
     if(MapData.size() == 0){
         return 0;
     }
+
+    checkSize();
 
     std::string cColMapPath = tpath + DIRDEL + "col" + tprefix + ".dat";
 
@@ -128,7 +128,7 @@ int TCollisionMap::removeTile(int cDropTile){
     
 int TCollisionMapEditor::render(TileMap *cTileMap){
 
-    TileMap *mTMap = cTileMap;
+    mTileMap = cTileMap;
 
     int mCurColumns = 4;
 
@@ -140,8 +140,14 @@ int TCollisionMapEditor::render(TileMap *cTileMap){
         mCurColumns = 16;
     }
 
+    int mColSpace = 2;
+    int mCurTileScale = 4;
+    int mScroll = 0;
+
     int isOdd = mGlobalSettings.CurrentEditor->mTileSet.TTiles.size() % mCurColumns;
 	int cRowNum = mGlobalSettings.CurrentEditor->mTileSet.TTiles.size() / mCurColumns;
+
+    ImGui::SetNextWindowSize(ImVec2(700,900), ImGuiCond_Once);
 
     if(bUpdateWinPos){
 		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
@@ -150,32 +156,60 @@ int TCollisionMapEditor::render(TileMap *cTileMap){
 		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Once, ImVec2(0.5f, 0.5f));
 	}
 
-    ImGui::Begin("Collision Map", &mGlobalSettings.CurrentEditor->bShowCollisionEditor, ImGuiWindowFlags_AlwaysAutoResize);    
+    ImGui::Begin("Collision Map", &mGlobalSettings.CurrentEditor->bShowCollisionEditor); //, ImGuiWindowFlags_NoScrollbar); //ImGuiWindowFlags_AlwaysAutoResize);    
 
     std::stringstream convert;
     std::string sTile;
     convert <<  (mSelectedTile + 1) << std::endl;
     convert >> sTile;
 
-    std::string cCurTile = "Selected: " + sTile;
+    std::string cCurTile = "Selected Tile: " + sTile;
 
     ImGui::Text("%s",cCurTile.c_str());
 
     ImGui::SameLine();
 
-    if(ImGui::SliderInt("Collision Value", &mCollisionValue, 0, 255)){
-        mTMap->mColMap.MapData[mSelectedTile] = mCollisionValue;
+    ImGuiStyle& style2 = ImGui::GetStyle();
+
+    float size2 = ImGui::CalcTextSize("Set All Values").x + style2.FramePadding.x * 2.0f;
+    float avail2 = ImGui::GetContentRegionAvail().x;
+
+    float off2 = (avail2 - size2) - 10;
+    if(off2 > 0.0f){
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off2);
+	}
+
+    if(ImGui::Button("Set All Values")){
+        for(auto &cTVal : mTileMap->mColMap.MapData){
+            cTVal = mCollisionValue;
+        }
     }
+
+    if(ImGui::SliderInt("Collision Value", &mCollisionValue, 0, 255)){
+        mTileMap->mColMap.MapData[mSelectedTile] = mCollisionValue;
+    }
+
+    ImGui::Separator();
 
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(mGlobalSettings.DefaultBGColor.r,mGlobalSettings.DefaultBGColor.g,mGlobalSettings.DefaultBGColor.b)));    
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(mGlobalSettings.DefaultBGColor.r,mGlobalSettings.DefaultBGColor.g,mGlobalSettings.DefaultBGColor.b)));
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(mGlobalSettings.DefaultBGColor.r,mGlobalSettings.DefaultBGColor.g,mGlobalSettings.DefaultBGColor.b)));
 	
     ImVec2 cWinPos = ImGui::GetWindowPos();
+    ImVec2 cWinSize = ImGui::GetWindowSize();
 
-    int mColSpace = 2;
-    int mCurTileScale = 4;
-    int mScroll = 0;
+    ImGui::SetNextWindowSizeConstraints(ImVec2(cWinSize.x-20,cWinSize.y - 160),ImVec2(cWinSize.x-20,cWinSize.y - 160));
+
+    int cRowRen = cRowNum + (isOdd > 0);
+    int cAreaY = cRowRen * ((mGlobalSettings.TileSizeY * mCurTileScale ) + (mColSpace * 2));
+    
+    ImGui::SetNextWindowContentSize(ImVec2(cWinSize.x-20,cAreaY+10));
+
+    ImGui::BeginChild("Collision Tiles");//, ImVec2(0,0),false, ImGuiWindowFlags_AlwaysVerticalScrollbar);
+
+    ImVec2 tSubWinPos = ImGui::GetWindowPos();
+
+    mColMapOffset = tSubWinPos.y;
 
 	if(mCurColumns > 0){
 		for(int i = 0; i < cRowNum; i++){
@@ -200,6 +234,25 @@ int TCollisionMapEditor::render(TileMap *cTileMap){
 	}
 
 	ImGui::PopStyleColor(3);
+
+
+    ImGui::EndChild();
+
+    ImGui::Separator();
+    
+    ImGuiStyle& style = ImGui::GetStyle();
+
+    float size = ImGui::CalcTextSize("   Close   ").x + style.FramePadding.x * 2.0f;
+    float avail = ImGui::GetContentRegionAvail().x;
+
+    float off = (avail - size) * 0.5f;
+    if(off > 0.0f){
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+	}
+
+    if(ImGui::Button("   Close   ")){
+        mGlobalSettings.CurrentEditor->bShowCollisionEditor = false;
+    }
 
     mGlobalSettings.CurrentEditor->ImButtonsColEdit.updateButtonStates();
     
