@@ -819,12 +819,12 @@ int OCDialog::render(){
 	ImGui::BeginMainMenuBar();
 		if (ImGui::BeginMenu("File"))
 		{
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Open Project")).c_str())){
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Open")).c_str())){
 				bSubDialogActive = true;
 				bSubDialogIsOpen = true;
 				bDialogIsWatingForText = true;				
 			}
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Create Project")).c_str())){
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Create")).c_str())){
 				bSubDialogActive = true;
 				bSubDialogIsCreate = true;
 				bDialogIsWatingForText = true;				
@@ -1969,7 +1969,7 @@ int HDialog::render(){
 	ImGui::Separator();
 
 
-	 ImGuiStyle& style = ImGui::GetStyle();
+	ImGuiStyle& style = ImGui::GetStyle();
 
     float size = ImGui::CalcTextSize("   Close   ").x + style.FramePadding.x * 2.0f;
     float avail = ImGui::GetContentRegionAvail().x;

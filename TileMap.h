@@ -63,6 +63,7 @@ class TPalette : public Dialog{
 		int loadFromFile(std::string palPath);
 		int saveToFolder(std::string palPath);
 		int saveToFile(std::string palPath);
+		void close();
 		int importGimpPalette(std::string palPath);
 		int importPaletteEdit(std::string palPath);
 		bool bImportingPalette = false;		

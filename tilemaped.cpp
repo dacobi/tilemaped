@@ -297,8 +297,11 @@ void TSettings::close(){
 	TileRenderSize=16;
 	PaletteScale=2;
 	ProjectPath = "";
+	
 	ProjectPalettePath = "";	
 	bProjectHasPalette = false;
+	ProjectPalette.clear();
+	CurrentEditor->mPalette.close();
 
 	mEditorState = 0;
 	

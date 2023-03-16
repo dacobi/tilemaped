@@ -622,6 +622,21 @@ int TPalette::loadFromFile(std::string filename){
 	return 1;
 }
 
+void TPalette::close(){
+
+	if(TPalette.size()){
+		TPalette.clear();
+		TPaletteEdit.clear();
+	}
+
+	if(TPixels.size()){
+		for(int i = 0; i < TPixels.size(); i++){
+			delete TPixels[i];
+		}
+		TPixels.clear();
+	}
+}
+
 int TPalette::initPalette(){
 	if(TPalette.size()){
 		TPalette.clear();
@@ -655,6 +670,9 @@ int TPalette::updateTPixels(){
 
 int TPalette::initTPixels(){
 	if(TPixels.size()){
+		for(int i = 0; i < TPixels.size(); i++){
+			delete TPixels[i];
+		}
 		TPixels.clear();
 	}
 
