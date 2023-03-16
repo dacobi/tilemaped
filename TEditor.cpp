@@ -543,7 +543,7 @@ int TEditor::render(){
 		}
 
 		if(bShowCollisionEditor){
-			mColMapEdit.render(mTileMap);
+			mColMapEdit.render();
 		}
 	}
 	
@@ -1282,12 +1282,8 @@ int TEditor::activateColMapDialog(bool bCreateColMap){
 	if(bCreateColMap){		
 		mTileMap->createCollisionMap();
 	}
-
-	mTileMap->mColMap.checkSize();
-	
-	mColMapEdit.TileAreas.resize(mGlobalSettings.CurrentEditor->mTileSet.TTiles.size());
-	mColMapEdit.mCollisionValue = mTileMap->mColMap.MapData[mColMapEdit.mSelectedTile];
-
+		
+	mColMapEdit.startEdit(mTileMap);
 	bShowCollisionEditor = true;
 
 	return 0;
@@ -2752,6 +2748,8 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	mOpenTileSetDialog.bUpdateWinPos = true;
 	mOpenTileMapDialog.bUpdateWinPos = true;
 	mNewTileMapDialog.bUpdateWinPos = true;
+
+	mColMapEdit.bUpdateWinPos = true;
 
 	return 0;
 }

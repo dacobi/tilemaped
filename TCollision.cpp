@@ -123,12 +123,27 @@ int TCollisionMap::removeTile(int cDropTile){
 }
 
 
-
- 
-    
-int TCollisionMapEditor::render(TileMap *cTileMap){
+int TCollisionMapEditor::startEdit(TileMap *cTileMap){
 
     mTileMap = cTileMap;
+
+    mTileMap->mColMap.checkSize();
+	
+    mSelectedTile = 0;
+	TileAreas.resize(mGlobalSettings.CurrentEditor->mTileSet.TTiles.size());
+	mCollisionValue = mTileMap->mColMap.MapData[mSelectedTile];
+
+    return 0;
+}
+ 
+    
+int TCollisionMapEditor::render(){
+
+    if(mTileMap->mColMap.checkSize() != 0){
+        mSelectedTile = 0;
+        mCollisionValue = mTileMap->mColMap.MapData[mSelectedTile];
+        TileAreas.resize(mGlobalSettings.CurrentEditor->mTileSet.TTiles.size());
+    }
 
     int mCurColumns = 4;
 
@@ -136,9 +151,9 @@ int TCollisionMapEditor::render(TileMap *cTileMap){
         mCurColumns = 8;
     }
 
-    if(mGlobalSettings.CurrentEditor->mTileSet.TTiles.size() > 255){
-        mCurColumns = 16;
-    }
+    //if(mGlobalSettings.CurrentEditor->mTileSet.TTiles.size() > 255){
+    //    mCurColumns = 16;
+    //}
 
     int mColSpace = 2;
     int mCurTileScale = 4;

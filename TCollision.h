@@ -17,7 +17,8 @@ class TCollisionMap {
 
 class TCollisionMapEditor {
     public:   	
-        int render(TileMap *cTileMap);
+        int render();
+        int startEdit(TileMap *cTileMap);
         std::vector<SDL_Rect> TileAreas;
         TileMap *mTileMap;
         bool bUpdateWinPos=false;
