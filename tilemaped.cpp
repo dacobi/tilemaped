@@ -430,6 +430,8 @@ void TSettings::initHelpText(){
 	mHelpText.push_back("UNDO: Most changes to TileMap(s) and Tiles can be undone. Press (U) to undo\nand (R) to redo action. Some operations will clear the Undo Stack.");
 	mHelpText.push_back("SELECTION: Tiles and Pixels can be selected using the mouse. Hold (LEFT SHIFT)\nand (LEFT MOUSE BUTTON) to select a range by dragging.\nHold (LEFT SHIFT) and press (RIGHT MOUSE BUTTON)\nto modify Selection on a Tile/Pixel basis.\nPress (A) to select All, (N) to select None and (I) to Invert selection.");
 	mHelpText.push_back("BRUSHES: Press (F8) to open the Brush List, then select <width> and <height>\nand Press <Add Brush>. Press (RIGHT MOUSE BUTTON) in TileSet or Palette to add Brush Elements.\nPress (F9) to activate (next) Brush and (F10) to drop selected Brush.");
+	mHelpText.push_back("INPUT: When entering a value using a Slider Widget hold (LEFT CONTROL) and press\n(LEFT MOUSE BUTTON) on the widget to turn it into a TextInput Widget.");
+
 
 	mHelpTextMap.push_back("PLACE TILE: To place a Tile in the TileMap press (LEFT MOUSE BUTTON) to select\na Tile in the TileSet and then (LEFT MOUSE BUTTON) to place it in the TileMap.");
 	mHelpTextMap.push_back("SELECT TILE: Press (RIGHT MOUSE BUTTON) to select a Tile in the TileMap.\nPress (S) to show all Tiles of the Selected Tile Type.\nPress (RIGHT MOUSE BUTTON) on a Tile in the TileSet\nto replace all selected Tiles in the TileMap.");
@@ -454,9 +456,14 @@ void TSettings::initHelpText(){
 	mHelpTextPalette.push_back("IMPORT: Select <Import Palette> in the Edit menu to import a palette file.\nGimp palettes and TilemapEd palettes are supported.");
 	mHelpTextPalette.push_back("APPLY/CANCEL: Press <Apply Changes> to update the Project Palette.\nPress <Cancel Changes> to revert the Palette Editor to the Project Palette.");
 
+	mHelpTextColMapEditor.push_back("EDITOR: Click \"Edit->CollisionMap->Create\" to create a CollisionMap\nfor the current TileMap. Then press (LEFT MOUSE BUTTON) on a Tile to select it.");
+	mHelpTextColMapEditor.push_back("VALUES: Use the <Collision Value> Slider Widget to set the \"Collision Value\" of the\nselected Tile. Press (RIGHT MOUSE BUTTON) on a Tile to select it and set its \"Collision Value\"\nto the value of the previously selected Tile. Click <Set All Values>\nto set the \"Collision Value\" of all Tiles to the value of the currently selected Tile.");
+
 	mHelpTextImport.push_back("TILE: Tiles can be imported from PNG and RAW, when BPP is 8 or 4.\nPNGs must have BPP 8 and Height/Width equal to TileSizeX/TileSizeY.\nRAW binary files must have filesize of (TileSizeX*TileSizeY) divided by pixels pr byte.\nIf BPP is 4, Tile pixel values from PNG will be \"pixelvalue % 16\"");
 	mHelpTextImport.push_back("TILESET: TileSets can be imported from Project file or PNG.\nProject files must have the same BPP as current project.\nPNGs must have Width and Height where \"Width % TileSizeX\" equals zero.\nIf BPP is 4, Tile pixel values from PNG will be \"pixelvalue % 16\"."); 
 	mHelpTextImport.push_back("TILEMAP: TileMaps can be imported from Project files. A Tile value offset can be specified.\nThe final TileMap must not have any Tile values larger than the current TileSet.\nTo Import an existing TileMap with its TileSet, first Import the TileSet.\nThen open Project Info and take note of the Tile number of the first Tile in the TileSet.\nThen Import the TileMap with Tile offset set to the given Tile number.");
+
+	
 }
 
 void printUsage(){
@@ -516,6 +523,15 @@ void TSettings::printHelpText(){
 	for(const auto& cStr : mHelpTextPalette){
 		std::cout << cStr << std::endl;	
 	}
+
+	std::cout  << std::endl;		
+	std::cout << "CollisionMap:" << std::endl;	
+
+	for(const auto& cStr : mHelpTextColMapEditor){
+		std::cout << cStr << std::endl;	
+	}
+
+	std::cout  << std::endl;	
 
 	std::cout  << std::endl;		
 	std::cout << "Import:" << std::endl;	

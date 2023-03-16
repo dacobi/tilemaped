@@ -1876,6 +1876,7 @@ void HDialog::init(){
 	mHelpTextGeneral = mGlobalSettings.mHelpText;
 	mHelpTextPalette = mGlobalSettings.mHelpTextPalette;
 	mHelpTextImport = mGlobalSettings.mHelpTextImport;
+	mHelpTextColMapEditor = mGlobalSettings.mHelpTextColMapEditor;
 }
 
 void HDialog::recieveInput(int mKey){
@@ -1957,6 +1958,16 @@ int HDialog::render(){
 	}
 
 	ImGui::Separator();
+	
+	if(ImGui::CollapsingHeader("CollisionMap")){
+		ImGui::PushFont(mGlobalSettings.SFont);
+		for(int i = 0; i < mHelpTextColMapEditor.size(); i++){
+			ImGui::BulletText("%s", mHelpTextColMapEditor[i].c_str());
+		}
+		ImGui::PopFont();
+	}
+
+	ImGui::Separator();
 
 	if(ImGui::CollapsingHeader("Import")){
 		ImGui::PushFont(mGlobalSettings.SFont);
@@ -1967,6 +1978,8 @@ int HDialog::render(){
 	}
 
 	ImGui::Separator();
+
+	
 
 
 	ImGuiStyle& style = ImGui::GetStyle();

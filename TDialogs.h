@@ -225,6 +225,7 @@ class HDialog: public SDialog{
 		std::vector<std::string> mHelpTextImport;
 		std::vector<std::string> mHelpTextGeneral;
 		std::vector<std::string> mHelpTextSelection;
+		std::vector<std::string> mHelpTextColMapEditor;
 		virtual void init();
 		virtual void recieveInput(int mKey);		
 		virtual int render();

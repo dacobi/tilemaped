@@ -217,6 +217,7 @@ class TSettings{
 		std::vector<std::string> mHelpTextPalette;
 		std::vector<std::string> mHelpTextImport;
 		std::vector<std::string> mHelpTextSelection;
+		std::vector<std::string> mHelpTextColMapEditor;
 		int mLastTick = 0;
 		int mCurrentTick = 0;
 		int initSettings();
