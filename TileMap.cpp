@@ -2358,15 +2358,14 @@ int TileMap::loadFromFile(std::string path, std::string filename, bool bLoadColM
 	if(bLoadColMap){
 		
 		std::string cColMapPath;
-		cColMapPath = path + DIRDEL + "col" + filename.substr(0,filename.find(".")) + ".dat";
-		std::cout << "Load ColMap: " << cColMapPath  << std::endl;		
+		cColMapPath = path + DIRDEL + "col" + filename.substr(0,filename.find(".")) + ".dat";		
 		if(fs::exists(fs::status(cColMapPath))){	
-			std::cout << "ColMap Found" << std::endl;
+			std::cout << "CollisionMap Found" << std::endl;
 			if(mColMap.loadFromFile(cColMapPath, this)){
+				std::cout << "Error Loading CollisionMap: " << cColMapPath << std::endl;
 				return 1;
 			} else {
-				bHasCollisionMap = true;
-				std::cout << "ColMap True" << std::endl;
+				bHasCollisionMap = true;				
 			}
 		}
 	}
