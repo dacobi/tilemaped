@@ -1158,6 +1158,9 @@ int TEditor::showMessage(std::string cMessage, bool isError){
 }
 
 bool TEditor::checkQuit(){
+
+	if(mGlobalSettings.mio->WantCaptureKeyboard) return true;
+
 	if(mCurMode == EMODE_MAP){
 		if(bShowCollisionEditor){
 			bShowCollisionEditor = false;
