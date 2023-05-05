@@ -58,6 +58,7 @@ class TPalette : public Dialog{
 		std::vector<SDL_Color> TPalette;
 		std::vector<SDL_Color> TPaletteEdit;
 		ImVec4 mEditColor;
+		ImVec4 mEditColorPick;
 		bool bUpdateEditColor = true;	
 		int initPalette();
 		int loadFromFile(std::string palPath);
@@ -76,6 +77,7 @@ class TPalette : public Dialog{
 		ImU32 getImColor(SDL_Color cColor);	
 		ImVec4 getIm4Color(SDL_Color cColor);
 		SDL_Color getSDLColor(ImVec4 cCol);
+		SDL_Color getSDLColor4Bit(int cR, int cG, int cB);
 		int updatePalette();
 		int renderEditor(int xpos, int ypos);
 		int renderIm(int xpos, int ypos);
@@ -83,6 +85,7 @@ class TPalette : public Dialog{
 		SDL_Rect renderTileEd(int xpos,int ypos, int tcolor);
 		SDL_Rect renderTileEd(int xpos,int ypos, int tcolor, int cScale);
 		SDL_Rect renderSelEd(int xpos,int ypos, int tcolor, int cScale);
+		std::vector<std::string> mMapColorVals = {"0/0","1/17","2/34","3/51","4/68","5/85","6/102","7/119","8/136","9/153","10/170","11/187","12/204","13/221","14/238","15/255"};
 		std::map<int,int> mMapColorIn = {{0,0},{1,17},{2,34},{3,51},{4,68},{5,85},{6,102},{7,119},{8,136},{9,153},{10,170},{11,187},{12,204},{13,221},{14,238},{15,255}};
 		std::map<int,int> mMapColorOut = {{0,0},{17,1},{34,2},{51,3},{68,4},{85,5},{102,6},{119,7},{136,8},{153,9},{170,10},{187,11},{204,12},{221,13},{238,14},{255,15}};
 };

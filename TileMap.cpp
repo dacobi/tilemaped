@@ -280,6 +280,21 @@ void TTexture::renderEd(int xpos, int ypos, TPalette* tpal){
 
 }
 
+SDL_Color TPalette::getSDLColor4Bit(int cR, int cG, int cB){
+	SDL_Color nCol;
+	nCol.a = 0xff;
+
+	int tColR =  mMapColorIn[cR];
+	int tColG =  mMapColorIn[cG];
+	int tColB =  mMapColorIn[cB];
+
+	nCol.r = tColR;
+	nCol.g = tColG;
+	nCol.b = tColB;
+
+	return nCol;
+}
+
 SDL_Color TPalette::getSDLColor(ImVec4 cCol){
 	SDL_Color nCol;
 	nCol.a = 0xff;
@@ -846,7 +861,22 @@ int TPalette::renderEditor(int xpos,int ypos){
     ImGuiColorEditFlags misc_flags = ( 0 ); //: ImGuiColorEditFlags_NoOptions);
 
 	ImGui::Text("Change Selected Color");     
-	ImGui::ColorEdit3("Selected Color##1", (float*)&mEditColor, misc_flags);
+
+	static int mR, mG, mB;
+
+	mR = (mEditColor.x * 255.0f) / 16;
+	mG = (mEditColor.y * 255.0f) / 16;
+	mB = (mEditColor.z * 255.0f) / 16;
+
+	const char *mRval = mMapColorVals[mR].c_str();
+	const char *mGval = mMapColorVals[mG].c_str();
+	const char *mBval = mMapColorVals[mB].c_str();
+
+	//ImGui::ColorEdit3("Selected Color##1", (float*)&mEditColor, misc_flags);
+
+	ImGui::SliderInt("Red", &mR, 0, 15, mRval, ImGuiSliderFlags_NoInput);
+	ImGui::SliderInt("Green", &mG, 0, 15, mGval, ImGuiSliderFlags_NoInput);
+	ImGui::SliderInt("Blue", &mB, 0, 15, mBval, ImGuiSliderFlags_NoInput);
 	
 	bool bColorPicker = ImGui::ColorButton("Selected Color##3b", mEditColor, misc_flags);
 	ImGui::SameLine();
@@ -854,7 +884,8 @@ int TPalette::renderEditor(int xpos,int ypos){
 
 	if(bColorPicker){
 	    ImGui::OpenPopup("mypicker");
-		backup_color = mEditColor;		
+		backup_color = mEditColor;
+		mEditColorPick = mEditColor;
 	}
 
 	ImVec2 sPos = ImGui::GetWindowPos();
@@ -865,27 +896,47 @@ int TPalette::renderEditor(int xpos,int ypos){
         {
             ImGui::Text("Select Color");
             ImGui::Separator();
-            ImGui::ColorPicker3("##picker", (float*)&mEditColor, misc_flags | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview);
-            ImGui::SameLine();            
+            ImGui::ColorPicker3("##picker", (float*)&mEditColorPick, misc_flags | ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview | ImGuiColorEditFlags_NoInputs);
+            //ImGui::SameLine();            
             ImGui::Text("Current");
-            ImGui::ColorButton("##current", mEditColor, ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreviewHalf, ImVec2(60, 40));
+			ImGui::SameLine();            
+            ImGui::ColorButton("##current", mEditColorPick, ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreviewHalf, ImVec2(60, 40));
+			ImGui::SameLine();            
             ImGui::Text("Previous");
-            if (ImGui::ColorButton("##previous", backup_color, ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreviewHalf, ImVec2(60, 40)))
-                	mEditColor = backup_color;
-            
+			ImGui::SameLine();            	
+            if (ImGui::ColorButton("##previous", backup_color, ImGuiColorEditFlags_NoPicker | ImGuiColorEditFlags_AlphaPreviewHalf, ImVec2(60, 40))){
+                	mEditColorPick = backup_color;
+			}
+
+			if(ImGui::Button("Choose")){
+				mR = (mEditColorPick.x * 255.0f) / 16;
+				mG = (mEditColorPick.y * 255.0f) / 16;
+				mB = (mEditColorPick.z * 255.0f) / 16;
+
+				bColorPicker = false;				
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SameLine();
+
+			if(ImGui::Button("Close")){
+				bColorPicker = false;
+				ImGui::CloseCurrentPopup();
+			}
+
             ImGui::EndPopup();
         }
 
 
 	ImVec2 cSize;
 	cSize.x = 20 + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4) * 16);
-	cSize.y = 210 + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4) * 16);
+	cSize.y = 270 + ((mGlobalSettings.TileRenderSize*mGlobalSettings.PaletteScale+4) * 16);
 
 	ImGui::SetWindowSize(cSize, ImGuiCond_Once);
 
 	ImVec2 cPos = ImGui::GetWindowPos();
 	cPos.x += 10;
-	cPos.y += 180;
+	cPos.y += 255;
 
 	for(int i = 0; i < 16; i++){
 		for(int j = 0; j < 16; j++){
@@ -899,7 +950,9 @@ int TPalette::renderEditor(int xpos,int ypos){
 	mGlobalSettings.CurrentEditor->ImButtonsPalette.updateButtonStates();
 
 
-	TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelectedEdit] = getSDLColor(mEditColor);
+	TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelectedEdit] = getSDLColor4Bit(mR, mG, mB);
+	mEditColor = getIm4Color(TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelectedEdit]);
+	//TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelectedEdit] = getSDLColor(mEditColor);
 
 	if(ImGui::Button("Apply Changes")){
 		mGlobalSettings.CurrentEditor->activatePaletteUpdate();
