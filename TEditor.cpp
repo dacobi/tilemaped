@@ -939,7 +939,8 @@ int TEditor::activatePaletteUpdate(){
 
 int TEditor::activatePaletteEdit(){
 	if(mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor){		
-		mPalette.mEditColor = mPalette.getIm4Color(mPalette.TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelected]);		
+		mPalette.mEditColor = mPalette.getIm4Color(mPalette.TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelected]);	
+		mPalette.setEditColor();	
 		if(mColorSelectedTileEdit){
 			mColorSelectedTileEdit->bPixelSelectedEdit = false;
 		}
@@ -1817,6 +1818,7 @@ int TEditor::handlePaletteEdit(){
 			mColorSelectedTileEdit = mPalette.TPixels[tSel];
 			mColorSelectedTileEdit->bPixelSelectedEdit = true;
 			mPalette.mEditColor = mPalette.getIm4Color(mPalette.TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelectedEdit]);
+			mPalette.setEditColor();
 		}
 	}
 
@@ -1825,6 +1827,7 @@ int TEditor::handlePaletteEdit(){
 		tSel = searchRectsXY(mPalette.PixelAreas, ImButtonsPalette.mRight.mMousePos.x, ImButtonsPalette.mRight.mMousePos.y);
 		if(tSel != -1){			
 			mPalette.mEditColor = mPalette.getIm4Color(mPalette.TPaletteEdit[tSel]);
+			mPalette.setEditColor();	
 		}
 	}
 

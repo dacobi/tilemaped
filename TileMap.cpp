@@ -830,6 +830,12 @@ int TPalette::renderIm(int xpos,int ypos){
 return 0;
 }
 
+void TPalette::setEditColor(){
+	mR = (mEditColor.x * 255.0f) / 16;
+	mG = (mEditColor.y * 255.0f) / 16;
+	mB = (mEditColor.z * 255.0f) / 16;
+}
+
 int TPalette::renderEditor(int xpos,int ypos){
 	
 	Dialog::render(xpos, ypos);
@@ -862,21 +868,15 @@ int TPalette::renderEditor(int xpos,int ypos){
 
 	ImGui::Text("Change Selected Color");     
 
-	static int mR, mG, mB;
-
-	mR = (mEditColor.x * 255.0f) / 16;
-	mG = (mEditColor.y * 255.0f) / 16;
-	mB = (mEditColor.z * 255.0f) / 16;
+	
 
 	const char *mRval = mMapColorVals[mR].c_str();
 	const char *mGval = mMapColorVals[mG].c_str();
 	const char *mBval = mMapColorVals[mB].c_str();
 
-	//ImGui::ColorEdit3("Selected Color##1", (float*)&mEditColor, misc_flags);
-
-	ImGui::SliderInt("Red", &mR, 0, 15, mRval, ImGuiSliderFlags_NoInput);
-	ImGui::SliderInt("Green", &mG, 0, 15, mGval, ImGuiSliderFlags_NoInput);
-	ImGui::SliderInt("Blue", &mB, 0, 15, mBval, ImGuiSliderFlags_NoInput);
+	ImGui::SliderInt("Red", &mR, 0, 15, mRval, ImGuiSliderFlags_AlwaysClamp);
+	ImGui::SliderInt("Green", &mG, 0, 15, mGval, ImGuiSliderFlags_AlwaysClamp);
+	ImGui::SliderInt("Blue", &mB, 0, 15, mBval, ImGuiSliderFlags_AlwaysClamp);
 	
 	bool bColorPicker = ImGui::ColorButton("Selected Color##3b", mEditColor, misc_flags);
 	ImGui::SameLine();
@@ -952,6 +952,7 @@ int TPalette::renderEditor(int xpos,int ypos){
 
 	TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelectedEdit] = getSDLColor4Bit(mR, mG, mB);
 	mEditColor = getIm4Color(TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelectedEdit]);
+
 	//TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelectedEdit] = getSDLColor(mEditColor);
 
 	if(ImGui::Button("Apply Changes")){
@@ -963,6 +964,7 @@ int TPalette::renderEditor(int xpos,int ypos){
 	if(ImGui::Button("Cancel Changes")){
 		TPaletteEdit = TPalette;
 		mEditColor = getIm4Color(TPalette[mGlobalSettings.CurrentEditor->mColorSelectedEdit]);
+		setEditColor();	
 	}
 
 	ImGui::End();
