@@ -868,8 +868,6 @@ int TPalette::renderEditor(int xpos,int ypos){
 
 	ImGui::Text("Change Selected Color");     
 
-	
-
 	const char *mRval = mMapColorVals[mR].c_str();
 	const char *mGval = mMapColorVals[mG].c_str();
 	const char *mBval = mMapColorVals[mB].c_str();

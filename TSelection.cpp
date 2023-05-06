@@ -920,8 +920,8 @@ int TBrushList::renderIm(){
 
     ImGui::Begin(cTitleType.c_str(), bIsShown);
 
-    ImGui::SliderInt("Brush Width", &mNewBrushX, 1, mMaxX);
-    ImGui::SliderInt("Brush Height", &mNewBrushY, 1, mMaxY);
+    ImGui::SliderInt("Brush Width", &mNewBrushX, 1, mMaxX,"%d", ImGuiSliderFlags_AlwaysClamp);
+    ImGui::SliderInt("Brush Height", &mNewBrushY, 1, mMaxY,"%d", ImGuiSliderFlags_AlwaysClamp);
 
     if(ImGui::Button("Add Brush")){
         addBrush(mNewBrushX, mNewBrushY);

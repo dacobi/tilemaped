@@ -200,7 +200,7 @@ int TCollisionMapEditor::render(){
         }
     }
 
-    if(ImGui::SliderInt("Collision Value", &mCollisionValue, 0, 255)){
+    if(ImGui::SliderInt("Collision Value", &mCollisionValue, 0, 255,"%d", ImGuiSliderFlags_AlwaysClamp)){
         mTileMap->mColMap.MapData[mSelectedTile] = mCollisionValue;
     }
 

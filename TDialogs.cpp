@@ -338,10 +338,10 @@ int TBDialog::render(){
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET){
 				if(ImGui::BeginMenu("TileSet Edit")){
-					if(ImGui::SliderInt("Grid Width", &mGlobalSettings.mTileSetEditWidth, 2, 16)){
+					if(ImGui::SliderInt("Grid Width", &mGlobalSettings.mTileSetEditWidth, 2, 16,"%d", ImGuiSliderFlags_AlwaysClamp)){
 						mGlobalSettings.CurrentEditor->mTileSet.bUpdateEditSelection = true;
 					}
-					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mTileSetEditScale, 2, 24)){
+					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mTileSetEditScale, 2, 24,"%d", ImGuiSliderFlags_AlwaysClamp)){
 						mGlobalSettings.CurrentEditor->mTileSet.bUpdateEditSelectionScale = true;
 					}
 					ImGui::EndMenu();
@@ -351,7 +351,7 @@ int TBDialog::render(){
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SELEDIT){
 				if(ImGui::BeginMenu("Selection Edit")){					
-					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mSelectionEditScale, 2, 24)){
+					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mSelectionEditScale, 2, 24,"%d", ImGuiSliderFlags_AlwaysClamp)){
 						mGlobalSettings.CurrentEditor->mSelEdit.bUpdateEditSelectionScale = true;
 					}
 					ImGui::EndMenu();
@@ -1042,10 +1042,10 @@ int CTMDialog::render(){
 		ImGui::RadioButton("H: 256", &tmapy, 256);
 
 		int mMax = mGlobalSettings.CurrentEditor->mTileSet.TTiles.size();
-		ImGui::SliderInt("Initial Tile Value", &toffset, 1, mMax);
+		ImGui::SliderInt("Initial Tile Value", &toffset, 1, mMax,"%d", ImGuiSliderFlags_AlwaysClamp);
 
 		if(mGlobalSettings.TileSetBPP < 0x8){
-			ImGui::SliderInt("Initial Palette Offset", &mPaletteOffset, 0, 15);
+			ImGui::SliderInt("Initial Palette Offset", &mPaletteOffset, 0, 15,"%d", ImGuiSliderFlags_AlwaysClamp);
 		}
 
 		ImGui::Text("Undo Stack will be cleared");  
@@ -1371,17 +1371,7 @@ int RNDialog::render(int xpos, int ypos){
 	ImGui::Begin("Hello, world!", &isShown);                          // Create a window called "Hello, world!" and append into it.
 
    		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-   		/*ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-   		ImGui::Checkbox("Another Window", &show_another_window);
-
-        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-        ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-        if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-            counter++;
-            //ImGui::SameLine();
-	    ImGui::Text("counter = %d", counter);*/
-		
+   		
 		ImGui::Image((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[1]->TileTex, ImVec2(160,160));
 		if(ImGui::IsMouseClicked(1)){
 				int x = mGlobalSettings.mio->MousePos.x;
@@ -1634,11 +1624,11 @@ int ITMDialog::render(){
 
 	if(bUseOffset){
 		int mMax = mGlobalSettings.CurrentEditor->mTileSet.TTiles.size();
-		ImGui::SliderInt("Tile Offset", &mTileOffset, 1, mMax);
+		ImGui::SliderInt("Tile Offset", &mTileOffset, 1, mMax,"%d", ImGuiSliderFlags_AlwaysClamp);
 	}
 
 	if(mGlobalSettings.TileSetBPP < 0x8){
-			ImGui::SliderInt("Palette Offset", &mPaletteOffset, 0, 15);
+			ImGui::SliderInt("Palette Offset", &mPaletteOffset, 0, 15,"%d", ImGuiSliderFlags_AlwaysClamp);
 	}
 	
 	mTextInput.render();
