@@ -746,7 +746,7 @@ int main( int argc, char* args[] )
 	bool bMaximize = false;
 	
 #ifdef MAPPIMAGE
-	fs::path inipath = "~/.tilemaped";
+	fs::path inipath = std::string(getenv("HOME")) + "/.tilemaped";
 	if(!fs::is_directory(fs::status(inipath))){		
 		try{
 			fs::create_directory(inipath);			
@@ -755,11 +755,16 @@ int main( int argc, char* args[] )
 			return 1;
 		}
 	}
-#endif
-
+	if(fs::exists(fs::status(inipath.string()+DIRDEL+"tilemaped.ini"))){
+		mINIFile.load(inipath.string()+DIRDEL+"tilemaped.ini");
+		//std::cout << "INI LOAD" << std::endl;
+	}
+#else
 	if(fs::exists(fs::status(mINIPath))){
 		mINIFile.load(mINIPath);
+		//std::cout << "INI LOAD" << std::endl;
 	}
+#endif
 
 	switch(mINIFile.Sys_Renderer->ivalue)
 	{
@@ -1016,7 +1021,11 @@ int main( int argc, char* args[] )
 		mGlobalSettings.shutdown();		
 	}
 	
+#ifdef MAPPIMAGE
+	mINIFile.writedefault(inipath.string()+DIRDEL+"tilemaped.ini");
+#else
 	mINIFile.writedefault(mINIPath);
-
+#endif
+	
 	return 0;
 }
