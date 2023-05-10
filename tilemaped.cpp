@@ -746,7 +746,7 @@ int main( int argc, char* args[] )
 	bool bMaximize = false;
 	
 #ifdef MAPPIMAGE
-	fs::path inipath = std::string(getenv("HOME")) + "/.tilemaped";
+	fs::path inipath = std::string(getenv("HOME")) + DIRDEL + ".tilemaped";
 	if(!fs::is_directory(fs::status(inipath))){		
 		try{
 			fs::create_directory(inipath);			
@@ -756,13 +756,11 @@ int main( int argc, char* args[] )
 		}
 	}
 	if(fs::exists(fs::status(inipath.string()+DIRDEL+"tilemaped.ini"))){
-		mINIFile.load(inipath.string()+DIRDEL+"tilemaped.ini");
-		//std::cout << "INI LOAD" << std::endl;
+		mINIFile.load(inipath.string()+DIRDEL+"tilemaped.ini");		
 	}
 #else
 	if(fs::exists(fs::status(mINIPath))){
-		mINIFile.load(mINIPath);
-		//std::cout << "INI LOAD" << std::endl;
+		mINIFile.load(mINIPath);		
 	}
 #endif
 
@@ -781,8 +779,7 @@ int main( int argc, char* args[] )
 	}
 
 	if(mINIFile.Sys_VSYNC->ivalue == 0){
-		bNoVsync = true;
-		//std::cout << "VSYNC" << std::endl;
+		bNoVsync = true;		
 	}
 
 	if(mINIFile.Win_Maximize->ivalue == 1){
