@@ -483,7 +483,7 @@ void printUsage(){
 		std::cout << "TilemapEd Version: " << TilemapEd_Version  << std::endl;
 		std::cout << std::endl;	
 		std::cout << "Command Line Usage:" << std::endl;
-		std::cout << "tilemaped [ --opengl, --d3d, --software, --window, --maximize, --vsync, --novsync ]" << std::endl;		
+		std::cout << "tilemaped [ --opengl, --d3d, --software, --window, --maximize, --vsync, --novsync ] (options are saved to \""+mINIPath+"\")" << std::endl;		
 		std::cout << "tilemaped -o <folder>" << std::endl;		
 		std::cout << "tilemaped -n <mapwidth> <mapheight> <tilewidth> <tileheight> <folder> [ -p <palette file> ]" << std::endl;
 		std::cout << "tilemaped -c <Gimp Palette> <palfile.bin>" << std::endl;		
@@ -809,6 +809,7 @@ int main( int argc, char* args[] )
 		//bNoVsync = argvals & 0x10;
 		//bRenderD3D = argvals & 0x40;
 		
+		/*
 		if(argvals & 0x8){
 			bRunSoftware = true;
 		}
@@ -832,13 +833,14 @@ int main( int argc, char* args[] )
 		if(argvals & 0x400){
 			bMaximize = true;
 		}
+		*/
 	}
 
 	if((argvals & 0x2)){ // || (argvals == 10) || (argvals == 18) || (argvals == 26) || (argvals == 66)){
 		//bRunSoftware = argvals & 0x8;
 		//bNoVsync = argvals & 0x10;
 		//bRenderD3D = argvals & 0x40;
-
+		/*
 		if(argvals & 0x8){
 			bRunSoftware = true;
 		}
@@ -861,7 +863,7 @@ int main( int argc, char* args[] )
 		}
 		if(argvals & 0x400){
 			bMaximize = true;
-		}
+		}*/
 	}
 
 	if((argvals & 0x4)){ // || (argvals == 12) || (argvals == 20) || (argvals == 28) || (argvals == 68)){
@@ -869,7 +871,7 @@ int main( int argc, char* args[] )
 		//bRunSoftware = argvals & 0x8;
 		//bNoVsync = argvals & 0x10;
 		//bRenderD3D = argvals & 0x40;
-
+	/*
 		if(argvals & 0x8){
 			bRunSoftware = true;
 		}
@@ -893,6 +895,32 @@ int main( int argc, char* args[] )
 		if(argvals & 0x400){
 			bMaximize = true;
 		}
+		*/
+	}
+
+	if(argvals & 0x8){
+		bRunSoftware = true;
+		bRenderD3D = false;
+	}
+	if(argvals & 0x10){
+		bNoVsync = true;
+	}
+	if(argvals & 0x40){
+		bRenderD3D = true;
+		bRunSoftware = false;
+	}
+	if(argvals & 0x80){
+		bRunSoftware = false;
+		bRenderD3D = false;
+	}
+	if(argvals & 0x100){
+		bNoVsync = false;
+	}
+	if(argvals & 0x200){
+		bMaximize = false;
+	}
+	if(argvals & 0x400){
+		bMaximize = true;
 	}
 
 	mINIFile.Sys_VSYNC->ivalue = !bNoVsync;
