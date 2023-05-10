@@ -79,6 +79,16 @@ Settings::Settings(){
 	
 	error_catch = new sKey("error_catch", type_int, 0);
 
+	keys.push_back(error_catch);
+
+    for(int i = 0; i < keys.size(); i++){
+		keyindex[keys[i]->kname] = i;
+	}
+		
+}
+
+
+ProjectSettings::ProjectSettings(){	
     Editor_SelectionAppend = new sKey("Editor_SelectionAppend", type_bool, true);
 	Tile_ShowPixelGrid = new sKey("Tile_ShowPixelGrid", type_bool, true);
 	TileSet_ShowPixelGrid = new sKey("TileSet_ShowPixelGrid", type_bool, true);
@@ -88,9 +98,7 @@ Settings::Settings(){
 	TileSet_EditWidth = new sKey("TileSet_EditWidth", type_int, 4);
 	SelectionEdit_ShowPixelGrid = new sKey("SelectionEdit_ShowPixelGrid", type_bool, true);
 	SelectionEdit_ShowTileGrid = new sKey("SelectionEdit_ShowTileGrid", type_bool, true);
-	
-
-	keys.push_back(error_catch);
+		
     keys.push_back(Editor_SelectionAppend);
 	keys.push_back(Tile_ShowPixelGrid);
 	keys.push_back(TileSet_ShowPixelGrid);
@@ -107,7 +115,27 @@ Settings::Settings(){
 		
 }
 
-void Settings::close(){
+ProgramSettings::ProgramSettings(){	
+	Sys_Renderer = new sKey("Sys_Renderer", type_int, 0);
+	Sys_VSYNC = new sKey("Sys_VSYNC", type_bool, true);
+	Win_Maximize = new sKey("Win_Maximize", type_bool, false);	
+
+	keys.push_back(Sys_Renderer);
+	keys.push_back(Sys_VSYNC);
+	keys.push_back(Win_Maximize);	
+
+	for(int i = 0; i < keys.size(); i++){
+		keyindex[keys[i]->kname] = i;
+	}
+}
+
+void ProgramSettings::close(){
+	Sys_Renderer->ivalue = 0;
+	Sys_VSYNC->ivalue = true;
+	Win_Maximize->ivalue = false;
+}
+
+void ProjectSettings::close(){
 	Editor_SelectionAppend->ivalue = true;
 	Tile_ShowPixelGrid->ivalue = true;
 	TileSet_ShowPixelGrid->ivalue = true;

@@ -337,26 +337,26 @@ int TEditor::loadFromFolder(std::string path){
 	mGlobalSettings.ProjectPath = path;
 
 	if(fs::exists(fs::status(path + DIRDEL + "settings.ini"))){
-		if(mGlobalSettings.ProjectSettings.load(path + DIRDEL + "settings.ini")){
+		if(mGlobalSettings.mProjectSettings.load(path + DIRDEL + "settings.ini")){
 			std::cout << "Error Loading Settings" << std::endl;
 		} else {
 			std::cout << "Loading Settings" << std::endl;
-			mGlobalSettings.mSelectionMode = mGlobalSettings.ProjectSettings.Editor_SelectionAppend->getBool();
+			mGlobalSettings.mSelectionMode = mGlobalSettings.mProjectSettings.Editor_SelectionAppend->getBool();
 
-			mGlobalSettings.bShowPixelGrid = mGlobalSettings.ProjectSettings.Tile_ShowPixelGrid->getBool();
+			mGlobalSettings.bShowPixelGrid = mGlobalSettings.mProjectSettings.Tile_ShowPixelGrid->getBool();
 			
-			mGlobalSettings.bShowTilePixelGrid = mGlobalSettings.ProjectSettings.TileSet_ShowPixelGrid->getBool();
-			mGlobalSettings.bShowTileGrid = mGlobalSettings.ProjectSettings.TileSet_ShowTileGrid->getBool();
+			mGlobalSettings.bShowTilePixelGrid = mGlobalSettings.mProjectSettings.TileSet_ShowPixelGrid->getBool();
+			mGlobalSettings.bShowTileGrid = mGlobalSettings.mProjectSettings.TileSet_ShowTileGrid->getBool();
 			
-			mGlobalSettings.bTileSetOrderUpdateTileMap = mGlobalSettings.ProjectSettings.TileSet_UpdateMaps->getBool();
-			mGlobalSettings.bTileSetWarnBeforeDelete = mGlobalSettings.ProjectSettings.TileSet_WarnBeforeDelete->getBool();
+			mGlobalSettings.bTileSetOrderUpdateTileMap = mGlobalSettings.mProjectSettings.TileSet_UpdateMaps->getBool();
+			mGlobalSettings.bTileSetWarnBeforeDelete = mGlobalSettings.mProjectSettings.TileSet_WarnBeforeDelete->getBool();
 			
-			mTileSet.mSelEdWidth = mGlobalSettings.ProjectSettings.TileSet_EditWidth->getInteger();
+			mTileSet.mSelEdWidth = mGlobalSettings.mProjectSettings.TileSet_EditWidth->getInteger();
 			mGlobalSettings.mTileSetEditWidth = mTileSet.mSelEdWidth;
 			mTileSet.resizeEdit();		
 
-			mGlobalSettings.bShowTilePixelSelGrid = mGlobalSettings.ProjectSettings.SelectionEdit_ShowPixelGrid->getBool();
-			mGlobalSettings.bShowTileSelGrid = mGlobalSettings.ProjectSettings.SelectionEdit_ShowTileGrid->getBool();
+			mGlobalSettings.bShowTilePixelSelGrid = mGlobalSettings.mProjectSettings.SelectionEdit_ShowPixelGrid->getBool();
+			mGlobalSettings.bShowTileSelGrid = mGlobalSettings.mProjectSettings.SelectionEdit_ShowTileGrid->getBool();
 		}
 	}
 
@@ -459,21 +459,21 @@ int TEditor::saveToFolder(std::string path){
 	mBrushesPixel.saveToFile(path + DIRDEL + "pbrushes.dat");
 
 
-	mGlobalSettings.ProjectSettings.Editor_SelectionAppend->ivalue = mGlobalSettings.mSelectionMode;
+	mGlobalSettings.mProjectSettings.Editor_SelectionAppend->ivalue = mGlobalSettings.mSelectionMode;
 
-	mGlobalSettings.ProjectSettings.Tile_ShowPixelGrid->ivalue = mGlobalSettings.bShowPixelGrid;
+	mGlobalSettings.mProjectSettings.Tile_ShowPixelGrid->ivalue = mGlobalSettings.bShowPixelGrid;
 
-	mGlobalSettings.ProjectSettings.TileSet_ShowPixelGrid->ivalue = mGlobalSettings.bShowTilePixelGrid;
-	mGlobalSettings.ProjectSettings.TileSet_ShowTileGrid->ivalue = mGlobalSettings.bShowTileGrid;
+	mGlobalSettings.mProjectSettings.TileSet_ShowPixelGrid->ivalue = mGlobalSettings.bShowTilePixelGrid;
+	mGlobalSettings.mProjectSettings.TileSet_ShowTileGrid->ivalue = mGlobalSettings.bShowTileGrid;
 
- 	mGlobalSettings.ProjectSettings.TileSet_UpdateMaps->ivalue = mGlobalSettings.bTileSetOrderUpdateTileMap;
-	mGlobalSettings.ProjectSettings.TileSet_WarnBeforeDelete->ivalue = mGlobalSettings.bTileSetWarnBeforeDelete;
- 	mGlobalSettings.ProjectSettings.TileSet_EditWidth->ivalue = mTileSet.mSelEdWidth;
+ 	mGlobalSettings.mProjectSettings.TileSet_UpdateMaps->ivalue = mGlobalSettings.bTileSetOrderUpdateTileMap;
+	mGlobalSettings.mProjectSettings.TileSet_WarnBeforeDelete->ivalue = mGlobalSettings.bTileSetWarnBeforeDelete;
+ 	mGlobalSettings.mProjectSettings.TileSet_EditWidth->ivalue = mTileSet.mSelEdWidth;
 
-	mGlobalSettings.ProjectSettings.SelectionEdit_ShowPixelGrid->ivalue = mGlobalSettings.bShowTilePixelSelGrid;
-	mGlobalSettings.ProjectSettings.SelectionEdit_ShowTileGrid->ivalue = mGlobalSettings.bShowTileSelGrid;
+	mGlobalSettings.mProjectSettings.SelectionEdit_ShowPixelGrid->ivalue = mGlobalSettings.bShowTilePixelSelGrid;
+	mGlobalSettings.mProjectSettings.SelectionEdit_ShowTileGrid->ivalue = mGlobalSettings.bShowTileSelGrid;
 
-	mGlobalSettings.ProjectSettings.writedefault(path + DIRDEL + "settings.ini");
+	mGlobalSettings.mProjectSettings.writedefault(path + DIRDEL + "settings.ini");
 
 	return 0;
 }

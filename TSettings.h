@@ -109,7 +109,7 @@ public:
 	int load(std::string filename);
 	bool bLoaded = false;
 	int writedefault(std::string filename);
-	void close();
+	
 	std::map<std::string,int> keyindex;
 	std::vector<sKey*> keys;
 	
@@ -119,7 +119,14 @@ public:
 
 	sKey* getKey(std::string gKeyName);
 
+	sKey *error_catch;
+};
 
+class ProjectSettings : public Settings{
+public:
+	ProjectSettings();
+	void close();
+	
 	sKey *Editor_SelectionAppend;
 	sKey *Tile_ShowPixelGrid;
 	sKey *TileSet_ShowPixelGrid;
@@ -129,7 +136,16 @@ public:
 	sKey *TileSet_EditWidth;
 	sKey *SelectionEdit_ShowPixelGrid;
 	sKey *SelectionEdit_ShowTileGrid;
-	sKey *error_catch;
+};
+
+class ProgramSettings : public Settings{
+public:
+	ProgramSettings();
+	void close();
+	
+	sKey *Sys_Renderer;
+	sKey *Sys_VSYNC;
+	sKey *Win_Maximize;	
 };
 
 
@@ -141,7 +157,7 @@ class TSettings{
 		TEditor* CurrentEditor;		
 		SDL_Renderer *TRenderer;
 		SDL_Window *TWindow;
-		Settings ProjectSettings;		
+		ProjectSettings mProjectSettings;		
 		int WindowWidth=1900;
 		int WindowHeight=1000;
 		int TopBarHeight = 50;
@@ -240,6 +256,7 @@ class TSettings{
 		int mSelectionMode = 1;
 		bool bSoftwareRendering = false;
 		bool bNoVSync = false;
+		bool bMaximize = false;
 		bool bRenderingD3D = false;
 		
 };

@@ -68,6 +68,14 @@ class MEDialog;
 
 
 TSettings mGlobalSettings;
+ProgramSettings mINIFile;
+
+#ifdef MAPPIMAGE
+	std::string mINIPath = "~/.tilemaped/tilemaped.ini";
+#else
+	std::string mINIPath = "tilemaped.ini";
+#endif
+
 
 int TSettings::testProjectFolder(std::string cPath){
 	fs::path pPath = cPath;
@@ -227,6 +235,10 @@ int TSettings::initSettings(){
 		mTileEdScale--;		
 	}
 
+	if(bMaximize){
+		SDL_MaximizeWindow(TWindow);		
+	}
+
 	srand(time(0));
 
 	IMGUI_CHECKVERSION();
@@ -334,7 +346,7 @@ void TSettings::close(){
 	mTileEdScale = 4;
 	mSelectionMode = 1;
 
-	ProjectSettings.close();
+	mProjectSettings.close();
 }
 
 void TSettings::shutdown(){	
@@ -681,7 +693,7 @@ int parseArgs(int argc, char *argv[]){
 					}
 				}								
 			} 
-		} else 	if(std::string(argv[argpos]) == "--software"){
+		} else if(std::string(argv[argpos]) == "--software"){
 			argpos++;
 			if(!(returnval & 0x8))	returnval += 8;
 			continue;			
@@ -693,7 +705,25 @@ int parseArgs(int argc, char *argv[]){
 			argpos++;
 			if(!(returnval & 0x40))	returnval += 64;
 			continue;	
+		} else if(std::string(argv[argpos]) == "--opengl"){
+			argpos++;
+			if(!(returnval & 0x80))	returnval += 0x80;
+			continue;	
+		} else 	if(std::string(argv[argpos]) == "--vsync"){
+			argpos++;
+			if(!(returnval & 0x100)) returnval += 0x100;
+			continue;	
+		} else if(std::string(argv[argpos]) == "--window"){
+			argpos++;
+			if(!(returnval & 0x200)) returnval += 0x200;
+			continue;	
+		} else if(std::string(argv[argpos]) == "--maximize"){
+			argpos++;
+			if(!(returnval & 0x400)) returnval += 0x400;
+			continue;	
 		}
+
+
 		
 		looptime--;
 		if(looptime == 0){			
@@ -713,9 +743,49 @@ int main( int argc, char* args[] )
 	bool bRunSoftware = false;
 	bool bNoVsync = false;
 	bool bRenderD3D = false;
+	bool bMaximize = false;
 	
+#ifdef MAPPIMAGE
+	fs::path inipath = "~/.tilemaped";
+	if(!fs::is_directory(fs::status(inipath))){		
+		try{
+			fs::create_directory(inipath);			
+		} catch(...){
+			std::cout << "Error Creating Folder: ~/.tilemaped" << std::endl;
+			return 1;
+		}
+	}
+#endif
+
+	if(fs::exists(fs::status(mINIPath))){
+		mINIFile.load(mINIPath);
+	}
+
+	switch(mINIFile.Sys_Renderer->ivalue)
+	{
+	case 0:
+		break;
+	case 1:
+		bRenderD3D = true;
+		break;
+	case 2:
+		bRunSoftware = true;
+		break;			
+	default:
+		break;
+	}
+
+	if(mINIFile.Sys_VSYNC->ivalue == 0){
+		bNoVsync = true;
+		//std::cout << "VSYNC" << std::endl;
+	}
+
+	if(mINIFile.Win_Maximize->ivalue == 1){
+		bMaximize = true;		
+	}
+
 	int argvals = parseArgs(argc, args);
-	
+
 	if(argvals == -1){
 		printUsage();
 		return 1;
@@ -735,27 +805,114 @@ int main( int argc, char* args[] )
 
 	if(!(argvals & 0x2) && !(argvals & 0x4) ){ //|| (argvals == 16) || (argvals == 24 ) || (argvals == 64)){
 		mGlobalSettings.bRunningOCD = true;
-		bRunSoftware = argvals & 0x8;
-		bNoVsync = argvals & 0x10;
-		bRenderD3D = argvals & 0x40;
+		//bRunSoftware = argvals & 0x8;
+		//bNoVsync = argvals & 0x10;
+		//bRenderD3D = argvals & 0x40;
+		
+		if(argvals & 0x8){
+			bRunSoftware = true;
+		}
+		if(argvals & 0x10){
+			bNoVsync = true;
+		}
+		if(argvals & 0x40){
+			bRenderD3D = true;
+			bRunSoftware = false;
+		}	
+		if(argvals & 0x80){
+			bRunSoftware = false;
+			bRenderD3D = false;
+		}
+		if(argvals & 0x100){
+			bNoVsync = false;
+		}
+		if(argvals & 0x200){
+			bMaximize = false;
+		}
+		if(argvals & 0x400){
+			bMaximize = true;
+		}
 	}
 
 	if((argvals & 0x2)){ // || (argvals == 10) || (argvals == 18) || (argvals == 26) || (argvals == 66)){
-		bRunSoftware = argvals & 0x8;
-		bNoVsync = argvals & 0x10;
-		bRenderD3D = argvals & 0x40;
+		//bRunSoftware = argvals & 0x8;
+		//bNoVsync = argvals & 0x10;
+		//bRenderD3D = argvals & 0x40;
+
+		if(argvals & 0x8){
+			bRunSoftware = true;
+		}
+		if(argvals & 0x10){
+			bNoVsync = true;
+		}
+		if(argvals & 0x40){
+			bRenderD3D = true;
+			bRunSoftware = false;
+		}
+		if(argvals & 0x80){
+			bRunSoftware = false;
+			bRenderD3D = false;
+		}
+		if(argvals & 0x100){
+			bNoVsync = false;
+		}
+		if(argvals & 0x200){
+			bMaximize = false;
+		}
+		if(argvals & 0x400){
+			bMaximize = true;
+		}
 	}
 
 	if((argvals & 0x4)){ // || (argvals == 12) || (argvals == 20) || (argvals == 28) || (argvals == 68)){
 		mCreateNewProject = true;
-		bRunSoftware = argvals & 0x8;
-		bNoVsync = argvals & 0x10;
-		bRenderD3D = argvals & 0x40;
+		//bRunSoftware = argvals & 0x8;
+		//bNoVsync = argvals & 0x10;
+		//bRenderD3D = argvals & 0x40;
+
+		if(argvals & 0x8){
+			bRunSoftware = true;
+		}
+		if(argvals & 0x10){
+			bNoVsync = true;
+		}
+		if(argvals & 0x40){
+			bRenderD3D = true;
+			bRunSoftware = false;
+		}
+		if(argvals & 0x80){
+			bRunSoftware = false;
+			bRenderD3D = false;
+		}
+		if(argvals & 0x100){
+			bNoVsync = false;
+		}
+		if(argvals & 0x200){
+			bMaximize = false;
+		}
+		if(argvals & 0x400){
+			bMaximize = true;
+		}
 	}
 
+	mINIFile.Sys_VSYNC->ivalue = !bNoVsync;
+
+	mINIFile.Sys_Renderer->ivalue = 0;
+
+	if(bRunSoftware){
+		mINIFile.Sys_Renderer->ivalue = 2;
+	}
+
+	if(bRenderD3D){
+		mINIFile.Sys_Renderer->ivalue = 1;
+	}
+
+	mINIFile.Win_Maximize->ivalue = bMaximize;
+	
 	mGlobalSettings.bSoftwareRendering = bRunSoftware;
 	mGlobalSettings.bRenderingD3D = bRenderD3D;
 	mGlobalSettings.bNoVSync = bNoVsync;
+	mGlobalSettings.bMaximize = bMaximize;
 
 	if( mGlobalSettings.initSettings() ){
 		std::cout << "SDL Init Failed!" << std::endl;
@@ -830,5 +987,8 @@ int main( int argc, char* args[] )
 
 		mGlobalSettings.shutdown();		
 	}
+	
+	mINIFile.writedefault(mINIPath);
+
 	return 0;
 }
