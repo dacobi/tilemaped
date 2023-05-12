@@ -338,10 +338,10 @@ int TBDialog::render(){
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET){
 				if(ImGui::BeginMenu("TileSet Edit")){
-					if(ImGui::SliderInt("Grid Width", &mGlobalSettings.mTileSetEditWidth, 2, 16,"%d", ImGuiSliderFlags_AlwaysClamp)){
+					if(ImGui::SliderInt("Grid Width", &mGlobalSettings.mTileSetEditWidth, 2, 16,"%d", ImGuiSliderFlags_NoInput)){
 						mGlobalSettings.CurrentEditor->mTileSet.bUpdateEditSelection = true;
 					}
-					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mTileSetEditScale, 2, 24,"%d", ImGuiSliderFlags_AlwaysClamp)){
+					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mTileSetEditScale, 2, 24,"%d", ImGuiSliderFlags_NoInput)){
 						mGlobalSettings.CurrentEditor->mTileSet.bUpdateEditSelectionScale = true;
 					}
 					ImGui::EndMenu();
@@ -351,7 +351,7 @@ int TBDialog::render(){
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SELEDIT){
 				if(ImGui::BeginMenu("Selection Edit")){					
-					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mSelectionEditScale, 2, 24,"%d", ImGuiSliderFlags_AlwaysClamp)){
+					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mSelectionEditScale, 2, 24,"%d", ImGuiSliderFlags_NoInput)){
 						mGlobalSettings.CurrentEditor->mSelEdit.bUpdateEditSelectionScale = true;
 					}
 					ImGui::EndMenu();
