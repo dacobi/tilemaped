@@ -947,10 +947,14 @@ int TBrushList::renderIm(){
 
     if(bIsEditing){
 
-        if(ImGui::Button("Brushes Done")){
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(mGlobalSettings.ErrorTextColor.r-80,mGlobalSettings.ErrorTextColor.g,mGlobalSettings.ErrorTextColor.b)));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(mGlobalSettings.ErrorTextColor.r,mGlobalSettings.ErrorTextColor.g,mGlobalSettings.ErrorTextColor.b)));
+        if(ImGui::Button("Brushes Edit Done")){
             bIsEditing = false;
             mBrushes[mSelectedBrush]->bIsEditing = false;
-        }        
+        }
+        ImGui::PopStyleColor();
+        ImGui::PopStyleColor();
 
         if(ImGui::Button("Reset Cursor")){
             mBrushes[mSelectedBrush]->mCursorPos = 0;
