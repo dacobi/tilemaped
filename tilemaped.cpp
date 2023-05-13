@@ -786,11 +786,11 @@ int main( int argc, char* args[] )
 		break;
 	}
 
-	if(mINIFile.Sys_VSYNC->ivalue == 0){
+	if(mINIFile.Sys_VSYNC->bvalue == false){
 		bVsync = false;		
 	}
 
-	if(mINIFile.Win_Maximize->ivalue == 1){
+	if(mINIFile.Win_Maximize->bvalue){
 		bMaximize = true;		
 	}
 
@@ -933,7 +933,7 @@ int main( int argc, char* args[] )
 		bMaximize = true;
 	}
 
-	mINIFile.Sys_VSYNC->ivalue = bVsync ? 1 : 0;
+	mINIFile.Sys_VSYNC->bvalue = bVsync;// ? 1 : 0;
 
 	mINIFile.Sys_Renderer->ivalue = 0;
 
@@ -945,7 +945,7 @@ int main( int argc, char* args[] )
 		mINIFile.Sys_Renderer->ivalue = 1;
 	}
 
-	mINIFile.Win_Maximize->ivalue = bMaximize ? 1 : 0;
+	mINIFile.Win_Maximize->bvalue = bMaximize;// ? 1 : 0;
 	
 	mGlobalSettings.bSoftwareRendering = bRunSoftware;
 	mGlobalSettings.bRenderingD3D = bRenderD3D;

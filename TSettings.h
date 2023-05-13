@@ -86,6 +86,7 @@ public:
 	sKey(std::string _kname, TKeyType _ktype, double _value);
 	sKey(std::string _kname, TKeyType _ktype, std::string _value);
 	sKey(std::string _kname, TKeyType _ktype, int _value);
+	sKey(std::string _kname, TKeyType _ktype, bool _value);
 	void sKeyEnable();
 	void sKeyDisable();
 	std::string getString();
@@ -96,6 +97,7 @@ public:
 	TKeyType ktype;
 	bool bEnabled;
 	int ivalue;
+	bool bvalue;
 	double fvalue;
 	std::string svalue;
 	std::vector<int> optionvalue;
@@ -116,6 +118,7 @@ public:
 	sKey* createNewKey(std::string nKeyName, TKeyType nKeyType, double nKeyFloat);
 	sKey* createNewKey(std::string nKeyName, TKeyType nKeyType, std::string nKeyString);
 	sKey* createNewKey(std::string nKeyName, TKeyType nKeyType, int nKeyInteger);
+	sKey* createNewKey(std::string nKeyName, TKeyType nKeyType, bool nKeyBool);
 
 	sKey* getKey(std::string gKeyName);
 

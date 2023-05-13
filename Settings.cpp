@@ -17,6 +17,16 @@ sKey::sKey(std::string _kname, TKeyType _ktype, int _value){
 	bEnabled = true;	
 }
 
+sKey::sKey(std::string _kname, TKeyType _ktype, bool _value){
+	kname = _kname;
+	ktype = _ktype;
+	ivalue = _value ? 1 : 0;
+	fvalue = ivalue;
+	bvalue = _value;
+	bEnabled = true;	
+}
+
+
 sKey::sKey(std::string _kname, TKeyType _ktype, std::string _value){
 	kname = _kname;
 	ktype = _ktype;
@@ -38,13 +48,23 @@ double sKey::getFloat(){return fvalue;}
 bool sKey::getBool(){return (ivalue > 0);}
 
 sKey* Settings::createNewKey(std::string nKeyName, TKeyType nKeyType, int nKeyInteger){
-	if(nKeyType == type_int || nKeyType == type_bool){
+	if(nKeyType == type_int){
 		sKey *newKey = new sKey(nKeyName, nKeyType, nKeyInteger);
 		keys.push_back(newKey);
 		return newKey;
 	}	
 	return NULL;
 }
+
+sKey* Settings::createNewKey(std::string nKeyName, TKeyType nKeyType, bool nKeyBool){
+	if(nKeyType == type_bool){
+		sKey *newKey = new sKey(nKeyName, nKeyType, nKeyBool);
+		keys.push_back(newKey);
+		return newKey;
+	}	
+	return NULL;
+}
+
 
 sKey* Settings::createNewKey(std::string nKeyName, TKeyType nKeyType, double nKeyFloat){
 	if(nKeyType == type_float){
@@ -234,6 +254,7 @@ int Settings::load(std::string filename){
 				convert >> value;         
 				keys[key]->ivalue = (int)value;
 				keys[key]->fvalue = value;
+				keys[key]->bvalue = keys[key]->ivalue ? true : false;
 			}
 			keys[key]->ktype = (TKeyType)type;
 			keys[key]->svalue = tmpStr;
@@ -283,7 +304,8 @@ int Settings::writedefault(std::string filename){
 				convert << keys[i]->fvalue << std::endl;
 			}
 			if(keys[i]->ktype == type_bool){
-				convert << keys[i]->ivalue << std::endl;
+				int tmpintb = keys[i]->bvalue ? 1 : 0;
+				convert << tmpintb << std::endl;
 			}
 
 			convert >> tmpStr;
