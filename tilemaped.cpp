@@ -15,15 +15,20 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 
-
-//#define MAPPIMAGE
-
 #define SCREEN_WIDTH 1900
 #define SCREEN_HEIGHT 1000
 
 #include "version.h"
 
-#ifdef MAPPIMAGE
+//#define MAPPIMAGE
+
+#ifdef _WIN64
+#define MWIN64
+#endif
+
+
+#ifndef MWIN64
+#define MNIXHOME
 #include <stdlib.h>
 #endif
 
@@ -73,7 +78,7 @@ class MEDialog;
 
 TSettings mGlobalSettings;
 
-#ifdef MAPPIMAGE
+#ifdef MNIXHOME
 	std::string mINIPath = "~/.tilemaped/tilemaped.ini";
 #else
 	std::string mINIPath = "tilemaped.ini";
@@ -366,8 +371,10 @@ void TSettings::shutdown(){
 void TSettings::settingsMenu(){
 	if (ImGui::BeginMenu(std::string(mGlobalSettings.mInfo + " Settings").c_str())){
 			ImGui::Text("Renderer");
-			ImGui::RadioButton("OpenGl", &mINIFile.Sys_Renderer->ivalue, 0);
-			ImGui::RadioButton("D3D", &mINIFile.Sys_Renderer->ivalue, 1);
+			ImGui::RadioButton("OpenGL", &mINIFile.Sys_Renderer->ivalue, 0);
+#ifdef MWIN64
+			ImGui::RadioButton("DirectX", &mINIFile.Sys_Renderer->ivalue, 1);
+#endif
 			ImGui::RadioButton("Software", &mINIFile.Sys_Renderer->ivalue, 2);
 			ImGui::Checkbox("VSYNC", &mINIFile.Sys_VSYNC->bvalue);
 			ImGui::Separator();
@@ -726,7 +733,9 @@ int parseArgs(int argc, char *argv[]){
 			continue;	
 		} else 	if(std::string(argv[argpos]) == "--d3d"){
 			argpos++;
+#ifdef MWIN64
 			if(!(returnval & 0x40))	returnval += 64;
+#endif
 			continue;	
 		} else if(std::string(argv[argpos]) == "--opengl"){
 			argpos++;
@@ -768,7 +777,7 @@ int main( int argc, char* args[] )
 	bool bRenderD3D = false;
 	bool bMaximize = false;
 	
-#ifdef MAPPIMAGE
+#ifdef MNIXHOME
 	fs::path inipath = std::string(getenv("HOME")) + DIRDEL + ".tilemaped";
 	if(!fs::is_directory(fs::status(inipath))){		
 		try{
@@ -785,6 +794,12 @@ int main( int argc, char* args[] )
 	if(fs::exists(fs::status(mINIPath))){
 		mGlobalSettings.mINIFile.load(mINIPath);		
 	}
+#endif
+
+#ifndef MWIN64
+		if(mGlobalSettings.mINIFile.Sys_Renderer->ivalue == 1){
+			mGlobalSettings.mINIFile.Sys_Renderer->ivalue = 0;			
+		}
 #endif
 
 	switch(mGlobalSettings.mINIFile.Sys_Renderer->ivalue)
@@ -1041,7 +1056,7 @@ int main( int argc, char* args[] )
 		mGlobalSettings.shutdown();		
 	}
 	
-#ifdef MAPPIMAGE
+#ifdef MNIXHOME
 	mGlobalSettings.mINIFile.writedefault(inipath.string()+DIRDEL+"tilemaped.ini");
 #else
 	mGlobalSettings.mINIFile.writedefault(mINIPath);
