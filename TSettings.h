@@ -255,7 +255,7 @@ class TSettings{
 		std::string mExit = "\uf705";
 		int mSelectionMode = 1;
 		bool bSoftwareRendering = false;
-		bool bNoVSync = false;
+		bool bVSync = true;
 		bool bMaximize = false;
 		bool bRenderingD3D = false;
 		

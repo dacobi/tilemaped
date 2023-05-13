@@ -175,7 +175,7 @@ int TSettings::initSettings(){
 		std::cout << "Accelerated Rendering: "<< bRenderingD3D << std::endl;
 	}
 
-	if(!bNoVSync){
+	if(bVSync){
 		mFlags += SDL_RENDERER_PRESENTVSYNC;
 	} else {
 		std::cout << "No VSYNC"<< std::endl;
@@ -749,7 +749,7 @@ int main( int argc, char* args[] )
 	
 	bool mCreateNewProject=false;
 	bool bRunSoftware = false;
-	bool bNoVsync = false;
+	bool bVsync = true;
 	bool bRenderD3D = false;
 	bool bMaximize = false;
 	
@@ -787,7 +787,7 @@ int main( int argc, char* args[] )
 	}
 
 	if(mINIFile.Sys_VSYNC->ivalue == 0){
-		bNoVsync = true;		
+		bVsync = false;		
 	}
 
 	if(mINIFile.Win_Maximize->ivalue == 1){
@@ -913,7 +913,7 @@ int main( int argc, char* args[] )
 		bRenderD3D = false;
 	}
 	if(argvals & 0x10){
-		bNoVsync = true;
+		bVsync = false;
 	}
 	if(argvals & 0x40){
 		bRenderD3D = true;
@@ -924,7 +924,7 @@ int main( int argc, char* args[] )
 		bRenderD3D = false;
 	}
 	if(argvals & 0x100){
-		bNoVsync = false;
+		bVsync = true;
 	}
 	if(argvals & 0x200){
 		bMaximize = false;
@@ -933,7 +933,7 @@ int main( int argc, char* args[] )
 		bMaximize = true;
 	}
 
-	mINIFile.Sys_VSYNC->ivalue = !bNoVsync;
+	mINIFile.Sys_VSYNC->ivalue = bVsync ? 1 : 0;
 
 	mINIFile.Sys_Renderer->ivalue = 0;
 
@@ -945,11 +945,11 @@ int main( int argc, char* args[] )
 		mINIFile.Sys_Renderer->ivalue = 1;
 	}
 
-	mINIFile.Win_Maximize->ivalue = bMaximize;
+	mINIFile.Win_Maximize->ivalue = bMaximize ? 1 : 0;
 	
 	mGlobalSettings.bSoftwareRendering = bRunSoftware;
 	mGlobalSettings.bRenderingD3D = bRenderD3D;
-	mGlobalSettings.bNoVSync = bNoVsync;
+	mGlobalSettings.bVSync = bVsync;
 	mGlobalSettings.bMaximize = bMaximize;
 
 	if( mGlobalSettings.initSettings() ){
