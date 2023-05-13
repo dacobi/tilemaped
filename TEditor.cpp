@@ -1212,6 +1212,10 @@ bool TEditor::checkQuit(){
         }
     }
 
+	if(mCurMode == EMODE_PALED){
+		if(mPalette.bPickerOpen) return true;
+	}
+
 	return false;
 }
 
