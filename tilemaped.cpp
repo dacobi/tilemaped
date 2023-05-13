@@ -12,6 +12,8 @@
 #include <sstream>
 #include <cstdlib>
 
+#include "imgui_internal.h"
+
 //#define MAPPIMAGE
 
 #define SCREEN_WIDTH 1900
@@ -242,9 +244,12 @@ int TSettings::initSettings(){
 	srand(time(0));
 
 	IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
+    ImGuiContext* mg = ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO(); (void)io;
 	mio = &io;
+
+	mg->ConfigNavWindowingKeyNext = 0; //ImGuiMod_Ctrl | ImGuiKey_Tab;
+	mg->ConfigNavWindowingKeyPrev = 0; //ImGuiMod_Ctrl | ImGuiMod_Shift | ImGuiKey_Tab;
 
 	ImVector<ImWchar> ranges;
 	ImFontGlyphRangesBuilder builder;
@@ -276,6 +281,9 @@ int TSettings::initSettings(){
     ImGui_ImplSDL2_InitForSDLRenderer(mGlobalSettings.TWindow, mGlobalSettings.TRenderer);
     ImGui_ImplSDLRenderer_Init(mGlobalSettings.TRenderer);
 
+	mio->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	mio->ConfigFlags |= ImGuiConfigFlags_NavNoCaptureKeyboard;
+	
 	return 0;	
 }
 

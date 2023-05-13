@@ -265,6 +265,7 @@ class TBDialog: public Dialog{
 		TEditor* mEditor;
 		virtual void init();
 		virtual int render();
+		bool bIsMenuOpen = false;
 };
 
 

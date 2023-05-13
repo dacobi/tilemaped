@@ -171,7 +171,7 @@ int TCollisionMapEditor::render(){
 		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Once, ImVec2(0.5f, 0.5f));
 	}
 
-    ImGui::Begin("Collision Map", &mGlobalSettings.CurrentEditor->bShowCollisionEditor); 
+    ImGui::Begin("Collision Map", &mGlobalSettings.CurrentEditor->bShowCollisionEditor, ImGuiWindowFlags_NoNav); 
 
     std::stringstream convert;
     std::string sTile;
@@ -220,7 +220,7 @@ int TCollisionMapEditor::render(){
     
     ImGui::SetNextWindowContentSize(ImVec2(cWinSize.x-20,cAreaY+10));
 
-    ImGui::BeginChild("Collision Tiles");
+    ImGui::BeginChild("Collision Tiles", ImVec2(0,0), false, ImGuiWindowFlags_NoNav);
 
     ImVec2 tSubWinPos = ImGui::GetWindowPos();
 

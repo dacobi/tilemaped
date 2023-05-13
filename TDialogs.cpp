@@ -121,9 +121,14 @@ int TBDialog::render(){
 		break;
 	};
 
+	bIsMenuOpen = false;
+
 	ImGui::BeginMainMenuBar();
+
 		if (ImGui::BeginMenu("File"))
 		{
+			bIsMenuOpen = true;
+
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Save (F12)")).c_str())){
 				mGlobalSettings.CurrentEditor->activateSaveDialog();
 			}
@@ -166,6 +171,8 @@ int TBDialog::render(){
 
 		if (ImGui::BeginMenu("View"))
 		{
+			bIsMenuOpen = true;
+
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
 				
 					if(ImGui::BeginMenu((std::string(mGlobalSettings.mWindow + " Tilemaps")).c_str())){
@@ -275,6 +282,8 @@ int TBDialog::render(){
 
 		if (ImGui::BeginMenu("Edit"))
 		{
+			bIsMenuOpen = true;
+
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Flip Tile (F) (X) (Y)")).c_str())){
 					mGlobalSettings.CurrentEditor->flipSelectedTile(0);
@@ -425,8 +434,7 @@ int TBDialog::render(){
 	ImGui::Text("%s", cProjPath.c_str());               
 
 	ImGui::EndMainMenuBar();
-	
-	
+
 	return 0;
 }
 
@@ -473,7 +481,7 @@ int RTSDialog::render(){
     
 	Dialog::render();
 
-	ImGui::Begin(mDialogTextTitle.c_str(),NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
+	ImGui::Begin(mDialogTextTitle.c_str(),NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
     		
 		ImGui::Text("%s", mDialogTextMain.c_str()); 
 
@@ -576,7 +584,7 @@ int SDialog::render(){
     
 	Dialog::render();
 
-	ImGui::Begin(mDialogTextTitle.c_str(),NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
+	ImGui::Begin(mDialogTextTitle.c_str(),NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
     		
 		ImGui::Text("%s", mDialogTextMain.c_str()); 
 
@@ -620,7 +628,7 @@ int SADialog::render(){
 	Dialog::render();
 
 
-	ImGui::Begin(mDialogTextTitle.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
+	ImGui::Begin(mDialogTextTitle.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
     		
 	ImGui::Text("%s", mDialogTextMain.c_str());
 
@@ -727,7 +735,7 @@ int OPDialog::render(){
 
 	Dialog::render();
 
-	ImGui::Begin("Open Project",NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
+	ImGui::Begin("Open Project",NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
 		
 	ImGui::Text("Open Project from Folder");
 
@@ -1021,7 +1029,7 @@ int CTMDialog::render(){
 	Dialog::render();
 
 
-	ImGui::Begin(mDialogTextMain.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
+	ImGui::Begin(mDialogTextMain.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
     		
 		ImGui::Text("TileMap Width & Height");  
 			
@@ -1089,7 +1097,7 @@ int CPDialog::render(){
 	Dialog::render();
 
 
-	ImGui::Begin("Create New Project", NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
+	ImGui::Begin("Create New Project", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
     		
 		ImGui::Text("TileMap Width & Height");  
 			
@@ -1368,7 +1376,7 @@ void RNDialog::recieveInput(int mKey){
 }
 
 int RNDialog::render(int xpos, int ypos){	
-	ImGui::Begin("Hello, world!", &isShown);                          // Create a window called "Hello, world!" and append into it.
+	ImGui::Begin("Hello, world!", &isShown, ImGuiWindowFlags_NoNav);                          // Create a window called "Hello, world!" and append into it.
 
    		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
    		
@@ -1423,7 +1431,7 @@ int ITDialog::render(){
 	
 	Dialog::render();
 
-	ImGui::Begin("Import Tile", NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
+	ImGui::Begin("Import Tile", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
     		
 	ImGui::Text("Import Tile from bitmap or RAW");
 	
@@ -1529,7 +1537,7 @@ int ITSDialog::render(){
 	
 	Dialog::render();
 
-	ImGui::Begin("Import TileSet", NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
+	ImGui::Begin("Import TileSet", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
     		
 	ImGui::Text("Import TileSet from Project file or PNG");
 	
@@ -1615,7 +1623,7 @@ int ITMDialog::render(){
 	
 	Dialog::render();
 
-	ImGui::Begin("Import TileMap", NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
+	ImGui::Begin("Import TileMap", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
     		
 	ImGui::Text("Import TileMap from Project file");
 	ImGui::Text("Undo Stack will be cleared!");
@@ -1878,7 +1886,7 @@ int HDialog::render(){
 
 	Dialog::render();
 
-	ImGui::Begin("Help", &mGlobalSettings.bShowHelpDialog);
+	ImGui::Begin("Help", &mGlobalSettings.bShowHelpDialog, ImGuiWindowFlags_NoNav);
 
 	ImGui::SetWindowSize(ImVec2(950, 900), ImGuiCond_Once);
 
@@ -2019,7 +2027,7 @@ int MEDialog::render(){
 
 	Dialog::render();
 
-	ImGui::Begin("Message", NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
+	ImGui::Begin("Message", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
 		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(mTextColor.r, mTextColor.g, mTextColor.b, 255));
 		ImGui::Text("%s", mDialogTextMain.c_str());
 		ImGui::PopStyleColor();
@@ -2130,7 +2138,7 @@ int PIDialog::render(int xpos, int ypos){
 
 	ImGui::PushFont(mGlobalSettings.SFont);
 
-	ImGui::Begin(mDialogTextMain.c_str(), &mGlobalSettings.bShowProjectInfo, ImGuiWindowFlags_AlwaysAutoResize);
+	ImGui::Begin(mDialogTextMain.c_str(), &mGlobalSettings.bShowProjectInfo, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);
 	
 	ImGui::Text("%s", TileMap.c_str());
 	ImGui::Text("%s", TileSizeX.c_str());
@@ -2160,7 +2168,7 @@ int PODialog::render(int xpos, int ypos){
 	ImGui::PushFont(mGlobalSettings.SFont);
 
 
-	ImGui::Begin(mDialogTextMain.c_str(), &mGlobalSettings.bShowPaletteOffset);
+	ImGui::Begin(mDialogTextMain.c_str(), &mGlobalSettings.bShowPaletteOffset, ImGuiWindowFlags_NoNav);
 
 	ImGui::RadioButton("0", &mGlobalSettings.PaletteOffset, 0);
 	ImGui::SameLine();
@@ -2216,7 +2224,7 @@ int QDialog::render(){
     
 	Dialog::render();
 
-	ImGui::Begin("Quit Program?", NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
+	ImGui::Begin("Quit Program?", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
     		
 			ImGui::Text("Any unsaved progress will be lost   "); 
 
@@ -2254,7 +2262,7 @@ int CCPDialog::render(){
     
 	Dialog::render();
 
-	ImGui::Begin("Close Project?", NULL, ImGuiWindowFlags_AlwaysAutoResize);                         
+	ImGui::Begin("Close Project?", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
     		
 			ImGui::Text("Close Current Project? Any unsaved progress will be lost"); 
 

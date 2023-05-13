@@ -918,7 +918,7 @@ int TBrushList::renderIm(){
 
     std::string cTitleType = "Brushes: " + mTitle;
 
-    ImGui::Begin(cTitleType.c_str(), bIsShown);
+    ImGui::Begin(cTitleType.c_str(), bIsShown, ImGuiWindowFlags_NoNav);
 
     ImGui::SliderInt("Brush Width", &mNewBrushX, 1, mMaxX,"%d", ImGuiSliderFlags_AlwaysClamp);
     ImGui::SliderInt("Brush Height", &mNewBrushY, 1, mMaxY,"%d", ImGuiSliderFlags_AlwaysClamp);
@@ -1015,7 +1015,7 @@ int TBrushList::renderIm(){
         }
     }
 
-    ImGui::BeginChild("Brush List");
+    ImGui::BeginChild("Brush List", ImVec2(0,0), false, ImGuiWindowFlags_NoNav);
 
     ImVec2 tSubWinPos = ImGui::GetWindowPos();
 

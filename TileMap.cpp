@@ -739,7 +739,7 @@ int TPalette::renderIm(int xpos,int ypos){
 	
 	Dialog::render(xpos, ypos);
 
-	ImGui::Begin("Palette");
+	ImGui::Begin("Palette", NULL, ImGuiWindowFlags_NoNav);
 
 	ImVec2 cSize;
 	if(mGlobalSettings.TileSetBPP < 0x8){
@@ -840,7 +840,7 @@ int TPalette::renderEditor(int xpos,int ypos){
 	
 	Dialog::render(xpos, ypos);
 
-	ImGui::Begin("Palette: Edit Mode");
+	ImGui::Begin("Palette: Edit Mode", NULL, ImGuiWindowFlags_NoNav);
 
 	if(bImportingPalette){
 		Dialog::render();
@@ -2187,7 +2187,7 @@ int TileSet::renderIm(int ypos, int mScroll){
 		ImGui::SetNextWindowSize(cWinSize, ImGuiCond_Once);
 	}
 
-	ImGui::Begin("TileSet");    
+	ImGui::Begin("TileSet", NULL, ImGuiWindowFlags_NoNav);    
 
 	if(ImGui::Button("Move Up")){
 		mGlobalSettings.CurrentEditor->moveTileUp();
