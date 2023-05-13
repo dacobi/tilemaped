@@ -268,6 +268,7 @@ int TSettings::initSettings(){
 	builder.AddChar(0xf449); 
 	builder.AddChar(0xf71e);
 	builder.AddChar(0xf705);
+	builder.AddChar(0xf013);
 
 	builder.AddRanges(io.Fonts->GetGlyphRangesDefault()); // Add one of the default ranges
 	builder.BuildRanges(&ranges);       
@@ -369,7 +370,7 @@ void TSettings::shutdown(){
 }
 
 void TSettings::settingsMenu(){
-	if (ImGui::BeginMenu(std::string(mGlobalSettings.mInfo + " Settings").c_str())){
+	if (ImGui::BeginMenu(std::string(mGlobalSettings.mGear + " Settings").c_str())){
 			ImGui::Text("Renderer");
 			ImGui::RadioButton("OpenGL", &mINIFile.Sys_Renderer->ivalue, 0);
 #ifdef MWIN64
