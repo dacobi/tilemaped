@@ -12,7 +12,9 @@
 #include <sstream>
 #include <cstdlib>
 
+#include "imgui.h"
 #include "imgui_internal.h"
+
 
 //#define MAPPIMAGE
 
@@ -70,7 +72,6 @@ class MEDialog;
 
 
 TSettings mGlobalSettings;
-ProgramSettings mINIFile;
 
 #ifdef MAPPIMAGE
 	std::string mINIPath = "~/.tilemaped/tilemaped.ini";
@@ -360,6 +361,20 @@ void TSettings::close(){
 void TSettings::shutdown(){	
 	SDL_DestroyRenderer(TRenderer);
 	std::cout << "SDL_DestroyRenderer(TSettings::TRenderer)" << std::endl;
+}
+
+void TSettings::settingsMenu(){
+	if (ImGui::BeginMenu(std::string(mGlobalSettings.mInfo + " Settings").c_str())){
+			ImGui::Text("Renderer");
+			ImGui::RadioButton("OpenGl", &mINIFile.Sys_Renderer->ivalue, 0);
+			ImGui::RadioButton("D3D", &mINIFile.Sys_Renderer->ivalue, 1);
+			ImGui::RadioButton("Software", &mINIFile.Sys_Renderer->ivalue, 2);
+			ImGui::Checkbox("VSYNC", &mINIFile.Sys_VSYNC->bvalue);
+			ImGui::Separator();
+			ImGui::Text("Window");
+			ImGui::Checkbox("Maximize", &mINIFile.Win_Maximize->bvalue);
+			ImGui::EndMenu();
+	}
 }
 
 int TSettings::runOCD(int mode){
@@ -764,15 +779,15 @@ int main( int argc, char* args[] )
 		}
 	}
 	if(fs::exists(fs::status(inipath.string()+DIRDEL+"tilemaped.ini"))){
-		mINIFile.load(inipath.string()+DIRDEL+"tilemaped.ini");		
+		mGlobalSettings.mINIFile.load(inipath.string()+DIRDEL+"tilemaped.ini");		
 	}
 #else
 	if(fs::exists(fs::status(mINIPath))){
-		mINIFile.load(mINIPath);		
+		mGlobalSettings.mINIFile.load(mINIPath);		
 	}
 #endif
 
-	switch(mINIFile.Sys_Renderer->ivalue)
+	switch(mGlobalSettings.mINIFile.Sys_Renderer->ivalue)
 	{
 	case 0:
 		break;
@@ -786,11 +801,11 @@ int main( int argc, char* args[] )
 		break;
 	}
 
-	if(mINIFile.Sys_VSYNC->bvalue == false){
+	if(mGlobalSettings.mINIFile.Sys_VSYNC->bvalue == false){
 		bVsync = false;		
 	}
 
-	if(mINIFile.Win_Maximize->bvalue){
+	if(mGlobalSettings.mINIFile.Win_Maximize->bvalue){
 		bMaximize = true;		
 	}
 
@@ -933,19 +948,19 @@ int main( int argc, char* args[] )
 		bMaximize = true;
 	}
 
-	mINIFile.Sys_VSYNC->bvalue = bVsync;// ? 1 : 0;
+	mGlobalSettings.mINIFile.Sys_VSYNC->bvalue = bVsync;// ? 1 : 0;
 
-	mINIFile.Sys_Renderer->ivalue = 0;
+	mGlobalSettings.mINIFile.Sys_Renderer->ivalue = 0;
 
 	if(bRunSoftware){
-		mINIFile.Sys_Renderer->ivalue = 2;
+		mGlobalSettings.mINIFile.Sys_Renderer->ivalue = 2;
 	}
 
 	if(bRenderD3D){
-		mINIFile.Sys_Renderer->ivalue = 1;
+		mGlobalSettings.mINIFile.Sys_Renderer->ivalue = 1;
 	}
 
-	mINIFile.Win_Maximize->bvalue = bMaximize;// ? 1 : 0;
+	mGlobalSettings.mINIFile.Win_Maximize->bvalue = bMaximize;// ? 1 : 0;
 	
 	mGlobalSettings.bSoftwareRendering = bRunSoftware;
 	mGlobalSettings.bRenderingD3D = bRenderD3D;
@@ -1027,9 +1042,9 @@ int main( int argc, char* args[] )
 	}
 	
 #ifdef MAPPIMAGE
-	mINIFile.writedefault(inipath.string()+DIRDEL+"tilemaped.ini");
+	mGlobalSettings.mINIFile.writedefault(inipath.string()+DIRDEL+"tilemaped.ini");
 #else
-	mINIFile.writedefault(mINIPath);
+	mGlobalSettings.mINIFile.writedefault(mINIPath);
 #endif
 	
 	return 0;

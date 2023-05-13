@@ -159,8 +159,11 @@ int TBDialog::render(){
 				}
 			}
 
+			ImGui::Separator();
 
+			mGlobalSettings.settingsMenu();
 
+			ImGui::Separator();
 
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mExit + " Quit")).c_str())){
 				mGlobalSettings.CurrentEditor->activateQuitDialog();					
@@ -837,6 +840,14 @@ int OCDialog::render(){
 				bSubDialogIsCreate = true;
 				bDialogIsWatingForText = true;				
 			}
+
+			ImGui::Separator();
+
+			mGlobalSettings.settingsMenu();
+
+			ImGui::Separator();
+
+
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mExit + " Quit")).c_str())){
 				mGlobalSettings.bRunningOCD = false;
 			}

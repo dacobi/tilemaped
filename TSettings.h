@@ -248,6 +248,7 @@ class TSettings{
 		int updateTicks();
 		int getTicks();
 		int runOCD(int mode=0);
+		void settingsMenu();
 		std::string mWindow = "\uf2d0";
 		std::string mFloppy = "\ue240"; //Floppy disk		
 		std::string mPrompt = "\uf120"; //Prompt
@@ -261,7 +262,7 @@ class TSettings{
 		bool bVSync = true;
 		bool bMaximize = false;
 		bool bRenderingD3D = false;
-		
+		ProgramSettings mINIFile;		
 };
 
 enum {
