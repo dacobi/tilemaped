@@ -258,7 +258,7 @@ class TSettings{
 		std::string mImage = "\uf71e"; // Info circle	
 		std::string mExit = "\uf705";
 		std::string mGear = "\uf013";
-		int mSelectionMode = 1;
+		bool bSelectionMode = true;
 		bool bSoftwareRendering = false;
 		bool bVSync = true;
 		bool bMaximize = false;

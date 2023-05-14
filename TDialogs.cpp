@@ -373,15 +373,15 @@ int TBDialog::render(){
 
 			if((mGlobalSettings.CurrentEditor->mCurMode != EMODE_PALED) && (mGlobalSettings.CurrentEditor->mCurMode != EMODE_SELEDIT)){
 				if(ImGui::BeginMenu("Selection Mode")){
-					bool bIsAppend = mGlobalSettings.mSelectionMode;
-					bool bIsReplace = !mGlobalSettings.mSelectionMode;
+					bool bIsAppend = mGlobalSettings.bSelectionMode;
+					bool bIsReplace = !mGlobalSettings.bSelectionMode;
 
 					if(ImGui::MenuItem("Replace", NULL, &bIsReplace)){
-						mGlobalSettings.mSelectionMode = !bIsReplace;						
+						mGlobalSettings.bSelectionMode = !bIsReplace;						
 					}
 
 					if(ImGui::MenuItem("Append", NULL, &bIsAppend)){
-						mGlobalSettings.mSelectionMode = bIsAppend;						
+						mGlobalSettings.bSelectionMode = bIsAppend;						
 					}
 					
 					ImGui::EndMenu();

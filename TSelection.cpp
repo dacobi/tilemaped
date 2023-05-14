@@ -94,7 +94,7 @@ int TSelection::confirmSelection(std::vector<SDL_Rect> &sRects, int xdelta, int 
         mCurSelection.y -= mCurSelection.h;
     }
     
-    if(mGlobalSettings.mSelectionMode == 0){
+    if(mGlobalSettings.bSelectionMode == 0){
         clearSelection();
     }
     getSelection(sRects, mCurSelection, xdelta, ydelta);    

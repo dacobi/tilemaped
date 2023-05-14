@@ -341,7 +341,7 @@ int TEditor::loadFromFolder(std::string path){
 			std::cout << "Error Loading Settings" << std::endl;
 		} else {
 			std::cout << "Loading Settings" << std::endl;
-			mGlobalSettings.mSelectionMode = mGlobalSettings.mProjectSettings.Editor_SelectionAppend->getBool();
+			mGlobalSettings.bSelectionMode = mGlobalSettings.mProjectSettings.Editor_SelectionAppend->getBool();
 
 			mGlobalSettings.bShowPixelGrid = mGlobalSettings.mProjectSettings.Tile_ShowPixelGrid->getBool();
 			
@@ -459,7 +459,7 @@ int TEditor::saveToFolder(std::string path){
 	mBrushesPixel.saveToFile(path + DIRDEL + "pbrushes.dat");
 
 
-	mGlobalSettings.mProjectSettings.Editor_SelectionAppend->bvalue = mGlobalSettings.mSelectionMode ? true : false;
+	mGlobalSettings.mProjectSettings.Editor_SelectionAppend->bvalue = mGlobalSettings.bSelectionMode;
 
 	mGlobalSettings.mProjectSettings.Tile_ShowPixelGrid->bvalue = mGlobalSettings.bShowPixelGrid;
 

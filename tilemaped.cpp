@@ -359,7 +359,7 @@ void TSettings::close(){
 	bShowHelpDialog = false;		
 	mSelectedTile = 0;
 	mTileEdScale = 4;
-	mSelectionMode = 1;
+	bSelectionMode = true;
 
 	mProjectSettings.close();
 }
@@ -844,99 +844,16 @@ int main( int argc, char* args[] )
 		return 0;
 	}
 
-	if(!(argvals & 0x2) && !(argvals & 0x4) ){ //|| (argvals == 16) || (argvals == 24 ) || (argvals == 64)){
-		mGlobalSettings.bRunningOCD = true;
-		//bRunSoftware = argvals & 0x8;
-		//bNoVsync = argvals & 0x10;
-		//bRenderD3D = argvals & 0x40;
-		
-		/*
-		if(argvals & 0x8){
-			bRunSoftware = true;
-		}
-		if(argvals & 0x10){
-			bNoVsync = true;
-		}
-		if(argvals & 0x40){
-			bRenderD3D = true;
-			bRunSoftware = false;
-		}	
-		if(argvals & 0x80){
-			bRunSoftware = false;
-			bRenderD3D = false;
-		}
-		if(argvals & 0x100){
-			bNoVsync = false;
-		}
-		if(argvals & 0x200){
-			bMaximize = false;
-		}
-		if(argvals & 0x400){
-			bMaximize = true;
-		}
-		*/
+	if(!(argvals & 0x2) && !(argvals & 0x4) ){ 
+		mGlobalSettings.bRunningOCD = true;		
 	}
 
-	if((argvals & 0x2)){ // || (argvals == 10) || (argvals == 18) || (argvals == 26) || (argvals == 66)){
-		//bRunSoftware = argvals & 0x8;
-		//bNoVsync = argvals & 0x10;
-		//bRenderD3D = argvals & 0x40;
-		/*
-		if(argvals & 0x8){
-			bRunSoftware = true;
-		}
-		if(argvals & 0x10){
-			bNoVsync = true;
-		}
-		if(argvals & 0x40){
-			bRenderD3D = true;
-			bRunSoftware = false;
-		}
-		if(argvals & 0x80){
-			bRunSoftware = false;
-			bRenderD3D = false;
-		}
-		if(argvals & 0x100){
-			bNoVsync = false;
-		}
-		if(argvals & 0x200){
-			bMaximize = false;
-		}
-		if(argvals & 0x400){
-			bMaximize = true;
-		}*/
+	if((argvals & 0x2)){ 
+		//Such empty
 	}
 
-	if((argvals & 0x4)){ // || (argvals == 12) || (argvals == 20) || (argvals == 28) || (argvals == 68)){
-		mCreateNewProject = true;
-		//bRunSoftware = argvals & 0x8;
-		//bNoVsync = argvals & 0x10;
-		//bRenderD3D = argvals & 0x40;
-	/*
-		if(argvals & 0x8){
-			bRunSoftware = true;
-		}
-		if(argvals & 0x10){
-			bNoVsync = true;
-		}
-		if(argvals & 0x40){
-			bRenderD3D = true;
-			bRunSoftware = false;
-		}
-		if(argvals & 0x80){
-			bRunSoftware = false;
-			bRenderD3D = false;
-		}
-		if(argvals & 0x100){
-			bNoVsync = false;
-		}
-		if(argvals & 0x200){
-			bMaximize = false;
-		}
-		if(argvals & 0x400){
-			bMaximize = true;
-		}
-		*/
+	if((argvals & 0x4)){ 
+		mCreateNewProject = true;		
 	}
 
 	if(argvals & 0x8){
