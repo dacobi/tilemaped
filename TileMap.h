@@ -58,7 +58,7 @@ class TPalette : public Dialog{
 		std::vector<SDL_Color> TPaletteEdit;
 		ImVec4 mEditColor;
 		ImVec4 mEditColorPick;
-		bool bPickerOpen = false;
+		bool bIsPickerOpen = false;
 		void setEditColor();
 		int mR;
 		int mG;

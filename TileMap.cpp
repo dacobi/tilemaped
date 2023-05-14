@@ -890,11 +890,11 @@ int TPalette::renderEditor(int xpos,int ypos){
 
 	ImGui::SetNextWindowPos(ImVec2(sPos.x+600, sPos.y), ImGuiCond_Always);
 
-	bPickerOpen = false;
+	bIsPickerOpen = false;
 
 	if (ImGui::BeginPopup("mypicker", ImGuiWindowFlags_NoNav))
         {
-			bPickerOpen = true;
+			bIsPickerOpen = true;
 
             ImGui::Text("Select Color");
             ImGui::Separator();

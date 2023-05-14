@@ -459,19 +459,19 @@ int TEditor::saveToFolder(std::string path){
 	mBrushesPixel.saveToFile(path + DIRDEL + "pbrushes.dat");
 
 
-	mGlobalSettings.mProjectSettings.Editor_SelectionAppend->ivalue = mGlobalSettings.mSelectionMode;
+	mGlobalSettings.mProjectSettings.Editor_SelectionAppend->bvalue = mGlobalSettings.mSelectionMode ? true : false;
 
-	mGlobalSettings.mProjectSettings.Tile_ShowPixelGrid->ivalue = mGlobalSettings.bShowPixelGrid;
+	mGlobalSettings.mProjectSettings.Tile_ShowPixelGrid->bvalue = mGlobalSettings.bShowPixelGrid;
 
-	mGlobalSettings.mProjectSettings.TileSet_ShowPixelGrid->ivalue = mGlobalSettings.bShowTilePixelGrid;
-	mGlobalSettings.mProjectSettings.TileSet_ShowTileGrid->ivalue = mGlobalSettings.bShowTileGrid;
+	mGlobalSettings.mProjectSettings.TileSet_ShowPixelGrid->bvalue = mGlobalSettings.bShowTilePixelGrid;
+	mGlobalSettings.mProjectSettings.TileSet_ShowTileGrid->bvalue = mGlobalSettings.bShowTileGrid;
 
- 	mGlobalSettings.mProjectSettings.TileSet_UpdateMaps->ivalue = mGlobalSettings.bTileSetOrderUpdateTileMap;
-	mGlobalSettings.mProjectSettings.TileSet_WarnBeforeDelete->ivalue = mGlobalSettings.bTileSetWarnBeforeDelete;
+ 	mGlobalSettings.mProjectSettings.TileSet_UpdateMaps->bvalue = mGlobalSettings.bTileSetOrderUpdateTileMap;
+	mGlobalSettings.mProjectSettings.TileSet_WarnBeforeDelete->bvalue = mGlobalSettings.bTileSetWarnBeforeDelete;
  	mGlobalSettings.mProjectSettings.TileSet_EditWidth->ivalue = mTileSet.mSelEdWidth;
 
-	mGlobalSettings.mProjectSettings.SelectionEdit_ShowPixelGrid->ivalue = mGlobalSettings.bShowTilePixelSelGrid;
-	mGlobalSettings.mProjectSettings.SelectionEdit_ShowTileGrid->ivalue = mGlobalSettings.bShowTileSelGrid;
+	mGlobalSettings.mProjectSettings.SelectionEdit_ShowPixelGrid->bvalue = mGlobalSettings.bShowTilePixelSelGrid;
+	mGlobalSettings.mProjectSettings.SelectionEdit_ShowTileGrid->bvalue = mGlobalSettings.bShowTileSelGrid;
 
 	mGlobalSettings.mProjectSettings.writedefault(path + DIRDEL + "settings.ini");
 
@@ -1213,7 +1213,7 @@ bool TEditor::checkQuit(){
     }
 
 	if(mCurMode == EMODE_PALED){
-		if(mPalette.bPickerOpen) return true;
+		if(mPalette.bIsPickerOpen) return true;	
 	}
 
 	return false;

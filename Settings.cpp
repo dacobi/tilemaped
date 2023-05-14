@@ -45,7 +45,7 @@ void sKey::sKeyDisable(){bEnabled = false;}
 std::string sKey::getString(){return svalue;}
 int sKey::getInteger(){return ivalue;}
 double sKey::getFloat(){return fvalue;}
-bool sKey::getBool(){return (ivalue > 0);}
+bool sKey::getBool(){return bvalue;}
 
 sKey* Settings::createNewKey(std::string nKeyName, TKeyType nKeyType, int nKeyInteger){
 	if(nKeyType == type_int){
