@@ -240,7 +240,7 @@ int TSettings::initSettings(){
 	SDL_GetCurrentDisplayMode(cWin, &mCurDispMode);
 
 	if(mCurDispMode.w <= 1920){
-		mTileEdScale--;		
+		mGlobalTexParam.mTileEdScale--;		
 	}
 
 	if(bMaximize){
@@ -315,13 +315,13 @@ void TSettings::close(){
 	TileMapScale=3;
 	TileMapHeight=128;
 	TileMapWidth=128;		
-	TileSizeX=16;
-	TileSizeY=16;
-	TileSetBPP=8;
-	TilePixelSize=16;	
-	PaletteOffset=0;
+	mGlobalTexParam.TileSizeX=16;
+	mGlobalTexParam.TileSizeY=16;
+	mGlobalTexParam.TileSetBPP=8;
+	mGlobalTexParam.TilePixelSize=16;	
+	mGlobalTexParam.PaletteOffset=0;
 	bShowPaletteOffset = false;
-	TileRenderSize=16;
+	mGlobalTexParam.TileRenderSize=16;
 	PaletteScale=2;
 	ProjectPath = "";
 	
@@ -358,7 +358,7 @@ void TSettings::close(){
 	bShowProjectInfo = false;		
 	bShowHelpDialog = false;		
 	mSelectedTile = 0;
-	mTileEdScale = 4;
+	mGlobalTexParam.mTileEdScale = 4;
 	bSelectionMode = true;
 
 	mProjectSettings.close();
@@ -675,7 +675,7 @@ int parseArgs(int argc, char *argv[]){
 				mConvert >> nTileSize;
 			
 				if((nTileSize == 16) || (nTileSize == 8)){	
-					mGlobalSettings.TileSizeX = nTileSize;	
+					mGlobalSettings.mGlobalTexParam.TileSizeX = nTileSize;	
 				} else {
 					std::cout << "Wrong TileSize!" << std::endl;
 					std::cout << "Valid Values are: 8, 16" << std::endl;						
@@ -687,7 +687,7 @@ int parseArgs(int argc, char *argv[]){
 				mConvert >> nTileSize;
 			
 				if((nTileSize == 16) || (nTileSize == 8)){	
-					mGlobalSettings.TileSizeY = nTileSize;	
+					mGlobalSettings.mGlobalTexParam.TileSizeY = nTileSize;	
 				} else {
 					std::cout << "Wrong TileSize!" << std::endl;
 					std::cout << "Valid Values are: 8, 16" << std::endl;						

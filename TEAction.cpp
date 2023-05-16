@@ -112,7 +112,7 @@ void TEActionReplaceTileFlip::doAction(TileMap *cTileMap, int mCurTile, int mOld
 	mNewValue = mNew;
 	mOldFlip = cFlipOld;
 	mNewFlip = cFlipNew;
-	mNewOffset = mGlobalSettings.PaletteOffset;
+	mNewOffset = mGlobalSettings.mGlobalTexParam.PaletteOffset;
 	mOldOffset = mTileMap->getOffset(mCurrentTile);
 	mTileMap->setTile(mCurrentTile, mNew);
 	mTileMap->setFlip(mCurrentTile, mNewFlip);
@@ -154,7 +154,7 @@ void TEActionReplaceTile::doAction(TileMap *cTileMap, int mCurTile, int mOld, in
 	mCurrentTile = mCurTile;
 	mOldValue = mOld;
 	mNewValue = mNew;
-	mNewOffset = mGlobalSettings.PaletteOffset;
+	mNewOffset = mGlobalSettings.mGlobalTexParam.PaletteOffset;
 	mOldOffset = mTileMap->getOffset(mCurrentTile);	
 	mTileMap->setTile(mCurrentTile, mNew);
 	mTileMap->setOffset(mCurrentTile, mNewOffset);

@@ -236,7 +236,7 @@ int TBDialog::render(){
 			
 			
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
-				if(mGlobalSettings.TileSetBPP < 0x8){
+				if(mGlobalSettings.mGlobalTexParam.TileSetBPP < 0x8){
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Palette Offset")).c_str(), NULL, &mGlobalSettings.bShowPaletteOffset) ){ 
 					}
 				}
@@ -301,7 +301,7 @@ int TBDialog::render(){
 					mGlobalSettings.CurrentEditor->createNewTileCopy(mGlobalSettings.CurrentEditor->mTileSelectedTile);
 				}
 
-				if(mGlobalSettings.TileSizeX == mGlobalSettings.TileSizeY){					
+				if(mGlobalSettings.mGlobalTexParam.TileSizeX == mGlobalSettings.mGlobalTexParam.TileSizeY){					
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Tile Left (F5)")).c_str())){
 						mGlobalSettings.CurrentEditor->rotateTileLeft();
 					}
@@ -921,9 +921,9 @@ void OCDialog::recieveInput(int mKey){
 								
 				mGlobalSettings.TileMapWidth = mCreateProject.tmapx;
 				mGlobalSettings.TileMapHeight = mCreateProject.tmapy;
-				mGlobalSettings.TileSetBPP = mCreateProject.tbpp;
-				mGlobalSettings.TileSizeX = mCreateProject.tilex;
-				mGlobalSettings.TileSizeY = mCreateProject.tiley;
+				mGlobalSettings.mGlobalTexParam.TileSetBPP = mCreateProject.tbpp;
+				mGlobalSettings.mGlobalTexParam.TileSizeX = mCreateProject.tilex;
+				mGlobalSettings.mGlobalTexParam.TileSizeY = mCreateProject.tiley;
 				mGlobalSettings.ProjectPath = mCreateProject.mReadPath.mDialogTextMain;
 
 				if(mCreateProject.bHasTileSet){
@@ -1063,7 +1063,7 @@ int CTMDialog::render(){
 		int mMax = mGlobalSettings.CurrentEditor->mTileSet.TTiles.size();
 		ImGui::SliderInt("Initial Tile Value", &toffset, 1, mMax,"%d", ImGuiSliderFlags_AlwaysClamp);
 
-		if(mGlobalSettings.TileSetBPP < 0x8){
+		if(mGlobalSettings.mGlobalTexParam.TileSetBPP < 0x8){
 			ImGui::SliderInt("Initial Palette Offset", &mPaletteOffset, 0, 15,"%d", ImGuiSliderFlags_AlwaysClamp);
 		}
 
@@ -1646,7 +1646,7 @@ int ITMDialog::render(){
 		ImGui::SliderInt("Tile Offset", &mTileOffset, 1, mMax,"%d", ImGuiSliderFlags_AlwaysClamp);
 	}
 
-	if(mGlobalSettings.TileSetBPP < 0x8){
+	if(mGlobalSettings.mGlobalTexParam.TileSetBPP < 0x8){
 			ImGui::SliderInt("Palette Offset", &mPaletteOffset, 0, 15,"%d", ImGuiSliderFlags_AlwaysClamp);
 	}
 	
@@ -2127,10 +2127,10 @@ void PIDialog::init(){
 	convert >> cMapHeight;
 
 
-	convert << mGlobalSettings.TileSizeX << std::endl;
+	convert << mGlobalSettings.mGlobalTexParam.TileSizeX << std::endl;
 	convert >> cTileSizeX;
 
-	convert << mGlobalSettings.TileSizeY << std::endl;
+	convert << mGlobalSettings.mGlobalTexParam.TileSizeY << std::endl;
 	convert >> cTileSizeY;
 
 	fliph=0;
@@ -2181,37 +2181,37 @@ int PODialog::render(int xpos, int ypos){
 
 	ImGui::Begin(mDialogTextMain.c_str(), &mGlobalSettings.bShowPaletteOffset, ImGuiWindowFlags_NoNav);
 
-	ImGui::RadioButton("0", &mGlobalSettings.PaletteOffset, 0);
+	ImGui::RadioButton("0", &mGlobalSettings.mTexParam->PaletteOffset, 0);
 	ImGui::SameLine();
-	ImGui::RadioButton("1", &mGlobalSettings.PaletteOffset, 1);
+	ImGui::RadioButton("1", &mGlobalSettings.mTexParam->PaletteOffset, 1);
 	ImGui::SameLine();
-	ImGui::RadioButton("2", &mGlobalSettings.PaletteOffset, 2);
+	ImGui::RadioButton("2", &mGlobalSettings.mTexParam->PaletteOffset, 2);
 	ImGui::SameLine();
-	ImGui::RadioButton("3", &mGlobalSettings.PaletteOffset, 3);
+	ImGui::RadioButton("3", &mGlobalSettings.mTexParam->PaletteOffset, 3);
 	ImGui::SameLine();
-	ImGui::RadioButton("4", &mGlobalSettings.PaletteOffset, 4);
+	ImGui::RadioButton("4", &mGlobalSettings.mTexParam->PaletteOffset, 4);
 	ImGui::SameLine();
-	ImGui::RadioButton("5", &mGlobalSettings.PaletteOffset, 5);
+	ImGui::RadioButton("5", &mGlobalSettings.mTexParam->PaletteOffset, 5);
 	ImGui::SameLine();
-	ImGui::RadioButton("6", &mGlobalSettings.PaletteOffset, 6);
+	ImGui::RadioButton("6", &mGlobalSettings.mTexParam->PaletteOffset, 6);
 	ImGui::SameLine();
-	ImGui::RadioButton("7", &mGlobalSettings.PaletteOffset, 7);
+	ImGui::RadioButton("7", &mGlobalSettings.mTexParam->PaletteOffset, 7);
 	ImGui::SameLine();
-	ImGui::RadioButton("8", &mGlobalSettings.PaletteOffset, 8);
+	ImGui::RadioButton("8", &mGlobalSettings.mTexParam->PaletteOffset, 8);
 	ImGui::SameLine();
-	ImGui::RadioButton("9", &mGlobalSettings.PaletteOffset, 9);
+	ImGui::RadioButton("9", &mGlobalSettings.mTexParam->PaletteOffset, 9);
 	ImGui::SameLine();
-	ImGui::RadioButton("10", &mGlobalSettings.PaletteOffset, 10);
+	ImGui::RadioButton("10", &mGlobalSettings.mTexParam->PaletteOffset, 10);
 	ImGui::SameLine();
-	ImGui::RadioButton("11", &mGlobalSettings.PaletteOffset, 11);
+	ImGui::RadioButton("11", &mGlobalSettings.mTexParam->PaletteOffset, 11);
 	ImGui::SameLine();
-	ImGui::RadioButton("12", &mGlobalSettings.PaletteOffset, 12);
+	ImGui::RadioButton("12", &mGlobalSettings.mTexParam->PaletteOffset, 12);
 	ImGui::SameLine();
-	ImGui::RadioButton("13", &mGlobalSettings.PaletteOffset, 13);
+	ImGui::RadioButton("13", &mGlobalSettings.mTexParam->PaletteOffset, 13);
 	ImGui::SameLine();
-	ImGui::RadioButton("14", &mGlobalSettings.PaletteOffset, 14);
+	ImGui::RadioButton("14", &mGlobalSettings.mTexParam->PaletteOffset, 14);
 	ImGui::SameLine();
-	ImGui::RadioButton("15", &mGlobalSettings.PaletteOffset, 15);
+	ImGui::RadioButton("15", &mGlobalSettings.mTexParam->PaletteOffset, 15);
 	
 	ImGui::PopFont();
 

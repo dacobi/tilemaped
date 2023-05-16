@@ -339,17 +339,17 @@ int TSelection::getTileIndex(int index, int careax, int careay,int &tIndex){
 
     getXYFromIndex(index, careax, careay, cx, cy);
 
-    int offset = careax / mGlobalSettings.TileSizeX;
+    int offset = careax / mGlobalSettings.mTexParam->TileSizeX;
 
     int tx, ty;
 
-    tx = cx % mGlobalSettings.TileSizeX;
-    ty = cy %  mGlobalSettings.TileSizeY;
+    tx = cx % mGlobalSettings.mTexParam->TileSizeX;
+    ty = cy %  mGlobalSettings.mTexParam->TileSizeY;
 
-    int tTile = cx / mGlobalSettings.TileSizeX;
-    tTile += (cy  / mGlobalSettings.TileSizeY) * offset;
+    int tTile = cx / mGlobalSettings.mTexParam->TileSizeX;
+    tTile += (cy  / mGlobalSettings.mTexParam->TileSizeY) * offset;
 
-    tIndex = tx + (ty * mGlobalSettings.TileSizeX);
+    tIndex = tx + (ty * mGlobalSettings.mTexParam->TileSizeX);
 
     return tTile;
 }
@@ -555,7 +555,7 @@ SDL_Rect TBrush::renderPixel(int xpos, int ypos){
     for(int i=0; i < mBrushHeight; i++){
             for(int j=0; j < mBrushWidth; j++){
                 if(mBrushElements[j+(i*mBrushWidth)] > -1){                    
-                    tList->AddRectFilled(telmin, telmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(mGlobalSettings.CurrentEditor->mPalette.TPalette[mBrushElements[j+(i*mBrushWidth)] + (16 * mGlobalSettings.PaletteOffset) ] ));
+                    tList->AddRectFilled(telmin, telmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(mGlobalSettings.CurrentEditor->mPalette.TPalette[mBrushElements[j+(i*mBrushWidth)] + (16 * mGlobalSettings.mTexParam->PaletteOffset) ] ));
                 }
                 if(bIsEditing){
                     if((j+(i*mBrushWidth)) == mCursorPos){
@@ -647,8 +647,8 @@ SDL_Rect TBrush::renderTile(int xpos, int ypos){
                         edmax.y = tmpInt;
                     }
 
-                    if(mGlobalSettings.TileSetBPP < 0x8){                        
-                        tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TPOffset[mGlobalSettings.PaletteOffset], edmin, edmax);
+                    if(mGlobalSettings.mGlobalTexParam.TileSetBPP < 0x8){                        
+                        tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TPOffset[mGlobalSettings.mGlobalTexParam.PaletteOffset], edmin, edmax);
                     } else {
                         tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TileTex, edmin, edmax);                        
                         
@@ -773,11 +773,13 @@ int TBrushList::init(std::string cTitle, std::string cType, int cBrushType, bool
     mDeltaBaseX = nDeltaX;
     mDeltaBaseY = nDeltaY;
 
+    //FIXME TODO
+
     if(mBrushType == TBRUSH_PIXEL){
-        if(mGlobalSettings.TileSizeX < 16){
+        if(mGlobalSettings.mGlobalTexParam.TileSizeX < 16){
             mMaxX = 8;        
         }
-        if(mGlobalSettings.TileSizeY < 16){
+        if(mGlobalSettings.mGlobalTexParam.TileSizeY < 16){
             mMaxY = 8;        
         }
     }
@@ -863,7 +865,7 @@ TileProperties TBrush::getElementProps(int element){
     TileProperties cProps;
     if(element > -1){
         cProps = mElementProps[element];
-        cProps.mPaletteOffset = mGlobalSettings.PaletteOffset;
+        cProps.mPaletteOffset = mGlobalSettings.mGlobalTexParam.PaletteOffset; //FIXME Maybe TODO
     }
     return cProps;
 }
@@ -1122,8 +1124,8 @@ int TBrushList::loadFromFile(std::string cBrushPath){
 int TSelectionEditor::getXY(int xpos, int ypos, int cxpos, int cypos){
 	int index;
 	int lineL = mSelectionAreaX; 
-	int fullL = lineL * mGlobalSettings.TileSizeY;
-	index = xpos + (ypos * lineL) + (cxpos * mGlobalSettings.TileSizeX) + (cypos * fullL);		
+	int fullL = lineL * mGlobalSettings.mGlobalTexParam.TileSizeY;
+	index = xpos + (ypos * lineL) + (cxpos * mGlobalSettings.mGlobalTexParam.TileSizeX) + (cypos * fullL);		
 	return index;
 }
 
@@ -1138,25 +1140,25 @@ int TSelectionEditor::renderEd(int xpos, int ypos){
     SDL_Rect cBorder;
 	for(int i = 0; i < mSelectionWidth; i++){
 		for(int j = 0; j <  mSelectionHeight; j++){
-			int cxpos = xpos +  (mCurEdScale*mGlobalSettings.TileSizeX)*i;
-			int cypos = ypos + (mGlobalSettings.TileSizeY*mCurEdScale)*j;
+			int cxpos = xpos +  (mCurEdScale*mGlobalSettings.mGlobalTexParam.TileSizeX)*i;
+			int cypos = ypos + (mGlobalSettings.mGlobalTexParam.TileSizeY*mCurEdScale)*j;
 
-			for(int ii=0; ii < mGlobalSettings.TileSizeY; ii++){
-				for(int jj=0; jj < mGlobalSettings.TileSizeX; jj++){                    
-                    if(mGlobalSettings.TileSetBPP < 0x8){
-                        EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mTileSet.TTiles[mGlobalSettings.CurrentEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])]->getPixel(jj+(ii*mGlobalSettings.TileSizeX), (mGlobalSettings.CurrentEditor->mTileMap->getOffset(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])), mGlobalSettings.CurrentEditor->mTileMap->getFlip(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])) , mCurEdScale); 
+			for(int ii=0; ii < mGlobalSettings.mGlobalTexParam.TileSizeY; ii++){
+				for(int jj=0; jj < mGlobalSettings.mGlobalTexParam.TileSizeX; jj++){                    
+                    if(mGlobalSettings.mGlobalTexParam.TileSetBPP < 0x8){
+                        EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mTileSet.TTiles[mGlobalSettings.CurrentEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])]->getPixel(jj+(ii*mGlobalSettings.mGlobalTexParam.TileSizeX), (mGlobalSettings.CurrentEditor->mTileMap->getOffset(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])), mGlobalSettings.CurrentEditor->mTileMap->getFlip(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])) , mCurEdScale); 
                     } else {                        
-                        EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mTileSet.TTiles[mGlobalSettings.CurrentEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])]->getPixel(jj+(ii*mGlobalSettings.TileSizeX), 0, mGlobalSettings.CurrentEditor->mTileMap->getFlip(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])) , mCurEdScale); 
+                        EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mTileSet.TTiles[mGlobalSettings.CurrentEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])]->getPixel(jj+(ii*mGlobalSettings.mGlobalTexParam.TileSizeX), 0, mGlobalSettings.CurrentEditor->mTileMap->getFlip(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])) , mCurEdScale); 
                     }
 					
 				}
 			}
 			
 			if(mGlobalSettings.bShowTileSelGrid){				
-				cBorder.x = xpos + ((mCurEdScale*mGlobalSettings.TileSizeX)*i);
-				cBorder.y = ypos + ((mGlobalSettings.TileSizeY*mCurEdScale)*j);
-				cBorder.w = (mCurEdScale*mGlobalSettings.TileSizeX);
-				cBorder.h = (mCurEdScale*mGlobalSettings.TileSizeY);
+				cBorder.x = xpos + ((mCurEdScale*mGlobalSettings.mGlobalTexParam.TileSizeX)*i);
+				cBorder.y = ypos + ((mGlobalSettings.mGlobalTexParam.TileSizeY*mCurEdScale)*j);
+				cBorder.w = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TileSizeX);
+				cBorder.h = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TileSizeY);
 				Tile::renderSelection(cBorder, mGlobalSettings.DefaultHighlightColor);
 			}
 
@@ -1165,12 +1167,12 @@ int TSelectionEditor::renderEd(int xpos, int ypos){
 
 			if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit && !mGlobalSettings.CurrentEditor->mBrushesPixel.bIsEditing){
 				if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit->mSelected.size()){						
-					for(int ii=0; ii < mGlobalSettings.TileSizeY; ii++){
-						for(int jj=0; jj < mGlobalSettings.TileSizeX; jj++){					
+					for(int ii=0; ii < mGlobalSettings.mGlobalTexParam.TileSizeY; ii++){
+						for(int jj=0; jj < mGlobalSettings.mGlobalTexParam.TileSizeX; jj++){					
 							if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit->findInSelection(getXY(jj,ii, i, j)) != -1){
 							    int findex = mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit->findInSelection(getXY(jj,ii, i, j));
 							    if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit->mBrushElements[findex] != -1){							
-                                    if(mGlobalSettings.TileSetBPP < 0x8){
+                                    if(mGlobalSettings.mGlobalTexParam.TileSetBPP < 0x8){
                                         mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit->mBrushElements[findex] + (16 * (mGlobalSettings.CurrentEditor->mTileMap->getOffset(mCurrentSelection->mSelected[(j*mSelectionWidth)+i]))), mCurEdScale); 
                                     } else {                        
                                         mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit->mBrushElements[findex] , mCurEdScale); 
@@ -1210,8 +1212,8 @@ SDL_Rect rEmpty;
 	rEmpty.w = 0;
 	rEmpty.h = 0;
    
-	mSelectionAreaX = mSelectionWidth * mGlobalSettings.TileSizeX;
-	mSelectionAreaY = mGlobalSettings.TileSizeY * mSelectionHeight;
+	mSelectionAreaX = mSelectionWidth * mGlobalSettings.mGlobalTexParam.TileSizeX;
+	mSelectionAreaY = mGlobalSettings.mGlobalTexParam.TileSizeY * mSelectionHeight;
 	
 	EditPixelAreas.resize(mSelectionAreaX*mSelectionAreaY);
 

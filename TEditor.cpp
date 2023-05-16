@@ -82,7 +82,7 @@ void TEditor::shutdown(){
 
 int TEditor::createNewProject(){
 	std::cout << "Creating Project: " << mGlobalSettings.ProjectPath << std::endl;
-	std::cout << "TileMapWidth: " << mGlobalSettings.TileMapWidth << " TileMapHeight: " << mGlobalSettings.TileMapHeight << " TileSizeX: " << mGlobalSettings.TileSizeX << " TileSizeY: " << mGlobalSettings.TileSizeY << std::endl;	
+	std::cout << "TileMapWidth: " << mGlobalSettings.TileMapWidth << " TileMapHeight: " << mGlobalSettings.TileMapHeight << " TileSizeX: " << mGlobalSettings.mGlobalTexParam.TileSizeX << " TileSizeY: " << mGlobalSettings.mGlobalTexParam.TileSizeY << std::endl;	
 	if(mGlobalSettings.bProjectHasPalette){
 		if(mGlobalSettings.testPaletteFile(mGlobalSettings.ProjectPalettePath) == 2){
 			if(mPalette.importGimpPalette(mGlobalSettings.ProjectPalettePath)){				
@@ -165,12 +165,12 @@ void TEditor::initDialogs(){
 
 	mPaletteOffset.init();
 
-	if(mGlobalSettings.TileSetBPP < 0x8){
+	if(mGlobalSettings.mGlobalTexParam.TileSetBPP < 0x8){
 		mGlobalSettings.bShowPaletteOffset = true;
 	}
 
-	mBrushesTile.init("Tiles","Tile", TBRUSH_TILE, &bShowBrushesTile,mGlobalSettings.TileSizeX, mGlobalSettings.TileSizeY, &mGlobalSettings.TileMapScale, mGlobalSettings.TileMapScale, &mCurrentBrushTile);
-	mBrushesPixel.init("Pixels","Pixel", TBRUSH_PIXEL, &bShowBrushesPixel, mGlobalSettings.TilePixelSize, mGlobalSettings.TilePixelSize, &mGlobalSettings.mTileEdScale, mGlobalSettings.mTileEdScale, &mCurrentBrushPixel);
+	mBrushesTile.init("Tiles","Tile", TBRUSH_TILE, &bShowBrushesTile,mGlobalSettings.mGlobalTexParam.TileSizeX, mGlobalSettings.mGlobalTexParam.TileSizeY, &mGlobalSettings.TileMapScale, mGlobalSettings.TileMapScale, &mCurrentBrushTile);
+	mBrushesPixel.init("Pixels","Pixel", TBRUSH_PIXEL, &bShowBrushesPixel, mGlobalSettings.mGlobalTexParam.TilePixelSize, mGlobalSettings.mGlobalTexParam.TilePixelSize, &mGlobalSettings.mGlobalTexParam.mTileEdScale, mGlobalSettings.mGlobalTexParam.mTileEdScale, &mCurrentBrushPixel);
 	
 }
 
@@ -552,7 +552,7 @@ int TEditor::render(){
 			mCurrentBrushPixel->getBrushSelection(cx, cy, mTileSelectedTile->PixelAreas);
 		}
 
-		mPalette.renderIm(100+mGlobalSettings.mTileEdScale*mGlobalSettings.TileSizeX*mGlobalSettings.TilePixelSize,50+mTopBar.mDialogHeight);	
+		mPalette.renderIm(100+mGlobalSettings.mGlobalTexParam.mTileEdScale*mGlobalSettings.mGlobalTexParam.TileSizeX*mGlobalSettings.mGlobalTexParam.TilePixelSize,50+mTopBar.mDialogHeight);	
 		if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
 		mTileSelectedTile->renderEd(50,50+mTopBar.mDialogHeight,&mPalette);
 		mColorSelectedTile->bPixelSelected = true;
@@ -678,12 +678,12 @@ int TEditor::setMode(int newMode){
 	}
 
 	if(newMode == EMODE_TILE){
-		mBrushesPixel.setBrushDeltas(mGlobalSettings.TilePixelSize, mGlobalSettings.TilePixelSize, &mGlobalSettings.mTileEdScale, mGlobalSettings.mTileEdScale);
+		mBrushesPixel.setBrushDeltas(mGlobalSettings.mGlobalTexParam.TilePixelSize, mGlobalSettings.mGlobalTexParam.TilePixelSize, &mGlobalSettings.mGlobalTexParam.mTileEdScale, mGlobalSettings.mGlobalTexParam.mTileEdScale);
 		mBrushesPixel.bIsShown = &bShowBrushesPixel;
 	}
 
 	if(newMode == EMODE_TILESET){
-		mBrushesPixel.setBrushDeltas(1, 1, &mTileSet.mCurEdScale, mGlobalSettings.mTileEdScale * mGlobalSettings.TilePixelSize);
+		mBrushesPixel.setBrushDeltas(1, 1, &mTileSet.mCurEdScale, mGlobalSettings.mGlobalTexParam.mTileEdScale * mGlobalSettings.mGlobalTexParam.TilePixelSize);
 		mBrushesPixel.bIsShown = &bShowBrushesPixelTileSet;
 	}
 
@@ -713,7 +713,7 @@ int TEditor::setMode(int newMode){
 				mPalette.bUpdateWinPos = true;
 			}        		        	
 
-			mBrushesPixel.setBrushDeltas(1, 1, &mSelEdit.mCurEdScale, mGlobalSettings.mTileEdScale * mGlobalSettings.TilePixelSize);
+			mBrushesPixel.setBrushDeltas(1, 1, &mSelEdit.mCurEdScale, mGlobalSettings.mGlobalTexParam.mTileEdScale * mGlobalSettings.mGlobalTexParam.TilePixelSize);
 			mBrushesPixel.bIsShown = &bShowBrushesPixelSelEdit;
 
     	} else {        	
@@ -1407,13 +1407,13 @@ int TEditor::handleSelection(int SELMODE){
 		switch (SELMODE)
 		{
 			case SELMODE_ALL:
-				mTileSelectedTile->mSelection.selectRange(0, mGlobalSettings.TileSizeX *  mGlobalSettings.TileSizeY);
+				mTileSelectedTile->mSelection.selectRange(0, mGlobalSettings.mGlobalTexParam.TileSizeX *  mGlobalSettings.mGlobalTexParam.TileSizeY);
 			break;
 			case SELMODE_NONE:
 				mTileSelectedTile->mSelection.clearSelection();
 			break;
 			case SELMODE_INVERT:
-				mTileSelectedTile->mSelection.invertSelection(0,  mGlobalSettings.TileSizeX *  mGlobalSettings.TileSizeY);
+				mTileSelectedTile->mSelection.invertSelection(0,  mGlobalSettings.mGlobalTexParam.TileSizeX *  mGlobalSettings.mGlobalTexParam.TileSizeY);
 			break;
 			default:
 			break;
@@ -1535,7 +1535,7 @@ int TEditor::replaceSelectedColor(int mx, int my){
 					std::vector<int> newSelection;
 					int cPixIndex = 0;
 					//for(auto &cPixel : mTileSelectedTile->FileData){
-					for(int i = 0; i < (mGlobalSettings.TileSizeX *mGlobalSettings.TileSizeY); i++){
+					for(int i = 0; i < (mGlobalSettings.mGlobalTexParam.TileSizeX *mGlobalSettings.mGlobalTexParam.TileSizeY); i++){
 						auto cPixel = mTileSelectedTile->getPixel(i);
 						if(cPixel == mOldColor){
 							newSelection.push_back(cPixIndex);
@@ -1581,7 +1581,7 @@ int TEditor::replaceSelectedColor(int mx, int my){
 						int cPixIndex = 0;
 						Tile* mTile =  mTileSet.TTiles[tt];
 						
-						for(int i = 0; i < (mGlobalSettings.TileSizeX *mGlobalSettings.TileSizeY); i++){
+						for(int i = 0; i < (mGlobalSettings.mGlobalTexParam.TileSizeX *mGlobalSettings.mGlobalTexParam.TileSizeY); i++){
 							auto cPixel = mTile->getPixel(i);
 							if(cPixel == mOldColor){
 								newSelection.push_back(cPixIndex);
@@ -1629,7 +1629,7 @@ int TEditor::replaceSelectedColor(int mx, int my){
 					int cPixIndex = 0;
 					Tile* mTile = mTileSet.TTiles[mTileMap->getTile(mSelectedTiles[tt])];
 						
-					for(int i = 0; i < (mGlobalSettings.TileSizeX *mGlobalSettings.TileSizeY); i++){
+					for(int i = 0; i < (mGlobalSettings.mGlobalTexParam.TileSizeX *mGlobalSettings.mGlobalTexParam.TileSizeY); i++){
 						auto cPixel = mTile->getPixel(i);
 						if(cPixel == mOldColor){
 							newSelection.push_back(cPixIndex);
@@ -1755,7 +1755,7 @@ int TEditor::findSelTile(){
 	
 	} else {		
 		if(mTileSelectedTile->mSelection.bIsSelecting){
-			mTileSelectedTile->mSelection.confirmSelection(mTileSelectedTile->PixelAreas, mGlobalSettings.TilePixelSize * mGlobalSettings.mTileEdScale, mGlobalSettings.TilePixelSize * mGlobalSettings.mTileEdScale);
+			mTileSelectedTile->mSelection.confirmSelection(mTileSelectedTile->PixelAreas, mGlobalSettings.mGlobalTexParam.TilePixelSize * mGlobalSettings.mGlobalTexParam.mTileEdScale, mGlobalSettings.mGlobalTexParam.TilePixelSize * mGlobalSettings.mGlobalTexParam.mTileEdScale);
 		}
 		
 		if(leftMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
@@ -1801,7 +1801,7 @@ int TEditor::findSelTile(){
 		tSel = searchRectsXY(mTileSelectedTile->PixelAreas, cx, cy);
 		if(tSel >-1){
 			mColorSelectedTile->bPixelSelected = false;
-			mColorSelected = (mTileSelectedTile->getPixel(tSel)+(mGlobalSettings.PaletteOffset*16));
+			mColorSelected = (mTileSelectedTile->getPixel(tSel)+(mGlobalSettings.mGlobalTexParam.PaletteOffset*16));
 			mColorSelectedTile = mPalette.TPixels[mColorSelected];
 			mColorSelectedTile->bPixelSelected = true;
 			mTileSelectedTile->mSelection.cancelSelection();
@@ -1845,14 +1845,14 @@ int TEditor::handlePaletteEdit(){
 
 int TEditor::handlePalette(){
 
-	if(mLastPixelOffset != mGlobalSettings.PaletteOffset){
+	if(mLastPixelOffset != mGlobalSettings.mTexParam->PaletteOffset){
 		int tmpSel = mColorSelected % 16;
-		tmpSel += (mGlobalSettings.PaletteOffset * 16);
+		tmpSel += (mGlobalSettings.mTexParam->PaletteOffset * 16);
 		mColorSelectedTile->bPixelSelected = false;
 		mColorSelected = tmpSel;
 		mColorSelectedTile = mPalette.TPixels[tmpSel];
 		mColorSelectedTile->bPixelSelected = true;
-		mLastPixelOffset = mGlobalSettings.PaletteOffset;
+		mLastPixelOffset = mGlobalSettings.mTexParam->PaletteOffset;
 		mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor = true;
 	}
 
@@ -1876,7 +1876,7 @@ int TEditor::handlePalette(){
 		int tSel = -1;		
 		tSel = searchRectsXY(mPalette.PixelAreas, cx, cy);
 		
-		if(mGlobalSettings.TileSetBPP < 0x8){
+		if(mGlobalSettings.mTexParam->TileSetBPP < 0x8){
 			mBrushesPixel.addBrushElement(tSel%16);
 		} else {
 			mBrushesPixel.addBrushElement(tSel);
@@ -1975,9 +1975,9 @@ int TEditor::handleSelEdit(){
 				Tile* cSelectedTile = mTileSet.TTiles[mtile];
 				int findex = cSelectedTile->getFlipIndex(tindex, mTileMap->getFlip(stile));
 
-				mGlobalSettings.PaletteOffset = mTileMap->getOffset(stile);
+				mGlobalSettings.mGlobalTexParam.PaletteOffset = mTileMap->getOffset(stile);
 
-				mColorSelected = (cSelectedTile->getPixel(findex)+(mGlobalSettings.PaletteOffset*16));
+				mColorSelected = (cSelectedTile->getPixel(findex)+(mGlobalSettings.mGlobalTexParam.PaletteOffset*16));
 				mColorSelectedTile = mPalette.TPixels[mColorSelected];
 				mColorSelectedTile->bPixelSelected = true;
 				mTileSelectedTile->mSelection.cancelSelection();
@@ -2104,7 +2104,7 @@ int TEditor::handleTileSetEdit(){
 			int tTile;
 			tTile = mTileSet.mSelection.getTileIndex(tSel, mTileSet.mSelectionAreaX, mTileSet.mSelectionAreaY, tindex);
 			Tile *mTile = mTileSet.TTiles[tTile];
-			mColorSelected = (mTile->getPixel(tindex)+(mGlobalSettings.PaletteOffset*16));
+			mColorSelected = (mTile->getPixel(tindex)+(mGlobalSettings.mGlobalTexParam.PaletteOffset*16));
 			mColorSelectedTile = mPalette.TPixels[mColorSelected];
 			mColorSelectedTile->bPixelSelected = true;
 			mTileSelectedTile->mSelection.cancelSelection();
@@ -2251,7 +2251,7 @@ int TEditor::handleTileMap(){
 		}
 	} else {
 		if(mTileMap->mSelection.bIsSelecting){
-			mTileMap->mSelection.confirmSelection(mTileMap->TileAreas, mGlobalSettings.TileSizeX * mGlobalSettings.TileMapScale,  mGlobalSettings.TileSizeY * mGlobalSettings.TileMapScale);
+			mTileMap->mSelection.confirmSelection(mTileMap->TileAreas, mGlobalSettings.mGlobalTexParam.TileSizeX * mGlobalSettings.TileMapScale,  mGlobalSettings.mGlobalTexParam.TileSizeY * mGlobalSettings.TileMapScale);
 		} else {
 			findSelMap();
 		}
@@ -2264,8 +2264,8 @@ int TEditor::handleEvents(){
 	
 	SDL_GetRelativeMouseState(&rx, &ry);
 	mButtonState = SDL_GetMouseState(&cx, &cy);
-	int mapWidthX = mGlobalSettings.TileMapWidth*mGlobalSettings.TileSizeX*mGlobalSettings.TileMapScale;					
-	int mapWidthY = mGlobalSettings.TileMapHeight*mGlobalSettings.TileSizeY*mGlobalSettings.TileMapScale;
+	int mapWidthX = mGlobalSettings.TileMapWidth*mGlobalSettings.mGlobalTexParam.TileSizeX*mGlobalSettings.TileMapScale;					
+	int mapWidthY = mGlobalSettings.TileMapHeight*mGlobalSettings.mGlobalTexParam.TileSizeY*mGlobalSettings.TileMapScale;
 	
 	if(mButtonState & SDL_BUTTON(SDL_BUTTON_LEFT)){
 		leftMouseButtonDown = true;
@@ -2374,7 +2374,7 @@ int TEditor::handleEvents(){
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
 				int cretval = 0;
 
-				if(mGlobalSettings.TileSetBPP < 0x8){
+				if(mGlobalSettings.mGlobalTexParam.TileSetBPP < 0x8){
 					cretval = importTileMap(mGlobalSettings.mNewTileMapPath, 0, mGlobalSettings.mNewTileMapPaletteOffset);
 				} else {
 				 	cretval = importTileMap(mGlobalSettings.mNewTileMapPath, 0, 0);
@@ -2410,7 +2410,7 @@ int TEditor::handleEvents(){
 				int cretval = 0;
 				std::cout << "Importing TileMap with offset: " << mGlobalSettings.mNewTileMapOffset << std::endl;
 
-				if(mGlobalSettings.TileSetBPP < 0x8){
+				if(mGlobalSettings.mGlobalTexParam.TileSetBPP < 0x8){
 					cretval = importTileMap(mGlobalSettings.mNewTileMapPath, mGlobalSettings.mNewTileMapOffset, mGlobalSettings.mNewTileMapPaletteOffset);
 				} else {
 				 	cretval = importTileMap(mGlobalSettings.mNewTileMapPath, mGlobalSettings.mNewTileMapOffset, 0);
@@ -2443,7 +2443,7 @@ int TEditor::handleEvents(){
 							
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
 
-				if(mGlobalSettings.TileSetBPP < 0x8){
+				if(mGlobalSettings.mGlobalTexParam.TileSetBPP < 0x8){
 					createTileMap(mGlobalSettings.mNewTileMapX, mGlobalSettings.mNewTileMapY, mGlobalSettings.mNewTileMapOffset, mGlobalSettings.mNewTileMapPaletteOffset);				
 				} else {
 					createTileMap(mGlobalSettings.mNewTileMapX, mGlobalSettings.mNewTileMapY, mGlobalSettings.mNewTileMapOffset);				

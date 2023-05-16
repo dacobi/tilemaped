@@ -151,9 +151,19 @@ public:
 	sKey *Win_Maximize;	
 };
 
+struct TextureParameters{
+	int TileSizeX=16;
+	int TileSizeY=16;
+	int TileSetBPP=8;
+	int TilePixelSize=16;
+	int PaletteOffset=0;
+	int mTileEdScale = 4;
+	int TileRenderSize=16;
+};
 
 class TSettings{
 	public:
+		TSettings(){mTexParam = &mGlobalTexParam;}
 		ImGuiIO *mio;
 		void shutdown();
 		void close();
@@ -161,6 +171,8 @@ class TSettings{
 		SDL_Renderer *TRenderer;
 		SDL_Window *TWindow;
 		ProjectSettings mProjectSettings;		
+		TextureParameters mGlobalTexParam;
+		TextureParameters *mTexParam;
 		int WindowWidth=1900;
 		int WindowHeight=1000;
 		int TopBarHeight = 50;
@@ -169,14 +181,17 @@ class TSettings{
 		int TileMapScale=3;
 		int TileMapHeight=128;
 		int TileMapWidth=128;		
+		/*
 		int TileSizeX=16;
 		int TileSizeY=16;
 		int TileSetBPP=8;
 		int TilePixelSize=16;
-		std::map<int, int> mTileBPPSize = {{8,1 },{4,2 },{2,4}};
+		int mTileEdScale = 4;		
 		int PaletteOffset=0;
-		bool bShowPaletteOffset = false;
 		int TileRenderSize=16;
+		*/
+		std::map<int, int> mTileBPPSize = {{8,1 },{4,2 },{2,4}};
+		bool bShowPaletteOffset = false;		
 		int PaletteScale=2;
 		std::string ProjectPath;
 		std::string ProjectPalettePath = "";
@@ -210,8 +225,7 @@ class TSettings{
 		bool bShowSelectedTile = true;
 		bool bShowProjectInfo = false;		
 		bool bShowHelpDialog = false;		
-		int mSelectedTile = 0;
-		int mTileEdScale = 4;		
+		int mSelectedTile = 0;		
 		ImFont* DFont;
 		ImFont* SFont;
 		SDL_Color DefaultBGColor = {0xc0,0xc0,0xc0,0xff};
