@@ -49,7 +49,7 @@ class TSelection{
         int getSelection(std::vector<SDL_Rect> &sRects, SDL_Rect &cSel, int xdelta, int ydelta);
         int getXY(int X,int Y);
         int getXYFromIndex(int index,int careax, int careay, int &mx, int &my);
-        int getTileIndex(int index, int careax, int careay,int &tIndex);
+        int getTileIndex(int index, int careax, int careay,int &tIndex, TextureParameters *mTexParam);
 };
 
 enum{
@@ -102,6 +102,7 @@ class TBrushList{
         std::vector<TBrush*> mBrushes;
         std::string mTitle;
         std::string mType;
+        TextureParameters *mTexParam;
         bool *bIsShown;
         int *mDeltaScale;
         bool bIsEditing = false;
@@ -115,9 +116,9 @@ class TBrushList{
         int mNewBrushY=1;
         int mSelectedBrush=0;
         int mBrushOffset = 0;
-        int setBrushDeltas(int nDeltaX, int nDeltaY, int *nDeltaScale, int nRenderScale);
+        int setBrushDeltas(int nDeltaX, int nDeltaY, int *nDeltaScale, int nRenderScale, TextureParameters *mTexParam);
    		std::vector<SDL_Rect> BrushAreas;
-        int init(std::string cTitle, std::string cType, int cBrushType, bool *cIsShown, int nDeltaX, int nDeltaY, int *cDeltaScale, int cRenderScale, TBrush **cCurrentBrush);
+        int init(std::string cTitle, std::string cType, int cBrushType, bool *cIsShown, int nDeltaX, int nDeltaY, int *cDeltaScale, int cRenderScale, TBrush **cCurrentBrush, TextureParameters *mTexParam);
         TBrush **mCurrentBrush;
         TBrush* getBrush();
         TBrush* getNextBrush();

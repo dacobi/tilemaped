@@ -2172,7 +2172,7 @@ void PODialog::init(){
 	mDialogTextMain = mGlobalSettings.mImage + " Palette Offset";
 }
 
-int PODialog::render(int xpos, int ypos){
+int PODialog::render(int xpos, int ypos, TextureParameters *mTexParam){
 
 	Dialog::render(ypos);
 
@@ -2181,37 +2181,37 @@ int PODialog::render(int xpos, int ypos){
 
 	ImGui::Begin(mDialogTextMain.c_str(), &mGlobalSettings.bShowPaletteOffset, ImGuiWindowFlags_NoNav);
 
-	ImGui::RadioButton("0", &mGlobalSettings.mTexParam->PaletteOffset, 0);
+	ImGui::RadioButton("0", &mTexParam->PaletteOffset, 0);
 	ImGui::SameLine();
-	ImGui::RadioButton("1", &mGlobalSettings.mTexParam->PaletteOffset, 1);
+	ImGui::RadioButton("1", &mTexParam->PaletteOffset, 1);
 	ImGui::SameLine();
-	ImGui::RadioButton("2", &mGlobalSettings.mTexParam->PaletteOffset, 2);
+	ImGui::RadioButton("2", &mTexParam->PaletteOffset, 2);
 	ImGui::SameLine();
-	ImGui::RadioButton("3", &mGlobalSettings.mTexParam->PaletteOffset, 3);
+	ImGui::RadioButton("3", &mTexParam->PaletteOffset, 3);
 	ImGui::SameLine();
-	ImGui::RadioButton("4", &mGlobalSettings.mTexParam->PaletteOffset, 4);
+	ImGui::RadioButton("4", &mTexParam->PaletteOffset, 4);
 	ImGui::SameLine();
-	ImGui::RadioButton("5", &mGlobalSettings.mTexParam->PaletteOffset, 5);
+	ImGui::RadioButton("5", &mTexParam->PaletteOffset, 5);
 	ImGui::SameLine();
-	ImGui::RadioButton("6", &mGlobalSettings.mTexParam->PaletteOffset, 6);
+	ImGui::RadioButton("6", &mTexParam->PaletteOffset, 6);
 	ImGui::SameLine();
-	ImGui::RadioButton("7", &mGlobalSettings.mTexParam->PaletteOffset, 7);
+	ImGui::RadioButton("7", &mTexParam->PaletteOffset, 7);
 	ImGui::SameLine();
-	ImGui::RadioButton("8", &mGlobalSettings.mTexParam->PaletteOffset, 8);
+	ImGui::RadioButton("8", &mTexParam->PaletteOffset, 8);
 	ImGui::SameLine();
-	ImGui::RadioButton("9", &mGlobalSettings.mTexParam->PaletteOffset, 9);
+	ImGui::RadioButton("9", &mTexParam->PaletteOffset, 9);
 	ImGui::SameLine();
-	ImGui::RadioButton("10", &mGlobalSettings.mTexParam->PaletteOffset, 10);
+	ImGui::RadioButton("10", &mTexParam->PaletteOffset, 10);
 	ImGui::SameLine();
-	ImGui::RadioButton("11", &mGlobalSettings.mTexParam->PaletteOffset, 11);
+	ImGui::RadioButton("11", &mTexParam->PaletteOffset, 11);
 	ImGui::SameLine();
-	ImGui::RadioButton("12", &mGlobalSettings.mTexParam->PaletteOffset, 12);
+	ImGui::RadioButton("12", &mTexParam->PaletteOffset, 12);
 	ImGui::SameLine();
-	ImGui::RadioButton("13", &mGlobalSettings.mTexParam->PaletteOffset, 13);
+	ImGui::RadioButton("13", &mTexParam->PaletteOffset, 13);
 	ImGui::SameLine();
-	ImGui::RadioButton("14", &mGlobalSettings.mTexParam->PaletteOffset, 14);
+	ImGui::RadioButton("14", &mTexParam->PaletteOffset, 14);
 	ImGui::SameLine();
-	ImGui::RadioButton("15", &mGlobalSettings.mTexParam->PaletteOffset, 15);
+	ImGui::RadioButton("15", &mTexParam->PaletteOffset, 15);
 	
 	ImGui::PopFont();
 

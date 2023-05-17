@@ -9,6 +9,8 @@
 
 class TTexture{
 	public:
+		TextureParameters *mTexParam;
+		TTexture(){mTexParam = &mGlobalSettings.mGlobalTexParam;}
 		~TTexture();		
 		SDL_Texture *TileTex = NULL;
 		std::vector<unsigned char> FileData;
@@ -44,7 +46,7 @@ class TPixel{
 		SDL_Rect renderImDisabled(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderEditor(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		//SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
-		SDL_Rect renderEd(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
+		SDL_Rect renderEd(int xpos, int ypos, TextureParameters *mTexParam, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderEdSel(int xpos, int ypos, int tscale, bool drawGrid=false);
 		bool bPixelSelected = false;
 		bool bPixelSelectedEdit = false;
@@ -84,10 +86,10 @@ class TPalette : public Dialog{
 		SDL_Color getSDLColor4Bit(int cR, int cG, int cB);
 		int updatePalette();
 		int renderEditor(int xpos, int ypos);
-		int renderIm(int xpos, int ypos);
+		int renderIm(int xpos, int ypos, TextureParameters *mTexParam);
 		//int render(int xpos, int ypos);
-		SDL_Rect renderTileEd(int xpos,int ypos, int tcolor);
-		SDL_Rect renderTileEd(int xpos,int ypos, int tcolor, int cScale);
+		SDL_Rect renderTileEd(int xpos,int ypos, int tcolor, TextureParameters *mTexParam);
+		SDL_Rect renderTileEd(int xpos,int ypos, int tcolor, int cScale, TextureParameters *mTexParam);
 		SDL_Rect renderSelEd(int xpos,int ypos, int tcolor, int cScale);
 		std::vector<std::string> mMapColorVals = {"%d/0","%d/17","%d/34","%d/51","%d/68","%d/85","%d/102","%d/119","%d/136","%d/153","%d/170","%d/187","%d/204","%d/221","%d/238","%d/255"};
 		std::map<int,int> mMapColorIn = {{0,0},{1,17},{2,34},{3,51},{4,68},{5,85},{6,102},{7,119},{8,136},{9,153},{10,170},{11,187},{12,204},{13,221},{14,238},{15,255}};

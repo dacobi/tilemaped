@@ -330,7 +330,7 @@ int TSelection::renderSelection(int xpos, int ypos){
     return 0;
 }
 
-int TSelection::getTileIndex(int index, int careax, int careay,int &tIndex){
+int TSelection::getTileIndex(int index, int careax, int careay,int &tIndex, TextureParameters *mTexParam){
     if(index >= (careax*careay)){            
         return -1;
     }
@@ -339,17 +339,17 @@ int TSelection::getTileIndex(int index, int careax, int careay,int &tIndex){
 
     getXYFromIndex(index, careax, careay, cx, cy);
 
-    int offset = careax / mGlobalSettings.mTexParam->TileSizeX;
+    int offset = careax / mTexParam->TileSizeX;
 
     int tx, ty;
 
-    tx = cx % mGlobalSettings.mTexParam->TileSizeX;
-    ty = cy %  mGlobalSettings.mTexParam->TileSizeY;
+    tx = cx % mTexParam->TileSizeX;
+    ty = cy %  mTexParam->TileSizeY;
 
-    int tTile = cx / mGlobalSettings.mTexParam->TileSizeX;
-    tTile += (cy  / mGlobalSettings.mTexParam->TileSizeY) * offset;
+    int tTile = cx / mTexParam->TileSizeX;
+    tTile += (cy  / mTexParam->TileSizeY) * offset;
 
-    tIndex = tx + (ty * mGlobalSettings.mTexParam->TileSizeX);
+    tIndex = tx + (ty * mTexParam->TileSizeX);
 
     return tTile;
 }
@@ -457,11 +457,12 @@ int TBrush::flipElementH(){
     return 0;
 }
 
-int TBrushList::setBrushDeltas(int nDeltaX, int nDeltaY, int *nDeltaScale, int nRenderScale){
+int TBrushList::setBrushDeltas(int nDeltaX, int nDeltaY, int *nDeltaScale, int nRenderScale, TextureParameters *cTexParam){
     mDeltaBaseX = nDeltaX;
     mDeltaBaseY = nDeltaY;
     mDeltaScale = nDeltaScale;
     mRenderScale = nRenderScale;
+    mTexParam = cTexParam;
     return 0;
 }
 int TBrush::getBrushSelection(int bx, int by, std::vector<SDL_Rect> &sRects){
@@ -555,7 +556,7 @@ SDL_Rect TBrush::renderPixel(int xpos, int ypos){
     for(int i=0; i < mBrushHeight; i++){
             for(int j=0; j < mBrushWidth; j++){
                 if(mBrushElements[j+(i*mBrushWidth)] > -1){                    
-                    tList->AddRectFilled(telmin, telmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(mGlobalSettings.CurrentEditor->mPalette.TPalette[mBrushElements[j+(i*mBrushWidth)] + (16 * mGlobalSettings.mTexParam->PaletteOffset) ] ));
+                    tList->AddRectFilled(telmin, telmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(mGlobalSettings.CurrentEditor->mPalette.TPalette[mBrushElements[j+(i*mBrushWidth)] + (16 * mParent->mTexParam->PaletteOffset) ] ));
                 }
                 if(bIsEditing){
                     if((j+(i*mBrushWidth)) == mCursorPos){
@@ -762,7 +763,7 @@ void TBrushList::swapBrushElements(int eVal1, int eVal2){
     }
 }
 
-int TBrushList::init(std::string cTitle, std::string cType, int cBrushType, bool *cIsShown, int nDeltaX, int nDeltaY, int *cDeltaScale, int cRenderScale, TBrush **cCurrentBrush){
+int TBrushList::init(std::string cTitle, std::string cType, int cBrushType, bool *cIsShown, int nDeltaX, int nDeltaY, int *cDeltaScale, int cRenderScale, TBrush **cCurrentBrush, TextureParameters *cTexParam){
     mTitle = cTitle;
     mType = cType;
     mBrushType = cBrushType;
@@ -772,6 +773,7 @@ int TBrushList::init(std::string cTitle, std::string cType, int cBrushType, bool
     mCurrentBrush = cCurrentBrush;
     mDeltaBaseX = nDeltaX;
     mDeltaBaseY = nDeltaY;
+    mTexParam = cTexParam;
 
     //FIXME TODO
 

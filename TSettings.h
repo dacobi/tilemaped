@@ -163,7 +163,7 @@ struct TextureParameters{
 
 class TSettings{
 	public:
-		TSettings(){mTexParam = &mGlobalTexParam;}
+		//TSettings(){mTexParam = &mGlobalTexParam;}
 		ImGuiIO *mio;
 		void shutdown();
 		void close();
@@ -172,7 +172,7 @@ class TSettings{
 		SDL_Window *TWindow;
 		ProjectSettings mProjectSettings;		
 		TextureParameters mGlobalTexParam;
-		TextureParameters *mTexParam;
+		
 		int WindowWidth=1900;
 		int WindowHeight=1000;
 		int TopBarHeight = 50;
@@ -262,7 +262,7 @@ class TSettings{
 		int updateTicks();
 		int getTicks();
 		int runOCD(int mode=0);
-		void settingsMenu();
+		void settingsMenu();	
 		std::string mWindow = "\uf2d0";
 		std::string mFloppy = "\ue240"; //Floppy disk		
 		std::string mPrompt = "\uf120"; //Prompt
@@ -285,7 +285,8 @@ enum {
 	EMODE_TILE,
 	EMODE_PALED,
 	EMODE_TILESET,
-	EMODE_SELEDIT
+	EMODE_SELEDIT,
+	EMODE_SPRITE
 } emodes;
 
 enum {

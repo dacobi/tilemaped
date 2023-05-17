@@ -214,7 +214,7 @@ void TEActionBrushPixelsSelEdit::doAction(TileMap* cTileMap, TileSet* cTileSet, 
 			int ttile;
 			int stile;
 			int mtile;
-			ttile = mTileSet->mSelection.getTileIndex(mSelElement, mAreaX, mAreaY,ttindex);
+			ttile = mTileSet->mSelection.getTileIndex(mSelElement, mAreaX, mAreaY,ttindex, &mGlobalSettings.mGlobalTexParam);
 			stile = mSelected[ttile];
 			mtile = mTileMap->getTile(stile);
 
@@ -245,7 +245,7 @@ void TEActionBrushPixelsTileSet::doAction(TileSet* cTileSet, TBrush &mBrush, int
 		if(mSelElement > -1){ 			
 			if(mNewValues[eindex] != -1){				
 				int tindex;
-				int tTile = mBrush.getTileIndex(mSelElement, mAreaX, mAreaY, tindex);
+				int tTile = mBrush.getTileIndex(mSelElement, mAreaX, mAreaY, tindex, &mGlobalSettings.mGlobalTexParam);
 				Tile *mTile = mTileSet->TTiles[tTile];
 				TEActionReplacePixel* newAction = new TEActionReplacePixel();							
 				newAction->doAction(mTile, tindex, mTile->getPixel(tindex), mNewValues[eindex], mPalette);
@@ -268,7 +268,7 @@ void TEActionReplacePixelsSel::doAction(TileSet *cTileSet, TSelection &mSelect, 
 	for(auto &mSelElement : mSelection){
 		if(mSelElement > -1){ 	
 				int tindex;
-				int tTile = mSelect.getTileIndex(mSelElement, mAreaX, mAreaY, tindex);
+				int tTile = mSelect.getTileIndex(mSelElement, mAreaX, mAreaY, tindex, &mGlobalSettings.mGlobalTexParam);
 				Tile *mTile = mTileSet->TTiles[tTile];
 				TEActionReplacePixel* newAction = new TEActionReplacePixel();							
 				newAction->doAction(mTile, tindex, mTile->getPixel(tindex), mNewValue, mCurrentPalette);

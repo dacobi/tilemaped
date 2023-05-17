@@ -234,7 +234,7 @@ class HDialog: public SDialog{
 class PODialog: public Dialog{
 	public:
 		virtual void init();
-		virtual int render(int xpos, int ypos);
+		virtual int render(int xpos, int ypos, TextureParameters *mTexParam);
 };
 
 class PIDialog: public Dialog{
