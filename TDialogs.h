@@ -201,6 +201,18 @@ class CTMDialog: public Dialog{
 		int mPaletteOffset = 0;
 };
 
+class CSDialog: public Dialog{
+	public:				
+		virtual void init();				
+		virtual void cancel();
+		virtual void recieveInput(int mKey);				
+		virtual int render();
+		int spritex=32;
+		int spritey=32;
+		int spritebpp=8;				
+};
+
+
 
 class OCDialog: public Dialog{
 	public:

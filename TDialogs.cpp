@@ -93,6 +93,9 @@ void TBDialog::init(){
 		case EMODE_SELEDIT:
 			mDialogTextWindow += " Selection Editor";
 		break;
+		case EMODE_SPRITE:
+			mDialogTextWindow += " Sprite Editor";
+		break;
 	};
 
 	mDialogTextProject = mGlobalSettings.mFile + " Project: " + mGlobalSettings.ProjectPath + "  " + mGlobalSettings.mInfo + " Info: F2";
@@ -118,6 +121,9 @@ int TBDialog::render(){
 		break;
 		case EMODE_SELEDIT:
 			mDialogTextWindow += " Selection Editor";
+		break;
+		case EMODE_SPRITE:
+			mDialogTextWindow += " Sprite Editor";
 		break;
 	};
 
@@ -227,6 +233,47 @@ int TBDialog::render(){
 				//mGlobalSettings.CurrentEditor->activatePaletteEdit();
 				mGlobalSettings.CurrentEditor->setMode(EMODE_SELEDIT);
 			}
+
+			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE){
+				
+					if(ImGui::BeginMenu((std::string(mGlobalSettings.mWindow + " Sprites")).c_str())){
+						int nSprite=0;
+						for(auto *cSprite : mGlobalSettings.CurrentEditor->mSprites){
+							if(ImGui::MenuItem(cSprite->getSpriteSize().c_str())){				
+								mGlobalSettings.CurrentEditor->switchSprite(nSprite);
+							}
+							nSprite++;
+						}
+ 
+						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Create Sprite")).c_str())){				
+							mGlobalSettings.CurrentEditor->activateNewSpriteDialog();
+						}		
+
+						if(mGlobalSettings.CurrentEditor->mTileMaps.size() > 1){
+							if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Remove Sprite")).c_str())){				
+								//TODO mGlobalSettings.CurrentEditor->activateRemoveTileMapDialog();
+							}	
+						}
+						
+						ImGui::EndMenu();
+					}
+				//} else {
+				//	if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Tilemap")).c_str())){				
+				//		mGlobalSettings.CurrentEditor->setMode(EMODE_MAP);
+				//	}
+				//}
+			} else {
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Sprite")).c_str())){				
+					if(mGlobalSettings.CurrentEditor->mSprites.size()){
+						mGlobalSettings.CurrentEditor->setMode(EMODE_SPRITE);
+					} else {
+						mGlobalSettings.CurrentEditor->activateNewSpriteDialog();
+					}
+					
+					
+				}
+			}
+
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Help Dialog (F1)")).c_str())){
 				mGlobalSettings.CurrentEditor->activateHelpDialog();
 			}
@@ -1002,6 +1049,18 @@ void CTMDialog::cancel(){
 		mPaletteOffset = 0;
 }
 
+void CSDialog::init(){
+	mDialogTextMain = mGlobalSettings.mFile + " Create New Sprite";	
+}
+
+void CSDialog::cancel(){
+		Dialog::cancel();
+		spritex=32;
+		spritey=32;
+		spritebpp=8;				
+}
+
+
 void CPDialog::init(){
 	mDialogTextMain = mGlobalSettings.mFile + " Create New Project";	
 		
@@ -1102,6 +1161,72 @@ void CTMDialog::recieveInput(int mKey){
 		bInputIsCancel=true;
 	}			
 }
+
+int CSDialog::render(){
+	
+	Dialog::render();
+
+
+	ImGui::Begin(mDialogTextMain.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
+    		
+		ImGui::Text("Sprite Width & Height");  
+			
+		ImGui::RadioButton("W: 8", &spritex, 8);
+		ImGui::SameLine();
+		ImGui::RadioButton("W: 16", &spritex, 16);
+		ImGui::SameLine();
+		ImGui::RadioButton("W: 32", &spritex, 32);
+		ImGui::SameLine();
+		ImGui::RadioButton("W: 64", &spritex, 64);
+
+		ImGui::RadioButton("H: 8", &spritey, 8);
+		ImGui::SameLine();
+		ImGui::RadioButton("H: 16", &spritey, 16);
+		ImGui::SameLine();
+		ImGui::RadioButton("H: 32", &spritey, 32);
+		ImGui::SameLine();
+		ImGui::RadioButton("H: 64", &spritey, 64);
+
+		
+		ImGui::Text("Sprite BPP");  
+			
+		ImGui::RadioButton("BPP: 4", &spritebpp, 4);
+		ImGui::SameLine();
+		ImGui::RadioButton("BPP: 8", &spritebpp, 8);
+		
+		if (ImGui::Button("Create")){
+			recieveInput(SDLK_y);
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel")){
+			recieveInput(SDLK_n);
+		}		
+            
+     ImGui::End();
+
+	return 0;
+}
+
+void CSDialog::recieveInput(int mKey){
+	
+	if(mKey == SDLK_y){		
+		bInputIsAccept=true;	
+		bDialogIsWatingForText = false;		
+
+		mGlobalSettings.mEditorState = ESTATE_SPRITECREATE;
+		
+		mGlobalSettings.mNewSpriteX = spritex;
+		mGlobalSettings.mNewSpriteY = spritey;
+		mGlobalSettings.mNewSpriteBPP = spritebpp;
+	}		
+	
+	if(mKey == SDLK_n){
+		bInputIsCancel=true;
+	}			
+}
+
 
 int CPDialog::render(){
 	

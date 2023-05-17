@@ -3,6 +3,7 @@
 
 #include "TSettings.h"
 #include "TileMap.h"
+#include "TSprite.h"
 #include "TDialogs.h"
 #include "TSelection.h"
 
@@ -67,7 +68,10 @@ class TEditor{
 		int mLastSelEditHeight=0;
 		bool bTileMapWasChanged = true;
 		std::vector<TileMap*> mTileMaps;
+		TSprite *mSprite = NULL;
+		std::vector<TSprite*> mSprites;
 		int switchTileMap(int cTileMap);
+		int switchSprite(int cSprite);
 		TBDialog mTopBar;
 		int mMapSelectedTile=0;
 		Tile* mTileSelectedTile = NULL;
@@ -115,7 +119,8 @@ class TEditor{
 		ImWinMouseState ImButtonsTileSet;		
 		ImWinMouseState ImButtonsPalette;		
 		ImWinMouseState ImButtonsBrushes;		
-		ImWinMouseState ImButtonsColEdit;		
+		ImWinMouseState ImButtonsColEdit;
+		ImWinMouseState ImButtonsSprite;		
 		bool leftMouseButtonDown = false;		
 		bool rightMouseButtonDown = false;
 		int leftMouseButtonClicks = 0;
@@ -156,6 +161,7 @@ class TEditor{
 		ITSDialog mOpenTileSetDialog;
 		ITMDialog mOpenTileMapDialog;
 		CTMDialog mNewTileMapDialog;
+		CSDialog mNewSpriteDialog;
 		HDialog mHelpDialog;
 		PIDialog mProjectInfo;
 		MEDialog mInfoMessage;
@@ -193,6 +199,7 @@ class TEditor{
 		int activateOpenTileSetDialog();
 		int activateOpenTileMapDialog();
 		int activateNewTileMapDialog();
+		int activateNewSpriteDialog();
 		int activateRemoveTileMapDialog();
 		int activateColMapDialog(bool bCreateColMap=false);
 		int removeColMapDialog();

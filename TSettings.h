@@ -58,6 +58,9 @@ class TIDialog;
 class TBDialog;
 class MEDialog;
 class TCollisionMap;
+class TSFrame;
+class TSprite;
+
 
 
 
@@ -177,6 +180,7 @@ class TSettings{
 		int WindowHeight=1000;
 		int TopBarHeight = 50;
 		int TileSetWidth=200;
+		int SpriteWidth=200;
 		int TileSetDefaultScale=10;
 		int TileMapScale=3;
 		int TileMapHeight=128;
@@ -205,7 +209,10 @@ class TSettings{
 		int mNewTileMapOffset = 0;
 		int mNewTileMapState = 0;
 		int mNewTileMapX = 0;
-		int mNewTileMapY = 0;		
+		int mNewTileMapY = 0;
+		int mNewSpriteX = 0;
+		int mNewSpriteY = 0;
+		int mNewSpriteBPP = 0;	
 		std::string mNewTilePath = "";
 		int mNewTileSize = 0;
 		int mDeleteTileMapState = 0;			
@@ -305,7 +312,8 @@ enum {
 	ESTATE_TILEMAPCREATE,
 	ESTATE_TILEMAPDELETE,
 	ESTATE_PALETTEUPDATE,
-	ESTATE_COLMAPREMOVE
+	ESTATE_COLMAPREMOVE,
+	ESTATE_SPRITECREATE
 } estates;
 
 

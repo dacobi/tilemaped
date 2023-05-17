@@ -22,6 +22,9 @@ void TEditor::closeProject(){
 
 	mTileMaps.clear();	
 	mTileMap = NULL;
+	
+	mSprites.clear();
+	mSprite = NULL;
 
 	mLastSelEditX=0;
 	mLastSelEditY=0;
@@ -149,6 +152,7 @@ void TEditor::initDialogs(){
 	mOpenTileSetDialog.init();
 	mOpenTileMapDialog.init();
 	mNewTileMapDialog.init();
+	mNewSpriteDialog.init();
 	mInfoMessage.init();
 	mErrorMessage.setColorScheme(1);
 	mErrorMessage.init();
@@ -478,6 +482,15 @@ int TEditor::saveToFolder(std::string path){
 	return 0;
 }
 
+int TEditor::switchSprite(int cSprite){
+	if((cSprite > -1) &&  (cSprite < mSprites.size())){
+		mSprite = mSprites[cSprite];
+		//mBrushesPixel.setBrushDeltas(mSprite->mTexParam.TilePixelSize, mSprite->mTexParam.TilePixelSize, &mSprite->mTexParam.mTileEdScale, mSprite->mTexParam.mTileEdScale, &mSprite->mTexParam);
+		return 0;
+	}
+	return 1;
+}
+
 int TEditor::switchTileMap(int cTileMap){
 	if((cTileMap > -1) &&  (cTileMap < mTileMaps.size())){
 		mTileMap->mMapSelectedTile = mMapSelectedTile;
@@ -583,6 +596,43 @@ int TEditor::render(){
 		}
 	}
 
+	if(mCurMode == EMODE_SPRITE){
+		//if(mCurrentBrushPixel){
+		//	mCurrentBrushPixel->getBrushSelection(cx, cy, mTileSelectedTile->PixelAreas);
+		//}
+
+		mPalette.renderIm(100+mSprite->mTexParam.mTileEdScale*mSprite->mTexParam.TileSizeX*mSprite->mTexParam.TilePixelSize,50+mTopBar.mDialogHeight, &mSprite->mTexParam);	
+		if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
+		mSprite->renderEd(50,50+mTopBar.mDialogHeight,&mPalette);
+		mColorSelectedTile->bPixelSelected = true;
+
+		//mSprite->mSelection.renderSelection();	    
+
+		if(mActiveDialog){
+			mActiveDialog->render();
+		}
+		if(mActiveMessage){
+			mActiveMessage->render();
+		}
+		
+		mTopBar.render();
+
+
+		if(mGlobalSettings.bShowProjectInfo){
+			mProjectInfo.update();
+			mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
+		}	
+
+		//if(mCurrentBrushPixel){
+		//	mCurrentBrushPixel->renderSelection();
+		//}
+
+		//if(bShowBrushesPixel){
+		//	mBrushesPixel.renderIm();
+		//}
+	}
+
+
 	if(mCurMode == EMODE_TILESET){		
 		mTopBar.render();
 
@@ -685,6 +735,11 @@ int TEditor::setMode(int newMode){
 	if(newMode == EMODE_TILESET){
 		mBrushesPixel.setBrushDeltas(1, 1, &mTileSet.mCurEdScale, mGlobalSettings.mGlobalTexParam.mTileEdScale * mGlobalSettings.mGlobalTexParam.TilePixelSize, &mGlobalSettings.mGlobalTexParam);
 		mBrushesPixel.bIsShown = &bShowBrushesPixelTileSet;
+	}
+
+	if(newMode == EMODE_SPRITE){
+		//mBrushesPixel.setBrushDeltas(mSprite->mTexParam.TilePixelSize, mSprite->mTexParam.TilePixelSize, &mSprite->mTexParam.mTileEdScale, mSprite->mTexParam.mTileEdScale, &mSprite->mTexParam);
+		//mBrushesPixel.bIsShown = &bShowBrushesPixel;
 	}
 
 	if(newMode == EMODE_SELEDIT){		
@@ -1273,6 +1328,14 @@ int TEditor::activateNewTileMapDialog(){
 	return 0;
 }
 
+int TEditor::activateNewSpriteDialog(){
+	//if(mCurMode == EMODE_MAP){
+		mActiveDialog = &mNewSpriteDialog;		
+	//}
+	return 0;
+}
+
+
 int TEditor::activateOpenTileMapDialog(){
 	if(mCurMode == EMODE_MAP){
 		mActiveDialog = &mOpenTileMapDialog;
@@ -1556,6 +1619,51 @@ int TEditor::replaceSelectedColor(int mx, int my){
 			} 
 		}
 	}
+
+	if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE){
+
+		/*
+		if(mGlobalSettings.bShowPixelType || mTileSelectedTile->mSelection.mSelected.size()){
+			int mOldColor = mColorSelected;
+			int tSel = searchRectsXY(mPalette.PixelAreas, mx, my);
+			if(tSel > -1){					
+				if(mTileSelectedTile->mSelection.mSelected.size()){
+					TEActionReplacePixels* newAction = new TEActionReplacePixels();
+						newAction->doAction(mTileSelectedTile, mTileSelectedTile->mSelection.mSelected, -1, tSel, &mPalette);
+						if(!(newAction == mTileSelectedTile->mActionStack.mLastAction)){
+							mTileSelectedTile->mActionStack.mLastAction = newAction;
+							mTileSelectedTile->mActionStack.newActionGroup();
+							mTileSelectedTile->mActionStack.addSubActions(newAction->mSubActions);
+							mTileSelectedTile->mActionStack.redoClearStack();
+						}
+
+				} else {
+					std::vector<int> newSelection;
+					int cPixIndex = 0;
+					//for(auto &cPixel : mTileSelectedTile->FileData){
+					for(int i = 0; i < (mGlobalSettings.mGlobalTexParam.TileSizeX *mGlobalSettings.mGlobalTexParam.TileSizeY); i++){
+						auto cPixel = mTileSelectedTile->getPixel(i);
+						if(cPixel == mOldColor){
+							newSelection.push_back(cPixIndex);
+						}
+						cPixIndex++;
+					}
+					if(newSelection.size()){
+						TEActionReplacePixels* newAction = new TEActionReplacePixels();
+						newAction->doAction(mTileSelectedTile, newSelection, mOldColor, tSel, &mPalette);
+						if(!(newAction == mTileSelectedTile->mActionStack.mLastAction)){
+							mTileSelectedTile->mActionStack.mLastAction = newAction;
+							mTileSelectedTile->mActionStack.newActionGroup();
+							mTileSelectedTile->mActionStack.addSubActions(newAction->mSubActions);
+							mTileSelectedTile->mActionStack.redoClearStack();
+						}
+					}
+				}
+			} 
+		}
+		*/
+	}
+
 
 	if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET){
 		if(mGlobalSettings.bShowPixelType || mTileSet.mSelection.mSelected.size()){
@@ -1849,7 +1957,7 @@ int TEditor::handlePalette(){
 	if(mCurMode != EMODE_SPRITE){
 		mTexParam = &mGlobalSettings.mGlobalTexParam;
 	} else {
-		//TODO
+		mTexParam = &mSprite->mTexParam;
 	}
 
 
@@ -2447,6 +2555,28 @@ int TEditor::handleEvents(){
 				return 0;
 			}
 			
+			if(mGlobalSettings.mEditorState == ESTATE_SPRITECREATE){				
+							
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
+
+				bool bFirstSprite = mSprite ? false : true;
+
+				mSprite = new TSprite(mGlobalSettings.mNewSpriteX, mGlobalSettings.mNewSpriteY, mGlobalSettings.mNewSpriteBPP);
+
+				mSprite->createFrame(&mPalette);
+
+				mSprites.push_back(mSprite);
+
+				if(bFirstSprite){
+					setMode(EMODE_SPRITE);					
+				} else {
+					switchSprite(mSprites.size()-1);
+				}
+
+				cancelActiveDialog();
+				return 0;
+			}
+
 			if(mGlobalSettings.mEditorState == ESTATE_TILEMAPCREATE){				
 							
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
