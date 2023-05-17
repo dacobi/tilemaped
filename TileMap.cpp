@@ -53,6 +53,7 @@ int TTexture::updateTexture(TPalette* tpal){
 	return 0;
 }
 
+/*
 SDL_Rect TTexture::render(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
 	SDL_Rect renderQuad = { xpos, ypos, mGlobalSettings.mTexParam->TileSizeX*tscale, mGlobalSettings.mTexParam->TileSizeY*tscale};
     SDL_RenderCopy(mGlobalSettings.TRenderer, TileTex, NULL, &renderQuad);	
@@ -76,6 +77,7 @@ SDL_Rect TTexture::render(int xpos, int ypos, int tscale, bool updateRect ,bool 
     }
     return renderQuad;
 }
+*/
 
 int TPixel::setPixelColor(unsigned char tcolor, TPalette* tpal){
 	PixelIndex = tcolor;
@@ -184,6 +186,7 @@ SDL_Rect TPixel::renderEditor(int xpos, int ypos, int tscale, bool updateRect ,b
 		return CurrentArea;
 }
 
+/*
 SDL_Rect TPixel::render(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
 	CurrentArea = { xpos, ypos, mGlobalSettings.mTexParam->TileRenderSize*tscale, mGlobalSettings.mTexParam->TileRenderSize*tscale};
 
@@ -209,6 +212,7 @@ SDL_Rect TPixel::render(int xpos, int ypos, int tscale, bool updateRect ,bool dr
     }
     return CurrentArea;
 }
+*/
 
 SDL_Rect TPixel::renderEdSel(int xpos, int ypos, int tscale, bool drawGrid){
 	CurrentArea = { xpos, ypos, tscale, tscale};
@@ -721,6 +725,7 @@ SDL_Rect TPalette::renderTileEd(int xpos,int ypos, int tcolor){
 	return TPixels[ccolor]->renderEd(xpos, ypos, mGlobalSettings.mTexParam->mTileEdScale,false,mGlobalSettings.bShowPixelGrid);	
 }
 
+/*
 int TPalette::render(int xpos,int ypos){
 	SDL_SetRenderDrawBlendMode(mGlobalSettings.TRenderer, SDL_BLENDMODE_NONE);
 	for(int i = 0; i < 16; i++){
@@ -734,6 +739,7 @@ int TPalette::render(int xpos,int ypos){
 
 return 0;
 }
+*/
 
 int TPalette::renderIm(int xpos,int ypos){
 	
@@ -1299,6 +1305,7 @@ int Tile::initTile(){
 	return 0;
 }
 
+/*
 SDL_Rect Tile::render(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
 	
 
@@ -1315,6 +1322,7 @@ SDL_Rect Tile::render(int xpos, int ypos, int tscale, bool updateRect ,bool draw
 	}
 	return tmpRect;
 }
+*/
 
 SDL_Rect Tile::renderImCol(int xpos, int ypos, int mIndex, int tscale, bool bColEditSelected){
 SDL_Rect tmpRect;
@@ -2078,6 +2086,8 @@ int TileSet::renderEd(int xpos, int ypos){
 	return 0;
 }
 
+
+/*
 int TileSet::render(int ypos, int mScroll){
 	
 	mTileSetBackGround.h = mGlobalSettings.WindowHeight- mGlobalSettings.TopBarHeight;
@@ -2148,6 +2158,7 @@ int TileSet::render(int ypos, int mScroll){
 
 return 0;
 }
+*/
 
 int TileSet::renderIm(int ypos, int mScroll){
 	

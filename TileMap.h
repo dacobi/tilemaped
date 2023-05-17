@@ -26,7 +26,7 @@ class TTexture{
 		int getFlipIndex(int pindex, int tflip);
 		int setPixel(int pindex, unsigned char pcolor);
 		int setPixel(int pindex, unsigned char pcolor, std::vector<unsigned char> &tBuf);		
-		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
+		//SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderEx(int xpos, int ypos, int tscale, SDL_RendererFlip flip);
 		void renderEd(int xpos, int ypos, TPalette* tpal);
 		bool bPixelSelected = false;
@@ -43,7 +43,7 @@ class TPixel{
 		SDL_Rect renderIm(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderImDisabled(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderEditor(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
-		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
+		//SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderEd(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderEdSel(int xpos, int ypos, int tscale, bool drawGrid=false);
 		bool bPixelSelected = false;
@@ -85,7 +85,7 @@ class TPalette : public Dialog{
 		int updatePalette();
 		int renderEditor(int xpos, int ypos);
 		int renderIm(int xpos, int ypos);
-		int render(int xpos, int ypos);
+		//int render(int xpos, int ypos);
 		SDL_Rect renderTileEd(int xpos,int ypos, int tcolor);
 		SDL_Rect renderTileEd(int xpos,int ypos, int tcolor, int cScale);
 		SDL_Rect renderSelEd(int xpos,int ypos, int tcolor, int cScale);
@@ -105,7 +105,7 @@ class Tile: public TTexture{
 		int initTexture();
 		std::vector<SDL_Texture*> TPOffset;		
 		std::vector<SDL_Rect> PixelAreas;		
-		SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
+		//SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderIm(int xpos, int ypos, int mIndex, int &mDragAndDropped, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderImCol(int xpos, int ypos, int mIndex, int tscale, bool bColEditSelected);
 		SDL_Rect render(int xpos, int ypos, int tscale, TileProperties tProps);
@@ -159,7 +159,7 @@ class TileSet{
 		int deleteTile(int cDropTile);
 		int removeTile(int cDropTile);
 		void appendTile(Tile* addTile);		
-		int render(int ypos, int mScroll);
+		//int render(int ypos, int mScroll);
 		int renderEd(int xpos, int ypos);
 		int renderIm(int ypos, int mScroll);		
 		bool updateWinPos=false;

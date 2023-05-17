@@ -315,13 +315,17 @@ void TSettings::close(){
 	TileMapScale=3;
 	TileMapHeight=128;
 	TileMapWidth=128;		
+	
 	mGlobalTexParam.TileSizeX=16;
 	mGlobalTexParam.TileSizeY=16;
 	mGlobalTexParam.TileSetBPP=8;
 	mGlobalTexParam.TilePixelSize=16;	
 	mGlobalTexParam.PaletteOffset=0;
-	bShowPaletteOffset = false;
+	mGlobalTexParam.mTileEdScale = 4;
 	mGlobalTexParam.TileRenderSize=16;
+
+	bShowPaletteOffset = false;
+	
 	PaletteScale=2;
 	ProjectPath = "";
 	
@@ -358,7 +362,7 @@ void TSettings::close(){
 	bShowProjectInfo = false;		
 	bShowHelpDialog = false;		
 	mSelectedTile = 0;
-	mGlobalTexParam.mTileEdScale = 4;
+	
 	bSelectionMode = true;
 
 	mProjectSettings.close();
