@@ -10,10 +10,19 @@ class TSFrame : public Tile{
 
 class TSprite{
     public:
+        void close();
         TSprite(int cSizeX, int cSizeY, int cBPP){
             mTexParam.TileSizeX = cSizeX;
             mTexParam.TileSizeY = cSizeY;
             mTexParam.TileSetBPP = cBPP;
+            if((cSizeX > 16) || (cSizeY > 16)){
+                mTexParam.mTileEdScale-=2;
+                mCurFrameScale-=4;
+            }
+            if((cSizeX > 32) || (cSizeY > 32)){
+                mTexParam.mTileEdScale--;
+                mCurFrameScale-=3;
+            }
         };
         TSFrame *mFrame = NULL;
         std::vector<TSFrame*> mFrames;
@@ -25,11 +34,18 @@ class TSprite{
 		int mCurColumns=1;
 		int mColSpace = 10;
 		int mMaxScrollY=0;
+        int mFrameScrollY = 0;
         SDL_Rect mFramesBackGround;
         bool updateWinPos=false;
+        int mSelectedFrame = 0;
+        void selectFrame(int cFrame);
+        bool bShowSpriteFrames = true;
 		//int mSelEdWidth=4;
 		//int mCurEdScale=10;
         std::string getSpriteSize();
+        //int reCalculateScale();
+        //void resizeEdit();
+		//void updateEditAreas(std::vector<SDL_Rect> &cTile, int xpos, int ypos);
         std::vector<SDL_Rect> FrameAreas;
 		std::vector<SDL_Rect> EditPixelAreas;	
         std::map<int, int> mFrameSizeIn = {{0,8},{1,16},{2,32},{3,64}};

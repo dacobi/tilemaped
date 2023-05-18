@@ -20,6 +20,10 @@ void TEditor::closeProject(){
 		delete cMap;
 	}
 
+	for(auto *cSprite : mSprites){
+		cSprite->close();
+	}
+
 	mTileMaps.clear();	
 	mTileMap = NULL;
 	
@@ -606,7 +610,7 @@ int TEditor::render(){
 		mSprite->renderEd(50,50+mTopBar.mDialogHeight,&mPalette);
 		mColorSelectedTile->bPixelSelected = true;
 
-		//mSprite->mSelection.renderSelection();	    
+		mSprite->mFrame->mSelection.renderSelection();	    
 
 		if(mActiveDialog){
 			mActiveDialog->render();
@@ -617,6 +621,9 @@ int TEditor::render(){
 		
 		mTopBar.render();
 
+		if(mSprite->bShowSpriteFrames){
+			mSprite->renderIm(mGlobalSettings.TopBarHeight, mSprite->mFrameScrollY);
+		}
 
 		if(mGlobalSettings.bShowProjectInfo){
 			mProjectInfo.update();
@@ -1622,27 +1629,27 @@ int TEditor::replaceSelectedColor(int mx, int my){
 
 	if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE){
 
-		/*
-		if(mGlobalSettings.bShowPixelType || mTileSelectedTile->mSelection.mSelected.size()){
+		
+		if(mGlobalSettings.bShowPixelType || mSprite->mFrame->mSelection.mSelected.size()){
 			int mOldColor = mColorSelected;
 			int tSel = searchRectsXY(mPalette.PixelAreas, mx, my);
 			if(tSel > -1){					
-				if(mTileSelectedTile->mSelection.mSelected.size()){
+				if(mSprite->mFrame->mSelection.mSelected.size()){
 					TEActionReplacePixels* newAction = new TEActionReplacePixels();
-						newAction->doAction(mTileSelectedTile, mTileSelectedTile->mSelection.mSelected, -1, tSel, &mPalette);
-						if(!(newAction == mTileSelectedTile->mActionStack.mLastAction)){
-							mTileSelectedTile->mActionStack.mLastAction = newAction;
-							mTileSelectedTile->mActionStack.newActionGroup();
-							mTileSelectedTile->mActionStack.addSubActions(newAction->mSubActions);
-							mTileSelectedTile->mActionStack.redoClearStack();
+						newAction->doAction(mSprite->mFrame, mSprite->mFrame->mSelection.mSelected, -1, tSel, &mPalette);
+						if(!(newAction == mSprite->mFrame->mActionStack.mLastAction)){
+							mSprite->mFrame->mActionStack.mLastAction = newAction;
+							mSprite->mFrame->mActionStack.newActionGroup();
+							mSprite->mFrame->mActionStack.addSubActions(newAction->mSubActions);
+							mSprite->mFrame->mActionStack.redoClearStack();
 						}
 
 				} else {
 					std::vector<int> newSelection;
 					int cPixIndex = 0;
 					//for(auto &cPixel : mTileSelectedTile->FileData){
-					for(int i = 0; i < (mGlobalSettings.mGlobalTexParam.TileSizeX *mGlobalSettings.mGlobalTexParam.TileSizeY); i++){
-						auto cPixel = mTileSelectedTile->getPixel(i);
+					for(int i = 0; i < (mSprite->mTexParam.TileSizeX *mSprite->mTexParam.TileSizeY); i++){
+						auto cPixel = mSprite->mFrame->getPixel(i);
 						if(cPixel == mOldColor){
 							newSelection.push_back(cPixIndex);
 						}
@@ -1650,18 +1657,18 @@ int TEditor::replaceSelectedColor(int mx, int my){
 					}
 					if(newSelection.size()){
 						TEActionReplacePixels* newAction = new TEActionReplacePixels();
-						newAction->doAction(mTileSelectedTile, newSelection, mOldColor, tSel, &mPalette);
-						if(!(newAction == mTileSelectedTile->mActionStack.mLastAction)){
-							mTileSelectedTile->mActionStack.mLastAction = newAction;
-							mTileSelectedTile->mActionStack.newActionGroup();
-							mTileSelectedTile->mActionStack.addSubActions(newAction->mSubActions);
-							mTileSelectedTile->mActionStack.redoClearStack();
+						newAction->doAction(mSprite->mFrame, newSelection, mOldColor, tSel, &mPalette);
+						if(!(newAction == mSprite->mFrame->mActionStack.mLastAction)){
+							mSprite->mFrame->mActionStack.mLastAction = newAction;
+							mSprite->mFrame->mActionStack.newActionGroup();
+							mSprite->mFrame->mActionStack.addSubActions(newAction->mSubActions);
+							mSprite->mFrame->mActionStack.redoClearStack();
 						}
 					}
 				}
 			} 
 		}
-		*/
+		
 	}
 
 
@@ -1850,6 +1857,75 @@ int TEditor::findSelMap(){
 int TEditor::handleTile(){
 	findSelTile();
 	return 0;
+}
+
+int TEditor::findSelSprite(){
+
+	if(leftMouseButtonDown && bLShiftIsDown && !mGlobalSettings.mio->WantCaptureMouse){
+		if(!mSprite->mFrame->mSelection.bIsSelecting){
+			mSprite->mFrame->mSelection.startSelection(cx, cy);	
+		} else {
+			mSprite->mFrame->mSelection.updateSelection(cx, cy);
+		}
+		
+	} else {		
+		if(mSprite->mFrame->mSelection.bIsSelecting){
+			mSprite->mFrame->mSelection.confirmSelection(mSprite->mFrame->PixelAreas, mSprite->mTexParam.TilePixelSize * mSprite->mTexParam.mTileEdScale, mSprite->mTexParam.TilePixelSize * mSprite->mTexParam.mTileEdScale);
+		}
+		
+		if(leftMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
+			int tSel = -1;
+
+			if(mCurrentBrushPixel){
+				TEActionBrushPixels* newAction = new TEActionBrushPixels();
+				newAction->doAction(mSprite->mFrame, *mCurrentBrushPixel, &mPalette);
+				if(!(*newAction == *mSprite->mFrame->mActionStack.mLastAction)){								
+					mSprite->mFrame->mActionStack.mLastAction = newAction;
+					mSprite->mFrame->mActionStack.newActionGroup();
+					mSprite->mFrame->mActionStack.addSubActions(newAction->mSubActions);
+       				mSprite->mFrame->mActionStack.redoClearStack();
+				}
+			} else {
+				tSel = searchRectsXY(mSprite->mFrame->PixelAreas, cx, cy);
+				if(tSel != -1){
+
+					TEActionReplacePixel *mCurAction = new TEActionReplacePixel();
+					mCurAction->doAction(mSprite->mFrame, tSel, mSprite->mFrame->getPixel(tSel), mColorSelected, &mPalette);
+				
+					if(!(*mCurAction == * mSprite->mFrame->mActionStack.mLastAction)){
+   						mSprite->mFrame->mActionStack.newActionGroup();	
+   						mSprite->mFrame->mActionStack.addAction(mCurAction);
+   						mSprite->mFrame->mActionStack.mLastAction = mCurAction;
+   						mSprite->mFrame->mActionStack.redoClearStack();
+   					}
+				}
+			}
+		}
+	}
+
+	if((rightMouseButtonClicks && bLShiftIsDown) && !mGlobalSettings.mio->WantCaptureMouse){		
+		int tSel = -1;
+		tSel = searchRectsXY(mSprite->mFrame->PixelAreas, cx, cy);
+		if(tSel >-1){
+			mSprite->mFrame->mSelection.modifySelection(tSel);
+		}		
+	}
+
+	if(rightMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse  && !bLShiftIsDown){
+		int tSel = -1;
+		tSel = searchRectsXY(mSprite->mFrame->PixelAreas, cx, cy);
+		if(tSel >-1){
+			mColorSelectedTile->bPixelSelected = false;
+			mColorSelected = (mSprite->mFrame->getPixel(tSel)+(mSprite->mTexParam.PaletteOffset*16));
+			mColorSelectedTile = mPalette.TPixels[mColorSelected];
+			mColorSelectedTile->bPixelSelected = true;
+			mSprite->mFrame->mSelection.cancelSelection();
+			mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor = true;
+		}
+	}
+
+	return 0;
+
 }
 
 int TEditor::findSelTile(){
@@ -2309,6 +2385,20 @@ int TEditor::handleColEdit(){
 	return 0;
 }
 
+int TEditor::handleSprite(){
+	
+	if(ImButtonsSprite.mLeft.bButtonIsDown){ 
+		int tSel = -1;
+		tSel = searchRectsXY(mSprite->FrameAreas, ImButtonsSprite.mLeft.mMousePos.x, ImButtonsSprite.mLeft.mMousePos.y);
+		if(tSel != -1){
+   	 		mSprite->selectFrame(tSel);   	 		
+		}		
+	}
+
+	return 0;
+
+}
+
 int TEditor::handleTileSet(){
 
 	if(ImButtonsTileSet.mLeft.bButtonIsDown){ 
@@ -2650,6 +2740,14 @@ int TEditor::handleEvents(){
 				handleBrushes();
 				handleEMTile();
 			}
+			if(mCurMode == EMODE_SPRITE){
+				//handleBrushes();
+				//handleEMTile();
+				findSelSprite();
+				handleSprite();
+				handlePalette();
+			}
+
 			if(mCurMode == EMODE_PALED){
 				handlePaletteEdit();
 			}
@@ -2799,6 +2897,9 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					if(mCurMode == EMODE_MAP){				
 		  				createNewTile();
 					}
+					if(mCurMode == EMODE_SPRITE){				
+		  				mSprite->createFrame(&mPalette);
+					}
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F4){
 					if(mCurMode == EMODE_MAP){								
@@ -2900,6 +3001,10 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	mNewTileMapDialog.bUpdateWinPos = true;
 
 	mColMapEdit.bUpdateWinPos = true;
+
+	for(auto *cSprite : mSprites){
+		cSprite->updateWinPos = true;
+	}
 
 	return 0;
 }

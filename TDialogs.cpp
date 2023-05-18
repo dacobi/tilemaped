@@ -257,6 +257,11 @@ int TBDialog::render(){
 						
 						ImGui::EndMenu();
 					}
+
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Sprite Frames")).c_str(), NULL, &mGlobalSettings.CurrentEditor->mSprite->bShowSpriteFrames)){
+						
+					}
+
 				//} else {
 				//	if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Tilemap")).c_str())){				
 				//		mGlobalSettings.CurrentEditor->setMode(EMODE_MAP);
@@ -333,6 +338,12 @@ int TBDialog::render(){
 		if (ImGui::BeginMenu("Edit"))
 		{
 			bIsMenuOpen = true;
+
+			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE){				
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " New Sprite Frame (F3)")).c_str())){
+					mGlobalSettings.CurrentEditor->mSprite->createFrame(&mGlobalSettings.CurrentEditor->mPalette);
+				}
+			}
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Flip Tile (F) (X) (Y)")).c_str())){

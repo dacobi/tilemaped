@@ -986,10 +986,20 @@ Tile::~Tile(){
 }
 
 void Tile::freeTexture(){
-	if(TileTex != NULL){
-		std::cout << "SDL_DestroyTexture(Tile::TileTex)" << std::endl;
-		SDL_DestroyTexture(TileTex);		
-		TileTex = NULL;
+	if(mTexParam->TileSetBPP < 8){
+		std::cout << "SDL_DestroyTexture(Tile::TPOffset)" << std::endl;
+		for(auto * cTex : TPOffset){
+			if(cTex != NULL){				
+				SDL_DestroyTexture(cTex);		
+				cTex = NULL;
+			}	
+		}
+	} else {
+		if(TileTex != NULL){
+			std::cout << "SDL_DestroyTexture(Tile::TileTex)" << std::endl;
+			SDL_DestroyTexture(TileTex);		
+			TileTex = NULL;
+		}
 	}
 }
 

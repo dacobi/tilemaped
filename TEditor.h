@@ -97,6 +97,8 @@ class TEditor{
 		int handleColEdit();	
 		int findSelMap();
 		int findSelTile();
+		int findSelSprite();
+		int handleSprite();
 		int resizeWindowEvent(SDL_Event* event);
 		void initDialogs();
 		int loadFromFolder(std::string path);

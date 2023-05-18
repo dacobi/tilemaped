@@ -10,7 +10,20 @@ TSFrame* TSprite::createFrame(TPalette* tpal){
     mFrames.push_back(newFrame);
     mFrame = newFrame;
 
+    FrameAreas.resize(mFrames.size());
+
+    selectFrame(mFrames.size()-1);   	 		
+    
     return newFrame;
+}
+
+void TSprite::selectFrame(int cFrame){
+    for(auto *sFrame : mFrames){
+        sFrame->bIsSelected = false;        
+    }
+    mFrame = mFrames[cFrame];
+    mFrame->bIsSelected = true;
+    mSelectedFrame = cFrame;     
 }
 
 std::string TSprite::getSpriteSize(){
@@ -41,12 +54,58 @@ void TSprite::renderEd(int xpos, int ypos, TPalette* tpal){
     }
 }
 
+void TSprite::close(){
+	for(auto *dTile: mFrames){
+		dTile->freeTexture();
+	}
+	mFrames.clear();
+}
+
+
+/*
+void TSprite::resizeEdit(){
+	int isOdd = TTiles.size() % mSelEdWidth;
+	int cRowNum = TTiles.size() / mSelEdWidth;
+
+	int cPad = 0;
+
+	int dummy = 1;
+
+	if(isOdd){cPad = 1;}
+
+	SDL_Rect rEmpty;
+
+	rEmpty.x = 0;
+	rEmpty.y = 0;
+	rEmpty.w = 0;
+	rEmpty.h = 0;
+
+	mSelectionAreaX = mSelEdWidth * mGlobalSettings.mGlobalTexParam.TileSizeX;
+	mSelectionAreaY = mGlobalSettings.mGlobalTexParam.TileSizeY * (cRowNum + cPad);
+	
+	EditPixelAreas.resize(mSelectionAreaX*mSelectionAreaY);
+
+	for(int i = 0; i <  EditPixelAreas.size(); i++){
+		EditPixelAreas[i].x = rEmpty.x;
+		EditPixelAreas[i].y = rEmpty.y;
+		EditPixelAreas[i].w = rEmpty.w;
+		EditPixelAreas[i].h = rEmpty.h;
+	}
+	
+	mSelection.clearSelection();	
+	mSelection.init(mSelectionAreaX , mSelectionAreaY, 1, 1, &mCurEdScale);	
+}
+*/
+
 void TSprite::renderIm(int ypos, int mScroll){
     mFramesBackGround.h = mGlobalSettings.WindowHeight- mGlobalSettings.TopBarHeight;
 	
 	if(mCurColumns < 4){
 		if( (int)( (float)( ( ( (mCurFrameScale*mTexParam.TileSizeX ) +mColSpace ) * mFrames.size() )  / mCurColumns ) ) > mFramesBackGround.h ){	
 			mCurFrameScale--;
+            if(mCurFrameScale == 0){
+                mCurFrameScale = 1;
+            }
 		
 			if(mCurFrameScale < 5){
 				mCurColumns++;
@@ -82,7 +141,7 @@ void TSprite::renderIm(int ypos, int mScroll){
 		ImGui::SetNextWindowSize(cWinSize, ImGuiCond_Once);
 	}
 
-	ImGui::Begin("Sprite", NULL, ImGuiWindowFlags_NoNav);    
+	ImGui::Begin("Sprite Frames", &bShowSpriteFrames, ImGuiWindowFlags_NoNav);    
 
 	if(ImGui::Button("Move Up")){
 		//TODO mGlobalSettings.CurrentEditor->moveTileUp();
