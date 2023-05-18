@@ -2,6 +2,7 @@
 #include "TEAction.h"
 #include "TileMap.h"
 #include "TEditor.h"
+#include "TSprite.h"
 
 
 extern TSettings mGlobalSettings;
@@ -18,6 +19,14 @@ bool TEAction::checkTileMap(){
 int TEAction::getTileMap(){
 	return 0;
 }
+
+bool TEAction::checkFrame(){
+	return false;
+}
+int TEAction::getFrame(){
+	return 0;
+}
+
 
 void TEActionReplaceTile::undo(){
 	mTileMap->setTile(mCurrentTile, mOldValue);
@@ -58,6 +67,24 @@ int TEActionReplacePixel::getTileMap(){
 	}
 	return cTileMap;
 }
+
+bool TEActionReplacePixel::checkFrame(){
+	if(mCurrentFrame == mGlobalSettings.CurrentEditor->mSprite->mFrame){
+		return false;
+	}
+	return true;
+}
+
+int TEActionReplacePixel::getFrame(){
+	int cFrame = -1;
+	for(int i = 0; i < mGlobalSettings.CurrentEditor->mSprite->mFrames.size(); i++){
+		if(mCurrentFrame == mGlobalSettings.CurrentEditor->mSprite->mFrames[i]){
+			cFrame = i;
+		}
+	}
+	return cFrame;
+}
+
 
 void TEAction::redo(){}
 
@@ -168,6 +195,7 @@ void TEActionReplacePixel::doAction(Tile* mCurTile, int mCurPix, int mOld, int m
 	mOldValue = mOld;
 	mNewValue = mNew;
 	mCurrentPalette = mPal;
+	mCurrentFrame = (TSFrame*)mCurrentTile;	
 	mCurrentTile->setPixel(mCurrentPixel, mNewValue);
 	mCurrentTile->updateTexture(mCurrentPalette);
 	TEActionType=ACTION_PIXEL;

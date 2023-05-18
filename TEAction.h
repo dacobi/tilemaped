@@ -3,6 +3,7 @@
 
 #include "TSettings.h"
 //#include "TSelection.h"
+
 class TSelection;
 class TBrushList;
 class TBrush;
@@ -18,6 +19,8 @@ class TEAction{
 		virtual bool doCompare(const TEAction& rhs){return false;}
 		virtual bool checkTileMap();
 		virtual int getTileMap();
+		virtual bool checkFrame();
+		virtual int getFrame();
 		virtual void swapTileValues(int tVal1, int tVal2);
 };
 
@@ -116,6 +119,7 @@ class TEActionReplacePixel: public TEAction{
 		~TEActionReplacePixel(){};
 		Tile* mCurrentTile;
 		TileMap* mCurrentTileMap;
+		TSFrame* mCurrentFrame;		
 		int mCurrentPixel;
 		int mOldValue;
 		int mNewValue;
@@ -125,6 +129,8 @@ class TEActionReplacePixel: public TEAction{
 		virtual void redo();
 		virtual bool checkTileMap();
 		virtual int getTileMap();
+		virtual bool checkFrame();
+		virtual int getFrame();
 		virtual bool doCompare(const TEAction& rhs){
 			const TEActionReplacePixel* mrhs =  dynamic_cast<const TEActionReplacePixel*>(&rhs); 
 			if(mrhs){

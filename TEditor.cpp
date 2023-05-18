@@ -901,6 +901,23 @@ void TEditor::undoLastActionGroup(){
 			mActionStack.undoLastActionGroup();
 		}
 	}
+	if(mCurMode == EMODE_SPRITE){
+		TEActionGroup *mGroup;
+		bool bFrameSwitch = false;
+		if(mSprite->mActionStack.mUndoStack.size()){
+			mGroup = *(mSprite->mActionStack.mUndoStack.end()-1);
+			if(mGroup->mActions.size()){
+				if(mGroup->mActions[0]->checkFrame()){
+					mSprite->selectFrame(mGroup->mActions[0]->getFrame());
+					bFrameSwitch = true;
+				}
+			}
+		}
+		
+		if(!bFrameSwitch){
+			mSprite->mActionStack.undoLastActionGroup();
+		}
+	}
 	if(mCurMode == EMODE_TILE){
 		mTileSelectedTile->mActionStack.undoLastActionGroup();
 	}
@@ -926,6 +943,23 @@ if((mCurMode == EMODE_MAP) || (mCurMode == EMODE_SELEDIT)){
 		if(!bMapSwitch){
 			mActionStack.redoLastActionGroup();
 		}		
+	}
+	if(mCurMode == EMODE_SPRITE){
+		TEActionGroup *mGroup;
+		bool bFrameSwitch = false;
+		if(mSprite->mActionStack.mRedoStack.size()){
+			mGroup = *(mSprite->mActionStack.mRedoStack.end()-1);
+			if(mGroup->mActions.size()){
+				if(mGroup->mActions[0]->checkFrame()){
+					mSprite->selectFrame(mGroup->mActions[0]->getFrame());
+					bFrameSwitch = true;
+				}
+			}
+		}
+		
+		if(!bFrameSwitch){
+			mSprite->mActionStack.redoLastActionGroup();
+		}
 	}
 	if(mCurMode == EMODE_TILE){
 		mTileSelectedTile->mActionStack.redoLastActionGroup();
@@ -1637,11 +1671,11 @@ int TEditor::replaceSelectedColor(int mx, int my){
 				if(mSprite->mFrame->mSelection.mSelected.size()){
 					TEActionReplacePixels* newAction = new TEActionReplacePixels();
 						newAction->doAction(mSprite->mFrame, mSprite->mFrame->mSelection.mSelected, -1, tSel, &mPalette);
-						if(!(newAction == mSprite->mFrame->mActionStack.mLastAction)){
-							mSprite->mFrame->mActionStack.mLastAction = newAction;
-							mSprite->mFrame->mActionStack.newActionGroup();
-							mSprite->mFrame->mActionStack.addSubActions(newAction->mSubActions);
-							mSprite->mFrame->mActionStack.redoClearStack();
+						if(!(newAction == mSprite->mActionStack.mLastAction)){
+							mSprite->mActionStack.mLastAction = newAction;
+							mSprite->mActionStack.newActionGroup();
+							mSprite->mActionStack.addSubActions(newAction->mSubActions);
+							mSprite->mActionStack.redoClearStack();
 						}
 
 				} else {
@@ -1658,11 +1692,11 @@ int TEditor::replaceSelectedColor(int mx, int my){
 					if(newSelection.size()){
 						TEActionReplacePixels* newAction = new TEActionReplacePixels();
 						newAction->doAction(mSprite->mFrame, newSelection, mOldColor, tSel, &mPalette);
-						if(!(newAction == mSprite->mFrame->mActionStack.mLastAction)){
-							mSprite->mFrame->mActionStack.mLastAction = newAction;
-							mSprite->mFrame->mActionStack.newActionGroup();
-							mSprite->mFrame->mActionStack.addSubActions(newAction->mSubActions);
-							mSprite->mFrame->mActionStack.redoClearStack();
+						if(!(newAction == mSprite->mActionStack.mLastAction)){
+							mSprite->mActionStack.mLastAction = newAction;
+							mSprite->mActionStack.newActionGroup();
+							mSprite->mActionStack.addSubActions(newAction->mSubActions);
+							mSprite->mActionStack.redoClearStack();
 						}
 					}
 				}
@@ -1879,11 +1913,11 @@ int TEditor::findSelSprite(){
 			if(mCurrentBrushPixel){
 				TEActionBrushPixels* newAction = new TEActionBrushPixels();
 				newAction->doAction(mSprite->mFrame, *mCurrentBrushPixel, &mPalette);
-				if(!(*newAction == *mSprite->mFrame->mActionStack.mLastAction)){								
-					mSprite->mFrame->mActionStack.mLastAction = newAction;
-					mSprite->mFrame->mActionStack.newActionGroup();
-					mSprite->mFrame->mActionStack.addSubActions(newAction->mSubActions);
-       				mSprite->mFrame->mActionStack.redoClearStack();
+				if(!(*newAction == *mSprite->mActionStack.mLastAction)){								
+					mSprite->mActionStack.mLastAction = newAction;
+					mSprite->mActionStack.newActionGroup();
+					mSprite->mActionStack.addSubActions(newAction->mSubActions);
+       				mSprite->mActionStack.redoClearStack();
 				}
 			} else {
 				tSel = searchRectsXY(mSprite->mFrame->PixelAreas, cx, cy);
@@ -1892,11 +1926,11 @@ int TEditor::findSelSprite(){
 					TEActionReplacePixel *mCurAction = new TEActionReplacePixel();
 					mCurAction->doAction(mSprite->mFrame, tSel, mSprite->mFrame->getPixel(tSel), mColorSelected, &mPalette);
 				
-					if(!(*mCurAction == * mSprite->mFrame->mActionStack.mLastAction)){
-   						mSprite->mFrame->mActionStack.newActionGroup();	
-   						mSprite->mFrame->mActionStack.addAction(mCurAction);
-   						mSprite->mFrame->mActionStack.mLastAction = mCurAction;
-   						mSprite->mFrame->mActionStack.redoClearStack();
+					if(!(*mCurAction == * mSprite->mActionStack.mLastAction)){
+   						mSprite->mActionStack.newActionGroup();	
+   						mSprite->mActionStack.addAction(mCurAction);
+   						mSprite->mActionStack.mLastAction = mCurAction;
+   						mSprite->mActionStack.redoClearStack();
    					}
 				}
 			}
