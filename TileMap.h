@@ -89,6 +89,7 @@ class TPalette : public Dialog{
 		int renderIm(int xpos, int ypos, TextureParameters *mTexParam);
 		//int render(int xpos, int ypos);
 		SDL_Rect renderTileEd(int xpos,int ypos, int tcolor, TextureParameters *mTexParam);
+		SDL_Rect renderSpriteEd(int xpos,int ypos, int tcolor, TextureParameters *mTexParam);
 		SDL_Rect renderTileEd(int xpos,int ypos, int tcolor, int cScale, TextureParameters *mTexParam);
 		SDL_Rect renderSelEd(int xpos,int ypos, int tcolor, int cScale);
 		std::vector<std::string> mMapColorVals = {"%d/0","%d/17","%d/34","%d/51","%d/68","%d/85","%d/102","%d/119","%d/136","%d/153","%d/170","%d/187","%d/204","%d/221","%d/238","%d/255"};

@@ -725,6 +725,14 @@ SDL_Rect TPalette::renderTileEd(int xpos,int ypos, int tcolor, TextureParameters
 	return TPixels[ccolor]->renderEd(xpos, ypos, mTexParam, mTexParam->mTileEdScale,false,mGlobalSettings.bShowPixelGrid);	
 }
 
+SDL_Rect TPalette::renderSpriteEd(int xpos,int ypos, int tcolor, TextureParameters *mTexParam){
+	SDL_SetRenderDrawBlendMode(mGlobalSettings.TRenderer, SDL_BLENDMODE_BLEND);
+	int ccolor=0;
+	if(tcolor != 0) ccolor = tcolor + (mTexParam->PaletteOffset*16);
+	return TPixels[ccolor]->renderEd(xpos, ypos, mTexParam, mTexParam->mTileEdScale,false,mGlobalSettings.bShowPixelGridSprite);	
+}
+
+
 /*
 int TPalette::render(int xpos,int ypos){
 	SDL_SetRenderDrawBlendMode(mGlobalSettings.TRenderer, SDL_BLENDMODE_NONE);

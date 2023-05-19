@@ -2916,10 +2916,11 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_s){
 					if(mCurMode == EMODE_MAP) mGlobalSettings.bShowTypeSelection = !mGlobalSettings.bShowTypeSelection;
-					if((mCurMode == EMODE_TILE) || (mCurMode == EMODE_TILESET) || (mCurMode == EMODE_SELEDIT)) mGlobalSettings.bShowPixelType = !mGlobalSettings.bShowPixelType;					
+					if((mCurMode == EMODE_TILE) || (mCurMode == EMODE_SPRITE) || (mCurMode == EMODE_TILESET) || (mCurMode == EMODE_SELEDIT)) mGlobalSettings.bShowPixelType = !mGlobalSettings.bShowPixelType;					
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_p){
 		  			if(mCurMode == EMODE_TILE) mGlobalSettings.bShowPixelGrid = !mGlobalSettings.bShowPixelGrid;
+					if(mCurMode == EMODE_SPRITE) mGlobalSettings.bShowPixelGridSprite = !mGlobalSettings.bShowPixelGridSprite;
 					if(mCurMode == EMODE_TILESET) mGlobalSettings.bShowTilePixelGrid = !mGlobalSettings.bShowTilePixelGrid;
 					if(mCurMode == EMODE_SELEDIT) mGlobalSettings.bShowTilePixelSelGrid = !mGlobalSettings.bShowTilePixelSelGrid;
 	  			}	  			  		

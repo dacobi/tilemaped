@@ -5,7 +5,7 @@
 void TSFrame::renderEd(int xpos, int ypos, TPalette* tpal){
 	for(int i=0; i < mTexParam->TileSizeY; i++){
 		for(int j=0; j < mTexParam->TileSizeX; j++){
-			PixelAreas[j+(mTexParam->TileSizeX*i)] = tpal->renderTileEd(xpos + (mTexParam->TilePixelSize * mTexParam->mTileEdScale)*j, ypos + (mTexParam->TilePixelSize * mTexParam->mTileEdScale)*i, getPixel(j+(i*mTexParam->TileSizeX)), mTexParam); 			
+			PixelAreas[j+(mTexParam->TileSizeX*i)] = tpal->renderSpriteEd(xpos + (mTexParam->TilePixelSize * mTexParam->mTileEdScale)*j, ypos + (mTexParam->TilePixelSize * mTexParam->mTileEdScale)*i, getPixel(j+(i*mTexParam->TileSizeX)), mTexParam); 			
 		}
 	}
 	
@@ -16,7 +16,7 @@ void TSFrame::renderEd(int xpos, int ypos, TPalette* tpal){
 					if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->findInSelection((j+(i*mTexParam->TileSizeX))) != -1){
 						int findex = mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->findInSelection((j+(i*mTexParam->TileSizeX)));
 						if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->mBrushElements[findex] != -1){
-							tpal->renderTileEd(xpos + (mTexParam->TilePixelSize * mTexParam->mTileEdScale)*j, ypos + (mTexParam->TilePixelSize * mTexParam->mTileEdScale)*i, mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->mBrushElements[findex], mTexParam); 							
+							tpal->renderSpriteEd(xpos + (mTexParam->TilePixelSize * mTexParam->mTileEdScale)*j, ypos + (mTexParam->TilePixelSize * mTexParam->mTileEdScale)*i, mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->mBrushElements[findex], mTexParam); 							
 						}
 					}
 				}

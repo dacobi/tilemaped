@@ -336,6 +336,14 @@ int TBDialog::render(){
 				if(ImGui::MenuItem("Pixel Grid (P)", NULL , &mGlobalSettings.bShowPixelGrid)){										
 				}
 			}
+			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE){
+				if(ImGui::MenuItem("Brushes (F8)", NULL , &mGlobalSettings.CurrentEditor->mSprite->bShowBrushesPixel)){										
+				}
+				if(ImGui::MenuItem("Selected Color (S)", NULL , &mGlobalSettings.bShowPixelType)){										
+				}
+				if(ImGui::MenuItem("Pixel Grid (P)", NULL , &mGlobalSettings.bShowPixelGridSprite)){										
+				}
+			}
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET){	
 				if(ImGui::MenuItem("Brushes (F8)", NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixelTileSet)){                                                                         

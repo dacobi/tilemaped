@@ -349,6 +349,7 @@ void TSettings::close(){
 	mTileMapFileCount = 0;			
 	bShowTypeSelection = false;
 	bShowPixelGrid = true;
+	bShowPixelGridSprite = true;
 	bShowTileGrid = true;
 	bShowTilePixelGrid = true;
 	bShowTileSelGrid = true;
