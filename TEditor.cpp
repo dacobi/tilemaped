@@ -495,6 +495,12 @@ int TEditor::switchSprite(int cSprite){
 	return 1;
 }
 
+int TEditor::switchSprite(int cSprite, int cFrame){
+	switchSprite(cSprite);
+	mSprite->selectFrame(cFrame);
+	return 0;
+}
+
 int TEditor::switchTileMap(int cTileMap){
 	if((cTileMap > -1) &&  (cTileMap < mTileMaps.size())){
 		mTileMap->mMapSelectedTile = mMapSelectedTile;

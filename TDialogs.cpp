@@ -238,9 +238,36 @@ int TBDialog::render(){
 				
 					if(ImGui::BeginMenu((std::string(mGlobalSettings.mWindow + " Sprites")).c_str())){
 						int nSprite=0;
-						for(auto *cSprite : mGlobalSettings.CurrentEditor->mSprites){
-							if(ImGui::MenuItem(cSprite->getSpriteSize().c_str())){				
-								mGlobalSettings.CurrentEditor->switchSprite(nSprite);
+						std::stringstream fconv;
+						std::string cSFrame;
+						std::string cSPrite;
+						std::string cSPriteStart;
+						bool bCFrame;
+						bool bCSprite;												
+						for(auto *cSprite : mGlobalSettings.CurrentEditor->mSprites){							
+							fconv << nSprite << std::endl;									
+							fconv >> cSPrite;
+							bCSprite = (cSprite == mGlobalSettings.CurrentEditor->mSprite);
+
+							if(bCSprite){
+								cSPriteStart = mGlobalSettings.mBall + " Sprite ";
+							} else {
+								cSPriteStart = "Sprite ";
+							}
+
+							if(ImGui::BeginMenu(std::string(cSPriteStart + cSPrite + ": "+ cSprite->getSpriteSize()).c_str())){
+								if(ImGui::IsItemClicked()){
+									mGlobalSettings.CurrentEditor->switchSprite(nSprite);								
+								}
+								for(int nf = 0; nf < cSprite->mFrames.size(); nf++){
+									fconv << nf << std::endl;									
+									fconv >> cSFrame;
+									bCFrame = (nf == cSprite->mSelectedFrame);
+									if(ImGui::MenuItem((std::string(mGlobalSettings.mImage+ " Frame " + cSFrame).c_str()), NULL, &bCFrame)){																					
+										mGlobalSettings.CurrentEditor->switchSprite(nSprite, nf);								
+									}								
+								}								
+								ImGui::EndMenu();
 							}
 							nSprite++;
 						}

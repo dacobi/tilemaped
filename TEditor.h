@@ -72,6 +72,7 @@ class TEditor{
 		std::vector<TSprite*> mSprites;
 		int switchTileMap(int cTileMap);
 		int switchSprite(int cSprite);
+		int switchSprite(int cSprite, int cFrame);
 		TBDialog mTopBar;
 		int mMapSelectedTile=0;
 		Tile* mTileSelectedTile = NULL;
