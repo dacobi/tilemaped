@@ -230,6 +230,7 @@ class TSettings{
 		int mTileSetEditScale = 10;		
 		int mSelectionEditScale = 10;
 		bool bShowPixelType = false;
+		bool bShowPixelTypeSprite = false;
 		bool bShowSelectedTile = true;
 		bool bShowProjectInfo = false;		
 		bool bShowHelpDialog = false;		

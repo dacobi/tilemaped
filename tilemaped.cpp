@@ -360,6 +360,7 @@ void TSettings::close(){
 	mTileSetEditScale = 10;		
 	mSelectionEditScale = 10;
 	bShowPixelType = false;
+	bShowPixelTypeSprite = false;
 	bShowSelectedTile = true;
 	bShowProjectInfo = false;		
 	bShowHelpDialog = false;		

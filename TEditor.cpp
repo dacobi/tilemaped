@@ -613,7 +613,7 @@ int TEditor::render(){
 		}
 
 		mPalette.renderIm(100+mSprite->mTexParam.mTileEdScale*mSprite->mTexParam.TileSizeX*mSprite->mTexParam.TilePixelSize,50+mTopBar.mDialogHeight, &mSprite->mTexParam);	
-		if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
+		if(!mGlobalSettings.bShowPixelTypeSprite) mColorSelectedTile->bPixelSelected = false;
 		mSprite->renderEd(50,50+mTopBar.mDialogHeight,&mPalette);
 		mColorSelectedTile->bPixelSelected = true;
 
@@ -2916,7 +2916,8 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_s){
 					if(mCurMode == EMODE_MAP) mGlobalSettings.bShowTypeSelection = !mGlobalSettings.bShowTypeSelection;
-					if((mCurMode == EMODE_TILE) || (mCurMode == EMODE_SPRITE) || (mCurMode == EMODE_TILESET) || (mCurMode == EMODE_SELEDIT)) mGlobalSettings.bShowPixelType = !mGlobalSettings.bShowPixelType;					
+					if((mCurMode == EMODE_TILE) || (mCurMode == EMODE_TILESET) || (mCurMode == EMODE_SELEDIT)) mGlobalSettings.bShowPixelType = !mGlobalSettings.bShowPixelType;					
+					if(mCurMode == EMODE_SPRITE) mGlobalSettings.bShowPixelTypeSprite = !mGlobalSettings.bShowPixelTypeSprite;					
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_p){
 		  			if(mCurMode == EMODE_TILE) mGlobalSettings.bShowPixelGrid = !mGlobalSettings.bShowPixelGrid;
