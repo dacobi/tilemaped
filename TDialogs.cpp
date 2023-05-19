@@ -240,13 +240,13 @@ int TBDialog::render(){
 						int nSprite=0;
 						std::stringstream fconv;
 						std::string cSFrame;
-						std::string cSPrite;
+						std::string snSprite;
 						std::string cSPriteStart;
 						bool bCFrame;
 						bool bCSprite;												
 						for(auto *cSprite : mGlobalSettings.CurrentEditor->mSprites){							
 							fconv << nSprite << std::endl;									
-							fconv >> cSPrite;
+							fconv >> snSprite;
 							bCSprite = (cSprite == mGlobalSettings.CurrentEditor->mSprite);
 
 							if(bCSprite){
@@ -255,7 +255,7 @@ int TBDialog::render(){
 								cSPriteStart = "Sprite ";
 							}
 
-							if(ImGui::BeginMenu(std::string(cSPriteStart + cSPrite + ": "+ cSprite->getSpriteSize()).c_str())){
+							if(ImGui::BeginMenu(std::string(cSPriteStart + snSprite + ": "+ cSprite->getSpriteSize()).c_str())){
 								if(ImGui::IsItemClicked()){
 									mGlobalSettings.CurrentEditor->switchSprite(nSprite);								
 								}

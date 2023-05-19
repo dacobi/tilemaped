@@ -2,6 +2,35 @@
 #include "TSprite.h"
 #include "TEditor.h"
 
+void TSFrame::renderEd(int xpos, int ypos, TPalette* tpal){
+	for(int i=0; i < mTexParam->TileSizeY; i++){
+		for(int j=0; j < mTexParam->TileSizeX; j++){
+			PixelAreas[j+(mTexParam->TileSizeX*i)] = tpal->renderTileEd(xpos + (mTexParam->TilePixelSize * mTexParam->mTileEdScale)*j, ypos + (mTexParam->TilePixelSize * mTexParam->mTileEdScale)*i, getPixel(j+(i*mTexParam->TileSizeX)), mTexParam); 			
+		}
+	}
+	
+	if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel && !mGlobalSettings.CurrentEditor->mBrushesPixel.bIsEditing){
+		if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->mSelected.size()){
+			for(int i=0; i < mTexParam->TileSizeY; i++){
+				for(int j=0; j < mTexParam->TileSizeX; j++){	
+					if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->findInSelection((j+(i*mTexParam->TileSizeX))) != -1){
+						int findex = mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->findInSelection((j+(i*mTexParam->TileSizeX)));
+						if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->mBrushElements[findex] != -1){
+							tpal->renderTileEd(xpos + (mTexParam->TilePixelSize * mTexParam->mTileEdScale)*j, ypos + (mTexParam->TilePixelSize * mTexParam->mTileEdScale)*i, mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->mBrushElements[findex], mTexParam); 							
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	if(mSelection.bHasSelection){
+		mSelection.renderSelection(xpos, ypos);
+	}
+
+}
+
+
 TSFrame* TSprite::createFrame(TPalette* tpal){
     TSFrame* newFrame = new TSFrame(&mTexParam);
 

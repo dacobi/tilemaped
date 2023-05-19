@@ -6,6 +6,7 @@
 class TSFrame : public Tile{
     public:
         TSFrame(TextureParameters *cTexParam){mTexParam = cTexParam;};
+        void renderEd(int xpos, int ypos, TPalette* tpal);
 };
 
 class TSprite{
@@ -40,6 +41,8 @@ class TSprite{
         int mSelectedFrame = 0;
         void selectFrame(int cFrame);
         bool bShowSpriteFrames = true;
+        TBrush *mCurrentBrushPixel = NULL;
+        bool bShowBrushesPixel = false;
 		//int mSelEdWidth=4;
 		//int mCurEdScale=10;
         std::string getSpriteSize();

@@ -489,7 +489,8 @@ int TEditor::saveToFolder(std::string path){
 int TEditor::switchSprite(int cSprite){
 	if((cSprite > -1) &&  (cSprite < mSprites.size())){
 		mSprite = mSprites[cSprite];
-		//mBrushesPixel.setBrushDeltas(mSprite->mTexParam.TilePixelSize, mSprite->mTexParam.TilePixelSize, &mSprite->mTexParam.mTileEdScale, mSprite->mTexParam.mTileEdScale, &mSprite->mTexParam);
+		mBrushesPixel.setBrushDeltas(mSprite->mTexParam.TilePixelSize, mSprite->mTexParam.TilePixelSize, &mSprite->mTexParam.mTileEdScale, mSprite->mTexParam.mTileEdScale, &mSprite->mTexParam);
+		mBrushesPixel.bIsShown = &mSprite->bShowBrushesPixel;
 		return 0;
 	}
 	return 1;
@@ -607,9 +608,9 @@ int TEditor::render(){
 	}
 
 	if(mCurMode == EMODE_SPRITE){
-		//if(mCurrentBrushPixel){
-		//	mCurrentBrushPixel->getBrushSelection(cx, cy, mTileSelectedTile->PixelAreas);
-		//}
+		if(mSprite->mCurrentBrushPixel){
+			mSprite->mCurrentBrushPixel->getBrushSelection(cx, cy, mSprite->mFrame->PixelAreas);
+		}
 
 		mPalette.renderIm(100+mSprite->mTexParam.mTileEdScale*mSprite->mTexParam.TileSizeX*mSprite->mTexParam.TilePixelSize,50+mTopBar.mDialogHeight, &mSprite->mTexParam);	
 		if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
@@ -636,13 +637,13 @@ int TEditor::render(){
 			mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
 		}	
 
-		//if(mCurrentBrushPixel){
-		//	mCurrentBrushPixel->renderSelection();
-		//}
+		if(mSprite->mCurrentBrushPixel){
+			mSprite->mCurrentBrushPixel->renderSelection();
+		}
 
-		//if(bShowBrushesPixel){
-		//	mBrushesPixel.renderIm();
-		//}
+		if(mSprite->bShowBrushesPixel){
+			mBrushesPixel.renderIm();
+		}
 	}
 
 
@@ -751,8 +752,8 @@ int TEditor::setMode(int newMode){
 	}
 
 	if(newMode == EMODE_SPRITE){
-		//mBrushesPixel.setBrushDeltas(mSprite->mTexParam.TilePixelSize, mSprite->mTexParam.TilePixelSize, &mSprite->mTexParam.mTileEdScale, mSprite->mTexParam.mTileEdScale, &mSprite->mTexParam);
-		//mBrushesPixel.bIsShown = &bShowBrushesPixel;
+		mBrushesPixel.setBrushDeltas(mSprite->mTexParam.TilePixelSize, mSprite->mTexParam.TilePixelSize, &mSprite->mTexParam.mTileEdScale, mSprite->mTexParam.mTileEdScale, &mSprite->mTexParam);
+		mBrushesPixel.bIsShown = &mSprite->bShowBrushesPixel;
 	}
 
 	if(newMode == EMODE_SELEDIT){		
@@ -1292,6 +1293,17 @@ bool TEditor::checkQuit(){
 		}
 	}
 
+	if(mCurMode == EMODE_SPRITE){
+		if(mSprite->bShowBrushesPixel){
+			mSprite->bShowBrushesPixel = false;
+			return true;
+		}
+		if(mSprite->mCurrentBrushPixel){
+			mSprite->mCurrentBrushPixel = NULL;
+			return true;
+		}
+	}
+
 	if(mCurMode == EMODE_TILESET){
         if(bShowBrushesPixelTileSet){
             bShowBrushesPixelTileSet = false;
@@ -1424,6 +1436,9 @@ int TEditor::activateBrushes(){
 	if(mCurMode == EMODE_TILE){
 		bShowBrushesPixel = !bShowBrushesPixel;
 	}
+	if(mCurMode == EMODE_SPRITE){
+		mSprite->bShowBrushesPixel = !mSprite->bShowBrushesPixel;
+	}
 	if(mCurMode == EMODE_TILESET){
 		bShowBrushesPixelTileSet = !bShowBrushesPixelTileSet;
 	}
@@ -1442,6 +1457,11 @@ int TEditor::dropBrush(){
 	if(mCurMode == EMODE_TILE){
 		if(mCurrentBrushPixel){
 			mCurrentBrushPixel = NULL;
+		}
+	}
+	if(mCurMode == EMODE_SPRITE){
+		if(mSprite->mCurrentBrushPixel){
+			mSprite->mCurrentBrushPixel = NULL;
 		}
 	}
 	if(mCurMode == EMODE_TILESET){
@@ -1470,6 +1490,13 @@ int TEditor::activateBrush(){
 				mCurrentBrushPixel = mBrushesPixel.getBrush();
 		} else {		
 				mCurrentBrushPixel = mBrushesPixel.getNextBrush();
+		}
+	}
+	if(mCurMode == EMODE_SPRITE){		
+		if(!mSprite->mCurrentBrushPixel){
+				mSprite->mCurrentBrushPixel = mBrushesPixel.getBrush();
+		} else {		
+				mSprite->mCurrentBrushPixel = mBrushesPixel.getNextBrush();
 		}
 	}
 
@@ -1916,9 +1943,9 @@ int TEditor::findSelSprite(){
 		if(leftMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
 			int tSel = -1;
 
-			if(mCurrentBrushPixel){
+			if(mSprite->mCurrentBrushPixel){
 				TEActionBrushPixels* newAction = new TEActionBrushPixels();
-				newAction->doAction(mSprite->mFrame, *mCurrentBrushPixel, &mPalette);
+				newAction->doAction(mSprite->mFrame, *mSprite->mCurrentBrushPixel, &mPalette);
 				if(!(*newAction == *mSprite->mActionStack.mLastAction)){								
 					mSprite->mActionStack.mLastAction = newAction;
 					mSprite->mActionStack.newActionGroup();
@@ -2371,6 +2398,17 @@ int TEditor::handleBrushes(){
 			}		
 		}
 	}
+	if(mCurMode == EMODE_SPRITE){
+		if(ImButtonsBrushes.mLeft.bButtonIsDown){ 
+			if(ImButtonsBrushes.mLeft.mMousePos.y < mBrushesPixel.mBrushOffset) {return 0;}
+			int tSel = -1;
+			tSel = searchRectsXY(mBrushesPixel.BrushAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
+			if(tSel != -1){
+				mBrushesPixel.mSelectedBrush = tSel;
+				mSprite->mCurrentBrushPixel = mBrushesPixel.mBrushes[tSel];
+			}		
+		}
+	}
 	
 	if(mCurMode == EMODE_TILESET){
         if(ImButtonsBrushes.mLeft.bButtonIsDown){ 
@@ -2781,8 +2819,7 @@ int TEditor::handleEvents(){
 				handleEMTile();
 			}
 			if(mCurMode == EMODE_SPRITE){
-				//handleBrushes();
-				//handleEMTile();
+				handleBrushes();				
 				findSelSprite();
 				handleSprite();
 				handlePalette();
