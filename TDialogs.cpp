@@ -259,11 +259,20 @@ int TBDialog::render(){
 								if(ImGui::IsItemClicked()){
 									mGlobalSettings.CurrentEditor->switchSprite(nSprite);								
 								}
+								std::string cPreFrame;
+								
 								for(int nf = 0; nf < cSprite->mFrames.size(); nf++){
 									fconv << nf << std::endl;									
 									fconv >> cSFrame;
 									bCFrame = (nf == cSprite->mSelectedFrame);
-									if(ImGui::MenuItem((std::string(mGlobalSettings.mImage+ " Frame " + cSFrame).c_str()), NULL, &bCFrame)){																					
+
+									if(bCFrame){
+										cPreFrame = mGlobalSettings.mBall + " Frame ";
+									} else {
+										cPreFrame = "Frame ";
+									}		
+
+									if(ImGui::MenuItem((std::string(cPreFrame + cSFrame).c_str()))){																					
 										mGlobalSettings.CurrentEditor->switchSprite(nSprite, nf);								
 									}								
 								}								
