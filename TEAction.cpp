@@ -384,6 +384,11 @@ TEActionAddTile::~TEActionAddTile(){
 	mNewTile->freeTexture();
 }
 
+TEActionAddFrame::~TEActionAddFrame(){	
+	mNewFrame->freeTexture();
+}
+
+
 TEActionAddTiles::~TEActionAddTiles(){	
 	mNewTile->freeTexture();
 }
@@ -480,6 +485,21 @@ void TEActionAddTile::doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles
 	TEActionType=ACTION_TILENEW;	
 }
 
+void TEActionAddFrame::doAction(TSFrame* cNewFrame, TEditor* cEditor, TSprite *cSprite){
+	mSprite = cSprite;
+	mNewFrame = cNewFrame;
+	mEditor = cEditor;
+	mOldFrame = mSprite->mFrame;	
+	mOldFrameIndex = mSprite->mSelectedFrame;
+	mFrameIndex = mSprite->mFrames.size()-1;	
+	mOldFrame->bIsSelected = false;
+	mSprite->mFrame = mNewFrame;
+	mNewFrame->bIsSelected = true;
+	mSprite->mSelectedFrame = mFrameIndex;
+	TEActionType=ACTION_FRAMENEW;	
+}
+
+
 void TEActionAddTiles::doAction(Tile* cNewTile, TEditor* cEditor, TileSet *cTiles){
 	mTiles = cTiles;
 	mNewTile = cNewTile;
@@ -541,6 +561,44 @@ void TEActionAddTile::redo(){
 	mEditor->mTileSelectedTile->bIsSelected = true;
 	mEditor->mMapSelectedTile = mTiles->TTiles.size()-1;
 }
+
+void TEActionAddFrame::undo(){	
+	mSprite->removeFrame(mFrameIndex);
+	mSprite->selectFrame(mOldFrameIndex);
+	//mEditor->mTileSelectedTile->bIsSelected = false;
+	//mEditor->mTileSelectedTile = mOldTile;
+	//mEditor->mTileSelectedTile->bIsSelected = true;	
+	//mEditor->mMapSelectedTile = mOldMapTile;
+}
+
+void TEActionAddFrame::redo(){
+	mSprite->appendFrame(mNewFrame);
+	mSprite->selectFrame(mFrameIndex);
+	//mTileIndex = mTiles->TTiles.size()-1;
+	//mEditor->mTileSelectedTile->bIsSelected = false;
+	//mEditor->mTileSelectedTile = mNewTile;
+	//mEditor->mTileSelectedTile->bIsSelected = true;
+	//mEditor->mMapSelectedTile = mTiles->TTiles.size()-1;
+}
+
+/*
+bool TEActionAddFrame::checkFrame(){
+	if(mOldFrame == mGlobalSettings.CurrentEditor->mSprite->mFrame){
+		return false;
+	}
+	return true;
+}
+
+int TEActionAddFrame::getFrame(){
+	int cFrame = -1;
+	for(int i = 0; i < mGlobalSettings.CurrentEditor->mSprite->mFrames.size(); i++){
+		if(mOldFrame == mGlobalSettings.CurrentEditor->mSprite->mFrames[i]){
+			cFrame = i;
+		}
+	}
+	return cFrame;
+}
+*/
 
 void TEActionGroup::undo(){
 	for(TEAction* mAction : mActions){

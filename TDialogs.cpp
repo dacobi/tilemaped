@@ -376,7 +376,10 @@ int TBDialog::render(){
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE){				
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " New Sprite Frame (F3)")).c_str())){
-					mGlobalSettings.CurrentEditor->mSprite->createFrame(&mGlobalSettings.CurrentEditor->mPalette);
+					mGlobalSettings.CurrentEditor->createNewFrame();
+				}
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Frame (F4)")).c_str())){
+					mGlobalSettings.CurrentEditor->createNewFrameCopy(mGlobalSettings.CurrentEditor->mSprite->mFrame);
 				}
 			}
 

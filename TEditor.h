@@ -195,6 +195,9 @@ class TEditor{
 		int dropUnusedTiles();
 		int dropUnusedTile(int cDropTile);
 		int removeSelectedTile();
+		TSFrame* createNewFrame();
+		TSFrame* createNewFrameCopy(TSFrame* cCopyFrame);
+		int removeSelectedFrame();
 		int showMessage(std::string cMessage, bool isError=false);
 		bool checkQuit();
 		int activateSaveDialog();

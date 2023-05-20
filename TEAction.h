@@ -356,4 +356,62 @@ class TEActionAddTiles: public TEAction{
 		}
 };
 
+class TEActionAddFrame: public TEAction{
+	public:
+		~TEActionAddFrame();
+		TSFrame* mNewFrame;
+		TSFrame* mOldFrame;
+		TSprite *mSprite;
+		TEditor *mEditor;		
+		int mFrameIndex;
+		int mOldFrameIndex;
+		void doAction(TSFrame* cNewFrame, TEditor* cEditor, TSprite *cSprite);	
+		virtual void undo();
+		virtual void redo();
+		//virtual bool checkFrame();
+		//virtual int getFrame();
+		virtual bool doCompare(const TEAction& rhs){
+			 return false;
+		}
+};
+
+class TEActionSwapFrames: public TEAction{
+	public:
+		~TEActionSwapFrames();
+		int mSource;
+		int mTarget;
+		int mOldSelFrame;
+		TSprite *mSprite;
+		TEditor *mEditor;		
+		void doAction(TEditor* cEditor, TSprite *cSprite, int cSource, int cTarget);	
+		virtual void undo();
+		virtual void redo();
+		virtual bool doCompare(const TEAction& rhs){
+			const TEActionSwapFrames* mrhs =  dynamic_cast<const TEActionSwapFrames*>(&rhs); 
+			if(mrhs){
+				if((mSource == mrhs->mSource) && (mTarget == mrhs->mTarget)){ // Not testing mOldValue
+					return true;
+				}
+			}
+			 return false;
+		}
+};
+
+class TEActionReplaceFrame: public TEAction{
+	public:
+		~TEActionReplaceFrame();
+		TSFrame* mFrame;
+		std::vector<unsigned char> mFrameBuf;
+		std::vector<unsigned char> mOldBuf;
+		TSprite *mSprite;
+		TEditor *mEditor;		
+		void doAction(TSFrame* cFrame, std::vector<unsigned char> &cFrameBuf, TEditor* cEditor, TSprite *cSprite);	
+		virtual void undo();
+		virtual void redo();
+		virtual bool doCompare(const TEAction& rhs){
+			 return false;
+		}
+};
+
+
 #endif

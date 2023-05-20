@@ -30,6 +30,29 @@ void TSFrame::renderEd(int xpos, int ypos, TPalette* tpal){
 
 }
 
+TSFrame* TSprite::createNewFromBuffer(std::vector<unsigned char> &newBuf, TPalette* tpal){
+
+	TSFrame *newTile = new TSFrame(&mTexParam);
+	SDL_Rect newRect;
+
+	newTile->loadFromBuffer(newBuf, tpal);
+	FrameAreas.push_back(newRect);
+	mFrames.push_back(newTile);
+	
+	return newTile;
+
+}
+
+TSFrame* TSprite::createNewCopy(TSFrame* cCopyTile, TPalette* tpal){	
+	return createNewFromBuffer(cCopyTile->FileData, tpal);
+}
+
+TSFrame* TSprite::createNew(TPalette* tpal){	
+	std::vector<unsigned char> tbuf;	
+	tbuf.resize(((mTexParam.TileSizeX * mTexParam.TileSizeY)/mGlobalSettings.mTileBPPSize[mTexParam.TileSetBPP]),0);
+	return createNewFromBuffer(tbuf, tpal);
+}
+
 
 TSFrame* TSprite::createFrame(TPalette* tpal){
     TSFrame* newFrame = new TSFrame(&mTexParam);
@@ -54,6 +77,20 @@ void TSprite::selectFrame(int cFrame){
     mFrame->bIsSelected = true;
     mSelectedFrame = cFrame;     
 }
+
+int TSprite::removeFrame(int cDropFrame){
+    TSFrame* dFrame = *(mFrames.begin() +  cDropFrame); 
+	mFrames.erase(mFrames.begin() +  cDropFrame);
+	FrameAreas.erase(FrameAreas.begin() + cDropFrame);	
+    return 0;
+}
+
+void TSprite::appendFrame(TSFrame* addFrame){
+    mFrames.push_back(addFrame);
+	SDL_Rect newRect;
+	FrameAreas.push_back(newRect);
+}
+
 
 std::string TSprite::getSpriteSize(){
 	std::string cSpriteSize;

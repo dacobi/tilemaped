@@ -1119,6 +1119,60 @@ int TEditor::dropUnusedTile(int cDropTile){
 	return 0;
 }
 
+TSFrame* TEditor::createNewFrame(){
+	if(mCurMode == EMODE_SPRITE){	
+	TSFrame* newFrame = mSprite->createNew(&mPalette);
+		if(newFrame){
+				TEActionAddFrame* newActionFrame = new TEActionAddFrame();				
+				newActionFrame->doAction(newFrame, this, mSprite);
+      			mSprite->mActionStack.newActionGroup();	
+      			mSprite->mActionStack.addAction(newActionFrame);
+      			
+				mSprite->mActionStack.mLastAction = newActionFrame;
+       			mSprite->mActionStack.redoClearStack();
+				
+				return newFrame;
+		}
+	}
+	return NULL;
+}
+
+
+TSFrame* TEditor::createNewFrameCopy(TSFrame* cCopyFrame){
+if(mCurMode == EMODE_SPRITE){	
+	TSFrame* newFrame = mSprite->createNewCopy(mSprite->mFrame, &mPalette);
+		if(newFrame){
+				TEActionAddFrame* newActionFrame = new TEActionAddFrame();				
+				newActionFrame->doAction(newFrame, this, mSprite);
+      			mSprite->mActionStack.newActionGroup();	
+      			mSprite->mActionStack.addAction(newActionFrame);
+      			
+				mSprite->mActionStack.mLastAction = newActionFrame;
+       			mSprite->mActionStack.redoClearStack();
+				
+				return newFrame;
+		}
+	}
+	return NULL;
+
+}
+int TEditor::removeSelectedFrame(){
+	/*
+	mSprite->mActionStack.redoClearStack();	
+	mSprite->mActionStack.undoClearStack();
+	
+	mSprite->mFrame->bIsSelected = false;
+				
+	
+
+	mMapSelectedTile = 0;
+	mTileSelectedTile = mTileSet.TTiles[0];
+
+	mTileSelectedTile->bIsSelected = true;				
+	*/
+	return 0;
+}
+
 Tile* TEditor::createNewTile(){
 	if(mCurMode == EMODE_MAP){	
 	Tile* newTile = mTileSet.createNew(&mPalette);
@@ -2977,12 +3031,15 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 		  				createNewTile();
 					}
 					if(mCurMode == EMODE_SPRITE){				
-		  				mSprite->createFrame(&mPalette);
+		  				createNewFrame();
 					}
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F4){
 					if(mCurMode == EMODE_MAP){								
 						createNewTileCopy(mGlobalSettings.CurrentEditor->mTileSelectedTile);
+					}
+					if(mCurMode == EMODE_SPRITE){				
+		  				createNewFrameCopy(mSprite->mFrame);
 					}
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F5){	  														
