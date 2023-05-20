@@ -171,6 +171,7 @@ class TEditor{
 		RTMDialog mRemoveTileMap;
 		RCMDialog mRemoveColMap;
 		RTDialog mRemoveUnused;
+		RSFDialog mRemoveFrame;
 		RTSDialog mRemoveSelUnused;
 		MEDialog mErrorMessage;
 		RNDialog mInputNumber;
@@ -221,6 +222,7 @@ class TEditor{
 		int activatePaletteUpdate();
 		int activateDropUnusedTiles();
 		int activateDropUnusedTile();
+		int activateRemoveFrame();
 		int activateBrushes();
 		int activateBrush();
 		int dropBrush();

@@ -378,7 +378,7 @@ int TBDialog::render(){
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " New Sprite Frame (F3)")).c_str())){
 					mGlobalSettings.CurrentEditor->createNewFrame();
 				}
-				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Frame (F4)")).c_str())){
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Sprite Frame (F4)")).c_str())){
 					mGlobalSettings.CurrentEditor->createNewFrameCopy(mGlobalSettings.CurrentEditor->mSprite->mFrame);
 				}
 				if(mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY){					
@@ -387,6 +387,13 @@ int TBDialog::render(){
 					}
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Frame Right (F6)")).c_str())){
 						mGlobalSettings.CurrentEditor->rotateFrameRight();
+					}
+				}				
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Selected Frame (DEL)")).c_str())){
+					if(mGlobalSettings.CurrentEditor->mSprite->mFrames.size() > 1){
+						mGlobalSettings.CurrentEditor->activateRemoveFrame();
+					} else {
+
 					}
 				}
 			}
@@ -608,6 +615,51 @@ int RTSDialog::render(){
 
 	return 0;
 }
+
+void RSFDialog::init(){
+	mDialogTextMain = mGlobalSettings.mInfo +" Remove Selected Frame? Sprite Undo Stack will be cleared."; 
+	mDialogTextTitle = "Remove Selected Frame";
+	mDialogButtonAccept = "Remove";
+	mDialogButtonCancel = "Cancel";
+}
+
+void RSFDialog::recieveInput(int mKey){
+	
+	if(mKey == SDLK_y){
+		bInputIsAccept=true;		
+		mGlobalSettings.mEditorState = ESTATE_FRAMEDELETE;
+	}
+	if(mKey == SDLK_n){
+		mGlobalSettings.bSpriteWarnBeforeDelete = true;
+		bInputIsCancel=true;
+	}
+}
+
+int RSFDialog::render(){
+    
+	Dialog::render();
+
+	ImGui::Begin(mDialogTextTitle.c_str(),NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
+    		
+		ImGui::Text("%s", mDialogTextMain.c_str()); 
+
+		ImGui::Checkbox("Show this warning", &mGlobalSettings.bSpriteWarnBeforeDelete);
+
+        if ( ImGui::Button(mDialogButtonAccept.c_str() )){ 
+			recieveInput(SDLK_y);				
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button(mDialogButtonCancel.c_str() )){ 
+			recieveInput(SDLK_n);				
+		}
+			            
+    ImGui::End();
+
+	return 0;
+}
+
 
 
 void RTMDialog::init(){

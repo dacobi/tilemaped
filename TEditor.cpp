@@ -165,6 +165,7 @@ void TEditor::initDialogs(){
 
 	mRemoveTileMap.init();
 	mRemoveUnused.init();
+	mRemoveFrame.init();
 	mRemoveSelUnused.init();
 
 	mPaletteUpdate.init();
@@ -1028,6 +1029,14 @@ int TEditor::activateDropUnusedTiles(){
 	if(mCurMode == EMODE_MAP){
 
 		mActiveDialog = &mRemoveUnused;
+	}
+	return 0;
+}
+
+int TEditor::activateRemoveFrame(){
+	if(mCurMode == EMODE_SPRITE){
+
+		mActiveDialog = &mRemoveFrame;
 	}
 	return 0;
 }
@@ -2811,6 +2820,22 @@ int TEditor::handleEvents(){
 				return 0;
 			}
 			
+			if(mGlobalSettings.mEditorState == ESTATE_FRAMEDELETE){
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
+
+				int preFrame = mSprite->mSelectedFrame-1;
+				if(preFrame < 0) preFrame = 0;
+				mSprite->removeFrame(mSprite->mSelectedFrame);
+				mSprite->selectFrame(preFrame);
+
+				mSprite->mActionStack.redoClearStack();
+				mSprite->mActionStack.undoClearStack();
+
+				cancelActiveDialog();
+				return 0;
+
+			}
+
 			if(mGlobalSettings.mEditorState == ESTATE_SPRITECREATE){				
 							
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
@@ -3104,6 +3129,13 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					if(mCurMode == EMODE_MAP){
 						activateDropUnusedTile();
 					}
+					if(mCurMode == EMODE_SPRITE){
+						if(mGlobalSettings.CurrentEditor->mSprite->mFrames.size() > 1){
+							activateRemoveFrame();
+						} else {
+
+						}
+					}					
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F12){	  				
 		  			activateSaveDialog();

@@ -356,6 +356,7 @@ void TSettings::close(){
 	bShowTilePixelSelGrid = true;
 	bTileSetOrderUpdateTileMap = true;
 	bTileSetWarnBeforeDelete = true;
+	bSpriteWarnBeforeDelete = true;
 	mTileSetEditWidth = 4;
 	mTileSetEditScale = 10;		
 	mSelectionEditScale = 10;

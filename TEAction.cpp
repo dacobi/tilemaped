@@ -721,7 +721,8 @@ void TEActionUndoStack::undoClearStack(){
 			for(auto *dAction: dGroup->mActions){
 				TEActionAddTile* ddAction = dynamic_cast<TEActionAddTile*>(dAction);
 				TEActionAddTiles* dddAction = dynamic_cast<TEActionAddTiles*>(dAction);
-				if(!ddAction && !dddAction){
+				TEActionAddFrame* ddddAction = dynamic_cast<TEActionAddFrame*>(dAction);
+				if(!ddAction && !dddAction && !ddddAction){
 					delete dAction;
 				}
 			}		

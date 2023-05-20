@@ -226,6 +226,7 @@ class TSettings{
 		bool bShowTilePixelSelGrid = true;
 		bool bTileSetOrderUpdateTileMap = true;
 		bool bTileSetWarnBeforeDelete = true;
+		bool bSpriteWarnBeforeDelete = true;
 		int mTileSetEditWidth = 4;
 		int mTileSetEditScale = 10;		
 		int mSelectionEditScale = 10;
@@ -316,7 +317,8 @@ enum {
 	ESTATE_TILEMAPDELETE,
 	ESTATE_PALETTEUPDATE,
 	ESTATE_COLMAPREMOVE,
-	ESTATE_SPRITECREATE
+	ESTATE_SPRITECREATE,
+	ESTATE_FRAMEDELETE
 } estates;
 
 
