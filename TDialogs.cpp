@@ -285,11 +285,11 @@ int TBDialog::render(){
 							mGlobalSettings.CurrentEditor->activateNewSpriteDialog();
 						}		
 
-						if(mGlobalSettings.CurrentEditor->mTileMaps.size() > 1){
-							if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Remove Sprite")).c_str())){				
-								//TODO mGlobalSettings.CurrentEditor->activateRemoveTileMapDialog();
-							}	
-						}
+						
+						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Remove Sprite")).c_str())){				
+							mGlobalSettings.CurrentEditor->activateRemoveSpriteDialog();
+						}	
+						
 						
 						ImGui::EndMenu();
 					}
@@ -402,7 +402,7 @@ int TBDialog::render(){
 					if(mGlobalSettings.CurrentEditor->mSprite->mFrames.size() > 1){
 						mGlobalSettings.CurrentEditor->activateRemoveFrame();
 					} else {
-
+						mGlobalSettings.CurrentEditor->activateRemoveSpriteDialog();
 					}
 				}
 			}
@@ -689,6 +689,25 @@ void RTMDialog::recieveInput(int mKey){
 		bInputIsCancel=true;
 	}
 }
+
+void RSDialog::init(){
+	mDialogTextMain = mGlobalSettings.mFile +" Remove Sprite? Can not be undone";
+	mDialogTextTitle = "Remove Sprite";
+	mDialogButtonAccept = "Remove";
+	mDialogButtonCancel = "Cancel";
+}
+
+void RSDialog::recieveInput(int mKey){
+	
+	if(mKey == SDLK_y){
+		bInputIsAccept=true;		
+		mGlobalSettings.mEditorState = ESTATE_SPRITEDELETE;
+	}
+	if(mKey == SDLK_n){
+		bInputIsCancel=true;
+	}
+}
+
 
 void RCMDialog::init(){
 	mDialogTextMain = mGlobalSettings.mFile +" Remove CollisionMap for current TileMap?";

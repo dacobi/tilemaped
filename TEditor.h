@@ -172,6 +172,7 @@ class TEditor{
 		RCMDialog mRemoveColMap;
 		RTDialog mRemoveUnused;
 		RSFDialog mRemoveFrame;
+		RSDialog mRemoveSprite;
 		RTSDialog mRemoveSelUnused;
 		MEDialog mErrorMessage;
 		RNDialog mInputNumber;
@@ -209,6 +210,7 @@ class TEditor{
 		int activateOpenTileMapDialog();
 		int activateNewTileMapDialog();
 		int activateNewSpriteDialog();
+		int activateRemoveSpriteDialog();
 		int activateRemoveTileMapDialog();
 		int activateColMapDialog(bool bCreateColMap=false);
 		int removeColMapDialog();

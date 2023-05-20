@@ -166,6 +166,7 @@ void TEditor::initDialogs(){
 	mRemoveTileMap.init();
 	mRemoveUnused.init();
 	mRemoveFrame.init();
+	mRemoveSprite.init();
 	mRemoveSelUnused.init();
 
 	mPaletteUpdate.init();
@@ -1464,6 +1465,14 @@ int TEditor::activateOpenTileDialog(){
 	if(mCurMode == EMODE_MAP){
 		mActiveDialog = &mOpenTileDialog;
 		mActiveDialog->bDialogIsWatingForText = true;		
+	}
+	return 0;
+}
+
+int TEditor::activateRemoveSpriteDialog(){
+
+	if(mCurMode == EMODE_SPRITE){		
+		mActiveDialog = &mRemoveSprite;		
 	}
 	return 0;
 }
@@ -2836,6 +2845,39 @@ int TEditor::handleEvents(){
 
 			}
 
+			if(mGlobalSettings.mEditorState == ESTATE_SPRITEDELETE){
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
+
+				int cDelSprite = -1;
+				int i = 0;
+				for(auto * cSprite : mSprites){
+					if(mSprite == cSprite){
+						cDelSprite = i;
+					}
+					i++;
+				}
+
+				if(cDelSprite != -1){								
+					mSprites.erase(mSprites.begin() + cDelSprite);
+				}
+
+				if(mSprites.size() == 0){
+					mSprite = NULL;					
+					setMode(EMODE_MAP);
+					mLastMode = EMODE_TILE;
+				} else {
+					if(cDelSprite > 0){
+						cDelSprite--;
+					}
+					switchSprite(cDelSprite);
+				}
+
+				cancelActiveDialog();
+				return 0;
+
+			}
+
+
 			if(mGlobalSettings.mEditorState == ESTATE_SPRITECREATE){				
 							
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
@@ -3133,7 +3175,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 						if(mGlobalSettings.CurrentEditor->mSprite->mFrames.size() > 1){
 							activateRemoveFrame();
 						} else {
-
+							activateRemoveSpriteDialog();
 						}
 					}					
 	  			}
