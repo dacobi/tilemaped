@@ -1239,6 +1239,40 @@ int TEditor::moveTileDown(){
 	return 1;
 }
 
+int TEditor::rotateFrameRight(){
+if(mCurMode == EMODE_SPRITE){		
+		TSFrame* newFrame = new TSFrame(&mSprite->mTexParam); 
+		newFrame->loadFromBuffer(mSprite->mFrame->FileData, &mPalette);
+		newFrame->rotater();
+		TEActionReplaceFrame* newAction = new TEActionReplaceFrame();				
+		newAction->doAction(mSprite->mFrame, newFrame->FileData, this, mSprite);
+      	mSprite->mActionStack.newActionGroup();	
+      	mSprite->mActionStack.addAction(newAction);
+
+		mSprite->mActionStack.mLastAction = newAction;
+       	mSprite->mActionStack.redoClearStack();
+		return 0;		
+	}
+	return 1;
+}
+
+int TEditor::rotateFrameLeft(){
+if(mCurMode == EMODE_SPRITE){		
+		TSFrame* newFrame = new TSFrame(&mSprite->mTexParam); 
+		newFrame->loadFromBuffer(mSprite->mFrame->FileData, &mPalette);
+		newFrame->rotatel();
+		TEActionReplaceFrame* newAction = new TEActionReplaceFrame();				
+		newAction->doAction(mSprite->mFrame, newFrame->FileData, this, mSprite);
+      	mSprite->mActionStack.newActionGroup();	
+      	mSprite->mActionStack.addAction(newAction);
+
+		mSprite->mActionStack.mLastAction = newAction;
+       	mSprite->mActionStack.redoClearStack();
+		return 0;		
+	}
+	return 1;
+}
+
 int TEditor::rotateTile(){
 	if(mCurMode == EMODE_MAP){
 		if(mTileSelectedTile){
@@ -3044,12 +3078,26 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F5){	  														
 					if(mCurMode == EMODE_MAP){
-						rotateTileLeft();
+						if(mGlobalSettings.mGlobalTexParam.TileSizeX == mGlobalSettings.mGlobalTexParam.TileSizeY){					
+							rotateTileLeft();
+						}
+					}
+					if(mCurMode == EMODE_SPRITE){
+						if(mSprite->mTexParam.TileSizeX == mSprite->mTexParam.TileSizeY){
+							rotateFrameLeft();
+						}
 					}
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F6){	  									
 					if(mCurMode == EMODE_MAP){
-						rotateTile();
+						if(mGlobalSettings.mGlobalTexParam.TileSizeX == mGlobalSettings.mGlobalTexParam.TileSizeY){					
+							rotateTile();
+						}
+					}
+					if(mCurMode == EMODE_SPRITE){
+						if(mSprite->mTexParam.TileSizeX == mSprite->mTexParam.TileSizeY){
+							rotateFrameRight();
+						}
 					}
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_DELETE){	  									

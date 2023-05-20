@@ -408,6 +408,8 @@ class TEActionReplaceFrame: public TEAction{
 		void doAction(TSFrame* cFrame, std::vector<unsigned char> &cFrameBuf, TEditor* cEditor, TSprite *cSprite);	
 		virtual void undo();
 		virtual void redo();
+		virtual bool checkFrame();
+		virtual int getFrame();
 		virtual bool doCompare(const TEAction& rhs){
 			 return false;
 		}

@@ -415,6 +415,44 @@ void TEActionReplaceTileSet::doAction(Tile* cTile, std::vector<unsigned char> &c
 	TEActionType = ACTION_TILEREPLACE;
 }
 
+void TEActionReplaceFrame::undo(){ 
+	mFrame->replaceWithBuffer(mOldBuf, &mEditor->mPalette);
+}
+
+void TEActionReplaceFrame::redo(){ 
+	mFrame->replaceWithBuffer(mFrameBuf, &mEditor->mPalette);
+}
+
+TEActionReplaceFrame::~TEActionReplaceFrame(){}
+
+
+void TEActionReplaceFrame::doAction(TSFrame* cFrame, std::vector<unsigned char> &cFrameBuf, TEditor* cEditor, TSprite *cSprite){
+	mFrame = cFrame;
+	mOldBuf = mFrame->FileData;
+	mFrameBuf = cFrameBuf;
+	mSprite = cSprite;
+	mEditor = cEditor;
+	mFrame->replaceWithBuffer(mFrameBuf, &mEditor->mPalette);
+	TEActionType = ACTION_FRAMEREPLACE;
+}
+
+bool TEActionReplaceFrame::checkFrame(){
+	if(mFrame == mGlobalSettings.CurrentEditor->mSprite->mFrame){
+		return false;
+	}
+	return true;
+}
+
+int TEActionReplaceFrame::getFrame(){
+	int cFrame = -1;
+	for(int i = 0; i < mGlobalSettings.CurrentEditor->mSprite->mFrames.size(); i++){
+		if(mFrame == mGlobalSettings.CurrentEditor->mSprite->mFrames[i]){
+			cFrame = i;
+		}
+	}
+	return cFrame;
+}
+
 TEActionSwapTiles::~TEActionSwapTiles(){	
 
 }

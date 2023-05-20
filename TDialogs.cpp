@@ -381,6 +381,14 @@ int TBDialog::render(){
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Frame (F4)")).c_str())){
 					mGlobalSettings.CurrentEditor->createNewFrameCopy(mGlobalSettings.CurrentEditor->mSprite->mFrame);
 				}
+				if(mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY){					
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Frame Left (F5)")).c_str())){
+						mGlobalSettings.CurrentEditor->rotateFrameLeft();
+					}
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Frame Right (F6)")).c_str())){
+						mGlobalSettings.CurrentEditor->rotateFrameRight();
+					}
+				}
 			}
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
