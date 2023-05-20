@@ -1036,8 +1036,11 @@ int TEditor::activateDropUnusedTiles(){
 
 int TEditor::activateRemoveFrame(){
 	if(mCurMode == EMODE_SPRITE){
-
-		mActiveDialog = &mRemoveFrame;
+		if(mGlobalSettings.bSpriteWarnBeforeDelete){
+			mActiveDialog = &mRemoveFrame;
+		} else {
+			removeSelectedFrame();
+		}
 	}
 	return 0;
 }
@@ -1167,19 +1170,14 @@ if(mCurMode == EMODE_SPRITE){
 
 }
 int TEditor::removeSelectedFrame(){
-	/*
-	mSprite->mActionStack.redoClearStack();	
+	int preFrame = mSprite->mSelectedFrame-1;
+	if(preFrame < 0) preFrame = 0;
+	mSprite->removeFrame(mSprite->mSelectedFrame);
+	mSprite->selectFrame(preFrame);
+
+	mSprite->mActionStack.redoClearStack();
 	mSprite->mActionStack.undoClearStack();
-	
-	mSprite->mFrame->bIsSelected = false;
-				
-	
 
-	mMapSelectedTile = 0;
-	mTileSelectedTile = mTileSet.TTiles[0];
-
-	mTileSelectedTile->bIsSelected = true;				
-	*/
 	return 0;
 }
 
@@ -2832,13 +2830,7 @@ int TEditor::handleEvents(){
 			if(mGlobalSettings.mEditorState == ESTATE_FRAMEDELETE){
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
 
-				int preFrame = mSprite->mSelectedFrame-1;
-				if(preFrame < 0) preFrame = 0;
-				mSprite->removeFrame(mSprite->mSelectedFrame);
-				mSprite->selectFrame(preFrame);
-
-				mSprite->mActionStack.redoClearStack();
-				mSprite->mActionStack.undoClearStack();
+				removeSelectedFrame();
 
 				cancelActiveDialog();
 				return 0;
@@ -3174,7 +3166,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					if(mCurMode == EMODE_SPRITE){
 						if(mGlobalSettings.CurrentEditor->mSprite->mFrames.size() > 1){
 							activateRemoveFrame();
-						} else {
+						} else {							
 							activateRemoveSpriteDialog();
 						}
 					}					
