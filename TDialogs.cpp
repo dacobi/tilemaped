@@ -405,6 +405,12 @@ int TBDialog::render(){
 						mGlobalSettings.CurrentEditor->activateRemoveSpriteDialog();
 					}
 				}
+				if(ImGui::BeginMenu("Sprite Frames Reordering")){										
+					if(ImGui::MenuItem("Warn before Frame Removal", NULL, &mGlobalSettings.bSpriteWarnBeforeDelete)){
+						
+					}
+					ImGui::EndMenu();
+				}
 			}
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){

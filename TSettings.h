@@ -142,6 +142,8 @@ public:
 	sKey *TileSet_EditWidth;
 	sKey *SelectionEdit_ShowPixelGrid;
 	sKey *SelectionEdit_ShowTileGrid;
+	sKey *Sprite_ShowPixelGrid;
+	sKey *Sprite_WarnBeforeDelete;
 };
 
 class ProgramSettings : public Settings{

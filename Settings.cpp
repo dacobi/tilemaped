@@ -118,6 +118,9 @@ ProjectSettings::ProjectSettings(){
 	TileSet_EditWidth = new sKey("TileSet_EditWidth", type_int, 4);
 	SelectionEdit_ShowPixelGrid = new sKey("SelectionEdit_ShowPixelGrid", type_bool, true);
 	SelectionEdit_ShowTileGrid = new sKey("SelectionEdit_ShowTileGrid", type_bool, true);
+	Sprite_ShowPixelGrid = new sKey("Sprite_ShowPixelGrid", type_bool, true);
+	Sprite_WarnBeforeDelete = new sKey("Sprite_WarnBeforeDelete", type_bool, true);
+
 		
     keys.push_back(Editor_SelectionAppend);
 	keys.push_back(Tile_ShowPixelGrid);
@@ -128,6 +131,8 @@ ProjectSettings::ProjectSettings(){
     keys.push_back(TileSet_EditWidth);
 	keys.push_back(SelectionEdit_ShowPixelGrid);
 	keys.push_back(SelectionEdit_ShowTileGrid);
+	keys.push_back(Sprite_ShowPixelGrid);
+	keys.push_back(Sprite_WarnBeforeDelete);
 
     for(int i = 0; i < keys.size(); i++){
 		keyindex[keys[i]->kname] = i;
