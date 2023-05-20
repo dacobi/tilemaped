@@ -638,6 +638,39 @@ int TEActionAddFrame::getFrame(){
 }
 */
 
+TEActionSwapFrames::~TEActionSwapFrames(){	
+
+}
+
+
+void TEActionSwapFrames::undo(){
+	std::swap(mSprite->mFrames[mTarget], mSprite->mFrames[mSource]);
+	
+	mSprite->selectFrame(mSource);	
+}
+
+void TEActionSwapFrames::redo(){
+	std::swap(mSprite->mFrames[mSource], mSprite->mFrames[mTarget]);
+
+	mSprite->selectFrame(mTarget);	
+}
+
+void TEActionSwapFrames::doAction(TEditor* cEditor, TSprite *cSprite, int cSource, int cTarget){
+	mEditor = cEditor;
+	mSprite = cSprite;
+	mSource = cSource;
+	mTarget = cTarget;
+	
+
+	TEActionType = ACTION_SWAPFRAMES;
+
+	std::swap(mSprite->mFrames[mSource], mSprite->mFrames[mTarget]);
+
+	mSprite->selectFrame(mTarget);	
+}
+
+
+
 void TEActionGroup::undo(){
 	for(TEAction* mAction : mActions){
 		mAction->undo();

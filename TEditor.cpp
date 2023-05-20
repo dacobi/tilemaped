@@ -1229,6 +1229,50 @@ int TEditor::swapTiles(int source, int target, bool bDoCopy){
 	return 1;
 }
 
+int TEditor::swapFrames(int source, int target, bool bDoCopy){
+if(mCurMode == EMODE_SPRITE){
+		if(bLCTRLisDown && bDoCopy){
+			TEActionReplaceFrame* newAction = new TEActionReplaceFrame();				
+			newAction->doAction(mSprite->mFrames[target], mSprite->mFrames[source]->FileData, this, mSprite);
+      		mSprite->mActionStack.newActionGroup();	
+      		mSprite->mActionStack.addAction(newAction);
+
+			mSprite->mActionStack.mLastAction = newAction;
+       		mSprite->mActionStack.redoClearStack();
+			
+		} else {			
+			TEActionSwapFrames* newAction = new TEActionSwapFrames();				
+			newAction->doAction(this, mSprite, source, target);
+      		mSprite->mActionStack.newActionGroup();	
+      		mSprite->mActionStack.addAction(newAction);
+			mSprite->mActionStack.mLastAction = newAction;
+			mSprite-> mActionStack.redoClearStack();						
+		}
+		return 0;
+	}
+	return 1;
+}
+
+int TEditor::moveFrameUp(){
+	if(mCurMode == EMODE_SPRITE){		
+		if(mSprite->mSelectedFrame > 0){				
+			swapFrames(mSprite->mSelectedFrame, mSprite->mSelectedFrame-1);				
+			return 0;
+		}		
+	}
+	return 1;
+}
+
+int TEditor::moveFrameDown(){
+	if(mCurMode == EMODE_SPRITE){		
+		if(mSprite->mSelectedFrame < (mSprite->mFrames.size()-1)){				
+			swapFrames(mSprite->mSelectedFrame, mSprite->mSelectedFrame+1);
+			return 0;
+		}
+	}
+	return 1;
+}
+
 int TEditor::moveTileUp(){
 	if(mCurMode == EMODE_MAP){
 		if(mTileSelectedTile){

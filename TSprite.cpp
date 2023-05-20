@@ -210,11 +210,11 @@ void TSprite::renderIm(int ypos, int mScroll){
 	ImGui::Begin("Sprite Frames", &bShowSpriteFrames, ImGuiWindowFlags_NoNav);    
 
 	if(ImGui::Button("Move Up")){
-		//TODO mGlobalSettings.CurrentEditor->moveTileUp();
+		mGlobalSettings.CurrentEditor->moveFrameUp();
 	}
 
 	if(ImGui::Button("Move Down")){
-		//TODO mGlobalSettings.CurrentEditor->moveTileDown();
+		mGlobalSettings.CurrentEditor->moveFrameDown();
 	}
 
 	bool bIsDragged = false;
@@ -261,7 +261,7 @@ void TSprite::renderIm(int ypos, int mScroll){
 	ImGui::PopStyleColor(3);
 
 	if(bIsDragged){		
-		//TODO mGlobalSettings.CurrentEditor->swapTiles(mDragSource, mDragTarget, true);
+		mGlobalSettings.CurrentEditor->swapFrames(mDragSource, mDragTarget, true);
 	}
 
 	mGlobalSettings.CurrentEditor->ImButtonsSprite.updateButtonStates();
