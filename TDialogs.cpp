@@ -252,7 +252,7 @@ int TBDialog::render(){
 							if(bCSprite){
 								cSPriteStart = mGlobalSettings.mBall + " Sprite ";
 							} else {
-								cSPriteStart = "Sprite ";
+								cSPriteStart = "  Sprite ";
 							}
 
 							if(ImGui::BeginMenu(std::string(cSPriteStart + snSprite + ": "+ cSprite->getSpriteSize()).c_str())){
@@ -269,7 +269,7 @@ int TBDialog::render(){
 									if(bCFrame){
 										cPreFrame = mGlobalSettings.mBall + " Frame ";
 									} else {
-										cPreFrame = "Frame ";
+										cPreFrame = "  Frame ";
 									}		
 
 									if(ImGui::MenuItem((std::string(cPreFrame + cSFrame).c_str()))){																					
