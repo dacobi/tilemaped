@@ -1207,6 +1207,12 @@ int TEditor::updatePalette(){
 		mTileSet.TTiles[i]->updateTexture(&mPalette);		
 	}
 
+	for(int i = 0; i < mSprites.size(); i++){		
+		for(int j = 0; j < mSprites[i]->mFrames.size(); j++){		
+			mSprites[i]->mFrames[j]->updateTexture(&mPalette);	
+		}	
+	}
+
 	return 0;
 }
 

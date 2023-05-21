@@ -234,40 +234,6 @@ TSFrame* TSprite::createNewFromFile(std::string newPath, TPalette* tpal){
 
 }
 
-/*
-void TSprite::resizeEdit(){
-	int isOdd = TTiles.size() % mSelEdWidth;
-	int cRowNum = TTiles.size() / mSelEdWidth;
-
-	int cPad = 0;
-
-	int dummy = 1;
-
-	if(isOdd){cPad = 1;}
-
-	SDL_Rect rEmpty;
-
-	rEmpty.x = 0;
-	rEmpty.y = 0;
-	rEmpty.w = 0;
-	rEmpty.h = 0;
-
-	mSelectionAreaX = mSelEdWidth * mGlobalSettings.mGlobalTexParam.TileSizeX;
-	mSelectionAreaY = mGlobalSettings.mGlobalTexParam.TileSizeY * (cRowNum + cPad);
-	
-	EditPixelAreas.resize(mSelectionAreaX*mSelectionAreaY);
-
-	for(int i = 0; i <  EditPixelAreas.size(); i++){
-		EditPixelAreas[i].x = rEmpty.x;
-		EditPixelAreas[i].y = rEmpty.y;
-		EditPixelAreas[i].w = rEmpty.w;
-		EditPixelAreas[i].h = rEmpty.h;
-	}
-	
-	mSelection.clearSelection();	
-	mSelection.init(mSelectionAreaX , mSelectionAreaY, 1, 1, &mCurEdScale);	
-}
-*/
 
 void TSprite::renderIm(int ypos, int mScroll){
     mFramesBackGround.h = mGlobalSettings.WindowHeight- mGlobalSettings.TopBarHeight;
