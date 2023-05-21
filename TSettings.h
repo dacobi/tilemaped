@@ -149,7 +149,7 @@ public:
 class ProgramSettings : public Settings{
 public:
 	ProgramSettings();
-	void close();
+	//void close();
 	
 	sKey *Sys_Renderer;
 	sKey *Sys_VSYNC;

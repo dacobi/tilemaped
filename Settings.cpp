@@ -154,22 +154,26 @@ ProgramSettings::ProgramSettings(){
 	}
 }
 
+/*
 void ProgramSettings::close(){
 	Sys_Renderer->ivalue = 0;
 	Sys_VSYNC->ivalue = true;
 	Win_Maximize->ivalue = false;
 }
+*/
 
 void ProjectSettings::close(){
-	Editor_SelectionAppend->ivalue = true;
-	Tile_ShowPixelGrid->ivalue = true;
-	TileSet_ShowPixelGrid->ivalue = true;
-	TileSet_ShowTileGrid->ivalue = true;
-	TileSet_UpdateMaps->ivalue = true;
-	TileSet_WarnBeforeDelete->ivalue = true;
+	Editor_SelectionAppend->bvalue = true;
+	Tile_ShowPixelGrid->bvalue = true;
+	TileSet_ShowPixelGrid->bvalue = true;
+	TileSet_ShowTileGrid->bvalue = true;
+	TileSet_UpdateMaps->bvalue = true;
+	TileSet_WarnBeforeDelete->bvalue = true;
 	TileSet_EditWidth->ivalue = 4;
-	SelectionEdit_ShowPixelGrid->ivalue = true;
-	SelectionEdit_ShowTileGrid->ivalue = true;
+	SelectionEdit_ShowPixelGrid->bvalue = true;
+	SelectionEdit_ShowTileGrid->bvalue = true;
+	Sprite_ShowPixelGrid->bvalue = true;
+	Sprite_WarnBeforeDelete->bvalue = true;
 
 	bLoaded = false;
 }

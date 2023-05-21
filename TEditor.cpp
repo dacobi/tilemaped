@@ -542,6 +542,43 @@ int TEditor::saveToFolder(std::string path){
 
 		mBrushesPixelSprite4.saveToFile(path + DIRDEL + "s4brushes.dat");
 		mBrushesPixelSprite8.saveToFile(path + DIRDEL + "s8brushes.dat");
+
+	} else {
+		if(fs::exists(fs::status(path+DIRDEL+"s4brushes.dat"))){
+			fs::remove(path+DIRDEL+"s4brushes.dat");
+		}
+
+		if(fs::exists(fs::status(path+DIRDEL+"s8brushes.dat"))){
+			fs::remove(path+DIRDEL+"s8brushes.dat");
+		}
+	}
+
+	convert << nSpriteNum << std::endl;
+	convert >> sSpriteNum;
+	
+	sSprite = std::string(path + DIRDEL + "sprite" + sSpriteNum + ".bin");
+
+
+	while(fs::exists(fs::status(sSprite))){
+		std::string cBackupNum;
+		int mBackupNum = 0;
+
+		convert << mBackupNum << std::endl;
+		convert >> cBackupNum;
+
+		while(fs::exists(fs::status(sSprite + cBackup + cBackupNum))){
+			mBackupNum++;
+			convert << mBackupNum << std::endl;
+			convert >> cBackupNum;
+		}
+
+		fs::rename(sSprite, sSprite + cBackup + cBackupNum);
+					
+		nSpriteNum++;
+		convert << nSpriteNum << std::endl;
+		convert >> sSpriteNum;
+
+		sSprite = std::string(path + DIRDEL + "sprite" + sSpriteNum + ".bin");
 	}
 
 
