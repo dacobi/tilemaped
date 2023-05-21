@@ -153,6 +153,7 @@ void TEditor::initDialogs(){
 	mProjectInfo.mEditor = this;
 	mProjectInfo.init();
 	mOpenTileDialog.init();
+	mOpenFrameDialog.init();
 	mOpenTileSetDialog.init();
 	mOpenTileMapDialog.init();
 	mNewTileMapDialog.init();
@@ -1511,6 +1512,10 @@ Tile* TEditor::createNewTileCopy(Tile* cCopyTile){
 	return NULL;
 }
 
+TSFrame* TEditor::createNewFrameFromFile(std::string newFramePath){
+	return mSprite->createNewFromFile(newFramePath, &mPalette);
+}
+
 Tile* TEditor::createNewTileFromFile(std::string newTilePath){
 	return mTileSet.createNewFromFile(newTilePath, &mPalette);
 }
@@ -1628,6 +1633,14 @@ int TEditor::activateSaveDialog(){
 int TEditor::activateSaveAsDialog(){
 	mActiveDialog = &mSaveAsDialog;
 	mActiveDialog->bDialogIsWatingForText = true;	
+	return 0;
+}
+
+int TEditor::activateOpenFrameDialog(){
+	if(mCurMode == EMODE_SPRITE){
+		mActiveDialog = &mOpenFrameDialog;
+		mActiveDialog->bDialogIsWatingForText = true;		
+	}
 	return 0;
 }
 
@@ -2918,6 +2931,30 @@ int TEditor::handleEvents(){
 					return 0;
 				}				
 			}			
+
+
+			if(mGlobalSettings.mEditorState == ESTATE_FRAMEIMPORT){				
+				TSFrame* newFrame = createNewFrameFromFile(mGlobalSettings.mNewFramePath);
+				if(newFrame){
+					TEActionAddFrame* newActionTile = new TEActionAddFrame();
+					newActionTile->doAction(newFrame, this, mSprite);
+	       			mSprite->mActionStack.newActionGroup();	
+	       			mSprite->mActionStack.addAction(newActionTile);
+	       			mSprite->mActionStack.mLastAction = newActionTile;
+	       			mSprite->mActionStack.redoClearStack();
+			
+					mGlobalSettings.mEditorState = ESTATE_NONE;	
+					cancelActiveDialog();
+					showMessage("Frame Loaded Successfully");
+					return 0;
+				} else {					
+					mGlobalSettings.mEditorState = ESTATE_NONE;	
+					cancelActiveDialog();
+					showMessage("Error Loading Frame!", true);					
+					return 0;
+				}				
+			}			
+
 
 			if(mGlobalSettings.mEditorState == ESTATE_TILESETIMPORT){				
 							

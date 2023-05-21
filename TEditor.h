@@ -166,6 +166,7 @@ class TEditor{
 		SDialog mSaveDialog;
 		SADialog mSaveAsDialog;
 		ITDialog mOpenTileDialog;
+		ISFDialog mOpenFrameDialog;
 		ITSDialog mOpenTileSetDialog;
 		ITMDialog mOpenTileMapDialog;
 		CTMDialog mNewTileMapDialog;
@@ -194,6 +195,7 @@ class TEditor{
 		Tile* createNewTile();
 		Tile* createNewTileCopy(Tile* cCopyTile);
 		Tile* createNewTileFromFile(std::string newTilePath);
+		TSFrame* createNewFrameFromFile(std::string newFramePath);
 		int rotateTile();
 		int rotateTileLeft();
 		int moveTileUp();
@@ -215,6 +217,7 @@ class TEditor{
 		void setSpriteBrushes();
 		int activateSaveDialog();
 		int activateOpenTileDialog();
+		int activateOpenFrameDialog();
 		int activateOpenTileSetDialog();
 		int activateOpenTileMapDialog();
 		int activateNewTileMapDialog();

@@ -181,6 +181,59 @@ int TSprite::loadFromBuffer(std::vector<unsigned char> sBuf, TPalette* tpal){
 	return 0;
 }
 
+TSFrame* TSprite::createNewFromFile(std::string newPath, TPalette* tpal){
+	if(fs::exists(fs::status(newPath))){
+		if(fs::is_directory(fs::status(newPath))){
+			return NULL;
+		}
+
+		SDL_Surface *newSurf = IMG_Load(newPath.c_str());
+		if(newSurf && (mTexParam.TileSetBPP > 0x2)){
+			if(newSurf->format->BitsPerPixel == 8){
+				if((newSurf->w == mTexParam.TileSizeX) && (newSurf->h == mTexParam.TileSizeY)){
+					std::vector<unsigned char> tbuffer;
+					if(mTexParam.TileSetBPP == 0x4){
+						unsigned char tmpChar;
+						bool sndPix=false;
+						for(int i = 0; i < (mTexParam.TileSizeX*mTexParam.TileSizeY); i++){
+							if(sndPix){
+								tmpChar = (tmpChar << 4) + ((unsigned char*)(newSurf->pixels))[i]%16;
+								tbuffer.push_back(tmpChar);
+								sndPix = false;
+							} else {
+								tmpChar = ((unsigned char*)(newSurf->pixels))[i]%16;
+								sndPix = true;
+							}
+							
+						}
+					} else {
+						for(int i = 0; i < (mTexParam.TileSizeX*mTexParam.TileSizeY); i++){
+							tbuffer.push_back(((unsigned char*)(newSurf->pixels))[i]);
+						}
+					}
+					SDL_FreeSurface(newSurf);
+					return createNewFromBuffer(tbuffer, tpal);
+				}
+			}
+			SDL_FreeSurface(newSurf);
+			return NULL;
+
+		} else {
+			std::ifstream infile(newPath, std::ios::binary );
+
+			std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
+
+			if(tbuffer.size() == ((mTexParam.TileSizeX * mTexParam.TileSizeY)/mGlobalSettings.mTileBPPSize[mTexParam.TileSetBPP])){
+				return createNewFromBuffer(tbuffer, tpal);
+			} else {
+				return NULL;				
+			}
+		}
+	}
+	return NULL;
+
+}
+
 /*
 void TSprite::resizeEdit(){
 	int isOdd = TTiles.size() % mSelEdWidth;

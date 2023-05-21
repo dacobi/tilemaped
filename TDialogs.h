@@ -135,6 +135,15 @@ class ITDialog: public SADialog{
 		virtual void recieveInput(int mKey);		
 };
 
+class ISFDialog: public SADialog{
+	public:
+		virtual void init();
+		virtual void cancel();
+		virtual int render();
+		virtual void recieveInput(int mKey);		
+};
+
+
 class ITSDialog: public ITDialog{
 	public:				
 		virtual int render();

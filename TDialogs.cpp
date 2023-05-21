@@ -164,6 +164,16 @@ int TBDialog::render(){
 					ImGui::EndMenu();
 				}
 			}
+			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE){
+				if(ImGui::BeginMenu((std::string(mGlobalSettings.mFile + " Import")).c_str())){
+
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Sprite Frame")).c_str())){
+						mGlobalSettings.CurrentEditor->activateOpenFrameDialog();		  			
+					}
+
+					ImGui::EndMenu();
+				}
+			}
 
 			ImGui::Separator();
 
@@ -1790,6 +1800,95 @@ void ITDialog::recieveInput(int mKey){
 	}
 }
 
+
+/* Frame Import*/
+
+int ISFDialog::render(){	
+	
+	Dialog::render();
+
+	ImGui::Begin("Import Sprite Frame", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
+    		
+	ImGui::Text("Import Sprite Frame from bitmap or RAW");
+	
+
+	mTextInput.render();
+
+	if (ImGui::Button("Choose Frame File")){
+		Dialog::render();
+		ImGui::SetNextWindowSize(ImVec2(800, 600));
+    	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyFrame", "Choose File", ".png,.data,.raw,.bin", ".");
+	}
+  
+  	// display
+  	if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKeyFrame")){
+    	// action if OK
+    	if (ImGuiFileDialog::Instance()->IsOk()){
+      		std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+      		std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+	  		mTextInput.mDialogTextMain = filePathName;
+			mTextInput.checkCurrentText();
+			if(mTextInput.bInputIsAccepted){
+				recieveInput(SDLK_y);
+			}
+      		// action
+    	}    
+    // close
+    	ImGuiFileDialog::Instance()->Close();
+  	}
+
+    if (ImGui::Button("Import")){
+		if(mTextInput.bInputIsAccepted){
+			recieveInput(SDLK_y);					
+		}				
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("Cancel")){
+		bInputIsCancel=true;
+	}		
+	        
+    ImGui::End();
+	
+	return 0;
+}
+
+
+void ISFDialog::init(){
+	mTextInput.bIsInputActive = true;
+	mTextInput.bAutoComplete = true;
+	mTextInput.bMustBeFile = true;	
+}
+
+void ISFDialog::cancel(){
+		Dialog::cancel();
+		mTextInput.mTextColor =  mGlobalSettings.DefaultTextColor;
+		mTextInput.mDialogTextMain = "";
+}
+
+void ISFDialog::recieveInput(int mKey){
+	if(mKey == SDLK_y){
+		if(mTextInput.bInputIsAccepted){
+			bInputIsAccept=true;	
+			bDialogIsWatingForText = false;
+			//mGlobalSettings.mOpenTileState = 1;
+			mGlobalSettings.mEditorState = ESTATE_FRAMEIMPORT;
+
+			mGlobalSettings.mNewFramePath = mTextInput.mDialogTextMain;
+		}		
+	}
+
+	if(mKey == SDLK_n){
+		bInputIsCancel=true;
+	}		
+	if(mKey == SDLK_TAB){
+		mTextInput.autoComplete();		
+	}
+}
+
+
+/* End*/
 
 
 void ITSDialog::recieveInput(int mKey){
