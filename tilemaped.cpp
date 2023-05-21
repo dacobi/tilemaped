@@ -84,6 +84,49 @@ TSettings mGlobalSettings;
 	std::string mINIPath = "tilemaped.ini";
 #endif
 
+bool TSettings::getSpriteFileHeader(std::string sPath, int &cSpriteX, int &cSpriteY, int &cSpriteBPP, std::vector<unsigned char> &sBuf){
+
+	fs::path cSpritePath = sPath;
+
+	if((fs::exists(fs::status(cSpritePath)))  && !(fs::is_directory(fs::status(cSpritePath)))){
+		
+		std::ifstream infile(cSpritePath, std::ios::binary );
+    	std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
+
+		int magic1,magic2;
+
+		magic1 = tbuffer[0];
+		magic2 = tbuffer[1];
+
+		tbuffer.erase(tbuffer.begin());
+		tbuffer.erase(tbuffer.begin());
+	
+		int nSpriteX, nSpriteY, nSpriteBPP;
+
+		nSpriteX = (magic1 & 0xF0) >> 4;
+		nSpriteY = (magic1 & 0x0F);
+
+		nSpriteBPP = magic2;
+
+		if( ( (nSpriteBPP == 4) || (nSpriteBPP == 8) ) && ( (nSpriteX >= 0) && (nSpriteX <= 3) ) && ( (nSpriteY >= 0) && (nSpriteY <= 3) ) ){
+
+			int cTexX, cTexY;
+			cTexX = mFrameSizeIn[nSpriteX];
+			cTexY = mFrameSizeIn[nSpriteY];
+
+			if((tbuffer.size() % ((cTexY*cTexX)/ mTileBPPSize[nSpriteBPP])) == 0){
+				cSpriteX = cTexX;
+				cSpriteY = cTexY;
+				cSpriteBPP = nSpriteBPP;
+				sBuf = tbuffer;
+				return true;
+			}
+		}
+	}
+
+	return false;
+
+}
 
 int TSettings::testProjectFolder(std::string cPath){
 	fs::path pPath = cPath;

@@ -143,6 +143,11 @@ class TEditor{
 		TBrush *mCurrentBrushPixelSelEdit = NULL;		
 		TBrushList mBrushesTile;
 		TBrushList mBrushesPixel;
+		TBrushList mBrushesPixelSprite4;
+		TBrushList mBrushesPixelSprite8;
+		TBrushList *mBrushesSprite;
+		TextureParameters mSprite4;
+		TextureParameters mSprite8;
 		bool bShowCollisionEditor = false;	
 		int flipSelectedTile(int cFlipMode);		
 		int replaceSelectedColor(int x, int y);
@@ -207,6 +212,7 @@ class TEditor{
 		int removeSelectedFrame();
 		int showMessage(std::string cMessage, bool isError=false);
 		bool checkQuit();
+		void setSpriteBrushes();
 		int activateSaveDialog();
 		int activateOpenTileDialog();
 		int activateOpenTileSetDialog();

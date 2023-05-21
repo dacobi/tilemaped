@@ -197,6 +197,8 @@ class TSettings{
 		int TileRenderSize=16;
 		*/
 		std::map<int, int> mTileBPPSize = {{8,1 },{4,2 },{2,4}};
+		std::map<int, int> mFrameSizeIn = {{0,8},{1,16},{2,32},{3,64}};
+		std::map<int, int> mFrameSizeOut = {{8,0},{16,1},{32,2},{64,3}};
 		bool bShowPaletteOffset = false;		
 		int PaletteScale=2;
 		std::string ProjectPath;
@@ -269,6 +271,7 @@ class TSettings{
 		void initHelpText();
 		int testPaletteFile(std::string palPath);
 		int testProjectFolder(std::string cPath);
+		bool getSpriteFileHeader(std::string sPath, int &cSpriteX, int &cSpriteY, int &cSpriteBPP, std::vector<unsigned char> &sBuf);
 		void printHelpText();		
 		int initTicks();
 		int updateTicks();

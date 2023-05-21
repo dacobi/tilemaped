@@ -9,7 +9,7 @@ void TSFrame::renderEd(int xpos, int ypos, TPalette* tpal){
 		}
 	}
 	
-	if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel && !mGlobalSettings.CurrentEditor->mBrushesPixel.bIsEditing){
+	if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel && !mGlobalSettings.CurrentEditor->mBrushesSprite->bIsEditing){
 		if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->mSelected.size()){
 			for(int i=0; i < mTexParam->TileSizeY; i++){
 				for(int j=0; j < mTexParam->TileSizeX; j++){	
@@ -127,6 +127,59 @@ void TSprite::close(){
 	mFrames.clear();
 }
 
+int TSprite::saveToFile(std::string spath, std::string sfile){
+
+	std::ofstream outfile(spath+DIRDEL+sfile, std::ios::binary );
+
+	std::vector<unsigned char> obuffer;
+
+	int magic1, magic2;
+
+	magic1 = mGlobalSettings.mFrameSizeOut[mTexParam.TileSizeX];
+	magic1 = (magic1 << 4) + mGlobalSettings.mFrameSizeOut[mTexParam.TileSizeY];
+
+	magic2 = mTexParam.TileSetBPP;
+
+	obuffer.push_back(magic1);
+	obuffer.push_back(magic2);
+
+	for(auto &cFrame : mFrames){		
+		obuffer.insert(obuffer.end(), cFrame->FileData.begin(), cFrame->FileData.end());
+	}
+
+	outfile.write((char*)obuffer.data(),obuffer.size());
+	outfile.close();
+
+	return 0;
+
+}
+
+int TSprite::loadFromBuffer(std::vector<unsigned char> sBuf, TPalette* tpal){
+
+	int tmpFrameSize = ((mTexParam.TileSizeX * mTexParam.TileSizeY)/mGlobalSettings.mTileBPPSize[mTexParam.TileSetBPP]);
+
+	if(sBuf.size() % tmpFrameSize){		
+		return 1;
+	}
+
+	int nframes = sBuf.size() / tmpFrameSize;
+	FrameAreas.resize(nframes);
+
+	TSFrame *cFrame;
+
+	for(int tCount = 0; tCount < nframes; tCount++){
+		cFrame = new TSFrame(&mTexParam);
+		std::vector<unsigned char>::const_iterator first = sBuf.begin() + (tCount * tmpFrameSize);
+		std::vector<unsigned char>::const_iterator last = sBuf.begin() + ((tCount * tmpFrameSize) + (tmpFrameSize));
+		std::vector<unsigned char> tbuffer2(first, last);
+		cFrame->loadFromBuffer(tbuffer2 ,tpal);
+		mFrames.push_back(cFrame);
+	}
+
+	selectFrame(0);
+
+	return 0;
+}
 
 /*
 void TSprite::resizeEdit(){

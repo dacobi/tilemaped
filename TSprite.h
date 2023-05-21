@@ -37,6 +37,8 @@ class TSprite{
 		void appendFrame(TSFrame* addFrame);		
         void renderEd(int xpos, int ypos, TPalette* tpal);
         void renderIm(int ypos, int mScroll);
+        int saveToFile(std::string spath, std::string sfile);
+        int loadFromBuffer(std::vector<unsigned char> sBuf, TPalette* tpal);
         int mCurFrameScale=10;
 		int mCurColumns=1;
 		int mColSpace = 10;
@@ -56,9 +58,7 @@ class TSprite{
         //void resizeEdit();
 		//void updateEditAreas(std::vector<SDL_Rect> &cTile, int xpos, int ypos);
         std::vector<SDL_Rect> FrameAreas;
-		std::vector<SDL_Rect> EditPixelAreas;	
-        std::map<int, int> mFrameSizeIn = {{0,8},{1,16},{2,32},{3,64}};
-		std::map<int, int> mFrameSizeOut = {{8,0},{16,1},{32,2},{64,3}};
+		std::vector<SDL_Rect> EditPixelAreas;	        
         TEActionUndoStack mActionStack;
 };
 

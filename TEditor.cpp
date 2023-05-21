@@ -181,7 +181,12 @@ void TEditor::initDialogs(){
 
 	mBrushesTile.init("Tiles","Tile", TBRUSH_TILE, &bShowBrushesTile,mGlobalSettings.mGlobalTexParam.TileSizeX, mGlobalSettings.mGlobalTexParam.TileSizeY, &mGlobalSettings.TileMapScale, mGlobalSettings.TileMapScale, &mCurrentBrushTile, &mGlobalSettings.mGlobalTexParam);
 	mBrushesPixel.init("Pixels","Pixel", TBRUSH_PIXEL, &bShowBrushesPixel, mGlobalSettings.mGlobalTexParam.TilePixelSize, mGlobalSettings.mGlobalTexParam.TilePixelSize, &mGlobalSettings.mGlobalTexParam.mTileEdScale, mGlobalSettings.mGlobalTexParam.mTileEdScale, &mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
-	
+
+	mSprite4.TileSetBPP = 4;
+
+	mBrushesPixelSprite4.init("Sprite 4BPP","Pixel", TBRUSH_PIXEL, &bShowBrushesPixel, mSprite4.TilePixelSize, mSprite4.TilePixelSize, &mSprite4.mTileEdScale, mSprite4.mTileEdScale, &mCurrentBrushPixel, &mSprite4);
+	mBrushesPixelSprite8.init("Sprite 8BPP","Pixel", TBRUSH_PIXEL, &bShowBrushesPixel, mSprite8.TilePixelSize, mSprite8.TilePixelSize, &mSprite8.mTileEdScale, mSprite8.mTileEdScale, &mCurrentBrushPixel, &mSprite8);	
+
 }
 
 int TEditor::createTileMap(int nMapX, int nMapY, int nTileValue, int cPaletteOffset){
@@ -346,6 +351,42 @@ int TEditor::loadFromFolder(std::string path){
 
 	mGlobalSettings.ProjectPath = path;
 
+	/* Sprites */
+
+	fs::path cSprites;
+	int nSpriteNum = 0;
+	std::string sSpriteNum;
+	
+
+	convert << nSpriteNum << std::endl;
+	convert >> sSpriteNum;
+
+	cSprites = std::string(path + DIRDEL + "sprite" + sSpriteNum + ".bin");
+
+	while(fs::exists(fs::status(cSprites))){
+		
+
+		int nSpriteX, nSpriteY, nSpriteBPP;
+		std::vector<unsigned char> sbuffer;
+
+
+		if(mGlobalSettings.getSpriteFileHeader(cSprites.string(), nSpriteX, nSpriteY, nSpriteBPP, sbuffer)){
+			mSprite = new TSprite(nSpriteX, nSpriteY, nSpriteBPP);
+			mSprite->loadFromBuffer(sbuffer, &mPalette);
+			mSprites.push_back(mSprite);
+		} else {
+			std::cout << "Error reading file: " <<  cSprites.string() << std::endl;
+		}
+		
+		nSpriteNum++;
+		convert << nSpriteNum << std::endl;
+		convert >> sSpriteNum;
+
+		cSprites = std::string(path + DIRDEL + "sprite" + sSpriteNum + ".bin");
+	}
+
+	/* Sprites End */
+
 	if(fs::exists(fs::status(path + DIRDEL + "settings.ini"))){
 		if(mGlobalSettings.mProjectSettings.load(path + DIRDEL + "settings.ini")){
 			std::cout << "Error Loading Settings" << std::endl;
@@ -378,6 +419,20 @@ int TEditor::loadFromFolder(std::string path){
 	initDialogs();
 
 	switchTileMap(0);
+
+	if(mSprites.size()){
+
+		switchSprite(0);
+
+		if(fs::exists(fs::status(path+DIRDEL+"s4brushes.dat"))){
+			mBrushesPixelSprite4.loadFromFile(path+DIRDEL+"s4brushes.dat");
+		}
+
+		if(fs::exists(fs::status(path+DIRDEL+"s8brushes.dat"))){
+			mBrushesPixelSprite8.loadFromFile(path+DIRDEL+"s8brushes.dat");
+		}
+	}
+
 
 	if(fs::exists(fs::status(path+DIRDEL+"tbrushes.dat"))){
 		mBrushesTile.loadFromFile(path+DIRDEL+"tbrushes.dat");
@@ -471,6 +526,24 @@ int TEditor::saveToFolder(std::string path){
 	mBrushesTile.saveToFile(path + DIRDEL + "tbrushes.dat");
 	mBrushesPixel.saveToFile(path + DIRDEL + "pbrushes.dat");
 
+	int nSpriteNum = 0;
+	std::string sSprite;
+	std::string sSpriteNum;
+
+
+	if(mSprites.size()){
+		for(int i = 0; i < mSprites.size(); i++){
+			convert << nSpriteNum << std::endl;
+			convert >> sSpriteNum;
+			sSprite = "sprite" + sSpriteNum + ".bin";
+			mSprites[i]->saveToFile(path, sSprite);
+			nSpriteNum++;
+		}
+
+		mBrushesPixelSprite4.saveToFile(path + DIRDEL + "s4brushes.dat");
+		mBrushesPixelSprite8.saveToFile(path + DIRDEL + "s8brushes.dat");
+	}
+
 
 	mGlobalSettings.mProjectSettings.Editor_SelectionAppend->bvalue = mGlobalSettings.bSelectionMode;
 
@@ -497,8 +570,9 @@ int TEditor::saveToFolder(std::string path){
 int TEditor::switchSprite(int cSprite){
 	if((cSprite > -1) &&  (cSprite < mSprites.size())){
 		mSprite = mSprites[cSprite];
-		mBrushesPixel.setBrushDeltas(mSprite->mTexParam.TilePixelSize, mSprite->mTexParam.TilePixelSize, &mSprite->mTexParam.mTileEdScale, mSprite->mTexParam.mTileEdScale, &mSprite->mTexParam);
-		mBrushesPixel.bIsShown = &mSprite->bShowBrushesPixel;
+		//mBrushesPixel.setBrushDeltas(mSprite->mTexParam.TilePixelSize, mSprite->mTexParam.TilePixelSize, &mSprite->mTexParam.mTileEdScale, mSprite->mTexParam.mTileEdScale, &mSprite->mTexParam);
+		//mBrushesPixel.bIsShown = &mSprite->bShowBrushesPixel;
+		setSpriteBrushes();
 		return 0;
 	}
 	return 1;
@@ -650,7 +724,7 @@ int TEditor::render(){
 		}
 
 		if(mSprite->bShowBrushesPixel){
-			mBrushesPixel.renderIm();
+			mBrushesSprite->renderIm();
 		}
 	}
 
@@ -743,6 +817,18 @@ int TEditor::render(){
 	return 0;
 }
 
+void TEditor::setSpriteBrushes(){
+
+		if(mSprite->mTexParam.TileSetBPP < 8){
+			mBrushesSprite = &mBrushesPixelSprite4;
+		} else {
+			mBrushesSprite = &mBrushesPixelSprite8;
+		}
+
+		mBrushesSprite->setBrushDeltas(mSprite->mTexParam.TilePixelSize, mSprite->mTexParam.TilePixelSize, &mSprite->mTexParam.mTileEdScale, mSprite->mTexParam.mTileEdScale, &mSprite->mTexParam);
+		mBrushesSprite->bIsShown = &mSprite->bShowBrushesPixel;
+}
+
 int TEditor::setMode(int newMode){
 
 	if(newMode == EMODE_PALED){
@@ -760,8 +846,7 @@ int TEditor::setMode(int newMode){
 	}
 
 	if(newMode == EMODE_SPRITE){
-		mBrushesPixel.setBrushDeltas(mSprite->mTexParam.TilePixelSize, mSprite->mTexParam.TilePixelSize, &mSprite->mTexParam.mTileEdScale, mSprite->mTexParam.mTileEdScale, &mSprite->mTexParam);
-		mBrushesPixel.bIsShown = &mSprite->bShowBrushesPixel;
+		setSpriteBrushes();
 	}
 
 	if(newMode == EMODE_SELEDIT){		
@@ -1648,9 +1733,9 @@ int TEditor::activateBrush(){
 	}
 	if(mCurMode == EMODE_SPRITE){		
 		if(!mSprite->mCurrentBrushPixel){
-				mSprite->mCurrentBrushPixel = mBrushesPixel.getBrush();
+				mSprite->mCurrentBrushPixel = mBrushesSprite->getBrush();
 		} else {		
-				mSprite->mCurrentBrushPixel = mBrushesPixel.getNextBrush();
+				mSprite->mCurrentBrushPixel = mBrushesSprite->getNextBrush();
 		}
 	}
 
@@ -2285,19 +2370,36 @@ int TEditor::handlePalette(){
 		}
 	}
 
-	if(ImButtonsPalette.mRight.bButtonIsDown && mBrushesPixel.bIsEditing){
-		int tSel = -1;		
-		tSel = searchRectsXY(mPalette.PixelAreas, cx, cy);
+	if(mCurMode != EMODE_SPRITE){
+		if(ImButtonsPalette.mRight.bButtonIsDown && mBrushesPixel.bIsEditing){
+			int tSel = -1;		
+			tSel = searchRectsXY(mPalette.PixelAreas, cx, cy);
 		
-		if(mTexParam->TileSetBPP < 0x8){
-			mBrushesPixel.addBrushElement(tSel%16);
-		} else {
-			mBrushesPixel.addBrushElement(tSel);
+			if(mTexParam->TileSetBPP < 0x8){
+				mBrushesPixel.addBrushElement(tSel%16);
+			} else {
+				mBrushesPixel.addBrushElement(tSel);
+			}
+		
+		} else if(ImButtonsPalette.mRight.bButtonIsDown){
+			replaceSelectedColor(ImButtonsPalette.mRight.mMousePos.x, ImButtonsPalette.mRight.mMousePos.y);		
 		}
+	} else {
+		if(ImButtonsPalette.mRight.bButtonIsDown && mBrushesSprite->bIsEditing){
+			int tSel = -1;		
+			tSel = searchRectsXY(mPalette.PixelAreas, cx, cy);
 		
-	} else if(ImButtonsPalette.mRight.bButtonIsDown){
-		replaceSelectedColor(ImButtonsPalette.mRight.mMousePos.x, ImButtonsPalette.mRight.mMousePos.y);		
+			if(mTexParam->TileSetBPP < 0x8){
+				mBrushesSprite->addBrushElement(tSel%16);
+			} else {
+				mBrushesSprite->addBrushElement(tSel);
+			}
+		
+		} else if(ImButtonsPalette.mRight.bButtonIsDown){
+			replaceSelectedColor(ImButtonsPalette.mRight.mMousePos.x, ImButtonsPalette.mRight.mMousePos.y);		
+		}
 	}
+
 	return 0;
 }
 
@@ -2554,12 +2656,12 @@ int TEditor::handleBrushes(){
 	}
 	if(mCurMode == EMODE_SPRITE){
 		if(ImButtonsBrushes.mLeft.bButtonIsDown){ 
-			if(ImButtonsBrushes.mLeft.mMousePos.y < mBrushesPixel.mBrushOffset) {return 0;}
+			if(ImButtonsBrushes.mLeft.mMousePos.y < mBrushesSprite->mBrushOffset) {return 0;}
 			int tSel = -1;
-			tSel = searchRectsXY(mBrushesPixel.BrushAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
+			tSel = searchRectsXY(mBrushesSprite->BrushAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
 			if(tSel != -1){
-				mBrushesPixel.mSelectedBrush = tSel;
-				mSprite->mCurrentBrushPixel = mBrushesPixel.mBrushes[tSel];
+				mBrushesSprite->mSelectedBrush = tSel;
+				mSprite->mCurrentBrushPixel = mBrushesSprite->mBrushes[tSel];
 			}		
 		}
 	}
