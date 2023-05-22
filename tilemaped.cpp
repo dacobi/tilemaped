@@ -367,6 +367,9 @@ void TSettings::close(){
 	mGlobalTexParam.PaletteOffset=0;
 	mGlobalTexParam.mTileEdScale = 4;
 	mGlobalTexParam.TileRenderSize=16;
+	
+	
+
 
 	bShowPaletteOffset = false;
 	

@@ -65,7 +65,9 @@ class TPalette : public Dialog{
 		int mR;
 		int mG;
 		int mB;
-		bool bUpdateEditColor = true;	
+		bool bUpdateEditColor = true;
+		bool bHasBackupColor = false;
+		int mBackupColor = 0;
 		int initPalette();
 		int loadFromFile(std::string palPath);
 		int saveToFolder(std::string palPath);

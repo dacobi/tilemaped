@@ -41,8 +41,9 @@ void TEditor::closeProject(){
 	mColorSelectedTile = NULL;
 	mColorSelectedEdit = 0;
 	mColorSelectedTileEdit = NULL;
+
 	mLastPixelOffset = 0;
-	
+		
 	mCurMode = EMODE_MAP;
 	mLastMode = EMODE_TILE;
 	mouseSelX=0;
@@ -2398,16 +2399,47 @@ int TEditor::handlePalette(){
 		mTexParam = &mSprite->mTexParam;
 	}
 
-
-	if(mLastPixelOffset != mTexParam->PaletteOffset){
-		int tmpSel = mColorSelected % 16;
-		tmpSel += (mTexParam->PaletteOffset * 16);
-		mColorSelectedTile->bPixelSelected = false;
-		mColorSelected = tmpSel;
-		mColorSelectedTile = mPalette.TPixels[tmpSel];
-		mColorSelectedTile->bPixelSelected = true;
-		mLastPixelOffset = mTexParam->PaletteOffset;
+	/*
+	if(mPalette.bHasBackupColor){
+		mPalette.bHasBackupColor = false;
+		mColorSelected = mPalette.mBackupColor;
+		mColorSelectedTile->bPixelSelected = false;			
+		mColorSelectedTile = mPalette.TPixels[mColorSelected];
+		mColorSelectedTile->bPixelSelected = true;			
 		mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor = true;
+	}
+	*/
+
+	if(mCurMode != EMODE_SPRITE){		
+		/*if(mPalette.bHasBackupColor){
+		mPalette.bHasBackupColor = false;
+		mColorSelected = mPalette.mBackupColor;
+		mColorSelectedTile->bPixelSelected = false;			
+		mColorSelectedTile = mPalette.TPixels[mColorSelected];
+		mColorSelectedTile->bPixelSelected = true;			
+		mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor = true;*/
+		if(mLastPixelOffset != mTexParam->PaletteOffset){
+			int tmpSel = mColorSelected % 16;
+			tmpSel += (mTexParam->PaletteOffset * 16);
+			mColorSelectedTile->bPixelSelected = false;
+			mColorSelected = tmpSel;
+			mColorSelectedTile = mPalette.TPixels[tmpSel];
+			mColorSelectedTile->bPixelSelected = true;
+			mLastPixelOffset = mTexParam->PaletteOffset;
+			mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor = true;
+		}		
+	} else {
+		if((mTexParam->TileSetBPP < mGlobalSettings.mGlobalTexParam.TileSetBPP)){ //&& !mPalette.bHasBackupColor
+			//mPalette.bHasBackupColor = true;
+			//mPalette.mBackupColor = mColorSelected;
+			int tmpSel = mColorSelected % 16;
+			tmpSel += (mTexParam->PaletteOffset * 16);
+			mColorSelectedTile->bPixelSelected = false;
+			mColorSelected = tmpSel;
+			mColorSelectedTile = mPalette.TPixels[tmpSel];
+			mColorSelectedTile->bPixelSelected = true;			
+			mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor = true;
+		}
 	}
 
 	if(!ImButtonsPalette.bWindowHasFocus){

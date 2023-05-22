@@ -163,7 +163,7 @@ struct TextureParameters{
 	int TilePixelSize=16;
 	int PaletteOffset=0;
 	int mTileEdScale = 4;
-	int TileRenderSize=16;
+	int TileRenderSize=16;	
 };
 
 class TSettings{
