@@ -318,15 +318,15 @@ int TEditor::loadFromFolder(std::string path){
 
 	mTileMap = new TileMap();
 
-	if(mTileMap->loadFromFile(path, "map.bin", true)){
-		std::cout << "Error: can't read: " << path << DIRDEL << "map.bin" << std::endl;
+	if(mTileMap->loadFromFile(path, "map0.bin", true)){
+		std::cout << "Error: can't read: " << path << DIRDEL << "map0.bin" << std::endl;
 		return 1;
 	}
 
 	mTileMaps.push_back(mTileMap);
 
 	fs::path cTileMaps;
-	int mMapNum = 0;
+	int mMapNum = 1;
 	std::string cMapNum;
 	std::stringstream convert;
 
@@ -462,9 +462,9 @@ int TEditor::saveToFolder(std::string path){
 	
 	mTileSet.saveToFolder(path);
 	//TODO maybe
-	mTileMaps[0]->saveToFolder(path, "map.bin");
+	mTileMaps[0]->saveToFolder(path, "map0.bin");
 
-	int mMapNum = 0;
+	int mMapNum = 1;
 	std::string cTileMap;
 	std::string cMapNum;
 	std::stringstream convert;

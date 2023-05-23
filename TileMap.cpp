@@ -1416,7 +1416,12 @@ SDL_Rect Tile::renderIm(int xpos, int ypos, int mIndex, int &mDragAndDropped, in
 	ImDrawList *tList = ImGui::GetWindowDrawList();
 
 	if(bIsSelected){		
-		tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor);
+		tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor); //ImAltHighLightColor
+		elmin.x--;
+		elmin.y--;
+		elmax.x++;;
+		elmax.y++;
+		tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor); //ImAltHighLightColor
 	} else {
 		tList->AddRect(elmin, elmax, mGlobalSettings.ImHighLightColor);
 	}

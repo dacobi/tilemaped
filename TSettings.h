@@ -257,6 +257,7 @@ class TSettings{
 		SDL_Color ErrorBorderColor = {0xc0,0x00,0x00,0xff};
 		SDL_Color PixelGridColor = {0xa0,0xa0,0xa0,0xff};
 		ImU32 ImAltHighLightColor = 0xFFFFFF00;
+		ImU32 ImFrameHighLightColor = 0xFF0000FF;
 		ImU32 ImHighLightColor = 0xFFFFFFFF;
 		std::vector<std::string> mHelpText;
 		std::vector<std::string> mHelpTextMap;

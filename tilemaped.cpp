@@ -132,7 +132,15 @@ int TSettings::testProjectFolder(std::string cPath){
 	fs::path pPath = cPath;
 
 	if((fs::exists(fs::status(pPath)))  && (fs::is_directory(fs::status(pPath)))){
+		
 		fs::path mPath = cPath  + DIRDEL + "map.bin";
+		
+		if(fs::exists(fs::status(mPath))){
+			return 0;
+		}
+		
+		mPath = cPath  + DIRDEL + "map0.bin";
+
 		if(fs::exists(fs::status(mPath))){
 			fs::path tPath = cPath  + DIRDEL + "tiles.bin";
 			if(fs::exists(fs::status(tPath))){
@@ -969,9 +977,15 @@ int main( int argc, char* args[] )
 					mEditor.bEditorRunning = false;
 				}		
 			} else {
-				if(mEditor.loadFromFolder(mGlobalSettings.ProjectPath)){
+				if(mGlobalSettings.testProjectFolder(mGlobalSettings.ProjectPath)){
+					if(mEditor.loadFromFolder(mGlobalSettings.ProjectPath)){
+						mEditor.bEditorRunning = false;
+					}
+				} else {
+					std::cout << "Error in Project Folder: " << mGlobalSettings.ProjectPath << std::endl;
 					mEditor.bEditorRunning = false;
-				}		
+					//return 1;
+				}
 			}
 		
 		}
