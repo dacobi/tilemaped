@@ -2235,6 +2235,8 @@ int TileSet::renderIm(int ypos, int mScroll){
 		mGlobalSettings.CurrentEditor->moveTileDown();
 	}
 
+	ImGui::BeginChild("TTiles", ImVec2(0,0), false, ImGuiWindowFlags_NoNav);
+
 	bool bIsDragged = false;
 	int mDragged = -1;
 	int mDragSource = 0;
@@ -2283,6 +2285,8 @@ int TileSet::renderIm(int ypos, int mScroll){
 	}
 
 	mGlobalSettings.CurrentEditor->ImButtonsTileSet.updateButtonStates();
+
+	ImGui::EndChild();
 	
     ImGui::End();
 

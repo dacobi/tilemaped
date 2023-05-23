@@ -306,6 +306,8 @@ void TSprite::renderIm(int ypos, int mScroll){
 		mGlobalSettings.CurrentEditor->moveFrameDown();
 	}
 
+	ImGui::BeginChild("SFrames", ImVec2(0,0), false, ImGuiWindowFlags_NoNav);
+
 	bool bIsDragged = false;
 	int mDragged = -1;
 	int mDragSource = 0;
@@ -354,6 +356,9 @@ void TSprite::renderIm(int ypos, int mScroll){
 	}
 
 	mGlobalSettings.CurrentEditor->ImButtonsSprite.updateButtonStates();
+
+    ImGui::EndChild();
+
 	
     ImGui::End();
 

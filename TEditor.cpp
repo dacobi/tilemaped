@@ -668,7 +668,7 @@ int TEditor::render(){
 			mActiveMessage->render();
 		}
 		mTopBar.render();
-		mTileSet.renderIm(mGlobalSettings.TopBarHeight, mTileSetScrollY);
+		mTileSet.renderIm(mGlobalSettings.TopBarHeight, 0);//mTileSetScrollY);
 		if(mGlobalSettings.bShowProjectInfo){
 			mProjectInfo.update();
 			mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
@@ -750,7 +750,7 @@ int TEditor::render(){
 		mTopBar.render();
 
 		if(mSprite->bShowSpriteFrames){
-			mSprite->renderIm(mGlobalSettings.TopBarHeight, mSprite->mFrameScrollY);
+			mSprite->renderIm(mGlobalSettings.TopBarHeight, 0);// mSprite->mFrameScrollY);
 		}
 
 		if(mGlobalSettings.bShowProjectInfo){

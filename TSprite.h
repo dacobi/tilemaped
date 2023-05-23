@@ -62,14 +62,8 @@ class TSprite{
         bool bShowSpriteFrames = true;
         TBrush *mCurrentBrushPixel = NULL;
         bool bShowBrushesPixel = false;
-		//int mSelEdWidth=4;
-		//int mCurEdScale=10;
-        std::string getSpriteSize();
-        //int reCalculateScale();
-        //void resizeEdit();
-		//void updateEditAreas(std::vector<SDL_Rect> &cTile, int xpos, int ypos);
-        std::vector<SDL_Rect> FrameAreas;
-		std::vector<SDL_Rect> EditPixelAreas;	        
+        std::string getSpriteSize();        
+        std::vector<SDL_Rect> FrameAreas;		
         TEActionUndoStack mActionStack;
 };
 
