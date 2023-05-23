@@ -362,13 +362,14 @@ void TSprite::renderIm(int ypos, int mScroll){
 	
     ImGui::End();
 
-
+	/*
 	int cMax = (int)( (float)( ( ( (mCurFrameScale*mTexParam.TileSizeY ) +mColSpace ) * mFrames.size() )  / mCurColumns )) + (4 * mTexParam.TileSizeY);
 	if((cMax - mFramesBackGround.h) > 0 ){
 		mMaxScrollY = -(cMax - mFramesBackGround.h);
 	} else {
 		mMaxScrollY = 0;
 	}
+	*/
 
 }
 

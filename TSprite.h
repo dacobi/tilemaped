@@ -51,8 +51,8 @@ class TSprite{
         int mCurFrameScale=10;
 		int mCurColumns=1;
 		int mColSpace = 10;
-		int mMaxScrollY=0;
-        int mFrameScrollY = 0;
+		//int mMaxScrollY=0;
+        //int mFrameScrollY = 0;
         SDL_Rect mFramesBackGround;
         bool updateWinPos=false;
         int mSelectedFrame = 0;
