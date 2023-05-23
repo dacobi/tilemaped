@@ -1000,6 +1000,18 @@ int TEditor::applyScroll(int mx,int my, int amount, int xamount){
 		}
 	}
 
+	if(mCurMode == EMODE_SPRITE){ 		
+		if(!mGlobalSettings.mio->WantCaptureMouse){
+			if(amount > 0){
+				mSprite->selectNext();
+			}
+			if(amount < 0){
+				mSprite->selectPrev();
+			}
+		}
+	}
+
+
 	if(mCurMode == EMODE_SELEDIT){ 		
 		if(!mGlobalSettings.mio->WantCaptureMouse){
 			if(amount > 0){
@@ -1847,6 +1859,23 @@ int TEditor::handleSelection(int SELMODE){
 			break;
 			case SELMODE_INVERT:
 				mTileSelectedTile->mSelection.invertSelection(0,  mGlobalSettings.mGlobalTexParam.TileSizeX *  mGlobalSettings.mGlobalTexParam.TileSizeY);
+			break;
+			default:
+			break;
+		}
+	}
+
+	if(mCurMode == EMODE_SPRITE){
+		switch (SELMODE)
+		{
+			case SELMODE_ALL:
+				mSprite->mFrame->mSelection.selectRange(0, mSprite->mTexParam.TileSizeX *  mSprite->mTexParam.TileSizeY);
+			break;
+			case SELMODE_NONE:
+				mSprite->mFrame->mSelection.clearSelection();
+			break;
+			case SELMODE_INVERT:
+				mSprite->mFrame->mSelection.invertSelection(0,  mSprite->mTexParam.TileSizeX *  mSprite->mTexParam.TileSizeY);
 			break;
 			default:
 			break;

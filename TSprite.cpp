@@ -78,6 +78,23 @@ void TSprite::selectFrame(int cFrame){
     mSelectedFrame = cFrame;     
 }
 
+int TSprite::selectNext(){
+	if(mSelectedFrame < mFrames.size()-1){
+		selectFrame(mSelectedFrame + 1);
+		return 0;
+	}
+	return 1;
+}
+
+int TSprite::selectPrev(){
+	if(mSelectedFrame > 0){
+		selectFrame(mSelectedFrame - 1);
+		return 0;
+	}
+	return 1;
+
+}
+
 int TSprite::removeFrame(int cDropFrame){
     TSFrame* dFrame = *(mFrames.begin() +  cDropFrame); 
 	mFrames.erase(mFrames.begin() +  cDropFrame);
@@ -234,7 +251,7 @@ TSFrame* TSprite::createNewFromFile(std::string newPath, TPalette* tpal){
 
 }
 
-
+	
 void TSprite::renderIm(int ypos, int mScroll){
     mFramesBackGround.h = mGlobalSettings.WindowHeight- mGlobalSettings.TopBarHeight;
 	

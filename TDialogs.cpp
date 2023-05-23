@@ -415,7 +415,7 @@ int TBDialog::render(){
 						mGlobalSettings.CurrentEditor->activateRemoveSpriteDialog();
 					}
 				}
-				if(ImGui::BeginMenu("Sprite Frames Reordering")){										
+				if(ImGui::BeginMenu("Sprite Frame Reordering")){										
 					if(ImGui::MenuItem("Warn before Frame Removal", NULL, &mGlobalSettings.bSpriteWarnBeforeDelete)){
 						
 					}

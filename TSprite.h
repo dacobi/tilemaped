@@ -16,6 +16,9 @@ class TSprite{
             mTexParam.TileSizeX = cSizeX;
             mTexParam.TileSizeY = cSizeY;
             mTexParam.TileSetBPP = cBPP;
+
+            mTexParam.mTileEdScale = mGlobalSettings.mGlobalTexParam.mTileEdScale;
+
             if((cSizeX > 16) || (cSizeY > 16)){
                 mTexParam.mTileEdScale-=2;
                 mCurFrameScale-=4;
@@ -24,6 +27,12 @@ class TSprite{
                 mTexParam.mTileEdScale--;
                 mCurFrameScale-=3;
             }
+
+            if(mTexParam.mTileEdScale < 1){
+                mTexParam.mTileEdScale = 1;
+                mTexParam.TilePixelSize-=4;
+            }
+
         };
         TSFrame *mFrame = NULL;
         std::vector<TSFrame*> mFrames;
@@ -48,6 +57,8 @@ class TSprite{
         bool updateWinPos=false;
         int mSelectedFrame = 0;
         void selectFrame(int cFrame);
+        int selectNext();
+        int selectPrev();
         bool bShowSpriteFrames = true;
         TBrush *mCurrentBrushPixel = NULL;
         bool bShowBrushesPixel = false;
