@@ -1011,6 +1011,32 @@ void Tile::freeTexture(){
 	}
 }
 
+int TTexture::setPixel(int pindex, unsigned char pcolor, std::vector<unsigned char> &tBuf, TextureParameters *cTexParam){
+	
+	if(cTexParam->TileSetBPP == 0x8){
+		tBuf[pindex] = pcolor;
+	}
+
+	if(cTexParam->TileSetBPP == 0x4){
+		int cindex = pindex / 2;
+		int crem = pindex % 2;
+		unsigned char ccolor = 0;
+
+		int tmppix = tBuf[cindex];
+
+		if(crem){
+			ccolor = (tmppix & 0xf0) + (pcolor%16);
+		} else {
+			ccolor = (tmppix & 0x0f) + ((pcolor%16) << 4);
+		}
+
+		tBuf[cindex] = ccolor;
+	}
+
+	return 0;
+
+}
+
 int TTexture::setPixel(int pindex, unsigned char pcolor, std::vector<unsigned char> &tBuf){
 	if(mTexParam->TileSetBPP == 0x8){
 		tBuf[pindex] = pcolor;
@@ -1655,14 +1681,15 @@ int TileSet::importPNG(SDL_Surface *newSurf, TPalette* tpal){
 				tbuf.resize((mGlobalSettings.mGlobalTexParam.TileSizeX*mGlobalSettings.mGlobalTexParam.TileSizeY) / mGlobalSettings.mTileBPPSize[mGlobalSettings.mGlobalTexParam.TileSetBPP],0);
 			}
 
-			Tile tmpTile;
+			//Tile tmpTile;
 			int cBufIndex;
 			int cPixIndex;
 
 			for(int ii=0; ii < newSurf->h; ii++){
 				for(int jj=0; jj < newSurf->w; jj++){
 					cBufIndex = mSelection.getTileIndex((ii*newSurf->w)+jj, newSurf->w, newSurf->h, cPixIndex, &mGlobalSettings.mGlobalTexParam);					
-					tmpTile.setPixel(cPixIndex, ((unsigned char*)(newSurf->pixels))[(ii*newSurf->w)+jj], tbuffers[cBufIndex]);
+					//tmpTile.
+					TTexture::setPixel(cPixIndex, ((unsigned char*)(newSurf->pixels))[(ii*newSurf->w)+jj], tbuffers[cBufIndex], &mGlobalSettings.mGlobalTexParam);
 				}
 			}
 

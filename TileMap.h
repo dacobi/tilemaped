@@ -27,7 +27,8 @@ class TTexture{
 		unsigned char getPixel(int pindex, int poffset, int tflip);
 		int getFlipIndex(int pindex, int tflip);
 		int setPixel(int pindex, unsigned char pcolor);
-		int setPixel(int pindex, unsigned char pcolor, std::vector<unsigned char> &tBuf);		
+		int setPixel(int pindex, unsigned char pcolor, std::vector<unsigned char> &tBuf);
+		static int setPixel(int pindex, unsigned char pcolor, std::vector<unsigned char> &tBuf, TextureParameters *cTexParam);		
 		//SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 		SDL_Rect renderEx(int xpos, int ypos, int tscale, SDL_RendererFlip flip);
 		void renderEd(int xpos, int ypos, TPalette* tpal);

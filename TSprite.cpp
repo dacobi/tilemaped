@@ -358,7 +358,6 @@ void TSprite::renderIm(int ypos, int mScroll){
 	mGlobalSettings.CurrentEditor->ImButtonsSprite.updateButtonStates();
 
     ImGui::EndChild();
-
 	
     ImGui::End();
 

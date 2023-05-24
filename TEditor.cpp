@@ -2896,6 +2896,9 @@ int TEditor::handleTileMap(){
    	 			mTileSelectedTile = mTileSet.TTiles[mMapSelectedTile];
    	 			mTileSelectedTile->bIsSelected = true;							
 				mTileMap->mSelection.cancelSelection();
+				if(mGlobalSettings.mGlobalTexParam.TileSetBPP < 8){
+					mGlobalSettings.mGlobalTexParam.PaletteOffset = mTileMap->getOffset(tSel);
+				}
 			}
 		}
 	}
