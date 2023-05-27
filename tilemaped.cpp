@@ -390,6 +390,14 @@ void TSettings::close(){
 	CurrentEditor->mPalette.close();
 
 	mEditorState = 0;
+
+	mNewFramePath = "";
+
+	mNewSpritePath = "";
+	mNewSpriteType = 0;
+	mNewSpriteX = 0;
+	mNewSpriteY = 0;
+	mNewSpriteBPP = 8;
 	
 	mNewTileMapPath = "";
 	mNewTileMapPaletteOffset = 0;

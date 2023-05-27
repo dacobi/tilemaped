@@ -198,6 +198,56 @@ int TSprite::loadFromBuffer(std::vector<unsigned char> sBuf, TPalette* tpal){
 	return 0;
 }
 
+int TSprite::importPNG(SDL_Surface *newSurf, TPalette* tpal){
+	if(newSurf->format->BitsPerPixel == 8){
+		if(!(newSurf->w % mTexParam.TileSizeX) && !(newSurf->h % mTexParam.TileSizeY)){
+			int cTilesX,cTilesY;
+			cTilesX = newSurf->w / mTexParam.TileSizeX;
+			cTilesY = newSurf->h / mTexParam.TileSizeY;
+			
+			std::cout << "Import PNG: " << cTilesX << "," <<  cTilesY << std::endl;
+
+			std::vector<std::vector<unsigned char>> tbuffers;
+
+			tbuffers.resize(cTilesX*cTilesY);
+
+			for(auto &tbuf : tbuffers){
+				tbuf.resize((mTexParam.TileSizeX*mTexParam.TileSizeY) / mGlobalSettings.mTileBPPSize[mTexParam.TileSetBPP],0);
+			}
+
+			//Tile tmpTile;
+			int cBufIndex;
+			int cPixIndex;
+
+			TSelection mSelection;
+
+			for(int ii=0; ii < newSurf->h; ii++){
+				for(int jj=0; jj < newSurf->w; jj++){
+					cBufIndex = mSelection.getTileIndex((ii*newSurf->w)+jj, newSurf->w, newSurf->h, cPixIndex, &mTexParam);					
+					//tmpTile.
+					TTexture::setPixel(cPixIndex, ((unsigned char*)(newSurf->pixels))[(ii*newSurf->w)+jj], tbuffers[cBufIndex], &mTexParam);
+				}
+			}
+
+			for(auto &tbufl : tbuffers){
+				createNewFromBuffer(tbufl, tpal);
+			}
+
+			FrameAreas.resize(mFrames.size());
+
+			selectFrame(0);
+
+					
+			SDL_FreeSurface(newSurf);
+			return 0;
+		}
+	}
+			
+	SDL_FreeSurface(newSurf);
+	return 1;
+}
+
+
 TSFrame* TSprite::createNewFromFile(std::string newPath, TPalette* tpal){
 	if(fs::exists(fs::status(newPath))){
 		if(fs::is_directory(fs::status(newPath))){

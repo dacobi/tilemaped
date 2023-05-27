@@ -143,6 +143,19 @@ class ISFDialog: public SADialog{
 		virtual void recieveInput(int mKey);		
 };
 
+class ISDialog: public SADialog{
+	public:				
+		virtual void init();				
+		virtual void cancel();
+		virtual void recieveInput(int mKey);				
+		virtual int render();
+		int spritex=32;
+		int spritey=32;
+		int spritebpp=8;
+		int simporttype = 0;			
+		bool bCreateNewSprite = false;
+};
+
 
 class ITSDialog: public ITDialog{
 	public:				
@@ -235,8 +248,6 @@ class CSDialog: public Dialog{
 		int spritey=32;
 		int spritebpp=8;				
 };
-
-
 
 class OCDialog: public Dialog{
 	public:

@@ -155,6 +155,7 @@ void TEditor::initDialogs(){
 	mProjectInfo.init();
 	mOpenTileDialog.init();
 	mOpenFrameDialog.init();
+	mOpenSpriteDialog.init();
 	mOpenTileSetDialog.init();
 	mOpenTileMapDialog.init();
 	mNewTileMapDialog.init();
@@ -1655,6 +1656,12 @@ int TEditor::activateSaveAsDialog(){
 	return 0;
 }
 
+int TEditor::activateOpenSpriteDialog(){
+		mActiveDialog = &mOpenSpriteDialog;
+		mActiveDialog->bDialogIsWatingForText = true;		
+		return 0;
+}
+
 int TEditor::activateOpenFrameDialog(){
 	if(mCurMode == EMODE_SPRITE){
 		mActiveDialog = &mOpenFrameDialog;
@@ -3023,6 +3030,76 @@ int TEditor::handleEvents(){
 					showMessage("Error Loading Frame!", true);					
 					return 0;
 				}				
+			}
+
+			if(mGlobalSettings.mEditorState == ESTATE_SPRITEIMPORT){				
+
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
+				std::vector<unsigned char> sbuffer;
+				fs::path cSpritePath;
+				SDL_Surface *newSurf;
+
+				switch (mGlobalSettings.mNewSpriteType)
+				{
+				case 0:												
+					if(mGlobalSettings.getSpriteFileHeader(mGlobalSettings.mNewSpritePath, mGlobalSettings.mNewSpriteX,  mGlobalSettings.mNewSpriteY,  mGlobalSettings.mNewSpriteBPP, sbuffer)){
+						mSprite = new TSprite(mGlobalSettings.mNewSpriteX,  mGlobalSettings.mNewSpriteY,  mGlobalSettings.mNewSpriteBPP);
+						mSprite->loadFromBuffer(sbuffer, &mPalette);
+						mSprites.push_back(mSprite);
+						setMode(EMODE_SPRITE);
+					}
+					 else {
+						std::cout << "Error Importing Sprite: " <<  mGlobalSettings.mNewSpritePath << std::endl;
+						showMessage("Error Importing Sprite", true);
+					}	
+					break;
+				case 1:				
+						newSurf = IMG_Load(mGlobalSettings.mNewSpritePath.c_str());
+						if(newSurf){
+							TSprite *cSprite = new TSprite(mGlobalSettings.mNewSpriteX,  mGlobalSettings.mNewSpriteY,  mGlobalSettings.mNewSpriteBPP);
+							if(cSprite->importPNG(newSurf,  &mGlobalSettings.CurrentEditor->mPalette)){
+								std::cout << "Error Importing Sprite: " << mGlobalSettings.mNewSpritePath << std::endl;								
+								showMessage("Error Importing Sprite", true);
+							} else {
+								mSprite = cSprite;								
+								mSprites.push_back(mSprite);
+								setMode(EMODE_SPRITE);
+							}	
+						}else {
+							std::cout << "Error Importing Sprite: " <<  mGlobalSettings.mNewSpritePath << std::endl;	
+							showMessage("Error Importing Sprite", true);
+						}			
+					break;					
+				case 2:
+					cSpritePath = mGlobalSettings.mNewSpritePath;
+
+					if((fs::exists(fs::status(cSpritePath)))  && !(fs::is_directory(fs::status(cSpritePath)))){		
+						std::ifstream infile(cSpritePath, std::ios::binary );
+    					std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
+
+						if(tbuffer.size() % ((mGlobalSettings.mNewSpriteX * mGlobalSettings.mNewSpriteY) /mGlobalSettings.mTileBPPSize[mGlobalSettings.mNewSpriteBPP])){
+							std::cout << "Error Importing Sprite: " <<  mGlobalSettings.mNewSpritePath << std::endl;
+							showMessage("Error Importing Sprite", true);
+						} else {
+							mSprite = new TSprite(mGlobalSettings.mNewSpriteX,  mGlobalSettings.mNewSpriteY,  mGlobalSettings.mNewSpriteBPP);
+							mSprite->loadFromBuffer(tbuffer, &mPalette);
+							mSprites.push_back(mSprite);
+							setMode(EMODE_SPRITE);
+						}
+					} else {
+						std::cout << "Error Importing Sprite: " <<  mGlobalSettings.mNewSpritePath << std::endl;
+						showMessage("Error Importing Sprite", true);
+					}
+					break;
+				
+				default:
+					break;
+				};
+					
+				cancelActiveDialog();
+					
+				return 0;
+								
 			}			
 
 

@@ -160,12 +160,19 @@ int TBDialog::render(){
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import TileMap")).c_str())){
 						mGlobalSettings.CurrentEditor->activateOpenTileMapDialog();		  			
 					}
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import Sprite")).c_str())){
+						mGlobalSettings.CurrentEditor->activateOpenSpriteDialog();		  			
+					}
 
 					ImGui::EndMenu();
 				}
 			}
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE){
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mFile + " Import")).c_str())){
+
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import Sprite")).c_str())){
+						mGlobalSettings.CurrentEditor->activateOpenSpriteDialog();		  			
+					}
 
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Sprite Frame")).c_str())){
 						mGlobalSettings.CurrentEditor->activateOpenFrameDialog();		  			
@@ -1876,6 +1883,164 @@ void ISFDialog::recieveInput(int mKey){
 			mGlobalSettings.mEditorState = ESTATE_FRAMEIMPORT;
 
 			mGlobalSettings.mNewFramePath = mTextInput.mDialogTextMain;
+		}		
+	}
+
+	if(mKey == SDLK_n){
+		bInputIsCancel=true;
+	}		
+	if(mKey == SDLK_TAB){
+		mTextInput.autoComplete();		
+	}
+}
+
+
+/* End*/
+
+/* Sprite*/
+
+int ISDialog::render(){	
+	
+	Dialog::render();
+
+	ImGui::Begin("Import Sprite", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
+    		
+	ImGui::Text("Import Sprite from Project file, PNG or RAW");
+
+	ImGui::RadioButton("Project File", &simporttype, 0);
+	ImGui::SameLine();
+	ImGui::RadioButton("PNG", &simporttype, 1);
+	ImGui::SameLine();
+	ImGui::RadioButton("RAW", &simporttype, 2);
+
+	if(simporttype != 0){
+
+		ImGui::Text("Sprite Width & Height");  
+			
+		ImGui::RadioButton("W: 8", &spritex, 8);
+		ImGui::SameLine();
+		ImGui::RadioButton("W: 16", &spritex, 16);
+		ImGui::SameLine();
+		ImGui::RadioButton("W: 32", &spritex, 32);
+		ImGui::SameLine();
+		ImGui::RadioButton("W: 64", &spritex, 64);
+
+		ImGui::RadioButton("H: 8", &spritey, 8);
+		ImGui::SameLine();
+		ImGui::RadioButton("H: 16", &spritey, 16);
+		ImGui::SameLine();
+		ImGui::RadioButton("H: 32", &spritey, 32);
+		ImGui::SameLine();	
+		ImGui::RadioButton("H: 64", &spritey, 64);
+
+		
+		ImGui::Text("Sprite BPP");  
+			
+		ImGui::RadioButton("BPP: 4", &spritebpp, 4);
+		ImGui::SameLine();
+		ImGui::RadioButton("BPP: 8", &spritebpp, 8);
+
+	}
+	
+
+	mTextInput.render();
+
+	switch (simporttype)
+	{
+	case 0:
+		if (ImGui::Button("Choose Sprite File")){
+			Dialog::render();
+			ImGui::SetNextWindowSize(ImVec2(800, 600));
+    		ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeySprite", "Choose File", ".bin", ".");
+		}
+	break;
+	case 1:
+		if (ImGui::Button("Choose Sprite File")){
+			Dialog::render();
+			ImGui::SetNextWindowSize(ImVec2(800, 600));
+    		ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeySprite", "Choose File", ".png", ".");
+		}
+	break;
+	case 2:
+		if (ImGui::Button("Choose Sprite File")){
+			Dialog::render();
+			ImGui::SetNextWindowSize(ImVec2(800, 600));
+    		ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeySprite", "Choose File", ".bin,.raw,.data", ".");
+		}
+	break;
+	
+	default:
+		break;
+	}
+
+  
+  	// display
+  	if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKeySprite")){
+    	// action if OK
+    	if (ImGuiFileDialog::Instance()->IsOk()){
+      		std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+      		std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+	  		mTextInput.mDialogTextMain = filePathName;
+			mTextInput.checkCurrentText();
+			if(mTextInput.bInputIsAccepted){
+				recieveInput(SDLK_y);
+			}
+      		// action
+    	}    
+    // close
+    	ImGuiFileDialog::Instance()->Close();
+  	}
+
+    if (ImGui::Button("Import")){
+		if(mTextInput.bInputIsAccepted){
+			recieveInput(SDLK_y);					
+		}				
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("Cancel")){
+		bInputIsCancel=true;
+	}		
+	        
+    ImGui::End();
+	
+	return 0;
+}
+
+
+void ISDialog::init(){
+	mTextInput.bIsInputActive = true;
+	mTextInput.bAutoComplete = true;
+	mTextInput.bMustBeFile = true;	
+}
+
+void ISDialog::cancel(){
+		Dialog::cancel();
+		mTextInput.mTextColor =  mGlobalSettings.DefaultTextColor;
+		mTextInput.mDialogTextMain = "";
+		spritex=32;
+		spritey=32;
+		spritebpp=8;
+		simporttype = 0;			
+}
+
+void ISDialog::recieveInput(int mKey){
+	if(mKey == SDLK_y){
+		if(mTextInput.bInputIsAccepted){
+			bInputIsAccept=true;	
+			bDialogIsWatingForText = false;
+			
+			mGlobalSettings.mEditorState = ESTATE_SPRITEIMPORT;
+
+			mGlobalSettings.mNewSpritePath = mTextInput.mDialogTextMain;
+
+			
+			mGlobalSettings.mNewSpriteType = simporttype;
+			mGlobalSettings.mNewSpriteX = spritex;
+			mGlobalSettings.mNewSpriteY = spritey;
+			mGlobalSettings.mNewSpriteBPP = spritebpp;
+
 		}		
 	}
 

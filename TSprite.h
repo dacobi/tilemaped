@@ -47,7 +47,8 @@ class TSprite{
         void renderEd(int xpos, int ypos, TPalette* tpal);
         void renderIm(int ypos, int mScroll);
         int saveToFile(std::string spath, std::string sfile);
-        int loadFromBuffer(std::vector<unsigned char> sBuf, TPalette* tpal);        
+        int loadFromBuffer(std::vector<unsigned char> sBuf, TPalette* tpal);
+        int importPNG(SDL_Surface *cTiles, TPalette* tpal);   
         int mCurFrameScale=10;
 		int mCurColumns=1;
 		int mColSpace = 10;

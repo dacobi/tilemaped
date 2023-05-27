@@ -214,11 +214,14 @@ class TSettings{
 		int mNewTileMapState = 0;
 		int mNewTileMapX = 0;
 		int mNewTileMapY = 0;
-		int mNewSpriteX = 0;
-		int mNewSpriteY = 0;
-		int mNewSpriteBPP = 0;	
+		
 		std::string mNewTilePath = "";
 		std::string mNewFramePath = "";
+		std::string mNewSpritePath = "";
+		int mNewSpriteType = 0;
+		int mNewSpriteX = 0;
+		int mNewSpriteY = 0;
+		int mNewSpriteBPP = 8;
 		int mNewTileSize = 0;
 		int mDeleteTileMapState = 0;			
 		int mTileMapFileCount = 0;			
@@ -327,7 +330,8 @@ enum {
 	ESTATE_SPRITECREATE,
 	ESTATE_FRAMEDELETE,
 	ESTATE_SPRITEDELETE,
-	ESTATE_FRAMEIMPORT
+	ESTATE_FRAMEIMPORT,
+	ESTATE_SPRITEIMPORT
 } estates;
 
 
