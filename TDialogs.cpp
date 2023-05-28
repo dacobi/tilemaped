@@ -178,6 +178,10 @@ int TBDialog::render(){
 						mGlobalSettings.CurrentEditor->activateOpenFrameDialog();		  			
 					}
 
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Sprite Frames")).c_str())){
+						mGlobalSettings.CurrentEditor->activateOpenFramesDialog();		  			
+					}
+
 					ImGui::EndMenu();
 				}
 			}
@@ -1816,7 +1820,7 @@ int ISFDialog::render(){
 
 	ImGui::Begin("Import Sprite Frame", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
     		
-	ImGui::Text("Import Sprite Frame from bitmap or RAW");
+	ImGui::Text("Import Sprite Frame from PNG or RAW");
 	
 
 	mTextInput.render();
@@ -1892,6 +1896,79 @@ void ISFDialog::recieveInput(int mKey){
 	if(mKey == SDLK_TAB){
 		mTextInput.autoComplete();		
 	}
+}
+
+
+void ISFSDialog::recieveInput(int mKey){
+	if(mKey == SDLK_y){
+		if(mTextInput.bInputIsAccepted){
+			bInputIsAccept=true;	
+			bDialogIsWatingForText = false;
+			
+			mGlobalSettings.mEditorState = ESTATE_FRAMESIMPORT;
+
+			mGlobalSettings.mNewFramesPath = mTextInput.mDialogTextMain;
+		}		
+	}
+
+	if(mKey == SDLK_n){
+		bInputIsCancel=true;
+	}		
+	if(mKey == SDLK_TAB){
+		mTextInput.autoComplete();		
+	}
+}
+
+int ISFSDialog::render(){	
+	
+	Dialog::render();
+
+	ImGui::Begin("Import Sprite Frames", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
+    		
+	ImGui::Text("Import Sprite Frames from Projet File, PNG or RAW");
+	ImGui::Text("Undo Stack will be cleared");
+	
+
+	mTextInput.render();
+
+	if (ImGui::Button("Choose Frames File")){
+		Dialog::render();
+		ImGui::SetNextWindowSize(ImVec2(800, 600));
+    	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyFrames", "Choose File", ".png,.data,.raw,.bin", ".");
+	}
+  
+  	// display
+  	if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKeyFrames")){
+    	// action if OK
+    	if (ImGuiFileDialog::Instance()->IsOk()){
+      		std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+      		std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+	  		mTextInput.mDialogTextMain = filePathName;
+			mTextInput.checkCurrentText();
+			if(mTextInput.bInputIsAccepted){
+				recieveInput(SDLK_y);
+			}
+      		// action
+    	}    
+    // close
+    	ImGuiFileDialog::Instance()->Close();
+  	}
+
+    if (ImGui::Button("Import")){
+		if(mTextInput.bInputIsAccepted){
+			recieveInput(SDLK_y);					
+		}				
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button("Cancel")){
+		bInputIsCancel=true;
+	}		
+	        
+    ImGui::End();
+	
+	return 0;
 }
 
 

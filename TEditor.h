@@ -167,6 +167,7 @@ class TEditor{
 		SADialog mSaveAsDialog;
 		ITDialog mOpenTileDialog;
 		ISFDialog mOpenFrameDialog;
+		ISFSDialog mOpenFramesDialog;
 		ISDialog mOpenSpriteDialog;
 		ITSDialog mOpenTileSetDialog;
 		ITMDialog mOpenTileMapDialog;
@@ -219,6 +220,7 @@ class TEditor{
 		int activateSaveDialog();
 		int activateOpenTileDialog();
 		int activateOpenFrameDialog();
+		int activateOpenFramesDialog();
 		int activateOpenSpriteDialog();
 		int activateOpenTileSetDialog();
 		int activateOpenTileMapDialog();

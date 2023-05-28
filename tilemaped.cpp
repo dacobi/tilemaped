@@ -392,6 +392,7 @@ void TSettings::close(){
 	mEditorState = 0;
 
 	mNewFramePath = "";
+	mNewFramesPath = "";
 
 	mNewSpritePath = "";
 	mNewSpriteType = 0;
