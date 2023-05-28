@@ -174,11 +174,11 @@ int TBDialog::render(){
 						mGlobalSettings.CurrentEditor->activateOpenSpriteDialog();		  			
 					}
 
-					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Sprite Frame")).c_str())){
+					/*if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Sprite Frame")).c_str())){
 						mGlobalSettings.CurrentEditor->activateOpenFrameDialog();		  			
-					}
+					}*/
 
-					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Sprite Frames")).c_str())){
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Sprite Frame(s)")).c_str())){
 						mGlobalSettings.CurrentEditor->activateOpenFramesDialog();		  			
 					}
 
