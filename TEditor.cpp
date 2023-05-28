@@ -3022,7 +3022,7 @@ int TEditor::handleEvents(){
 
 
 			if(mGlobalSettings.mEditorState == ESTATE_FRAMEIMPORT){				
-				TSFrame* newFrame = createNewFrameFromFile(mGlobalSettings.mNewFramesPath);
+				TSFrame* newFrame = createNewFrameFromFile(mGlobalSettings.mNewFramePath);
 				if(newFrame){
 					TEActionAddFrame* newActionTile = new TEActionAddFrame();
 					newActionTile->doAction(newFrame, this, mSprite);
@@ -3083,12 +3083,12 @@ int TEditor::handleEvents(){
 				if(bFramesImportSuccess){
 					mSprite->mActionStack.undoClearStack();
 					mSprite->mActionStack.redoClearStack();
-					showMessage("Frames Imported Successfully");
+					showMessage("Frame(s) Imported Successfully");
 					std::cout << "Frames Imported Successfully" << std::endl;
 					return 0;
 				}
 										
-				showMessage("Error Importing Frames", true);
+				showMessage("Error Importing Frame(s)", true);
 				std::cout << "Error Importing Frames: " <<  mGlobalSettings.mNewFramesPath << std::endl;
 				return 0;
 				
