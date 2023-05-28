@@ -1923,18 +1923,18 @@ int ISFSDialog::render(){
 	
 	Dialog::render();
 
-	ImGui::Begin("Import Sprite Frames", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
+	ImGui::Begin("Import Sprite Frame(s)", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
     		
-	ImGui::Text("Import Sprite Frames from Projet File, PNG or RAW");
+	ImGui::Text("Import Sprite Frame(s) from Projet File, PNG or RAW");
 	ImGui::Text("Undo Stack will be cleared");
 	
 
 	mTextInput.render();
 
-	if (ImGui::Button("Choose Frames File")){
+	if (ImGui::Button("Choose Frame(s) File")){
 		Dialog::render();
 		ImGui::SetNextWindowSize(ImVec2(800, 600));
-    	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyFrames", "Choose File", ".png,.data,.raw,.bin", ".");
+    	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyFrames", "Choose File", ".png,.bin,.data,.raw", ".");
 	}
   
   	// display
