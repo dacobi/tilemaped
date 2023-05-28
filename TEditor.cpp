@@ -872,10 +872,7 @@ void TEditor::setSpriteBrushes(){
 
 int TEditor::setMode(int newMode){
 
-	if(mActiveDialog){
-		mActiveDialog->cancel();
-		mActiveDialog = NULL;
-	}
+	cancelActiveDialog();
 
 	if(newMode == EMODE_PALED){
 		activatePaletteEdit();
@@ -3073,7 +3070,7 @@ int TEditor::handleEvents(){
 						std::ifstream infile(cFramesPath, std::ios::binary );
     					std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
 
-						if((tbuffer.size() % ((mSprite->mTexParam.TileSizeX * mSprite->mTexParam.TileSizeY) /mGlobalSettings.mTileBPPSize[mSprite->mTexParam.TileSetBPP])) == 0){							
+						if((tbuffer.size() % ((mSprite->mTexParam.TileSizeX * mSprite->mTexParam.TileSizeY) / mGlobalSettings.mTileBPPSize[mSprite->mTexParam.TileSetBPP])) == 0){							
 							if(!mSprite->importFromBuffer(tbuffer, &mPalette)){
 								bFramesImportSuccess = true;
 							} 
