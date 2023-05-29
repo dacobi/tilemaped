@@ -1447,7 +1447,7 @@ int TEditor::rotateFrameRight(){
 if(mCurMode == EMODE_SPRITE){		
 		TSFrame* newFrame = new TSFrame(&mSprite->mTexParam); 
 		newFrame->loadFromBuffer(mSprite->mFrame->FileData, &mPalette);
-		newFrame->rotater();
+		newFrame->rotate(22.5);
 		TEActionReplaceFrame* newAction = new TEActionReplaceFrame();				
 		newAction->doAction(mSprite->mFrame, newFrame->FileData, this, mSprite);
       	mSprite->mActionStack.newActionGroup();	

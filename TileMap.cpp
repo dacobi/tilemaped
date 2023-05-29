@@ -1294,201 +1294,104 @@ int Tile::rotatel(){
 	return 0;
 }
 
-double bicubicKernel(double x) {
-    double absX = std::abs(x);
-    double absX2 = absX * absX;
-    double absX3 = absX2 * absX;
+int getEuclideanDistance(const SDL_Color& color1, const SDL_Color& color2) {
+    int dR = color1.r - color2.r;
+    int dG = color1.g - color2.g;
+    int dB = color1.b - color2.b;
 
-    if (absX <= 1.0) {
-        return (1.5 * absX3 - 2.5 * absX2 + 1.0);
-    } else if (absX < 2.0) {
-        return (-0.5 * absX3 + 2.5 * absX2 - 4.0 * absX + 2.0);
-    } else {
-        return 0.0;
-    }
+    return dR * dR + dG * dG + dB * dB;
 }
 
-// Perform bicubic interpolation between two colors
-SDL_Color interpolateColors(const SDL_Color& c00, const SDL_Color& c01, const SDL_Color& c02, const SDL_Color& c03,
-                        const SDL_Color& c10, const SDL_Color& c11, const SDL_Color& c12, const SDL_Color& c13,
-                        const SDL_Color& c20, const SDL_Color& c21, const SDL_Color& c22, const SDL_Color& c23,
-                        const SDL_Color& c30, const SDL_Color& c31, const SDL_Color& c32, const SDL_Color& c33,
-                        double tx, double ty) {
-    SDL_Color result;
-    for (int component = 0; component < 3; component++) {
-        double sum = 0.0;
-        for (int j = 0; j < 4; j++) {
-            for (int i = 0; i < 4; i++) {
-                double weightX = bicubicKernel(tx - i + 1);
-                double weightY = bicubicKernel(ty - j + 1);
-                double weight = weightX * weightY;
+unsigned char findClosestPaletteColor(const SDL_Color& color) {
+    unsigned char closestColor = 0;
+    int minDistance = std::numeric_limits<int>::max();
 
-                const SDL_Color& color = (j == 0)
-                    ? ((i == 0) ? c00 : (i == 1) ? c01 : (i == 2) ? c02 : c03)
-                    : (j == 1)
-                        ? ((i == 0) ? c10 : (i == 1) ? c11 : (i == 2) ? c12 : c13)
-                        : (j == 2)
-                            ? ((i == 0) ? c20 : (i == 1) ? c21 : (i == 2) ? c22 : c23)
-                            : ((i == 0) ? c30 : (i == 1) ? c31 : (i == 2) ? c32 : c33);
+    for (int i = 0; i < 256; i++) {
+        SDL_Color paletteColor;
+        paletteColor.r = mGlobalSettings.CurrentEditor->mPalette.TPalette[i].r;
+        paletteColor.g = mGlobalSettings.CurrentEditor->mPalette.TPalette[i].g;
+        paletteColor.b = mGlobalSettings.CurrentEditor->mPalette.TPalette[i].b;
 
-                switch (component) {
-                    case 0: sum += weight * color.r; break;
-                    case 1: sum += weight * color.g; break;
-                    case 2: sum += weight * color.b; break;
-                }
-            }
-        }
-        switch (component) {
-            case 0: result.r = static_cast<unsigned char>(sum); break;
-            case 1: result.g = static_cast<unsigned char>(sum); break;
-            case 2: result.b = static_cast<unsigned char>(sum); break;
+        int distance = getEuclideanDistance(color, paletteColor);
+
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestColor = i;
         }
     }
-    return result;
+	
+    return closestColor;
 }
-
-
-/*
-SDL_Color interpolateColors(const SDL_Color& c00, const SDL_Color& c01, const SDL_Color& c10, const SDL_Color& c11, double tx, double ty) {
-    SDL_Color result;
-    result.r = c00.r * (1 - tx) * (1 - ty) + c01.r * tx * (1 - ty) + c10.r * (1 - tx) * ty + c11.r * tx * ty;
-    result.g = c00.g * (1 - tx) * (1 - ty) + c01.g * tx * (1 - ty) + c10.g * (1 - tx) * ty + c11.g * tx * ty;
-    result.b = c00.b * (1 - tx) * (1 - ty) + c01.b * tx * (1 - ty) + c10.b * (1 - tx) * ty + c11.b * tx * ty;
-    return result;
-}
-*/
-
-
-// Perform Lanczos interpolation between two colors
-/*
-
-double lanczosKernel(double x, double a) {
-    if (x == 0.0) {
-        return 1.0;
-    }
-    if (std::abs(x) < a) {
-        double piX = M_PI * x;
-        return a * std::sin(piX) * std::sin(piX / a) / (piX * piX);
-    }
-    return 0.0;
-}
-
-SDL_Color interpolateColors(const SDL_Color& c00, const SDL_Color& c01, const SDL_Color& c10, const SDL_Color& c11, double tx, double ty, double a) {
-    SDL_Color result;
-    for (int component = 0; component < 3; component++) {
-        double sum = 0.0;
-        for (int dy = -1; dy <= 1; dy++) {
-            for (int dx = -1; dx <= 1; dx++) {
-                double weightX = lanczosKernel(tx - dx, a);
-                double weightY = lanczosKernel(ty - dy, a);
-                double weight = weightX * weightY;
-                const SDL_Color& color = (dy == -1 && dx == -1) ? c00 : (dy == -1 && dx == 1) ? c01 : (dy == 1 && dx == -1) ? c10 : c11;
-                switch (component) {
-                    case 0: sum += weight * color.r; break;
-                    case 1: sum += weight * color.g; break;
-                    case 2: sum += weight * color.b; break;
-                }
-            }
-        }
-        switch (component) {
-            case 0: result.r = static_cast<unsigned char>(sum); break;
-            case 1: result.g = static_cast<unsigned char>(sum); break;
-            case 2: result.b = static_cast<unsigned char>(sum); break;
-        }
-    }
-    return result;
-}
-*/
 
 int Tile::rotate(double cAngle){
 
 	if((mTexParam->TileSetBPP == 8) && (mTexParam->TileSizeX == mTexParam->TileSizeY)){
-
+		
 		std::vector<unsigned char> bitmap;
 		bitmap.resize((mTexParam->TileSizeX * mTexParam->TileSizeY),0);
+		int *pixels = new int[mTexParam->TileSizeX * mTexParam->TileSizeY];
 
-		double cx = 16; //mTexParam->TileSizeX / 2.0;
-    	double cy = 16; //mTexParam->TileSizeY / 2.0;
+		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX, mTexParam->TileSizeY );
 
-    	// Calculate the sine and cosine of the rotation angle
-    	double angleRad = cAngle * M_PI / 180.0;
-    	double sinTheta = sin(angleRad);
-    	double cosTheta = cos(angleRad);
-
-    	// Iterate through each pixel of the rotated bitmap
-    	for (int y = 0; y < mTexParam->TileSizeY; y++) {
-        	for (int x = 0; x < mTexParam->TileSizeX; x++) {
-
-				
-				
-           	double origX = (x - cx) * cosTheta - (y - cy) * sinTheta + cx;
-            double origY = (x - cx) * sinTheta + (y - cy) * cosTheta + cy;
-
-            // Calculate the fractional parts for interpolation
-            double tx = origX - std::floor(origX);
-            double ty = origY - std::floor(origY);
-
-            // Calculate the integer coordinates of the 16 nearest pixels
-            int x1 = static_cast<int>(std::floor(origX)) - 1;
-            int y1 = static_cast<int>(std::floor(origY)) - 1;
-
-            // Ensure the coordinates are within the valid range
-            x1 = std::max(0, std::min(x1, mTexParam->TileSizeX - 1));
-            y1 = std::max(0, std::min(y1, mTexParam->TileSizeY - 1));
-
-
-			/*
-            const SDL_Color& c00 = mGlobalSettings.CurrentEditor->mPalette.TPalette[FileData[y1 * mTexParam->TileSizeX + x1]];
-            const SDL_Color& c01 = mGlobalSettings.CurrentEditor->mPalette.TPalette[FileData[y1 * mTexParam->TileSizeX + x2]];
-            const SDL_Color& c10 = mGlobalSettings.CurrentEditor->mPalette.TPalette[FileData[y2 * mTexParam->TileSizeX + x1]];
-            const SDL_Color& c11 = mGlobalSettings.CurrentEditor->mPalette.TPalette[FileData[y2 * mTexParam->TileSizeX + x2]];
-			*/
-
-		 	const SDL_Color& c00 = mGlobalSettings.CurrentEditor->mPalette.TPalette[FileData[y1 * mTexParam->TileSizeX + x1]];
-            const SDL_Color& c01 = mGlobalSettings.CurrentEditor->mPalette.TPalette[FileData[y1 * mTexParam->TileSizeX + x1 + 1]];
-            const SDL_Color& c02 = mGlobalSettings.CurrentEditor->mPalette.TPalette[FileData[y1 * mTexParam->TileSizeX + x1 + 2]];
-            const SDL_Color& c03 = mGlobalSettings.CurrentEditor->mPalette.TPalette[FileData[y1 * mTexParam->TileSizeX + x1 + 3]];
-            const SDL_Color& c10 = mGlobalSettings.CurrentEditor->mPalette.TPalette[FileData[(y1 + 1) * mTexParam->TileSizeX + x1]];
-            const SDL_Color& c11 = mGlobalSettings.CurrentEditor->mPalette.TPalette[FileData[(y1 + 1) * mTexParam->TileSizeX + x1 + 1]];
-            const SDL_Color& c12 = mGlobalSettings.CurrentEditor->mPalette.TPalette[FileData[(y1 + 1) * mTexParam->TileSizeX + x1 + 2]];
-            const SDL_Color& c13 = mGlobalSettings.CurrentEditor->mPalette.TPalette[FileData[(y1 + 1) * mTexParam->TileSizeX + x1 + 3]];
-            const SDL_Color& c20 = mGlobalSettings.CurrentEditor->mPalette.TPalette[FileData[(y1 + 2) * mTexParam->TileSizeX + x1]];
-            const SDL_Color& c21 = mGlobalSettings.CurrentEditor->mPalette.TPalette[FileData[(y1 + 2) * mTexParam->TileSizeX + x1 + 1]];
-            const SDL_Color& c22 = mGlobalSettings.CurrentEditor->mPalette.TPalette[FileData[(y1 + 2) * mTexParam->TileSizeX + x1 + 2]];
-            const SDL_Color& c23 = mGlobalSettings.CurrentEditor->mPalette.TPalette[FileData[(y1 + 2) * mTexParam->TileSizeX + x1 + 3]];
-            const SDL_Color& c30 = mGlobalSettings.CurrentEditor->mPalette.TPalette[FileData[(y1 + 3) * mTexParam->TileSizeX + x1]];
-            const SDL_Color& c31 = mGlobalSettings.CurrentEditor->mPalette.TPalette[FileData[(y1 + 3) * mTexParam->TileSizeX + x1 + 1]];
-            const SDL_Color& c32 = mGlobalSettings.CurrentEditor->mPalette.TPalette[FileData[(y1 + 3) * mTexParam->TileSizeX + x1 + 2]];
-            const SDL_Color& c33 = mGlobalSettings.CurrentEditor->mPalette.TPalette[FileData[(y1 + 3) * mTexParam->TileSizeX + x1 + 3]];
-
-            
-
-			//SDL_Color interpolatedColor = interpolateColors(c00, c01, c10, c11, tx, ty);
-	        //SDL_Color interpolatedColor = interpolateColors(c00, c01, c10, c11, tx, ty, 1.3);
-			SDL_Color interpolatedColor = interpolateColors(c00, c01, c02, c03, c10, c11, c12, c13,
-                                                        c20, c21, c22, c23, c30, c31, c32, c33,
-                                                        tx, ty);
-            
-			int closestIndex = 0;
-    		int minDistance = std::numeric_limits<int>::max();
-
-    		for (int i = 0; i < mGlobalSettings.CurrentEditor->mPalette.TPalette.size(); i++) {
-        		const SDL_Color& paletteColor = mGlobalSettings.CurrentEditor->mPalette.TPalette[i];
-        		int distance = pow(interpolatedColor.r - paletteColor.r, 2) + pow(interpolatedColor.g - paletteColor.g, 2) + pow(interpolatedColor.b - paletteColor.b, 2);
-        
-        		if (distance < minDistance) {
-            		closestIndex = i;
-            		minDistance = distance;
-        		}
-    		}
-
-	   		bitmap[y * mTexParam->TileSizeX + x] = closestIndex;
-				
-        	}
+ 		if(rTexture == NULL){
+        	std::cout <<  "Unable to Create Texture Target: " <<  SDL_GetError()  << std::endl;
     	}
+    	
+		/*
+		SDL_Rect tDest;
+		SDL_Rect tSrc;
+		SDL_Rect rDest;
+
+		tDest.x = 0;
+		tDest.y = 0;
+		tDest.h = mTexParam->TileSizeY;
+		tDest.w = mTexParam->TileSizeX;
+
+		tSrc.x = 0;
+		tSrc.y = 0;
+		tSrc.h = mTexParam->TileSizeY;
+		tSrc.w = mTexParam->TileSizeX;
+		
+		rDest.x = 0;
+		rDest.y = 0;
+		rDest.h = mTexParam->TileSizeY;
+		rDest.w = mTexParam->TileSizeX;
+		*/
+
+		if(SDL_SetRenderTarget(mGlobalSettings.TRenderer, rTexture)){
+			std::cout <<  "Unable to Set RenderTarget: " <<  SDL_GetError()  << std::endl;
+		}
+
+		//SDL_RenderCopyEx(mGlobalSettings.TRenderer, TileTex, &tSrc, &tDest, cAngle, NULL, SDL_FLIP_NONE );
+		SDL_RenderCopyEx(mGlobalSettings.TRenderer, TileTex, NULL, NULL, cAngle, NULL, SDL_FLIP_NONE );
+
+		SDL_RenderPresent( mGlobalSettings.TRenderer );
+
+		//if(SDL_RenderReadPixels(mGlobalSettings.TRenderer, &rDest, SDL_PIXELFORMAT_RGBA8888, pixels, mTexParam->TileSizeX * 4 )){
+		if(SDL_RenderReadPixels(mGlobalSettings.TRenderer, NULL, SDL_PIXELFORMAT_RGBA8888, pixels, mTexParam->TileSizeX * 4 )){			
+			std::cout <<  "Unable to Read Pixels: " <<  SDL_GetError()  << std::endl;
+		}
+
+		int *mPixels = pixels;
+
+	    for (int y = 0; y < mTexParam->TileSizeY; y++) {
+    	    for (int x = 0; x < mTexParam->TileSizeX; x++) {
+				
+				SDL_Color cTestCol;
+				cTestCol.r = (mPixels[(y * mTexParam->TileSizeX) + x] & 0xFF000000) >> 24;
+				cTestCol.g = (mPixels[(y * mTexParam->TileSizeX) + x] & 0x00FF0000) >> 16;
+				cTestCol.b = (mPixels[(y * mTexParam->TileSizeX) + x] & 0x0000FF00) >> 8;				
+				
+        	    bitmap[y * mTexParam->TileSizeX + x] = findClosestPaletteColor(cTestCol);
+   		     }
+    	}	
+   	
+		SDL_SetRenderTarget(mGlobalSettings.TRenderer, NULL);
+		SDL_DestroyTexture(rTexture);		
 
 		FileData = bitmap;
 		updateTexture(&mGlobalSettings.CurrentEditor->mPalette);
+		delete[] pixels;
 
 	}
 	return 0;
