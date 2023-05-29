@@ -158,6 +158,15 @@ class RTSFDialog: public Dialog{
 		float frotateangle = 0;	
 };
 
+class SSFDialog: public RTSFDialog{
+	public:
+		virtual void init();
+		virtual void cancel();
+		virtual int render();
+		virtual void recieveInput(int mKey);
+		float fscalefactor = 0;	
+};
+
 
 
 class ISDialog: public SADialog{

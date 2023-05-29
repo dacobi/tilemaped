@@ -126,6 +126,7 @@ class Tile: public TTexture{
 		int rotater();
 		int rotatel();
 		int rotate(double cAngle);
+		int scale(double cScale);
 		bool bIsSelected = false;
 		TEActionUndoStack mActionStack;
 		TSelection mSelection;		

@@ -157,6 +157,7 @@ void TEditor::initDialogs(){
 	mOpenFrameDialog.init();
 	mOpenFramesDialog.init();
 	mRotateFrame.init();
+	mScaleFrame.init();
 	mOpenSpriteDialog.init();
 	mOpenTileSetDialog.init();
 	mOpenTileMapDialog.init();
@@ -1449,6 +1450,7 @@ if(mCurMode == EMODE_SPRITE){
 		TSFrame* newFrame = new TSFrame(&mSprite->mTexParam); 
 		newFrame->loadFromBuffer(mSprite->mFrame->FileData, &mPalette);
 		newFrame->rotater();
+		//newFrame->scale(1.5);
 		TEActionReplaceFrame* newAction = new TEActionReplaceFrame();				
 		newAction->doAction(mSprite->mFrame, newFrame->FileData, this, mSprite);
       	mSprite->mActionStack.newActionGroup();	
@@ -1670,6 +1672,13 @@ int TEditor::activateOpenFramesDialog(){
 	if(mCurMode == EMODE_SPRITE){
 		mActiveDialog = &mOpenFramesDialog;
 		mActiveDialog->bDialogIsWatingForText = true;		
+	}
+	return 0;
+}
+
+int TEditor::activateScaleFrameDialog(){
+	if(mCurMode == EMODE_SPRITE){
+		mActiveDialog = &mScaleFrame;		
 	}
 	return 0;
 }
@@ -3034,8 +3043,27 @@ int TEditor::handleEvents(){
 				if(mCurMode == EMODE_SPRITE){		
 					TSFrame* newFrame = new TSFrame(&mSprite->mTexParam); 
 					newFrame->loadFromBuffer(mSprite->mFrame->FileData, &mPalette);
-					newFrame->rotate(mGlobalSettings.mRotateFrameAngle);
-					std::cout << "Rotate Frame Angle: " << mGlobalSettings.mRotateFrameAngle << std::endl;
+					newFrame->rotate(mGlobalSettings.mRotateFrameAngle);					
+					TEActionReplaceFrame* newAction = new TEActionReplaceFrame();				
+					newAction->doAction(mSprite->mFrame, newFrame->FileData, this, mSprite);
+      				mSprite->mActionStack.newActionGroup();	
+      				mSprite->mActionStack.addAction(newAction);
+
+					mSprite->mActionStack.mLastAction = newAction;
+       				mSprite->mActionStack.redoClearStack();		
+				}	
+
+				cancelActiveDialog();
+				return 0;
+			}
+
+			if(mGlobalSettings.mEditorState == ESTATE_FRAMESCALE){				
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
+
+				if(mCurMode == EMODE_SPRITE){		
+					TSFrame* newFrame = new TSFrame(&mSprite->mTexParam); 
+					newFrame->loadFromBuffer(mSprite->mFrame->FileData, &mPalette);
+					newFrame->scale(mGlobalSettings.mScaleFrameFactor);					
 					TEActionReplaceFrame* newAction = new TEActionReplaceFrame();				
 					newAction->doAction(mSprite->mFrame, newFrame->FileData, this, mSprite);
       				mSprite->mActionStack.newActionGroup();	

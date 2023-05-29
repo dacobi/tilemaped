@@ -421,6 +421,9 @@ int TBDialog::render(){
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Selected Frame")).c_str())){
 						mGlobalSettings.CurrentEditor->activateRotateFrameDialog();
 					}
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Scale Selected Frame")).c_str())){
+						mGlobalSettings.CurrentEditor->activateScaleFrameDialog();
+					}
 				}				
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Selected Frame (DEL)")).c_str())){
 					if(mGlobalSettings.CurrentEditor->mSprite->mFrames.size() > 1){
@@ -706,6 +709,62 @@ void RTSFDialog::cancel(){
 	frotateangle = 0;	
 }
 
+
+
+/* End */
+
+/* Frame Scale */
+
+
+
+void SSFDialog::init(){
+	mDialogTextMain = mGlobalSettings.mImage +" Scale Selected Frame by float factor"; 
+	mDialogTextTitle = "Scale Selected Frame";	
+	fscalefactor = 0;
+}
+
+void SSFDialog::recieveInput(int mKey){
+	
+	if(mKey == SDLK_y){
+		bInputIsAccept=true;		
+		mGlobalSettings.mEditorState = ESTATE_FRAMESCALE;
+		mGlobalSettings.mScaleFrameFactor = fscalefactor;
+	}
+	if(mKey == SDLK_n){
+		frotateangle = 0;
+		bInputIsCancel=true;
+	}
+}
+
+int SSFDialog::render(){
+    
+	Dialog::render();
+
+	ImGui::Begin(mDialogTextTitle.c_str(),NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
+    		
+		ImGui::Text("%s", mDialogTextMain.c_str()); 
+
+		ImGui::SliderFloat("Scale Factor", &fscalefactor, 0.5, 2.0,"%.2f", ImGuiSliderFlags_AlwaysClamp);
+
+        if ( ImGui::Button("Scale")){ 
+			recieveInput(SDLK_y);				
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel")){ 
+			recieveInput(SDLK_n);				
+		}
+			            
+    ImGui::End();
+
+	return 0;
+}
+
+void SSFDialog::cancel(){
+	Dialog::cancel();
+	fscalefactor = 0;	
+}
 
 
 /* End */
