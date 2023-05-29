@@ -1328,7 +1328,7 @@ int Tile::rotate(double cAngle){
 	if(((mTexParam->TileSetBPP == 8) || (mTexParam->TileSetBPP == 4) ) && (mTexParam->TileSizeX == mTexParam->TileSizeY)){
 		
 		std::vector<unsigned char> bitmap;
-		bitmap.resize((mTexParam->TileSizeX * mTexParam->TileSizeY),0);
+		bitmap.resize((mTexParam->TileSizeX * mTexParam->TileSizeY)/mGlobalSettings.mTileBPPSize[mTexParam->TileSetBPP],0);
 		int *pixels = new int[mTexParam->TileSizeX * mTexParam->TileSizeY];
 
 		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX, mTexParam->TileSizeY );
