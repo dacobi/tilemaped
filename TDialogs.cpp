@@ -720,7 +720,7 @@ void RTSFDialog::cancel(){
 void SSFDialog::init(){
 	mDialogTextMain = mGlobalSettings.mImage +" Scale Selected Frame by float factor"; 
 	mDialogTextTitle = "Scale Selected Frame";	
-	fscalefactor = 0;
+	fscalefactor = 1;
 }
 
 void SSFDialog::recieveInput(int mKey){
@@ -731,7 +731,7 @@ void SSFDialog::recieveInput(int mKey){
 		mGlobalSettings.mScaleFrameFactor = fscalefactor;
 	}
 	if(mKey == SDLK_n){
-		fscalefactor = 0;
+		fscalefactor = 1;
 		bInputIsCancel=true;
 	}
 }
@@ -763,7 +763,7 @@ int SSFDialog::render(){
 
 void SSFDialog::cancel(){
 	Dialog::cancel();
-	fscalefactor = 0;	
+	fscalefactor = 1;	
 }
 
 

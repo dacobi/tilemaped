@@ -217,7 +217,7 @@ int TSettings::initSettings(){
 		return 1;
 	}
 
-	Uint32 mFlags = 0;
+	Uint32 mFlags = SDL_RENDERER_TARGETTEXTURE;
 
 	if(bSoftwareRendering){
 		mFlags += SDL_RENDERER_SOFTWARE;

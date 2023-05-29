@@ -2057,7 +2057,7 @@ int TEditor::replaceSelectedColor(int mx, int my){
 	if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE){
 
 		
-		if(mGlobalSettings.bShowPixelType || mSprite->mFrame->mSelection.mSelected.size()){
+		if(mGlobalSettings.bShowPixelTypeSprite || mSprite->mFrame->mSelection.mSelected.size()){
 			int mOldColor = mColorSelected;
 			int tSel = searchRectsXY(mPalette.PixelAreas, mx, my);
 			if(tSel > -1){					
