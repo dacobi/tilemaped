@@ -1325,7 +1325,7 @@ unsigned char findClosestPaletteColor(const SDL_Color& color) {
 
 int Tile::rotate(double cAngle){
 
-	if((mTexParam->TileSetBPP == 8) && (mTexParam->TileSizeX == mTexParam->TileSizeY)){
+	if(((mTexParam->TileSetBPP == 8) || (mTexParam->TileSetBPP == 4) ) && (mTexParam->TileSizeX == mTexParam->TileSizeY)){
 		
 		std::vector<unsigned char> bitmap;
 		bitmap.resize((mTexParam->TileSizeX * mTexParam->TileSizeY),0);
@@ -1363,7 +1363,11 @@ int Tile::rotate(double cAngle){
 		}
 
 		//SDL_RenderCopyEx(mGlobalSettings.TRenderer, TileTex, &tSrc, &tDest, cAngle, NULL, SDL_FLIP_NONE );
-		SDL_RenderCopyEx(mGlobalSettings.TRenderer, TileTex, NULL, NULL, cAngle, NULL, SDL_FLIP_NONE );
+		if(mTexParam->TileSetBPP == 4){
+			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TPOffset[0], NULL, NULL, cAngle, NULL, SDL_FLIP_NONE );
+		} else {
+			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TileTex, NULL, NULL, cAngle, NULL, SDL_FLIP_NONE );
+		}
 
 		SDL_RenderPresent( mGlobalSettings.TRenderer );
 
@@ -1382,7 +1386,11 @@ int Tile::rotate(double cAngle){
 				cTestCol.g = (mPixels[(y * mTexParam->TileSizeX) + x] & 0x00FF0000) >> 16;
 				cTestCol.b = (mPixels[(y * mTexParam->TileSizeX) + x] & 0x0000FF00) >> 8;				
 				
-        	    bitmap[y * mTexParam->TileSizeX + x] = findClosestPaletteColor(cTestCol);
+				if(mTexParam->TileSetBPP == 4){
+					TTexture::setPixel(y * mTexParam->TileSizeX + x, findClosestPaletteColor(cTestCol) % 16, bitmap, mTexParam);					
+				} else {
+        	    	bitmap[y * mTexParam->TileSizeX + x] = findClosestPaletteColor(cTestCol);
+				}
    		     }
     	}	
    	
