@@ -731,7 +731,7 @@ void SSFDialog::recieveInput(int mKey){
 		mGlobalSettings.mScaleFrameFactor = fscalefactor;
 	}
 	if(mKey == SDLK_n){
-		frotateangle = 0;
+		fscalefactor = 0;
 		bInputIsCancel=true;
 	}
 }
