@@ -658,7 +658,7 @@ int RTSDialog::render(){
 /* Rotate Frame */
 
 void RTSFDialog::init(){
-	mDialogTextMain = mGlobalSettings.mImage +" Rotate Selected Frame by angle in degrees?"; 
+	mDialogTextMain = mGlobalSettings.mImage +" Rotate Selected Frame by angle in degrees"; 
 	mDialogTextTitle = "Rotate Selected Frame";	
 	frotateangle = 0;
 }
@@ -684,7 +684,7 @@ int RTSFDialog::render(){
     		
 		ImGui::Text("%s", mDialogTextMain.c_str()); 
 
-		ImGui::SliderFloat("Angle", &frotateangle, 0, 360.0);
+		ImGui::SliderFloat("Angle", &frotateangle, 0, 360.0,"%.1f", ImGuiSliderFlags_AlwaysClamp);
 
         if ( ImGui::Button("Rotate")){ 
 			recieveInput(SDLK_y);				

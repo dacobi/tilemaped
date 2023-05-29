@@ -3035,6 +3035,7 @@ int TEditor::handleEvents(){
 					TSFrame* newFrame = new TSFrame(&mSprite->mTexParam); 
 					newFrame->loadFromBuffer(mSprite->mFrame->FileData, &mPalette);
 					newFrame->rotate(mGlobalSettings.mRotateFrameAngle);
+					std::cout << "Rotate Frame Angle: " << mGlobalSettings.mRotateFrameAngle << std::endl;
 					TEActionReplaceFrame* newAction = new TEActionReplaceFrame();				
 					newAction->doAction(mSprite->mFrame, newFrame->FileData, this, mSprite);
       				mSprite->mActionStack.newActionGroup();	
