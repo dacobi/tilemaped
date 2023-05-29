@@ -418,6 +418,9 @@ int TBDialog::render(){
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Frame Right (F6)")).c_str())){
 						mGlobalSettings.CurrentEditor->rotateFrameRight();
 					}
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Selected Frame")).c_str())){
+						mGlobalSettings.CurrentEditor->activateRotateFrameDialog();
+					}
 				}				
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Selected Frame (DEL)")).c_str())){
 					if(mGlobalSettings.CurrentEditor->mSprite->mFrames.size() > 1){
@@ -651,6 +654,62 @@ int RTSDialog::render(){
 
 	return 0;
 }
+
+/* Rotate Frame */
+
+void RTSFDialog::init(){
+	mDialogTextMain = mGlobalSettings.mImage +" Rotate Selected Frame by angle in degrees?"; 
+	mDialogTextTitle = "Rotate Selected Frame";	
+	frotateangle = 0;
+}
+
+void RTSFDialog::recieveInput(int mKey){
+	
+	if(mKey == SDLK_y){
+		bInputIsAccept=true;		
+		mGlobalSettings.mEditorState = ESTATE_FRAMEROTATE;
+		mGlobalSettings.mRotateFrameAngle = frotateangle;
+	}
+	if(mKey == SDLK_n){
+		frotateangle = 0;
+		bInputIsCancel=true;
+	}
+}
+
+int RTSFDialog::render(){
+    
+	Dialog::render();
+
+	ImGui::Begin(mDialogTextTitle.c_str(),NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
+    		
+		ImGui::Text("%s", mDialogTextMain.c_str()); 
+
+		ImGui::SliderFloat("Angle", &frotateangle, 0, 360.0);
+
+        if ( ImGui::Button("Rotate")){ 
+			recieveInput(SDLK_y);				
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel")){ 
+			recieveInput(SDLK_n);				
+		}
+			            
+    ImGui::End();
+
+	return 0;
+}
+
+void RTSFDialog::cancel(){
+	Dialog::cancel();
+	frotateangle = 0;	
+}
+
+
+
+/* End */
+
 
 void RSFDialog::init(){
 	mDialogTextMain = mGlobalSettings.mInfo +" Remove Selected Frame? Sprite Undo Stack will be cleared."; 

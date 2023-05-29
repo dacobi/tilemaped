@@ -215,6 +215,7 @@ class TSettings{
 		int mNewTileMapX = 0;
 		int mNewTileMapY = 0;
 		
+		float mRotateFrameAngle = 0;
 		std::string mNewTilePath = "";
 		std::string mNewFramePath = "";
 		std::string mNewFramesPath = "";
@@ -333,7 +334,8 @@ enum {
 	ESTATE_SPRITEDELETE,
 	ESTATE_FRAMEIMPORT,
 	ESTATE_SPRITEIMPORT,
-	ESTATE_FRAMESIMPORT
+	ESTATE_FRAMESIMPORT,
+	ESTATE_FRAMEROTATE
 } estates;
 
 

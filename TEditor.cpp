@@ -156,6 +156,7 @@ void TEditor::initDialogs(){
 	mOpenTileDialog.init();
 	mOpenFrameDialog.init();
 	mOpenFramesDialog.init();
+	mRotateFrame.init();
 	mOpenSpriteDialog.init();
 	mOpenTileSetDialog.init();
 	mOpenTileMapDialog.init();
@@ -1447,7 +1448,7 @@ int TEditor::rotateFrameRight(){
 if(mCurMode == EMODE_SPRITE){		
 		TSFrame* newFrame = new TSFrame(&mSprite->mTexParam); 
 		newFrame->loadFromBuffer(mSprite->mFrame->FileData, &mPalette);
-		newFrame->rotate(22.5);
+		newFrame->rotater();
 		TEActionReplaceFrame* newAction = new TEActionReplaceFrame();				
 		newAction->doAction(mSprite->mFrame, newFrame->FileData, this, mSprite);
       	mSprite->mActionStack.newActionGroup();	
@@ -1669,6 +1670,13 @@ int TEditor::activateOpenFramesDialog(){
 	if(mCurMode == EMODE_SPRITE){
 		mActiveDialog = &mOpenFramesDialog;
 		mActiveDialog->bDialogIsWatingForText = true;		
+	}
+	return 0;
+}
+
+int TEditor::activateRotateFrameDialog(){
+	if(mCurMode == EMODE_SPRITE){
+		mActiveDialog = &mRotateFrame;		
 	}
 	return 0;
 }
@@ -3019,6 +3027,26 @@ int TEditor::handleEvents(){
 					return 0;
 				}				
 			}			
+
+			if(mGlobalSettings.mEditorState == ESTATE_FRAMEROTATE){				
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
+
+				if(mCurMode == EMODE_SPRITE){		
+					TSFrame* newFrame = new TSFrame(&mSprite->mTexParam); 
+					newFrame->loadFromBuffer(mSprite->mFrame->FileData, &mPalette);
+					newFrame->rotate(mGlobalSettings.mRotateFrameAngle);
+					TEActionReplaceFrame* newAction = new TEActionReplaceFrame();				
+					newAction->doAction(mSprite->mFrame, newFrame->FileData, this, mSprite);
+      				mSprite->mActionStack.newActionGroup();	
+      				mSprite->mActionStack.addAction(newAction);
+
+					mSprite->mActionStack.mLastAction = newAction;
+       				mSprite->mActionStack.redoClearStack();		
+				}	
+
+				cancelActiveDialog();
+				return 0;
+			}
 
 
 			if(mGlobalSettings.mEditorState == ESTATE_FRAMEIMPORT){				

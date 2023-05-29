@@ -149,6 +149,16 @@ class ISFSDialog: public ISFDialog{
 		virtual void recieveInput(int mKey);		
 };
 
+class RTSFDialog: public Dialog{
+	public:
+		virtual void init();
+		virtual void cancel();
+		virtual int render();
+		virtual void recieveInput(int mKey);
+		float frotateangle = 0;	
+};
+
+
 
 class ISDialog: public SADialog{
 	public:				
