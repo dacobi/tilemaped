@@ -1376,15 +1376,13 @@ int Tile::rotate(double cAngle){
 			std::cout <<  "Unable to Read Pixels: " <<  SDL_GetError()  << std::endl;
 		}
 
-		int *mPixels = pixels;
-
 	    for (int y = 0; y < mTexParam->TileSizeY; y++) {
     	    for (int x = 0; x < mTexParam->TileSizeX; x++) {
 				
 				SDL_Color cTestCol;
-				cTestCol.r = (mPixels[(y * mTexParam->TileSizeX) + x] & 0xFF000000) >> 24;
-				cTestCol.g = (mPixels[(y * mTexParam->TileSizeX) + x] & 0x00FF0000) >> 16;
-				cTestCol.b = (mPixels[(y * mTexParam->TileSizeX) + x] & 0x0000FF00) >> 8;				
+				cTestCol.r = (pixels[(y * mTexParam->TileSizeX) + x] & 0xFF000000) >> 24;
+				cTestCol.g = (pixels[(y * mTexParam->TileSizeX) + x] & 0x00FF0000) >> 16;
+				cTestCol.b = (pixels[(y * mTexParam->TileSizeX) + x] & 0x0000FF00) >> 8;				
 				
 				if(mTexParam->TileSetBPP == 4){
 					TTexture::setPixel(y * mTexParam->TileSizeX + x, findClosestPaletteColor(cTestCol) % 16, bitmap, mTexParam);					
