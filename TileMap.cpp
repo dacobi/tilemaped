@@ -1433,8 +1433,7 @@ int Tile::applyFilter(){
 		convert >> cQual;
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, cQual.c_str());
 		if(mGlobalSettings.mUseTextureFiltering > 1){
-			recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);
-			std::cout <<  "Texture ReCreate" << std::endl;
+			recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);			
 		}
 
 		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX * 8, mTexParam->TileSizeY * 8);
@@ -1524,15 +1523,13 @@ int Tile::scale(double cScale){
 				recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);
 			}
 		}
+		
 		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX, mTexParam->TileSizeY);
-		//SDL_Texture *rTexScale = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX * 8, mTexParam->TileSizeY * 8);
-		//SDL_Texture *rTexDest = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX, mTexParam->TileSizeY );
-
+		
  		if(rTexture == NULL){
         	std::cout <<  "Unable to Create Texture Target: " <<  SDL_GetError()  << std::endl;
     	}
-    	
-		
+    			
 		SDL_Rect tDest;
 		SDL_Rect tSrc;
 
@@ -1546,8 +1543,8 @@ int Tile::scale(double cScale){
 
 		tSrc.x = 0;
 		tSrc.y = 0;
-		tSrc.h = mTexParam->TileSizeY;// * 8;
-		tSrc.w = mTexParam->TileSizeX;// * 8;
+		tSrc.h = mTexParam->TileSizeY;;
+		tSrc.w = mTexParam->TileSizeX;
 		
 		if(SDL_SetRenderTarget(mGlobalSettings.TRenderer, rTexture)){
 			std::cout <<  "Unable to Set RenderTarget: " <<  SDL_GetError()  << std::endl;
@@ -1560,26 +1557,6 @@ int Tile::scale(double cScale){
 		}
 
 		SDL_RenderPresent( mGlobalSettings.TRenderer );
-
-		/*
-		if(SDL_SetRenderTarget(mGlobalSettings.TRenderer, rTexScale)){
-			std::cout <<  "Unable to Set RenderTarget Scale: " <<  SDL_GetError()  << std::endl;
-		}
-
-		SDL_RenderCopyEx(mGlobalSettings.TRenderer, rTexture, &tSrc, &tDest, cScale, NULL, SDL_FLIP_NONE );
-
-		SDL_RenderPresent( mGlobalSettings.TRenderer );
-
-		if(SDL_SetRenderTarget(mGlobalSettings.TRenderer, rTexDest)){
-			std::cout <<  "Unable to Set RenderTarget Dest: " <<  SDL_GetError()  << std::endl;
-		}
-
-		SDL_RenderCopyEx(mGlobalSettings.TRenderer, rTexScale, NULL, NULL, 0, NULL, SDL_FLIP_NONE );
-
-		SDL_RenderPresent( mGlobalSettings.TRenderer );
-
-		*/
-
 		
 		if(SDL_RenderReadPixels(mGlobalSettings.TRenderer, NULL, SDL_PIXELFORMAT_RGBA8888, pixels, mTexParam->TileSizeX * 4 )){			
 			std::cout <<  "Unable to Read Pixels: " <<  SDL_GetError()  << std::endl;
