@@ -530,7 +530,15 @@ int TSettings::runOCD(int mode){
 				break;
 				case SDL_MOUSEBUTTONDOWN:
 	   				
-				break;				
+				break;
+				case SDL_WINDOWEVENT:
+				if (e.window.event == SDL_WINDOWEVENT_RESIZED){
+					int newWidth,newHeight;
+ 					SDL_GetWindowSize(TWindow, &newWidth, &newHeight);
+ 					WindowWidth = newWidth;
+ 					WindowHeight = newHeight; 	
+				}
+			break;
 			}
 		}
 		updateTicks();			
