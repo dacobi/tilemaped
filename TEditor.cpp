@@ -3772,6 +3772,21 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	mOpenTileMapDialog.bUpdateWinPos = true;
 	mNewTileMapDialog.bUpdateWinPos = true;
 
+	mOpenFrameDialog.bUpdateWinPos = true;
+	mOpenFramesDialog.bUpdateWinPos = true;
+	mRotateFrame.bUpdateWinPos = true;
+	mScaleFrame.bUpdateWinPos = true;
+	mOpenSpriteDialog.bUpdateWinPos = true;
+	mNewSpriteDialog.bUpdateWinPos = true;
+	mRemoveTileMap.bUpdateWinPos = true;
+	mRemoveColMap.bUpdateWinPos = true;
+	mRemoveFrame.bUpdateWinPos = true;
+	mRemoveSprite.bUpdateWinPos = true;
+	mRemoveSelUnused.bUpdateWinPos = true;
+
+	mCloseProjectDialog.bUpdateWinPos = true;
+	mPaletteUpdate.bUpdateWinPos = true;
+		
 	mColMapEdit.bUpdateWinPos = true;
 
 	for(auto *cSprite : mSprites){
