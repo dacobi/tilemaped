@@ -302,7 +302,7 @@ class TSettings{
 		bool bVSync = true;
 		bool bMaximize = false;
 		bool bRenderingD3D = false;
-		int mUseTextureFiltering = 1;
+		int mUseTextureFiltering = 0;
 		ProgramSettings mINIFile;		
 };
 
