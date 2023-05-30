@@ -120,6 +120,7 @@ ProjectSettings::ProjectSettings(){
 	SelectionEdit_ShowTileGrid = new sKey("SelectionEdit_ShowTileGrid", type_bool, true);
 	Sprite_ShowPixelGrid = new sKey("Sprite_ShowPixelGrid", type_bool, true);
 	Sprite_WarnBeforeDelete = new sKey("Sprite_WarnBeforeDelete", type_bool, true);
+	Editor_UseTextureFiltering = new sKey("Editor_UseTextureFiltering", type_bool, true);
 
 		
     keys.push_back(Editor_SelectionAppend);
@@ -133,6 +134,7 @@ ProjectSettings::ProjectSettings(){
 	keys.push_back(SelectionEdit_ShowTileGrid);
 	keys.push_back(Sprite_ShowPixelGrid);
 	keys.push_back(Sprite_WarnBeforeDelete);
+	keys.push_back(Editor_UseTextureFiltering);
 
     for(int i = 0; i < keys.size(); i++){
 		keyindex[keys[i]->kname] = i;
@@ -174,6 +176,7 @@ void ProjectSettings::close(){
 	SelectionEdit_ShowTileGrid->bvalue = true;
 	Sprite_ShowPixelGrid->bvalue = true;
 	Sprite_WarnBeforeDelete->bvalue = true;
+	Editor_UseTextureFiltering->bvalue = true;
 
 	bLoaded = false;
 }

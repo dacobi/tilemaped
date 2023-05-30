@@ -1333,6 +1333,10 @@ int Tile::rotate(double cAngle){
 		bitmap.resize((mTexParam->TileSizeX * mTexParam->TileSizeY)/mGlobalSettings.mTileBPPSize[mTexParam->TileSetBPP],0);
 		int *pixels = new int[mTexParam->TileSizeX * mTexParam->TileSizeY];
 
+		if(mGlobalSettings.bUseTextureFiltering){
+			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+		}
+
 		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX * 8, mTexParam->TileSizeY * 8);
 		SDL_Texture *rTexRot = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX * 8, mTexParam->TileSizeY * 8);
 		SDL_Texture *rTexDest = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX, mTexParam->TileSizeY );
@@ -1392,6 +1396,12 @@ int Tile::rotate(double cAngle){
    	
 		SDL_SetRenderTarget(mGlobalSettings.TRenderer, NULL);
 		SDL_DestroyTexture(rTexture);		
+		SDL_DestroyTexture(rTexRot);
+		SDL_DestroyTexture(rTexDest);
+
+		if(mGlobalSettings.bUseTextureFiltering){
+			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+		}
 
 		FileData = bitmap;
 		updateTexture(&mGlobalSettings.CurrentEditor->mPalette);
@@ -1408,8 +1418,14 @@ int Tile::scale(double cScale){
 		std::vector<unsigned char> bitmap;
 		bitmap.resize((mTexParam->TileSizeX * mTexParam->TileSizeY)/mGlobalSettings.mTileBPPSize[mTexParam->TileSetBPP],0);
 		int *pixels = new int[mTexParam->TileSizeX * mTexParam->TileSizeY];
+		
+		if(mGlobalSettings.bUseTextureFiltering){
+			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+		}
 
-		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX, mTexParam->TileSizeY );
+		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX, mTexParam->TileSizeY);
+		//SDL_Texture *rTexScale = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX * 8, mTexParam->TileSizeY * 8);
+		//SDL_Texture *rTexDest = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX, mTexParam->TileSizeY );
 
  		if(rTexture == NULL){
         	std::cout <<  "Unable to Create Texture Target: " <<  SDL_GetError()  << std::endl;
@@ -1419,18 +1435,18 @@ int Tile::scale(double cScale){
 		SDL_Rect tDest;
 		SDL_Rect tSrc;
 
-		int nWidth = mTexParam->TileSizeX * cScale;
-		int nHeight = mTexParam->TileSizeY * cScale;
+		int nWidth = (mTexParam->TileSizeX * cScale);
+		int nHeight = (mTexParam->TileSizeY * cScale);
 
-		tDest.x = -((nWidth - mTexParam->TileSizeX)/2);
-		tDest.y = -((nHeight - mTexParam->TileSizeY)/2);
+		tDest.x = -((nWidth - (mTexParam->TileSizeX))/2);
+		tDest.y = -((nHeight - (mTexParam->TileSizeY))/2);
 		tDest.h = nHeight;
 		tDest.w = nWidth;
 
 		tSrc.x = 0;
 		tSrc.y = 0;
-		tSrc.h = mTexParam->TileSizeY;
-		tSrc.w = mTexParam->TileSizeX;
+		tSrc.h = mTexParam->TileSizeY;// * 8;
+		tSrc.w = mTexParam->TileSizeX;// * 8;
 		
 		if(SDL_SetRenderTarget(mGlobalSettings.TRenderer, rTexture)){
 			std::cout <<  "Unable to Set RenderTarget: " <<  SDL_GetError()  << std::endl;
@@ -1443,6 +1459,26 @@ int Tile::scale(double cScale){
 		}
 
 		SDL_RenderPresent( mGlobalSettings.TRenderer );
+
+		/*
+		if(SDL_SetRenderTarget(mGlobalSettings.TRenderer, rTexScale)){
+			std::cout <<  "Unable to Set RenderTarget Scale: " <<  SDL_GetError()  << std::endl;
+		}
+
+		SDL_RenderCopyEx(mGlobalSettings.TRenderer, rTexture, &tSrc, &tDest, cScale, NULL, SDL_FLIP_NONE );
+
+		SDL_RenderPresent( mGlobalSettings.TRenderer );
+
+		if(SDL_SetRenderTarget(mGlobalSettings.TRenderer, rTexDest)){
+			std::cout <<  "Unable to Set RenderTarget Dest: " <<  SDL_GetError()  << std::endl;
+		}
+
+		SDL_RenderCopyEx(mGlobalSettings.TRenderer, rTexScale, NULL, NULL, 0, NULL, SDL_FLIP_NONE );
+
+		SDL_RenderPresent( mGlobalSettings.TRenderer );
+
+		*/
+
 		
 		if(SDL_RenderReadPixels(mGlobalSettings.TRenderer, NULL, SDL_PIXELFORMAT_RGBA8888, pixels, mTexParam->TileSizeX * 4 )){			
 			std::cout <<  "Unable to Read Pixels: " <<  SDL_GetError()  << std::endl;
@@ -1454,7 +1490,8 @@ int Tile::scale(double cScale){
 				SDL_Color cTestCol;
 				cTestCol.r = (pixels[(y * mTexParam->TileSizeX) + x] & 0xFF000000) >> 24;
 				cTestCol.g = (pixels[(y * mTexParam->TileSizeX) + x] & 0x00FF0000) >> 16;
-				cTestCol.b = (pixels[(y * mTexParam->TileSizeX) + x] & 0x0000FF00) >> 8;				
+				cTestCol.b = (pixels[(y * mTexParam->TileSizeX) + x] & 0x0000FF00) >> 8;
+				cTestCol.a = (pixels[(y * mTexParam->TileSizeX) + x] & 0x000000FF);				
 				
 				if(mTexParam->TileSetBPP == 4){
 					TTexture::setPixel(y * mTexParam->TileSizeX + x, findClosestPaletteColor(cTestCol, 16), bitmap, mTexParam);					
@@ -1465,7 +1502,11 @@ int Tile::scale(double cScale){
     	}	
    	
 		SDL_SetRenderTarget(mGlobalSettings.TRenderer, NULL);
-		SDL_DestroyTexture(rTexture);		
+		SDL_DestroyTexture(rTexture);
+
+		if(mGlobalSettings.bUseTextureFiltering){
+			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+		}	
 
 		FileData = bitmap;
 		updateTexture(&mGlobalSettings.CurrentEditor->mPalette);

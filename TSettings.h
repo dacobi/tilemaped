@@ -144,6 +144,7 @@ public:
 	sKey *SelectionEdit_ShowTileGrid;
 	sKey *Sprite_ShowPixelGrid;
 	sKey *Sprite_WarnBeforeDelete;
+	sKey *Editor_UseTextureFiltering;
 };
 
 class ProgramSettings : public Settings{
@@ -301,6 +302,7 @@ class TSettings{
 		bool bVSync = true;
 		bool bMaximize = false;
 		bool bRenderingD3D = false;
+		bool bUseTextureFiltering = true;
 		ProgramSettings mINIFile;		
 };
 

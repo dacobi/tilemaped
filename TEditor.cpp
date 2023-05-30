@@ -417,6 +417,8 @@ int TEditor::loadFromFolder(std::string path){
 
 			mGlobalSettings.bShowPixelGridSprite = mGlobalSettings.mProjectSettings.Sprite_ShowPixelGrid->getBool();
 			mGlobalSettings.bSpriteWarnBeforeDelete = mGlobalSettings.mProjectSettings.Sprite_WarnBeforeDelete->getBool();
+
+			mGlobalSettings.bUseTextureFiltering = mGlobalSettings.mProjectSettings.Editor_UseTextureFiltering->getBool();
 		}
 	}
 
@@ -604,6 +606,8 @@ int TEditor::saveToFolder(std::string path){
 
 	mGlobalSettings.mProjectSettings.Sprite_ShowPixelGrid->bvalue = mGlobalSettings.bShowPixelGridSprite;
 	mGlobalSettings.mProjectSettings.Sprite_WarnBeforeDelete->bvalue = mGlobalSettings.bSpriteWarnBeforeDelete;
+
+	mGlobalSettings.mProjectSettings.Editor_UseTextureFiltering->bvalue = mGlobalSettings.bUseTextureFiltering;
 
 	mGlobalSettings.mProjectSettings.writedefault(path + DIRDEL + "settings.ini");
 

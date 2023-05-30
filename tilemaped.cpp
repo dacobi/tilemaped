@@ -203,13 +203,15 @@ int TSettings::initSettings(){
     SDL_WindowFlags window_flags;
 		
 	if(bRenderingD3D || bSoftwareRendering){
-		window_flags = (SDL_WindowFlags)( SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE);
+		window_flags = (SDL_WindowFlags)( SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE); // SDL_WINDOW_ALLOW_HIGHDPI |
 	} else {		
-		window_flags = (SDL_WindowFlags)( SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE);
+		window_flags = (SDL_WindowFlags)( SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	}
 
 	WindowWidth = SCREEN_WIDTH;
 	WindowHeight = SCREEN_HEIGHT;
+
+	SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "1");
 
 	TWindow = SDL_CreateWindow( "TilemapEd", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, window_flags);
 	if( TWindow == NULL ){
@@ -225,9 +227,9 @@ int TSettings::initSettings(){
 	} else {		
 		mFlags |= SDL_RENDERER_ACCELERATED;
 		if(bRenderingD3D){
-			SDL_SetHint(SDL_HINT_RENDER_DRIVER, "direct3d");
+			SDL_SetHint(SDL_HINT_RENDER_DRIVER, "direct3d");			
 		} else {
-			SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+			SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");			
 		}
 		std::cout << "Accelerated Rendering: "<< bRenderingD3D << std::endl;
 	}

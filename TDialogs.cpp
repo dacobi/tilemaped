@@ -438,6 +438,8 @@ int TBDialog::render(){
 					}
 					ImGui::EndMenu();
 				}
+
+				ImGui::MenuItem(std::string(mGlobalSettings.mImage + " Use Texture Filtering").c_str(), NULL, &mGlobalSettings.bUseTextureFiltering);
 			}
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
@@ -471,6 +473,8 @@ int TBDialog::render(){
 					mGlobalSettings.CurrentEditor->activateDropUnusedTiles();
 				}
 
+				ImGui::MenuItem(std::string(mGlobalSettings.mImage + " Use Texture Filtering").c_str(), NULL, &mGlobalSettings.bUseTextureFiltering);
+				
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mFile + " CollisionMap")).c_str())){
 				
 					if(mGlobalSettings.CurrentEditor->mTileMap->bHasCollisionMap){
