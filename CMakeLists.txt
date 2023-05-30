@@ -11,7 +11,15 @@ find_package(LibXml2 REQUIRED)
 
 file(GLOB Tilemaped_SRC "*.cpp" ".h")
 
-add_executable(tilemaped ${Tilemaped_SRC})
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+	add_executable(tilemaped ${Tilemaped_SRC} "tilemaped.rc")
+endif()
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+	add_executable(tilemaped ${Tilemaped_SRC})
+endif()
+
 
 target_include_directories(tilemaped SYSTEM PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${LIBXML2_INCLUDE_DIRS})
 
