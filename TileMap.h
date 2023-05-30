@@ -119,6 +119,7 @@ class Tile: public TTexture{
 		void renderEdSel(int xpos, int ypos, TPalette* tpal, int cScale);
 		static int renderSelection(SDL_Rect &sRect, SDL_Color sColor);		
 		int updateTexture(TPalette* tpal);
+		int recreateTexture(TPalette* tpal);
 		int loadFromFile(std::string filename,TPalette* tpal);
 		int loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal);	
 		int replaceWithBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal);

@@ -1335,8 +1335,9 @@ int Tile::rotate(double cAngle){
 
 		if(mGlobalSettings.bUseTextureFiltering){
 			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+			recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);			
 		}
-
+		
 		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX * 8, mTexParam->TileSizeY * 8);
 		SDL_Texture *rTexRot = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX * 8, mTexParam->TileSizeY * 8);
 		SDL_Texture *rTexDest = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX, mTexParam->TileSizeY );
@@ -1421,7 +1422,10 @@ int Tile::scale(double cScale){
 		
 		if(mGlobalSettings.bUseTextureFiltering){
 			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+			recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);			
 		}
+
+		updateTexture(&mGlobalSettings.CurrentEditor->mPalette);
 
 		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX, mTexParam->TileSizeY);
 		//SDL_Texture *rTexScale = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX * 8, mTexParam->TileSizeY * 8);
@@ -1513,6 +1517,17 @@ int Tile::scale(double cScale){
 		delete[] pixels;
 
 	}
+	return 0;
+}
+
+int Tile::recreateTexture(TPalette* tpal){
+	freeTexture();
+
+	initTile();
+	initTexture();
+    FileData.resize(((mTexParam->TileSizeX * mTexParam->TileSizeY)/mGlobalSettings.mTileBPPSize[mTexParam->TileSetBPP]), 0);	
+	updateTexture(tpal);
+	
 	return 0;
 }
 
