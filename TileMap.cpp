@@ -1298,8 +1298,9 @@ int getEuclideanDistance(const SDL_Color& color1, const SDL_Color& color2) {
     int dR = color1.r - color2.r;
     int dG = color1.g - color2.g;
     int dB = color1.b - color2.b;
+    int dA = color1.a - color2.a;
 
-    return dR * dR + dG * dG + dB * dB;
+    return dR * dR + dG * dG + dB * dB + dA * dA;
 }
 
 unsigned char findClosestPaletteColor(const SDL_Color& color, int cMaxPal) {
@@ -1311,6 +1312,7 @@ unsigned char findClosestPaletteColor(const SDL_Color& color, int cMaxPal) {
         paletteColor.r = mGlobalSettings.CurrentEditor->mPalette.TPalette[i].r;
         paletteColor.g = mGlobalSettings.CurrentEditor->mPalette.TPalette[i].g;
         paletteColor.b = mGlobalSettings.CurrentEditor->mPalette.TPalette[i].b;
+		paletteColor.a = mGlobalSettings.CurrentEditor->mPalette.TPalette[i].a;
 
         int distance = getEuclideanDistance(color, paletteColor);
 
@@ -1331,7 +1333,9 @@ int Tile::rotate(double cAngle){
 		bitmap.resize((mTexParam->TileSizeX * mTexParam->TileSizeY)/mGlobalSettings.mTileBPPSize[mTexParam->TileSetBPP],0);
 		int *pixels = new int[mTexParam->TileSizeX * mTexParam->TileSizeY];
 
-		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX, mTexParam->TileSizeY );
+		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX * 8, mTexParam->TileSizeY * 8);
+		SDL_Texture *rTexRot = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX * 8, mTexParam->TileSizeY * 8);
+		SDL_Texture *rTexDest = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX, mTexParam->TileSizeY );
 
  		if(rTexture == NULL){
         	std::cout <<  "Unable to Create Texture Target: " <<  SDL_GetError()  << std::endl;
@@ -1342,10 +1346,26 @@ int Tile::rotate(double cAngle){
 		}
 
 		if(mTexParam->TileSetBPP == 4){
-			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TPOffset[0], NULL, NULL, cAngle, NULL, SDL_FLIP_NONE );
+			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TPOffset[0], NULL, NULL, 0, NULL, SDL_FLIP_NONE );
 		} else {
-			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TileTex, NULL, NULL, cAngle, NULL, SDL_FLIP_NONE );
+			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TileTex, NULL, NULL, 0, NULL, SDL_FLIP_NONE );
 		}
+
+		SDL_RenderPresent( mGlobalSettings.TRenderer );
+
+		if(SDL_SetRenderTarget(mGlobalSettings.TRenderer, rTexRot)){
+			std::cout <<  "Unable to Set RenderTarget Rot: " <<  SDL_GetError()  << std::endl;
+		}
+
+		SDL_RenderCopyEx(mGlobalSettings.TRenderer, rTexture, NULL, NULL, cAngle, NULL, SDL_FLIP_NONE );
+
+		SDL_RenderPresent( mGlobalSettings.TRenderer );
+
+		if(SDL_SetRenderTarget(mGlobalSettings.TRenderer, rTexDest)){
+			std::cout <<  "Unable to Set RenderTarget Dest: " <<  SDL_GetError()  << std::endl;
+		}
+
+		SDL_RenderCopyEx(mGlobalSettings.TRenderer, rTexRot, NULL, NULL, 0, NULL, SDL_FLIP_NONE );
 
 		SDL_RenderPresent( mGlobalSettings.TRenderer );
 		
@@ -1359,7 +1379,8 @@ int Tile::rotate(double cAngle){
 				SDL_Color cTestCol;
 				cTestCol.r = (pixels[(y * mTexParam->TileSizeX) + x] & 0xFF000000) >> 24;
 				cTestCol.g = (pixels[(y * mTexParam->TileSizeX) + x] & 0x00FF0000) >> 16;
-				cTestCol.b = (pixels[(y * mTexParam->TileSizeX) + x] & 0x0000FF00) >> 8;				
+				cTestCol.b = (pixels[(y * mTexParam->TileSizeX) + x] & 0x0000FF00) >> 8;
+				cTestCol.a = (pixels[(y * mTexParam->TileSizeX) + x] & 0x000000FF);
 				
 				if(mTexParam->TileSetBPP == 4){
 					TTexture::setPixel(y * mTexParam->TileSizeX + x, findClosestPaletteColor(cTestCol, 16), bitmap, mTexParam);					

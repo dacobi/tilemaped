@@ -203,9 +203,9 @@ int TSettings::initSettings(){
     SDL_WindowFlags window_flags;
 		
 	if(bRenderingD3D || bSoftwareRendering){
-		window_flags = (SDL_WindowFlags)( SDL_WINDOW_SHOWN );
+		window_flags = (SDL_WindowFlags)( SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE);
 	} else {		
-		window_flags = (SDL_WindowFlags)( SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL );
+		window_flags = (SDL_WindowFlags)( SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE);
 	}
 
 	WindowWidth = SCREEN_WIDTH;
@@ -220,10 +220,10 @@ int TSettings::initSettings(){
 	Uint32 mFlags = SDL_RENDERER_TARGETTEXTURE;
 
 	if(bSoftwareRendering){
-		mFlags += SDL_RENDERER_SOFTWARE;
+		mFlags |= SDL_RENDERER_SOFTWARE;
 		std::cout << "Software Rendering"<< std::endl;
 	} else {		
-		mFlags += SDL_RENDERER_ACCELERATED;
+		mFlags |= SDL_RENDERER_ACCELERATED;
 		if(bRenderingD3D){
 			SDL_SetHint(SDL_HINT_RENDER_DRIVER, "direct3d");
 		} else {
@@ -233,7 +233,7 @@ int TSettings::initSettings(){
 	}
 
 	if(bVSync){
-		mFlags += SDL_RENDERER_PRESENTVSYNC;
+		mFlags |= SDL_RENDERER_PRESENTVSYNC;
 	} else {
 		std::cout << "No VSYNC"<< std::endl;
 	}
