@@ -418,7 +418,7 @@ int TEditor::loadFromFolder(std::string path){
 			mGlobalSettings.bShowPixelGridSprite = mGlobalSettings.mProjectSettings.Sprite_ShowPixelGrid->getBool();
 			mGlobalSettings.bSpriteWarnBeforeDelete = mGlobalSettings.mProjectSettings.Sprite_WarnBeforeDelete->getBool();
 
-			mGlobalSettings.bUseTextureFiltering = mGlobalSettings.mProjectSettings.Editor_UseTextureFiltering->getBool();
+			mGlobalSettings.mUseTextureFiltering = mGlobalSettings.mProjectSettings.Editor_UseTextureFiltering->getInteger();
 		}
 	}
 
@@ -607,7 +607,7 @@ int TEditor::saveToFolder(std::string path){
 	mGlobalSettings.mProjectSettings.Sprite_ShowPixelGrid->bvalue = mGlobalSettings.bShowPixelGridSprite;
 	mGlobalSettings.mProjectSettings.Sprite_WarnBeforeDelete->bvalue = mGlobalSettings.bSpriteWarnBeforeDelete;
 
-	mGlobalSettings.mProjectSettings.Editor_UseTextureFiltering->bvalue = mGlobalSettings.bUseTextureFiltering;
+	mGlobalSettings.mProjectSettings.Editor_UseTextureFiltering->ivalue = mGlobalSettings.mUseTextureFiltering;
 
 	mGlobalSettings.mProjectSettings.writedefault(path + DIRDEL + "settings.ini");
 
@@ -1449,12 +1449,28 @@ int TEditor::moveTileDown(){
 	return 1;
 }
 
+int TEditor::filterFrame(){
+	if(mCurMode == EMODE_SPRITE){		
+		TSFrame* newFrame = new TSFrame(&mSprite->mTexParam); 
+		newFrame->loadFromBuffer(mSprite->mFrame->FileData, &mPalette);
+		newFrame->applyFilter();
+		TEActionReplaceFrame* newAction = new TEActionReplaceFrame();				
+		newAction->doAction(mSprite->mFrame, newFrame->FileData, this, mSprite);
+      	mSprite->mActionStack.newActionGroup();	
+      	mSprite->mActionStack.addAction(newAction);
+
+		mSprite->mActionStack.mLastAction = newAction;
+       	mSprite->mActionStack.redoClearStack();
+		return 0;		
+	}
+	return 1;
+}
+
 int TEditor::rotateFrameRight(){
 if(mCurMode == EMODE_SPRITE){		
 		TSFrame* newFrame = new TSFrame(&mSprite->mTexParam); 
 		newFrame->loadFromBuffer(mSprite->mFrame->FileData, &mPalette);
-		newFrame->rotater();
-		//newFrame->scale(1.5);
+		newFrame->rotater();		
 		TEActionReplaceFrame* newAction = new TEActionReplaceFrame();				
 		newAction->doAction(mSprite->mFrame, newFrame->FileData, this, mSprite);
       	mSprite->mActionStack.newActionGroup();	

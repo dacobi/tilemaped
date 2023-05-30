@@ -208,6 +208,7 @@ class TEditor{
 		int moveFrameDown();
 		int rotateFrameRight();
 		int rotateFrameLeft();
+		int filterFrame();
 		int swapTiles(int source, int target, bool bDoCopy = false);
 		int swapFrames(int source, int target, bool bDoCopy = false);
 		int dropUnusedTiles();

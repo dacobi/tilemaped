@@ -438,8 +438,24 @@ int TBDialog::render(){
 					}
 					ImGui::EndMenu();
 				}
+			
+				if(ImGui::BeginMenu((std::string(mGlobalSettings.mImage + " Texture Filtering")).c_str())){
+					ImGui::RadioButton("None", &mGlobalSettings.mUseTextureFiltering, 0);
+					ImGui::RadioButton("Some", &mGlobalSettings.mUseTextureFiltering, 1);
+					ImGui::RadioButton("All", &mGlobalSettings.mUseTextureFiltering, 2);
 
-				ImGui::MenuItem(std::string(mGlobalSettings.mImage + " Use Texture Filtering").c_str(), NULL, &mGlobalSettings.bUseTextureFiltering);
+					ImGui::EndMenu();
+
+				}
+
+				if(mGlobalSettings.mUseTextureFiltering > 1){
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Filter Selected Frame")).c_str())){
+						mGlobalSettings.CurrentEditor->filterFrame();
+					}
+				}
+
+
+				//ImGui::MenuItem(std::string(mGlobalSettings.mImage + " Use Texture Filtering").c_str(), NULL, &mGlobalSettings.bUseTextureFiltering);
 			}
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
@@ -472,9 +488,18 @@ int TBDialog::render(){
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Unused Tiles")).c_str())){
 					mGlobalSettings.CurrentEditor->activateDropUnusedTiles();
 				}
-
-				ImGui::MenuItem(std::string(mGlobalSettings.mImage + " Use Texture Filtering").c_str(), NULL, &mGlobalSettings.bUseTextureFiltering);
 				
+				/*
+				if(ImGui::BeginMenu((std::string(mGlobalSettings.mImage + " Texture Filtering")).c_str())){
+					ImGui::RadioButton("None", &mGlobalSettings.mUseTextureFiltering, 0);
+					ImGui::RadioButton("Some", &mGlobalSettings.mUseTextureFiltering, 1);
+					ImGui::RadioButton("All", &mGlobalSettings.mUseTextureFiltering, 2);
+
+					ImGui::EndMenu();
+				}*/
+
+				//ImGui::MenuItem(std::string(mGlobalSettings.mImage + " Use Texture Filtering").c_str(), NULL, &mGlobalSettings.bUseTextureFiltering);
+
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mFile + " CollisionMap")).c_str())){
 				
 					if(mGlobalSettings.CurrentEditor->mTileMap->bHasCollisionMap){
