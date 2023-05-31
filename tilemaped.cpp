@@ -433,6 +433,7 @@ void TSettings::close(){
 	mSelectedTile = 0;
 	
 	bSelectionMode = true;
+	mUseTextureFiltering = 0;
 
 	mProjectSettings.close();
 }

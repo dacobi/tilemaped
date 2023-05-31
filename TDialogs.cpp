@@ -438,6 +438,13 @@ int TBDialog::render(){
 					}
 					ImGui::EndMenu();
 				}
+				if(ImGui::BeginMenu("Sprite Edit")){					
+					if(ImGui::SliderInt("Frame Scale", &mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, 4, 16,"%d", ImGuiSliderFlags_NoInput)){
+						mGlobalSettings.CurrentEditor->mSprite->mFrame->mSelection.init(mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX, mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY,mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, &mGlobalSettings.CurrentEditor->mSprite->mTexParam.mTileEdScale);
+					}
+											
+					ImGui::EndMenu();
+				}
 			
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mImage + " Texture Filtering")).c_str())){
 					ImGui::RadioButton("None", &mGlobalSettings.mUseTextureFiltering, 0);
@@ -551,6 +558,16 @@ int TBDialog::render(){
 					ImGui::EndMenu();
 				}
 				
+			}
+
+			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE){
+				if(ImGui::BeginMenu("Tile Edit")){					
+					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mGlobalTexParam.TilePixelSize, 4, 16,"%d", ImGuiSliderFlags_NoInput)){
+						mGlobalSettings.CurrentEditor->mTileSelectedTile->mSelection.init(mGlobalSettings.mGlobalTexParam.TileSizeX, mGlobalSettings.mGlobalTexParam.TileSizeY,mGlobalSettings.mGlobalTexParam.TilePixelSize, mGlobalSettings.mGlobalTexParam.TilePixelSize, &mGlobalSettings.mGlobalTexParam.mTileEdScale);
+					}
+											
+					ImGui::EndMenu();
+				}
 			}
 
 			if((mGlobalSettings.CurrentEditor->mCurMode != EMODE_PALED) && (mGlobalSettings.CurrentEditor->mCurMode != EMODE_SELEDIT)){
