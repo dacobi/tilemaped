@@ -157,14 +157,6 @@ ProgramSettings::ProgramSettings(){
 	}
 }
 
-/*
-void ProgramSettings::close(){
-	Sys_Renderer->ivalue = 0;
-	Sys_VSYNC->ivalue = true;
-	Win_Maximize->ivalue = false;
-}
-*/
-
 void ProjectSettings::close(){
 	Editor_SelectionAppend->bvalue = true;
 	Tile_ShowPixelGrid->bvalue = true;
@@ -218,7 +210,6 @@ int ProjectSettings::removeSpriteScaleKey(int cSNum){
 	if(cSpriteKey == keys[0]){
 		return 1;
 	}
-
 
 	for(int ki = 0;  ki < keys.size(); ki++){
 		if(cSpriteKey == keys[ki]){
@@ -308,7 +299,7 @@ int Settings::load(std::string filename){
 		if(type != error){
 			tmpStr = (const char *)xmlGetProp(myNode, (const xmlChar *)"keyname");
 			int key = keyindex[tmpStr];
-			std::string sBackup = tmpStr;
+			std::string cDynSKey = tmpStr;
 
 			tmpStr = (const char *)xmlGetProp(myNode, (const xmlChar *)"keyvalue");
 
@@ -316,25 +307,24 @@ int Settings::load(std::string filename){
 				switch (type)
 				{
 				case type_int:
-					createNewKey(sBackup, type_int, 0);
+					createNewKey(cDynSKey, type_int, 0);
 					break;
 				case type_float:
-					createNewKey(sBackup, type_int, 0.0);
+					createNewKey(cDynSKey, type_float, 0.0);
 					break;
 				case type_bool:
-					createNewKey(sBackup, type_int, false);
+					createNewKey(cDynSKey, type_bool, false);
 					break;
 				case type_string:
-					createNewKey(sBackup, type_int, "");
+					createNewKey(cDynSKey, type_string, "");
 					break;				
 				default:
 					break;
 				}
 			
 				key = keys.size()-1;
+				keyindex[keys[key]->kname] = key;
 			}
-
-			//std::cout << "Read key: " << key << "," << keyindex[tmpStr] << " - " << tmpStr << std::endl;			
 			
 			double value;
 			keys[key]->ivalue = 0;

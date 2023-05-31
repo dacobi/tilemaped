@@ -417,8 +417,7 @@ int TEditor::loadFromFolder(std::string path){
 
 			sKey* cSKey = mGlobalSettings.mProjectSettings.getSpriteScaleKey(nSpriteNum);
 
-			if(cSKey){
-				std::cout << "Reading Sprite Key" << std::endl;
+			if(cSKey){				
 				mSprite->mTexParam.TilePixelSize = cSKey->getInteger();
 			}
 
