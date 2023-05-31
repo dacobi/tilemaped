@@ -1658,7 +1658,7 @@ int Tile::initTile(){
 	if(mTexParam->TileSetBPP < 0x8){
 		TPOffset.resize(16, 0);
 	}
-	mSelection.init(mTexParam->TileSizeX, mTexParam->TileSizeY,mTexParam->TilePixelSize, mTexParam->TilePixelSize, &mTexParam->mTileEdScale);
+	mSelection.init(mTexParam->TileSizeX, mTexParam->TileSizeY,&mTexParam->TilePixelSize, &mTexParam->TilePixelSize, &mTexParam->mTileEdScale);
 	return 0;
 }
 
@@ -2312,7 +2312,7 @@ void TileSet::resizeEdit(){
 	}
 	
 	mSelection.clearSelection();	
-	mSelection.init(mSelectionAreaX , mSelectionAreaY, 1, 1, &mCurEdScale);	
+	mSelection.init(mSelectionAreaX , mSelectionAreaY, &mPixelScale, &mPixelScale, &mCurEdScale);	
 }
 
 int TileSet::getXY(int xpos, int ypos, int cxpos, int cypos){
@@ -2350,7 +2350,7 @@ int TileSet::renderEd(int xpos, int ypos){
 
 		resizeEdit();
 
-		mSelection.resize(mSelectionAreaX, mSelectionAreaY, 1, 1, &mCurEdScale);
+		mSelection.resize(mSelectionAreaX, mSelectionAreaY, &mPixelScale, &mPixelScale, &mCurEdScale);
 
 	} 
 
@@ -2642,7 +2642,7 @@ return 0;
 }
 
 void TileMap::init(){
-	mSelection.init(TileMapWidth, TileMapHeight, mGlobalSettings.mGlobalTexParam.TileSizeX, mGlobalSettings.mGlobalTexParam.TileSizeY, &mGlobalSettings.TileMapScale);
+	mSelection.init(TileMapWidth, TileMapHeight, &mGlobalSettings.mGlobalTexParam.TileSizeX, &mGlobalSettings.mGlobalTexParam.TileSizeY, &mGlobalSettings.TileMapScale);
 }
 
 

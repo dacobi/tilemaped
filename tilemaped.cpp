@@ -37,7 +37,6 @@
 namespace fs = std::filesystem;
 
 class TTexture;
-//class TTFTexture;
 class TPixel; 
 class TPalette;
 class Tile;
@@ -70,7 +69,6 @@ class MEDialog;
 
 #include "TSettings.h"
 #include "TEAction.h"
-//#include "TTFTexture.h"
 #include "TileMap.h"
 #include "TEditor.h"
 #include "TDialogs.h"

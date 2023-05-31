@@ -433,14 +433,14 @@ int TBDialog::render(){
 					}
 				}
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Sprite Frame Reordering").c_str()))){										
-					if(ImGui::MenuItem("Warn before Frame Removal", NULL, &mGlobalSettings.bSpriteWarnBeforeDelete)){
+					if(ImGui::MenuItem("Warn Before Frame Removal", NULL, &mGlobalSettings.bSpriteWarnBeforeDelete)){
 						
 					}
 					ImGui::EndMenu();
 				}
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Sprite Edit").c_str()))){					
 					if(ImGui::SliderInt("Frame Scale", &mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, 4, 16,"%d", ImGuiSliderFlags_NoInput)){
-						mGlobalSettings.CurrentEditor->mSprite->mFrame->mSelection.init(mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX, mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY,mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, &mGlobalSettings.CurrentEditor->mSprite->mTexParam.mTileEdScale);
+						//mGlobalSettings.CurrentEditor->mSprite->mFrame->mSelection.init(mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX, mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY,&mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, &mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, &mGlobalSettings.CurrentEditor->mSprite->mTexParam.mTileEdScale);
 						mGlobalSettings.CurrentEditor->setSpriteBrushes();
 					}
 											
@@ -564,7 +564,7 @@ int TBDialog::render(){
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE){
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Tile Edit").c_str()))){					
 					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mGlobalTexParam.TilePixelSize, 4, 16,"%d", ImGuiSliderFlags_NoInput)){
-						mGlobalSettings.CurrentEditor->mTileSelectedTile->mSelection.init(mGlobalSettings.mGlobalTexParam.TileSizeX, mGlobalSettings.mGlobalTexParam.TileSizeY,mGlobalSettings.mGlobalTexParam.TilePixelSize, mGlobalSettings.mGlobalTexParam.TilePixelSize, &mGlobalSettings.mGlobalTexParam.mTileEdScale);
+						//mGlobalSettings.CurrentEditor->mTileSelectedTile->mSelection.init(mGlobalSettings.mGlobalTexParam.TileSizeX, mGlobalSettings.mGlobalTexParam.TileSizeY,mGlobalSettings.mGlobalTexParam.TilePixelSize, mGlobalSettings.mGlobalTexParam.TilePixelSize, &mGlobalSettings.mGlobalTexParam.mTileEdScale);
 						mGlobalSettings.CurrentEditor->mBrushesPixel.setBrushDeltas(mGlobalSettings.mGlobalTexParam.TilePixelSize, mGlobalSettings.mGlobalTexParam.TilePixelSize, &mGlobalSettings.mGlobalTexParam.mTileEdScale, mGlobalSettings.mGlobalTexParam.mTileEdScale, &mGlobalSettings.mGlobalTexParam);
 					}
 											

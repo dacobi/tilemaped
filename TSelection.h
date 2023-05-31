@@ -23,11 +23,11 @@ class TSelection{
         bool bSelectionUpdate = false;
         int mAreaX;
         int mAreaY;
-        int mWidth;
-        int mHeight;
+        int *mWidth;
+        int *mHeight;
         int *mScale;
-        int init(int cAreaX, int cAreaY, int cWidth, int cHeight, int *cScale);
-        int resize(int cAreaX, int cAreaY, int cWidth, int cHeight, int *cScale);
+        int init(int cAreaX, int cAreaY, int *cWidth, int *cHeight, int *cScale);
+        int resize(int cAreaX, int cAreaY, int *cWidth, int *cHeight, int *cScale);
         int calcSelectionBorder();
 		int renderSelection(int xpos, int ypos);
         int startSelection(int mx, int my);
@@ -76,6 +76,7 @@ class TBrush: public TSelection{
         bool bIsSelected = false;
         bool bIsEditing = false;
         int setElementNext(int element);
+        void clearAllElements();
         int flipElementV();
         int flipElementH();
         int nextElement();
@@ -106,6 +107,7 @@ class TBrushList{
         bool *bIsShown;
         int *mDeltaScale;
         bool bIsEditing = false;
+        bool bSetAllElements = false;
         int mWinHeight = 600;
         int mMaxX = 9;
         int mMaxY = 9;
@@ -149,6 +151,7 @@ class TSelectionEditor{
 		int mCurEdScale=10;
 		int mSelectionAreaX;
 		int mSelectionAreaY;
+        int mPixelScale = 1;
         TEActionUndoStack mActionStack;
 };
 

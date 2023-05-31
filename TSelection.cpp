@@ -54,7 +54,7 @@ int TSelection::modifySelection(int item){
     }
 }
 
-int TSelection::init(int cAreaX, int cAreaY, int cWidth, int cHeight, int *cScale){
+int TSelection::init(int cAreaX, int cAreaY, int *cWidth, int *cHeight, int *cScale){
     mAreaX = cAreaX;
     mAreaY = cAreaY;
     mWidth = cWidth;
@@ -67,7 +67,7 @@ int TSelection::init(int cAreaX, int cAreaY, int cWidth, int cHeight, int *cScal
     return 0;
 }
 
-int TSelection::resize(int cAreaX, int cAreaY, int cWidth, int cHeight, int *cScale){
+int TSelection::resize(int cAreaX, int cAreaY, int *cWidth, int *cHeight, int *cScale){
     mAreaX = cAreaX;
     mAreaY = cAreaY;
     mWidth = cWidth;
@@ -300,10 +300,10 @@ int TSelection::renderSelection(int xpos, int ypos){
 			if(mSelectionEdges[getXY(j,i)]){
 				unsigned char edges = mSelectionEdges[getXY(j,i)];
 				int xstart, xend, ystart, yend;
-				xstart = xpos + (mWidth * j * *mScale);
-				ystart = ypos + (mHeight * i * *mScale);
-				xend = xstart + (mWidth * *mScale)-1;
-				yend = ystart + (mHeight * *mScale)-1;
+				xstart = xpos + (*mWidth * j * *mScale);
+				ystart = ypos + (*mHeight * i * *mScale);
+				xend = xstart + (*mWidth * *mScale)-1;
+				yend = ystart + (*mHeight * *mScale)-1;
 				if(edges & 0x1){
 					SDL_RenderDrawLine(mGlobalSettings.TRenderer, xstart, ystart, xend, ystart);
                     SDL_RenderDrawLine(mGlobalSettings.TRenderer, xstart, ystart-1, xend, ystart-1);
@@ -802,7 +802,19 @@ int TBrushList::addBrush(int sizex, int sizey){
     return 0;
 }
 
+void TBrush::clearAllElements(){
+    for(auto &cElem : mBrushElements){
+        cElem = -1;
+    }
+}
+
 int TBrush::setElementNext(int element){
+    if(mParent->bSetAllElements){
+        for(auto &cElem : mBrushElements){
+            cElem = element;
+        }
+        return 0;
+    }
     mBrushElements[mCursorPos] = element;
     nextElement();
     return 0;
@@ -990,15 +1002,40 @@ int TBrushList::renderIm(){
             mBrushes[mSelectedBrush]->prevLine();
         }
 
-        if(ImGui::Button("Flip H")){
-            mBrushes[mSelectedBrush]->flipElementH();
+        if(mBrushType == TBRUSH_TILE){
+
+            if(ImGui::Button("Flip H")){
+                mBrushes[mSelectedBrush]->flipElementH();
+            }
+
+            ImGui::SameLine();
+
+            if(ImGui::Button("Flip V")){
+                mBrushes[mSelectedBrush]->flipElementV();
+            }
         }
 
+        if(bSetAllElements){ 
+            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(mGlobalSettings.ErrorTextColor.r-80,mGlobalSettings.ErrorTextColor.g,mGlobalSettings.ErrorTextColor.b)));
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(mGlobalSettings.ErrorTextColor.r,mGlobalSettings.ErrorTextColor.g,mGlobalSettings.ErrorTextColor.b)));
+            if(ImGui::Button("Set All Elements")){
+                bSetAllElements = false;                
+            }
+            ImGui::PopStyleColor();
+            ImGui::PopStyleColor();
+        } else {
+            if(ImGui::Button("Set All Elements")){
+                bSetAllElements = true;                
+            }
+        }
+        
         ImGui::SameLine();
 
-        if(ImGui::Button("Flip V")){
-            mBrushes[mSelectedBrush]->flipElementV();
+        if(ImGui::Button("Clear All Elements")){
+            mBrushes[mSelectedBrush]->clearAllElements();
         }
+
+        
 
     }
 
@@ -1227,7 +1264,7 @@ SDL_Rect rEmpty;
 	}
 	
 	mSelection.clearSelection();	
-	mSelection.init(mSelectionAreaX , mSelectionAreaY, 1, 1, &mCurEdScale);	
+	mSelection.init(mSelectionAreaX , mSelectionAreaY, &mPixelScale, &mPixelScale, &mCurEdScale);	
 
     
 }

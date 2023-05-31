@@ -152,6 +152,7 @@ class TileSet{
 		int mMaxScrollY=0;
 		int mSelEdWidth=4;
 		int mCurEdScale=10;
+		int mPixelScale = 1;
 		int mSelectionAreaX;
 		int mSelectionAreaY;
 		int reCalculateScale();
