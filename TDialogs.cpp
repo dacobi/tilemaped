@@ -432,13 +432,13 @@ int TBDialog::render(){
 						mGlobalSettings.CurrentEditor->activateRemoveSpriteDialog();
 					}
 				}
-				if(ImGui::BeginMenu("Sprite Frame Reordering")){										
+				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Sprite Frame Reordering").c_str()))){										
 					if(ImGui::MenuItem("Warn before Frame Removal", NULL, &mGlobalSettings.bSpriteWarnBeforeDelete)){
 						
 					}
 					ImGui::EndMenu();
 				}
-				if(ImGui::BeginMenu("Sprite Edit")){					
+				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Sprite Edit").c_str()))){					
 					if(ImGui::SliderInt("Frame Scale", &mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, 4, 16,"%d", ImGuiSliderFlags_NoInput)){
 						mGlobalSettings.CurrentEditor->mSprite->mFrame->mSelection.init(mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX, mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY,mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, &mGlobalSettings.CurrentEditor->mSprite->mTexParam.mTileEdScale);
 						mGlobalSettings.CurrentEditor->setSpriteBrushes();
@@ -447,7 +447,7 @@ int TBDialog::render(){
 					ImGui::EndMenu();
 				}
 			
-				if(ImGui::BeginMenu((std::string(mGlobalSettings.mImage + " Texture Filtering")).c_str())){
+				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Texture Filtering")).c_str())){
 					ImGui::RadioButton("None", &mGlobalSettings.mUseTextureFiltering, 0);
 					ImGui::RadioButton("Some", &mGlobalSettings.mUseTextureFiltering, 1);
 					ImGui::RadioButton("All", &mGlobalSettings.mUseTextureFiltering, 2);
@@ -526,7 +526,7 @@ int TBDialog::render(){
 					ImGui::EndMenu();
 				}
 
-				if(ImGui::BeginMenu("TileSet Reordering")){
+				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " TileSet Reordering").c_str()))){
 					
 					if(ImGui::MenuItem("Update TileMap(s)", NULL, &mGlobalSettings.bTileSetOrderUpdateTileMap)){
 						
@@ -539,7 +539,7 @@ int TBDialog::render(){
 			}
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET){
-				if(ImGui::BeginMenu("TileSet Edit")){
+				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " TileSet Edit").c_str()))){
 					if(ImGui::SliderInt("Grid Width", &mGlobalSettings.mTileSetEditWidth, 2, 16,"%d", ImGuiSliderFlags_NoInput)){
 						mGlobalSettings.CurrentEditor->mTileSet.bUpdateEditSelection = true;
 					}
@@ -552,7 +552,7 @@ int TBDialog::render(){
 			}
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SELEDIT){
-				if(ImGui::BeginMenu("Selection Edit")){					
+				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Selection Edit").c_str()))){					
 					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mSelectionEditScale, 2, 24,"%d", ImGuiSliderFlags_NoInput)){
 						mGlobalSettings.CurrentEditor->mSelEdit.bUpdateEditSelectionScale = true;
 					}
@@ -562,7 +562,7 @@ int TBDialog::render(){
 			}
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE){
-				if(ImGui::BeginMenu("Tile Edit")){					
+				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Tile Edit").c_str()))){					
 					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mGlobalTexParam.TilePixelSize, 4, 16,"%d", ImGuiSliderFlags_NoInput)){
 						mGlobalSettings.CurrentEditor->mTileSelectedTile->mSelection.init(mGlobalSettings.mGlobalTexParam.TileSizeX, mGlobalSettings.mGlobalTexParam.TileSizeY,mGlobalSettings.mGlobalTexParam.TilePixelSize, mGlobalSettings.mGlobalTexParam.TilePixelSize, &mGlobalSettings.mGlobalTexParam.mTileEdScale);
 						mGlobalSettings.CurrentEditor->mBrushesPixel.setBrushDeltas(mGlobalSettings.mGlobalTexParam.TilePixelSize, mGlobalSettings.mGlobalTexParam.TilePixelSize, &mGlobalSettings.mGlobalTexParam.mTileEdScale, mGlobalSettings.mGlobalTexParam.mTileEdScale, &mGlobalSettings.mGlobalTexParam);
@@ -573,7 +573,7 @@ int TBDialog::render(){
 			}
 
 			if((mGlobalSettings.CurrentEditor->mCurMode != EMODE_PALED) && (mGlobalSettings.CurrentEditor->mCurMode != EMODE_SELEDIT)){
-				if(ImGui::BeginMenu("Selection Mode")){
+				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Selection Mode").c_str()))){
 					bool bIsAppend = mGlobalSettings.bSelectionMode;
 					bool bIsReplace = !mGlobalSettings.bSelectionMode;
 
