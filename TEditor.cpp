@@ -1311,7 +1311,7 @@ TSFrame* TEditor::createNewFrame(){
 
 TSFrame* TEditor::createNewFrameCopy(TSFrame* cCopyFrame){
 if(mCurMode == EMODE_SPRITE){	
-	TSFrame* newFrame = mSprite->createNewCopy(mSprite->mFrame, &mPalette);
+	TSFrame* newFrame = mSprite->createNewCopy(cCopyFrame, &mPalette); //mSprite->mFrame, &mPalette);
 		if(newFrame){
 				TEActionAddFrame* newActionFrame = new TEActionAddFrame();				
 				newActionFrame->doAction(newFrame, this, mSprite);

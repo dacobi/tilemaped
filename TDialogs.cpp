@@ -311,6 +311,47 @@ int TBDialog::render(){
 							mGlobalSettings.CurrentEditor->activateRemoveSpriteDialog();
 						}	
 						
+						if(mGlobalSettings.CurrentEditor->mSprites.size() > 1){
+							bool bFrameCopyPosible = false;
+
+							for(auto *cSprt : mGlobalSettings.CurrentEditor->mSprites){
+								if(cSprt != mGlobalSettings.CurrentEditor->mSprite){
+									if((cSprt->mTexParam.TileSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX) && (cSprt->mTexParam.TileSizeY == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY) && (cSprt->mTexParam.TileSetBPP == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSetBPP)){
+										bFrameCopyPosible = true;
+									}
+								}
+							}
+
+							if(ImGui::BeginMenu((std::string(mGlobalSettings.mFile + " Copy Frame")).c_str(), bFrameCopyPosible)){
+								int fSCount = 0;
+								std::string sfSCount;
+								std::string cCSFrame;
+								for(auto *cSprt : mGlobalSettings.CurrentEditor->mSprites){
+									if(cSprt != mGlobalSettings.CurrentEditor->mSprite){
+										if((cSprt->mTexParam.TileSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX) && (cSprt->mTexParam.TileSizeY == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY) && (cSprt->mTexParam.TileSetBPP == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSetBPP)){
+											
+											fconv << fSCount << std::endl;
+											fconv >> sfSCount;
+
+											if(ImGui::BeginMenu(std::string("Sprite " + sfSCount + ": " +  cSprt->getSpriteSize()).c_str())){
+
+												for(int nf = 0; nf < cSprt->mFrames.size(); nf++){
+													fconv << nf << std::endl;									
+													fconv >> cCSFrame;
+																								
+													if(ImGui::MenuItem((std::string("Frame " + cCSFrame).c_str()))){																					
+														mGlobalSettings.CurrentEditor->createNewFrameCopy(cSprt->mFrames[nf]);
+													}								
+												}	
+												ImGui::EndMenu();
+											}											
+										}	
+									}
+									fSCount++;
+								}
+								ImGui::EndMenu();		
+							}
+						}
 						
 						ImGui::EndMenu();
 					}
