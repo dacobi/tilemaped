@@ -193,6 +193,7 @@ int TSettings::initSettings(){
 #define NERDFONT "nerdfont.ttf"
 #endif
 
+	
 	if( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER ) < 0 ){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
 		return 1;
