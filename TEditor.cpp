@@ -357,6 +357,41 @@ int TEditor::loadFromFolder(std::string path){
 
 	mGlobalSettings.ProjectPath = path;
 
+	
+
+	if(fs::exists(fs::status(path + DIRDEL + "settings.ini"))){
+		if(mGlobalSettings.mProjectSettings.load(path + DIRDEL + "settings.ini")){
+			std::cout << "Error Loading Settings" << std::endl;
+		} else {
+			std::cout << "Loading Settings" << std::endl;
+			mGlobalSettings.bSelectionMode = mGlobalSettings.mProjectSettings.Editor_SelectionAppend->getBool();
+
+			mGlobalSettings.bShowPixelGrid = mGlobalSettings.mProjectSettings.Tile_ShowPixelGrid->getBool();
+			
+			mGlobalSettings.bShowTilePixelGrid = mGlobalSettings.mProjectSettings.TileSet_ShowPixelGrid->getBool();
+			mGlobalSettings.bShowTileGrid = mGlobalSettings.mProjectSettings.TileSet_ShowTileGrid->getBool();
+			
+			mGlobalSettings.bTileSetOrderUpdateTileMap = mGlobalSettings.mProjectSettings.TileSet_UpdateMaps->getBool();
+			mGlobalSettings.bTileSetWarnBeforeDelete = mGlobalSettings.mProjectSettings.TileSet_WarnBeforeDelete->getBool();
+			
+			mTileSet.mSelEdWidth = mGlobalSettings.mProjectSettings.TileSet_EditWidth->getInteger();
+			mGlobalSettings.mTileSetEditWidth = mTileSet.mSelEdWidth;
+			mTileSet.resizeEdit();		
+
+			mGlobalSettings.bShowTilePixelSelGrid = mGlobalSettings.mProjectSettings.SelectionEdit_ShowPixelGrid->getBool();
+			mGlobalSettings.bShowTileSelGrid = mGlobalSettings.mProjectSettings.SelectionEdit_ShowTileGrid->getBool();
+
+			mGlobalSettings.bShowPixelGridSprite = mGlobalSettings.mProjectSettings.Sprite_ShowPixelGrid->getBool();
+			mGlobalSettings.bSpriteWarnBeforeDelete = mGlobalSettings.mProjectSettings.Sprite_WarnBeforeDelete->getBool();
+
+			mGlobalSettings.mUseTextureFiltering = mGlobalSettings.mProjectSettings.Editor_UseTextureFiltering->getInteger();
+
+			mGlobalSettings.mGlobalTexParam.TilePixelSize = mGlobalSettings.mProjectSettings.Editor_PixelScale->getInteger();
+
+			mGlobalSettings.mPixelScaleSprite = mGlobalSettings.mProjectSettings.Editor_PixelScaleSprite->getInteger();
+		}
+	}
+
 	/* Sprites */
 
 	fs::path cSprites;
@@ -392,37 +427,6 @@ int TEditor::loadFromFolder(std::string path){
 	}
 
 	/* Sprites End */
-
-	if(fs::exists(fs::status(path + DIRDEL + "settings.ini"))){
-		if(mGlobalSettings.mProjectSettings.load(path + DIRDEL + "settings.ini")){
-			std::cout << "Error Loading Settings" << std::endl;
-		} else {
-			std::cout << "Loading Settings" << std::endl;
-			mGlobalSettings.bSelectionMode = mGlobalSettings.mProjectSettings.Editor_SelectionAppend->getBool();
-
-			mGlobalSettings.bShowPixelGrid = mGlobalSettings.mProjectSettings.Tile_ShowPixelGrid->getBool();
-			
-			mGlobalSettings.bShowTilePixelGrid = mGlobalSettings.mProjectSettings.TileSet_ShowPixelGrid->getBool();
-			mGlobalSettings.bShowTileGrid = mGlobalSettings.mProjectSettings.TileSet_ShowTileGrid->getBool();
-			
-			mGlobalSettings.bTileSetOrderUpdateTileMap = mGlobalSettings.mProjectSettings.TileSet_UpdateMaps->getBool();
-			mGlobalSettings.bTileSetWarnBeforeDelete = mGlobalSettings.mProjectSettings.TileSet_WarnBeforeDelete->getBool();
-			
-			mTileSet.mSelEdWidth = mGlobalSettings.mProjectSettings.TileSet_EditWidth->getInteger();
-			mGlobalSettings.mTileSetEditWidth = mTileSet.mSelEdWidth;
-			mTileSet.resizeEdit();		
-
-			mGlobalSettings.bShowTilePixelSelGrid = mGlobalSettings.mProjectSettings.SelectionEdit_ShowPixelGrid->getBool();
-			mGlobalSettings.bShowTileSelGrid = mGlobalSettings.mProjectSettings.SelectionEdit_ShowTileGrid->getBool();
-
-			mGlobalSettings.bShowPixelGridSprite = mGlobalSettings.mProjectSettings.Sprite_ShowPixelGrid->getBool();
-			mGlobalSettings.bSpriteWarnBeforeDelete = mGlobalSettings.mProjectSettings.Sprite_WarnBeforeDelete->getBool();
-
-			mGlobalSettings.mUseTextureFiltering = mGlobalSettings.mProjectSettings.Editor_UseTextureFiltering->getInteger();
-		}
-	}
-
-	
 	
 	initDialogs();
 
@@ -609,6 +613,10 @@ int TEditor::saveToFolder(std::string path){
 
 	mGlobalSettings.mProjectSettings.Editor_UseTextureFiltering->ivalue = mGlobalSettings.mUseTextureFiltering;
 
+	mGlobalSettings.mProjectSettings.Editor_PixelScale->ivalue = mGlobalSettings.mGlobalTexParam.TilePixelSize;
+
+	mGlobalSettings.mProjectSettings.Editor_PixelScaleSprite->ivalue = mGlobalSettings.mPixelScaleSprite;
+
 	mGlobalSettings.mProjectSettings.writedefault(path + DIRDEL + "settings.ini");
 
 	return 0;
@@ -616,9 +624,9 @@ int TEditor::saveToFolder(std::string path){
 
 int TEditor::switchSprite(int cSprite){
 	if((cSprite > -1) &&  (cSprite < mSprites.size())){
-		mSprite = mSprites[cSprite];
-		//mBrushesPixel.setBrushDeltas(mSprite->mTexParam.TilePixelSize, mSprite->mTexParam.TilePixelSize, &mSprite->mTexParam.mTileEdScale, mSprite->mTexParam.mTileEdScale, &mSprite->mTexParam);
-		//mBrushesPixel.bIsShown = &mSprite->bShowBrushesPixel;
+		mSprite = mSprites[cSprite];		
+		mPalette.bUpdateWinPos = true;
+		mSprite->updateWinPos = true;
 		setSpriteBrushes();
 		return 0;
 	}
@@ -777,8 +785,7 @@ int TEditor::render(){
 
 
 	if(mCurMode == EMODE_TILESET){		
-		mTopBar.render();
-
+		
 		if(mCurrentBrushPixelTileSet){
 			mCurrentBrushPixelTileSet->getBrushSelection(cx, cy, mTileSet.EditPixelAreas);
 		}
@@ -795,6 +802,8 @@ int TEditor::render(){
 		if(mActiveMessage){			
 			mActiveMessage->render();
 		}
+
+		mTopBar.render();
 
 		if(mGlobalSettings.bShowProjectInfo){
 			mProjectInfo.update();
@@ -814,7 +823,7 @@ int TEditor::render(){
 	}
 
 	if(mCurMode == EMODE_SELEDIT){		
-		mTopBar.render();
+		
 
 		if(mCurrentBrushPixelSelEdit){
 			mCurrentBrushPixelSelEdit->getBrushSelection(cx, cy, mSelEdit.EditPixelAreas);
@@ -832,6 +841,8 @@ int TEditor::render(){
 		if(mActiveMessage){			
 			mActiveMessage->render();
 		}
+
+		mTopBar.render();
 
 		if(mGlobalSettings.bShowProjectInfo){
 			mProjectInfo.update();
@@ -886,16 +897,16 @@ int TEditor::setMode(int newMode){
 
 	if(newMode == EMODE_TILE){
 		mBrushesPixel.setBrushDeltas(mGlobalSettings.mGlobalTexParam.TilePixelSize, mGlobalSettings.mGlobalTexParam.TilePixelSize, &mGlobalSettings.mGlobalTexParam.mTileEdScale, mGlobalSettings.mGlobalTexParam.mTileEdScale, &mGlobalSettings.mGlobalTexParam);
-		mBrushesPixel.bIsShown = &bShowBrushesPixel;
+		mBrushesPixel.bIsShown = &bShowBrushesPixel;		
 	}
 
 	if(newMode == EMODE_TILESET){
 		mBrushesPixel.setBrushDeltas(1, 1, &mTileSet.mCurEdScale, mGlobalSettings.mGlobalTexParam.mTileEdScale * mGlobalSettings.mGlobalTexParam.TilePixelSize, &mGlobalSettings.mGlobalTexParam);
-		mBrushesPixel.bIsShown = &bShowBrushesPixelTileSet;
+		mBrushesPixel.bIsShown = &bShowBrushesPixelTileSet;		
 	}
 
 	if(newMode == EMODE_SPRITE){
-		setSpriteBrushes();
+		setSpriteBrushes();		
 	}
 
 	if(newMode == EMODE_SELEDIT){		
@@ -920,8 +931,7 @@ int TEditor::setMode(int newMode){
 					return 1;		
 				}
 
-				mSelEdit.setSelection(&mTileMap->mSelection, width+1, height+1);
-				mPalette.bUpdateWinPos = true;
+				mSelEdit.setSelection(&mTileMap->mSelection, width+1, height+1);				
 			}        		        	
 
 			mBrushesPixel.setBrushDeltas(1, 1, &mSelEdit.mCurEdScale, mGlobalSettings.mGlobalTexParam.mTileEdScale * mGlobalSettings.mGlobalTexParam.TilePixelSize, &mGlobalSettings.mGlobalTexParam);
@@ -933,6 +943,8 @@ int TEditor::setMode(int newMode){
 			return 1;
     	}
 	}
+
+	mPalette.bUpdateWinPos = true;
 
 	mLastMode = mCurMode;
 	mCurMode = newMode;
@@ -3788,6 +3800,8 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	mPaletteUpdate.bUpdateWinPos = true;
 		
 	mColMapEdit.bUpdateWinPos = true;
+
+	mPalette.bUpdateWinPos = true;
 
 	for(auto *cSprite : mSprites){
 		cSprite->updateWinPos = true;

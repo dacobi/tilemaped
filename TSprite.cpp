@@ -348,14 +348,14 @@ void TSprite::renderIm(int ypos, int mScroll){
 		}
 	}
 
-	mGlobalSettings.SpriteWidth = (((mCurFrameScale*mTexParam.TileSizeX)+mColSpace)*mCurColumns)+(mColSpace*3);
+	SpriteWidth = (((mCurFrameScale*mTexParam.TileSizeX)+mColSpace)*mCurColumns)+(mColSpace*3);
 
 	int isOdd = mFrames.size() % mCurColumns;
 	int cRowNum = mFrames.size() / mCurColumns;
 
-	mFramesBackGround.x = mGlobalSettings.WindowWidth - mGlobalSettings.SpriteWidth;
+	mFramesBackGround.x = mGlobalSettings.WindowWidth - SpriteWidth;
 	mFramesBackGround.y = ypos;
-	mFramesBackGround.w = mGlobalSettings.SpriteWidth; 
+	mFramesBackGround.w = SpriteWidth; 
 
 	ImVec2 cWinPos;
 	cWinPos.x = mFramesBackGround.x;

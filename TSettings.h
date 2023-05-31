@@ -145,6 +145,8 @@ public:
 	sKey *Sprite_ShowPixelGrid;
 	sKey *Sprite_WarnBeforeDelete;
 	sKey *Editor_UseTextureFiltering;
+	sKey *Editor_PixelScale;
+	sKey *Editor_PixelScaleSprite;
 };
 
 class ProgramSettings : public Settings{
@@ -183,11 +185,12 @@ class TSettings{
 		int WindowHeight=1000;
 		int TopBarHeight = 50;
 		int TileSetWidth=200;
-		int SpriteWidth=200;
+		//int SpriteWidth=200;
 		int TileSetDefaultScale=10;
 		int TileMapScale=3;
 		int TileMapHeight=128;
-		int TileMapWidth=128;		
+		int TileMapWidth=128;	
+		int mPixelScaleSprite = 16;
 		/*
 		int TileSizeX=16;
 		int TileSizeY=16;

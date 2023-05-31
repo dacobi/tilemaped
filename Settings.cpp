@@ -121,6 +121,8 @@ ProjectSettings::ProjectSettings(){
 	Sprite_ShowPixelGrid = new sKey("Sprite_ShowPixelGrid", type_bool, true);
 	Sprite_WarnBeforeDelete = new sKey("Sprite_WarnBeforeDelete", type_bool, true);
 	Editor_UseTextureFiltering = new sKey("Editor_UseTextureFiltering", type_int, 0);
+	Editor_PixelScale = new sKey("Editor_PixelScale", type_int, 16);
+	Editor_PixelScaleSprite = new sKey("Editor_PixelScaleSprite", type_int, 16);
 
 		
     keys.push_back(Editor_SelectionAppend);
@@ -135,6 +137,8 @@ ProjectSettings::ProjectSettings(){
 	keys.push_back(Sprite_ShowPixelGrid);
 	keys.push_back(Sprite_WarnBeforeDelete);
 	keys.push_back(Editor_UseTextureFiltering);
+	keys.push_back(Editor_PixelScale);
+	keys.push_back(Editor_PixelScaleSprite);
 
     for(int i = 0; i < keys.size(); i++){
 		keyindex[keys[i]->kname] = i;
@@ -177,6 +181,8 @@ void ProjectSettings::close(){
 	Sprite_ShowPixelGrid->bvalue = true;
 	Sprite_WarnBeforeDelete->bvalue = true;
 	Editor_UseTextureFiltering->ivalue = 0;
+	Editor_PixelScale->ivalue = 16;
+	Editor_PixelScaleSprite->ivalue = 16;
 
 	bLoaded = false;
 }

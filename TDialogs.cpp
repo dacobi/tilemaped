@@ -31,7 +31,7 @@ void Dialog::dropLastInputChar(){
 int Dialog::render(){
 	if(bUpdateWinPos){
 		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
-		bUpdateWinPos = false;
+		bUpdateWinPos = false;		
 	} else {
 		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Once, ImVec2(0.5f, 0.5f));
 	}
@@ -60,7 +60,7 @@ int Dialog::render(int ypos){
 int Dialog::render(int xpos, int ypos){
 	if(bUpdateWinPos){
 		ImGui::SetNextWindowPos(ImVec2(xpos, ypos), ImGuiCond_Always);
-		bUpdateWinPos = false;
+		bUpdateWinPos = false;		
 	} else {
 		ImGui::SetNextWindowPos(ImVec2(xpos, ypos), ImGuiCond_Once);
 	}
@@ -480,8 +480,9 @@ int TBDialog::render(){
 					ImGui::EndMenu();
 				}
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Sprite Edit").c_str()))){					
-					if(ImGui::SliderInt("Frame Scale", &mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, 4, 16,"%d", ImGuiSliderFlags_NoInput)){						
+					if(ImGui::SliderInt("Frame Scale", &mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, 4, 24,"%d", ImGuiSliderFlags_NoInput)){						
 						mGlobalSettings.CurrentEditor->setSpriteBrushes();
+						mGlobalSettings.mPixelScaleSprite = mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize;
 					}
 											
 					ImGui::EndMenu();
@@ -595,7 +596,7 @@ int TBDialog::render(){
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE){
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Tile Edit").c_str()))){					
-					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mGlobalTexParam.TilePixelSize, 4, 16,"%d", ImGuiSliderFlags_NoInput)){						
+					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mGlobalTexParam.TilePixelSize, 4, 24,"%d", ImGuiSliderFlags_NoInput)){						
 						mGlobalSettings.CurrentEditor->mBrushesPixel.setBrushDeltas(mGlobalSettings.mGlobalTexParam.TilePixelSize, mGlobalSettings.mGlobalTexParam.TilePixelSize, &mGlobalSettings.mGlobalTexParam.mTileEdScale, mGlobalSettings.mGlobalTexParam.mTileEdScale, &mGlobalSettings.mGlobalTexParam);
 					}
 											
