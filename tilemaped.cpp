@@ -210,7 +210,12 @@ int TSettings::initSettings(){
 	WindowWidth = SCREEN_WIDTH;
 	WindowHeight = SCREEN_HEIGHT;
 
-	SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "1");
+	//SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "1");
+
+	if (!SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "1")) {
+    	// Warning: High DPI not disabled!
+    	std::cout << "WARNING: High DPI not disabled!" << std::endl;
+	}
 
 	TWindow = SDL_CreateWindow( "TilemapEd", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, window_flags);
 	if( TWindow == NULL ){
