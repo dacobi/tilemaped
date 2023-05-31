@@ -122,8 +122,6 @@ ProjectSettings::ProjectSettings(){
 	Sprite_WarnBeforeDelete = new sKey("Sprite_WarnBeforeDelete", type_bool, true);
 	Editor_UseTextureFiltering = new sKey("Editor_UseTextureFiltering", type_int, 0);
 	Editor_PixelScale = new sKey("Editor_PixelScale", type_int, 16);
-	Editor_PixelScaleSprite = new sKey("Editor_PixelScaleSprite", type_int, 16);
-
 		
     keys.push_back(Editor_SelectionAppend);
 	keys.push_back(Tile_ShowPixelGrid);
@@ -138,8 +136,7 @@ ProjectSettings::ProjectSettings(){
 	keys.push_back(Sprite_WarnBeforeDelete);
 	keys.push_back(Editor_UseTextureFiltering);
 	keys.push_back(Editor_PixelScale);
-	keys.push_back(Editor_PixelScaleSprite);
-
+	
     for(int i = 0; i < keys.size(); i++){
 		keyindex[keys[i]->kname] = i;
 	}
@@ -182,9 +179,59 @@ void ProjectSettings::close(){
 	Sprite_WarnBeforeDelete->bvalue = true;
 	Editor_UseTextureFiltering->ivalue = 0;
 	Editor_PixelScale->ivalue = 16;
-	Editor_PixelScaleSprite->ivalue = 16;
-
+	
 	bLoaded = false;
+}
+
+sKey* ProjectSettings::getSpriteScaleKey(int cSNum){
+
+	std::stringstream sconv;
+	std::string sSnum;
+	sconv << cSNum << std::endl;
+	sconv >> sSnum;
+	sKey *cSpriteKey = getKey(std::string("Sprite"+sSnum+"_PixelScale"));
+
+	if(cSpriteKey == keys[0]){
+		std::cout << "Sprite Key Not Found!" << std::endl;
+		return NULL;
+	}
+
+	return cSpriteKey;	
+}
+
+sKey* ProjectSettings::createSpriteScaleKey(int cSNum){
+	std::stringstream sconv;
+	std::string sSnum;
+	sconv << cSNum << std::endl;
+	sconv >> sSnum;
+	sKey *cSpriteKey = createNewKey(std::string("Sprite"+sSnum+"_PixelScale"), type_int, 16);
+	return cSpriteKey;
+}
+
+int ProjectSettings::removeSpriteScaleKey(int cSNum){
+	std::stringstream sconv;
+	std::string sSnum;
+	sconv << cSNum << std::endl;
+	sconv >> sSnum;
+	sKey *cSpriteKey = getKey(std::string("Sprite"+sSnum+"_PixelScale"));
+
+	if(cSpriteKey == keys[0]){
+		return 1;
+	}
+
+
+	for(int ki = 0;  ki < keys.size(); ki++){
+		if(cSpriteKey == keys[ki]){
+			keys.erase(keys.begin()+ki);
+			
+			for(int i = 0; i < keys.size(); i++){
+				keyindex[keys[i]->kname] = i;
+			}
+			return 0;
+		}
+	}
+
+	return 1;	
 }
 
 int Settings::load(std::string filename){
@@ -261,7 +308,33 @@ int Settings::load(std::string filename){
 		if(type != error){
 			tmpStr = (const char *)xmlGetProp(myNode, (const xmlChar *)"keyname");
 			int key = keyindex[tmpStr];
+			std::string sBackup = tmpStr;
+
 			tmpStr = (const char *)xmlGetProp(myNode, (const xmlChar *)"keyvalue");
+
+			if(key == 0){
+				switch (type)
+				{
+				case type_int:
+					createNewKey(sBackup, type_int, 0);
+					break;
+				case type_float:
+					createNewKey(sBackup, type_int, 0.0);
+					break;
+				case type_bool:
+					createNewKey(sBackup, type_int, false);
+					break;
+				case type_string:
+					createNewKey(sBackup, type_int, "");
+					break;				
+				default:
+					break;
+				}
+			
+				key = keys.size()-1;
+			}
+
+			//std::cout << "Read key: " << key << "," << keyindex[tmpStr] << " - " << tmpStr << std::endl;			
 			
 			double value;
 			keys[key]->ivalue = 0;

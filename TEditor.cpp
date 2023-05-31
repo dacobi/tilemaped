@@ -387,8 +387,7 @@ int TEditor::loadFromFolder(std::string path){
 			mGlobalSettings.mUseTextureFiltering = mGlobalSettings.mProjectSettings.Editor_UseTextureFiltering->getInteger();
 
 			mGlobalSettings.mGlobalTexParam.TilePixelSize = mGlobalSettings.mProjectSettings.Editor_PixelScale->getInteger();
-
-			mGlobalSettings.mPixelScaleSprite = mGlobalSettings.mProjectSettings.Editor_PixelScaleSprite->getInteger();
+			
 		}
 	}
 
@@ -415,6 +414,14 @@ int TEditor::loadFromFolder(std::string path){
 			mSprite = new TSprite(nSpriteX, nSpriteY, nSpriteBPP);
 			mSprite->loadFromBuffer(sbuffer, &mPalette);
 			mSprites.push_back(mSprite);
+
+			sKey* cSKey = mGlobalSettings.mProjectSettings.getSpriteScaleKey(nSpriteNum);
+
+			if(cSKey){
+				std::cout << "Reading Sprite Key" << std::endl;
+				mSprite->mTexParam.TilePixelSize = cSKey->getInteger();
+			}
+
 		} else {
 			std::cout << "Error reading file: " <<  cSprites.string() << std::endl;
 		}
@@ -549,6 +556,16 @@ int TEditor::saveToFolder(std::string path){
 			convert >> sSpriteNum;
 			sSprite = "sprite" + sSpriteNum + ".bin";
 			mSprites[i]->saveToFile(path, sSprite);
+
+			sKey *cSKey = mGlobalSettings.mProjectSettings.getSpriteScaleKey(nSpriteNum);
+
+			if(cSKey){
+				cSKey->ivalue = mSprites[i]->mTexParam.TilePixelSize;
+			} else {
+				sKey *cNewSKey = mGlobalSettings.mProjectSettings.createSpriteScaleKey(nSpriteNum);
+				cNewSKey->ivalue = mSprites[i]->mTexParam.TilePixelSize;
+			}
+
 			nSpriteNum++;
 		}
 
@@ -585,6 +602,12 @@ int TEditor::saveToFolder(std::string path){
 		}
 
 		fs::rename(sSprite, sSprite + cBackup + cBackupNum);
+
+		sKey *cDelSKey = mGlobalSettings.mProjectSettings.getSpriteScaleKey(nSpriteNum);
+
+		if(cDelSKey){
+			mGlobalSettings.mProjectSettings.removeSpriteScaleKey(nSpriteNum);
+		}
 					
 		nSpriteNum++;
 		convert << nSpriteNum << std::endl;
@@ -614,8 +637,6 @@ int TEditor::saveToFolder(std::string path){
 	mGlobalSettings.mProjectSettings.Editor_UseTextureFiltering->ivalue = mGlobalSettings.mUseTextureFiltering;
 
 	mGlobalSettings.mProjectSettings.Editor_PixelScale->ivalue = mGlobalSettings.mGlobalTexParam.TilePixelSize;
-
-	mGlobalSettings.mProjectSettings.Editor_PixelScaleSprite->ivalue = mGlobalSettings.mPixelScaleSprite;
 
 	mGlobalSettings.mProjectSettings.writedefault(path + DIRDEL + "settings.ini");
 

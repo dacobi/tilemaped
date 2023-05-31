@@ -18,7 +18,7 @@ class TSprite{
             mTexParam.TileSetBPP = cBPP;
 
             mTexParam.mTileEdScale = mGlobalSettings.mGlobalTexParam.mTileEdScale;
-            mTexParam.TilePixelSize = mGlobalSettings.mPixelScaleSprite; //mGlobalSettings.mGlobalTexParam.TilePixelSize;
+            mTexParam.TilePixelSize = 16; //mGlobalSettings.mPixelScaleSprite; //mGlobalSettings.mGlobalTexParam.TilePixelSize;
 
             if((cSizeX > 8) || (cSizeY > 8)){
                 mTexParam.mTileEdScale--;

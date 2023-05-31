@@ -132,6 +132,9 @@ class ProjectSettings : public Settings{
 public:
 	ProjectSettings();
 	void close();
+	sKey* getSpriteScaleKey(int cSNum);
+	sKey* createSpriteScaleKey(int cSNum);
+	int removeSpriteScaleKey(int cSNum);
 	
 	sKey *Editor_SelectionAppend;
 	sKey *Tile_ShowPixelGrid;
@@ -145,8 +148,7 @@ public:
 	sKey *Sprite_ShowPixelGrid;
 	sKey *Sprite_WarnBeforeDelete;
 	sKey *Editor_UseTextureFiltering;
-	sKey *Editor_PixelScale;
-	sKey *Editor_PixelScaleSprite;
+	sKey *Editor_PixelScale;	
 };
 
 class ProgramSettings : public Settings{
@@ -190,7 +192,7 @@ class TSettings{
 		int TileMapScale=3;
 		int TileMapHeight=128;
 		int TileMapWidth=128;	
-		int mPixelScaleSprite = 16;
+		
 		/*
 		int TileSizeX=16;
 		int TileSizeY=16;

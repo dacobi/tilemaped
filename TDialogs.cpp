@@ -481,8 +481,7 @@ int TBDialog::render(){
 				}
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Sprite Edit").c_str()))){					
 					if(ImGui::SliderInt("Frame Scale", &mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, 4, 24,"%d", ImGuiSliderFlags_NoInput)){						
-						mGlobalSettings.CurrentEditor->setSpriteBrushes();
-						mGlobalSettings.mPixelScaleSprite = mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize;
+						mGlobalSettings.CurrentEditor->setSpriteBrushes();						
 					}
 											
 					ImGui::EndMenu();
