@@ -439,8 +439,7 @@ int TBDialog::render(){
 					ImGui::EndMenu();
 				}
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Sprite Edit").c_str()))){					
-					if(ImGui::SliderInt("Frame Scale", &mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, 4, 16,"%d", ImGuiSliderFlags_NoInput)){
-						//mGlobalSettings.CurrentEditor->mSprite->mFrame->mSelection.init(mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX, mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY,&mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, &mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, &mGlobalSettings.CurrentEditor->mSprite->mTexParam.mTileEdScale);
+					if(ImGui::SliderInt("Frame Scale", &mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, 4, 16,"%d", ImGuiSliderFlags_NoInput)){						
 						mGlobalSettings.CurrentEditor->setSpriteBrushes();
 					}
 											
@@ -460,10 +459,7 @@ int TBDialog::render(){
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Filter Selected Frame")).c_str())){
 						mGlobalSettings.CurrentEditor->filterFrame();
 					}
-				}
-
-
-				//ImGui::MenuItem(std::string(mGlobalSettings.mImage + " Use Texture Filtering").c_str(), NULL, &mGlobalSettings.bUseTextureFiltering);
+				}				
 			}
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
@@ -472,10 +468,7 @@ int TBDialog::render(){
 				}
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " New Tile (F3)")).c_str())){
 					mGlobalSettings.CurrentEditor->createNewTile();
-				}
-				//if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Tile (F4)")).c_str())){
-				//	mGlobalSettings.CurrentEditor->activateOpenTileDialog();		  			
-				//}
+				}				
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Tile (F4)")).c_str())){
 					mGlobalSettings.CurrentEditor->createNewTileCopy(mGlobalSettings.CurrentEditor->mTileSelectedTile);
 				}
@@ -504,9 +497,7 @@ int TBDialog::render(){
 					ImGui::RadioButton("All", &mGlobalSettings.mUseTextureFiltering, 2);
 
 					ImGui::EndMenu();
-				}*/
-
-				//ImGui::MenuItem(std::string(mGlobalSettings.mImage + " Use Texture Filtering").c_str(), NULL, &mGlobalSettings.bUseTextureFiltering);
+				}*/				
 
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mFile + " CollisionMap")).c_str())){
 				
@@ -563,8 +554,7 @@ int TBDialog::render(){
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE){
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Tile Edit").c_str()))){					
-					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mGlobalTexParam.TilePixelSize, 4, 16,"%d", ImGuiSliderFlags_NoInput)){
-						//mGlobalSettings.CurrentEditor->mTileSelectedTile->mSelection.init(mGlobalSettings.mGlobalTexParam.TileSizeX, mGlobalSettings.mGlobalTexParam.TileSizeY,mGlobalSettings.mGlobalTexParam.TilePixelSize, mGlobalSettings.mGlobalTexParam.TilePixelSize, &mGlobalSettings.mGlobalTexParam.mTileEdScale);
+					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mGlobalTexParam.TilePixelSize, 4, 16,"%d", ImGuiSliderFlags_NoInput)){						
 						mGlobalSettings.CurrentEditor->mBrushesPixel.setBrushDeltas(mGlobalSettings.mGlobalTexParam.TilePixelSize, mGlobalSettings.mGlobalTexParam.TilePixelSize, &mGlobalSettings.mGlobalTexParam.mTileEdScale, mGlobalSettings.mGlobalTexParam.mTileEdScale, &mGlobalSettings.mGlobalTexParam);
 					}
 											
@@ -652,8 +642,7 @@ void RTDialog::init(){
 void RTDialog::recieveInput(int mKey){
 	
 	if(mKey == SDLK_y){
-		bInputIsAccept=true;
-		//mGlobalSettings.mDeleteUnusedTilesState = 1;
+		bInputIsAccept=true;		
 		mGlobalSettings.mEditorState = ESTATE_TILEDELETEALL;
 	}
 	if(mKey == SDLK_n){
@@ -671,8 +660,7 @@ void RTSDialog::init(){
 void RTSDialog::recieveInput(int mKey){
 	
 	if(mKey == SDLK_y){
-		bInputIsAccept=true;
-		//mGlobalSettings.mDeleteUnusedTilesState = 2;
+		bInputIsAccept=true;		
 		mGlobalSettings.mEditorState = ESTATE_TILEDELETE;
 	}
 	if(mKey == SDLK_n){
@@ -874,8 +862,7 @@ void RTMDialog::init(){
 void RTMDialog::recieveInput(int mKey){
 	
 	if(mKey == SDLK_y){
-		bInputIsAccept=true;
-		//mGlobalSettings.mDeleteTileMapState = 1;
+		bInputIsAccept=true;		
 		mGlobalSettings.mEditorState = ESTATE_TILEMAPDELETE;
 	}
 	if(mKey == SDLK_n){
@@ -912,8 +899,7 @@ void RCMDialog::init(){
 void RCMDialog::recieveInput(int mKey){
 	
 	if(mKey == SDLK_y){
-		bInputIsAccept=true;
-		//mGlobalSettings.mDeleteTileMapState = 1;
+		bInputIsAccept=true;		
 		mGlobalSettings.mEditorState = ESTATE_COLMAPREMOVE;
 	}
 	if(mKey == SDLK_n){
@@ -931,8 +917,7 @@ void PUDialog::init(){
 void PUDialog::recieveInput(int mKey){
 	
 	if(mKey == SDLK_y){
-		bInputIsAccept=true;
-		//mGlobalSettings.mPaletteUpdateState = 1;
+		bInputIsAccept=true;		
 		mGlobalSettings.mEditorState = ESTATE_PALETTEUPDATE;
 	}
 	if(mKey == SDLK_n){
@@ -951,8 +936,7 @@ void SDialog::init(){
 void SDialog::recieveInput(int mKey){
 	
 	if(mKey == SDLK_y){
-		bInputIsAccept=true;
-		//mGlobalSettings.mProjectSaveState = 1;
+		bInputIsAccept=true;		
 		mGlobalSettings.mEditorState = ESTATE_PROJECTSAVE;
 	}
 	if(mKey == SDLK_n){
@@ -1072,8 +1056,7 @@ void SADialog::recieveInput(int mKey){
 	if(bSubDialogActive){
 		if(mKey == SDLK_y){
 			bInputIsAccept=true;
-			bSubDialogActive = false;
-			//mGlobalSettings.mProjectSaveState = 1;
+			bSubDialogActive = false;			
 			mGlobalSettings.mEditorState = ESTATE_PROJECTSAVE;
 
 			mGlobalSettings.ProjectPath = mTextInput.mDialogTextMain;
@@ -1088,8 +1071,7 @@ void SADialog::recieveInput(int mKey){
 				bSubDialogActive = true;
 				bDialogIsWatingForText = false;
 			} else {				
-				if(mTextInput.bInputIsAccepted){
-					//mGlobalSettings.mProjectSaveState = 1;
+				if(mTextInput.bInputIsAccepted){					
 					mGlobalSettings.mEditorState = ESTATE_PROJECTSAVE;
 
 					mGlobalSettings.ProjectPath = mTextInput.mDialogTextMain;
@@ -1282,9 +1264,7 @@ void OCDialog::recieveInput(int mKey){
 	if(mKey == SDLK_y){
 		if(bSubDialogActive && bSubDialogIsOpen){
 			if(mOpenProject.mTextInput.bInputIsAccepted){
-				mGlobalSettings.ProjectPath = mOpenProject.mTextInput.mDialogTextMain;
-				//mGlobalSettings.mProjectOpenState = 1;
-				//mGlobalSettings.mOpenCreateProjectState = ESTATE_PROJECTOPEN;
+				mGlobalSettings.ProjectPath = mOpenProject.mTextInput.mDialogTextMain;				
 				mGlobalSettings.mEditorState = ESTATE_PROJECTOPEN;
 
 				SDL_StopTextInput();
@@ -1327,9 +1307,7 @@ void OCDialog::recieveInput(int mKey){
 						}
 					}
 				}
-
-				//mGlobalSettings.mProjectOpenState = 2;
-				//mGlobalSettings.mOpenCreateProjectState = ESTATE_PROJECTCREATE;
+				
 				mGlobalSettings.mEditorState = ESTATE_PROJECTCREATE;
 
 				SDL_StopTextInput();
@@ -1477,8 +1455,7 @@ void CTMDialog::recieveInput(int mKey){
 	
 	if(mKey == SDLK_y){		
 		bInputIsAccept=true;	
-		bDialogIsWatingForText = false;		
-		//mGlobalSettings.mNewTileMapState = 1;		
+		bDialogIsWatingForText = false;				
 		mGlobalSettings.mEditorState = ESTATE_TILEMAPCREATE;
 
 		mGlobalSettings.mNewTileMapOffset = toffset - 1;
@@ -1594,11 +1571,6 @@ int CPDialog::render(){
 		ImGui::RadioButton("Y: 8", &tiley, 8);
 		ImGui::SameLine();
 		ImGui::RadioButton("Y: 16", &tiley, 16);
-
-		//int tilesettype = 0;
-		//int tilesetsize = 4;
-		//bool bHasPalette = false;
-		//bool bHasTileSet = false;
 
 		ImGui::Separator();
 
@@ -1817,6 +1789,7 @@ void CPDialog::recieveInput(int mKey){
 	}
 }	
 
+/*
 void RNDialog::dropLastInputChar(){
 	mTextInput.dropLastInputChar();
 }
@@ -1891,7 +1864,7 @@ void RNDialog::cancel(){
 void RNDialog::init(){
 
 }
-
+*/
 
 int ITDialog::render(){	
 	
@@ -1901,7 +1874,6 @@ int ITDialog::render(){
     		
 	ImGui::Text("Import Tile from bitmap or RAW");
 	
-
 	mTextInput.render();
 
 	if (ImGui::Button("Choose Tile File")){
@@ -1961,10 +1933,8 @@ void ITDialog::recieveInput(int mKey){
 	if(mKey == SDLK_y){
 		if(mTextInput.bInputIsAccepted){
 			bInputIsAccept=true;	
-			bDialogIsWatingForText = false;
-			//mGlobalSettings.mOpenTileState = 1;
+			bDialogIsWatingForText = false;			
 			mGlobalSettings.mEditorState = ESTATE_TILEIMPORT;
-
 			mGlobalSettings.mNewTilePath = mTextInput.mDialogTextMain;
 		}		
 	}
@@ -2048,8 +2018,7 @@ void ISFDialog::recieveInput(int mKey){
 	if(mKey == SDLK_y){
 		if(mTextInput.bInputIsAccepted){
 			bInputIsAccept=true;	
-			bDialogIsWatingForText = false;
-			//mGlobalSettings.mOpenTileState = 1;
+			bDialogIsWatingForText = false;			
 			mGlobalSettings.mEditorState = ESTATE_FRAMEIMPORT;
 
 			mGlobalSettings.mNewFramePath = mTextInput.mDialogTextMain;
@@ -2303,8 +2272,7 @@ void ITSDialog::recieveInput(int mKey){
 	if(mKey == SDLK_y){
 		if(mTextInput.bInputIsAccepted){
 			bInputIsAccept=true;	
-			bDialogIsWatingForText = false;
-			//mGlobalSettings.mOpenTileState = 2;
+			bDialogIsWatingForText = false;			
 			mGlobalSettings.mEditorState = ESTATE_TILESETIMPORT;
 			mGlobalSettings.mNewTilePath = mTextInput.mDialogTextMain;
 		}		
@@ -2384,12 +2352,10 @@ void ITMDialog::recieveInput(int mKey){
 			bInputIsAccept=true;	
 			bDialogIsWatingForText = false;
 			mGlobalSettings.mNewTileMapPaletteOffset = mPaletteOffset;
-			if(bUseOffset && (mTileOffset > 1)){
-				//mGlobalSettings.mOpenTileMapState = 2;
+			if(bUseOffset && (mTileOffset > 1)){				
 				mGlobalSettings.mEditorState = ESTATE_TILEMAPIMPORTOFFSET;
 				mGlobalSettings.mNewTileMapOffset = mTileOffset - 1;				
-			} else {
-				//mGlobalSettings.mOpenTileMapState = 1;
+			} else {				
 				mGlobalSettings.mEditorState = ESTATE_TILEMAPIMPORT;
 			}
 			mGlobalSettings.mNewTileMapPath = mTextInput.mDialogTextMain;
@@ -2678,9 +2644,6 @@ int HDialog::render(){
 
     ImGui::Separator();
 
-	
-	
-
 	if(ImGui::CollapsingHeader("General")){
 		ImGui::PushFont(mGlobalSettings.SFont);
 		for(int i = 0; i < mHelpTextGeneral.size(); i++){
@@ -2763,8 +2726,6 @@ int HDialog::render(){
 
 	ImGui::Separator();
 
-	
-
 
 	ImGuiStyle& style = ImGui::GetStyle();
 
@@ -2794,11 +2755,9 @@ void MEDialog::init(){
 	mDialogTextMain = mGlobalSettings.mInfo + " ";
 }
 void MEDialog::setColorScheme(int nScheme){
-	if(nScheme == 1){
-		//mDialogBorderColor = mGlobalSettings.ErrorBorderColor;
+	if(nScheme == 1){		
 		mTextColor = mGlobalSettings.ErrorTextColor;		
-	} else {
-		//mDialogBorderColor = mGlobalSettings.DefaultBorderColor;
+	} else {		
 		mTextColor = mGlobalSettings.DefaultTextColor;		
 	}
 }
@@ -3038,8 +2997,7 @@ void CCPDialog::recieveInput(int mKey){
 		mGlobalSettings.bRunningOCD = true;
 	}
 	if(mKey == SDLK_n){
-		mGlobalSettings.mOpenCreateProjectState = ESTATE_NONE;
-		//mGlobalSettings.mEditorState = ESTATE_NONE;
+		mGlobalSettings.mOpenCreateProjectState = ESTATE_NONE;		
 		bInputIsCancel=true;
 	}
 }

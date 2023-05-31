@@ -199,6 +199,7 @@ class ITMDialog: public ITDialog{
 		virtual void recieveInput(int mKey);		
 };
 
+/*
 class RNDialog: public ITDialog{
 	public:
 		int mNumber = 0;
@@ -220,6 +221,7 @@ class RNDialog: public ITDialog{
 		ImVec2 elmax;
 		ImVec2 esize;		
 };
+*/
 
 class OPDialog: public ITDialog{
 	public:

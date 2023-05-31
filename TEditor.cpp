@@ -177,7 +177,7 @@ void TEditor::initDialogs(){
 
 	mPaletteUpdate.init();
 
-	mInputNumber.init();
+	//mInputNumber.init();
 
 	mPaletteOffset.init();
 

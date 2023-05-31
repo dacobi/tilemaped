@@ -185,7 +185,7 @@ class TEditor{
 		RSDialog mRemoveSprite;
 		RTSDialog mRemoveSelUnused;
 		MEDialog mErrorMessage;
-		RNDialog mInputNumber;
+		//RNDialog mInputNumber;
 		QDialog mQuitDialog;
 		CCPDialog mCloseProjectDialog;
 		PUDialog mPaletteUpdate;
