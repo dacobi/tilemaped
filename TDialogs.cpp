@@ -480,7 +480,7 @@ int TBDialog::render(){
 					ImGui::EndMenu();
 				}
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Sprite Edit").c_str()))){					
-					if(ImGui::SliderInt("Frame Scale", &mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, 4, 24,"%d", ImGuiSliderFlags_NoInput)){						
+					if(ImGui::SliderInt("Frame Scale", &mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, TSprite::MinScale, TSprite::MaxScale,"%d", ImGuiSliderFlags_NoInput)){						
 						mGlobalSettings.CurrentEditor->setSpriteBrushes();						
 					}
 											
@@ -572,10 +572,10 @@ int TBDialog::render(){
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET){
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " TileSet Edit").c_str()))){
-					if(ImGui::SliderInt("Grid Width", &mGlobalSettings.mTileSetEditWidth, 2, 16,"%d", ImGuiSliderFlags_NoInput)){
+					if(ImGui::SliderInt("Grid Width", &mGlobalSettings.mTileSetEditWidth, TileSet::MinGrid, TileSet::MaxGrid,"%d", ImGuiSliderFlags_NoInput)){
 						mGlobalSettings.CurrentEditor->mTileSet.bUpdateEditSelection = true;
 					}
-					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mTileSetEditScale, 2, 24,"%d", ImGuiSliderFlags_NoInput)){
+					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mTileSetEditScale, TileSet::MinScale, TileSet::MaxScale,"%d", ImGuiSliderFlags_NoInput)){
 						mGlobalSettings.CurrentEditor->mTileSet.bUpdateEditSelectionScale = true;
 					}
 					ImGui::EndMenu();
@@ -585,7 +585,7 @@ int TBDialog::render(){
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SELEDIT){
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Selection Edit").c_str()))){					
-					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mSelectionEditScale, 2, 24,"%d", ImGuiSliderFlags_NoInput)){
+					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mSelectionEditScale, TSelectionEditor::MinScale, TSelectionEditor::MaxScale,"%d", ImGuiSliderFlags_NoInput)){
 						mGlobalSettings.CurrentEditor->mSelEdit.bUpdateEditSelectionScale = true;
 					}
 					ImGui::EndMenu();
@@ -595,7 +595,7 @@ int TBDialog::render(){
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE){
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Tile Edit").c_str()))){					
-					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mGlobalTexParam.TilePixelSize, 4, 24,"%d", ImGuiSliderFlags_NoInput)){						
+					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mGlobalTexParam.TilePixelSize, Tile::MinScale, Tile::MaxScale,"%d", ImGuiSliderFlags_NoInput)){						
 						mGlobalSettings.CurrentEditor->mBrushesPixel.setBrushDeltas(mGlobalSettings.mGlobalTexParam.TilePixelSize, mGlobalSettings.mGlobalTexParam.TilePixelSize, &mGlobalSettings.mGlobalTexParam.mTileEdScale, mGlobalSettings.mGlobalTexParam.mTileEdScale, &mGlobalSettings.mGlobalTexParam);
 					}
 											

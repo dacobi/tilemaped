@@ -458,7 +458,7 @@ void TSettings::settingsMenu(){
 			ImGui::Checkbox("VSYNC", &mINIFile.Sys_VSYNC->bvalue);
 			ImGui::Separator();
 			ImGui::Text("Window");
-			ImGui::Checkbox("Restore", &mINIFile.Win_Restore->bvalue);
+			ImGui::Checkbox("Restore Size", &mINIFile.Win_Restore->bvalue);
 			if(!mINIFile.Win_Restore->bvalue){
 				ImGui::Checkbox("Maximize", &mINIFile.Win_Maximize->bvalue);
 			}

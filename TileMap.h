@@ -130,6 +130,8 @@ class Tile: public TTexture{
 		int scale(double cScale);
 		int applyFilter();
 		bool bIsSelected = false;
+		const static int MaxScale = 24;
+        const static int MinScale = 4;
 		TEActionUndoStack mActionStack;
 		TSelection mSelection;		
 };	
@@ -153,6 +155,10 @@ class TileSet{
 		int mSelEdWidth=4;
 		int mCurEdScale=10;
 		int mPixelScale = 1;
+		const static int MaxScale = 24;
+        const static int MinScale = 4;
+		const static int MaxGrid = 16;
+        const static int MinGrid = 2;
 		int mSelectionAreaX;
 		int mSelectionAreaY;
 		int reCalculateScale();

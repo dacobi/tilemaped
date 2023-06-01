@@ -152,6 +152,8 @@ class TSelectionEditor{
 		int mSelectionAreaX;
 		int mSelectionAreaY;
         int mPixelScale = 1;
+        const static int MaxScale = 24;
+        const static int MinScale = 4;
         TEActionUndoStack mActionStack;
 };
 
