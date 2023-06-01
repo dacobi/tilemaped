@@ -207,8 +207,8 @@ int TSettings::initSettings(){
 		window_flags = (SDL_WindowFlags)( SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	}
 
-	WindowWidth = SCREEN_WIDTH;
-	WindowHeight = SCREEN_HEIGHT;
+	//WindowWidth = SCREEN_WIDTH;
+	//WindowHeight = SCREEN_HEIGHT;
 
 	//SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "1");
 
@@ -217,7 +217,7 @@ int TSettings::initSettings(){
     	std::cout << "WARNING: High DPI not disabled!" << std::endl;
 	}
 
-	TWindow = SDL_CreateWindow( "TilemapEd", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, window_flags);
+	TWindow = SDL_CreateWindow( "TilemapEd", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WindowWidth, WindowHeight, window_flags);
 	if( TWindow == NULL ){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
 		return 1;
@@ -986,6 +986,9 @@ int main( int argc, char* args[] )
 	mGlobalSettings.bVSync = bVsync;
 	mGlobalSettings.bMaximize = bMaximize;
 
+	mGlobalSettings.WindowWidth = mGlobalSettings.mINIFile.Win_Width->ivalue; 
+	mGlobalSettings.WindowHeight = mGlobalSettings.mINIFile.Win_Height->ivalue; 
+
 	if( mGlobalSettings.initSettings() ){
 		std::cout << "SDL Init Failed!" << std::endl;
 	}
@@ -1065,7 +1068,10 @@ int main( int argc, char* args[] )
 
 		mGlobalSettings.shutdown();		
 	}
-	
+
+	mGlobalSettings.mINIFile.Win_Width->ivalue = mGlobalSettings.WindowWidth;  
+	mGlobalSettings.mINIFile.Win_Height->ivalue = mGlobalSettings.WindowHeight; 
+
 #ifdef MNIXHOME
 	mGlobalSettings.mINIFile.writedefault(inipath.string()+DIRDEL+"tilemaped.ini");
 #else

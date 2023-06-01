@@ -146,10 +146,14 @@ ProjectSettings::ProjectSettings(){
 ProgramSettings::ProgramSettings(){	
 	Sys_Renderer = new sKey("Sys_Renderer", type_int, 0);
 	Sys_VSYNC = new sKey("Sys_VSYNC", type_bool, true);
+	Win_Width = new sKey("Win_Width", type_int, 1900);
+	Win_Height = new sKey("Win_Height", type_int, 1000);
 	Win_Maximize = new sKey("Win_Maximize", type_bool, false);	
 
 	keys.push_back(Sys_Renderer);
 	keys.push_back(Sys_VSYNC);
+	keys.push_back(Win_Width);
+	keys.push_back(Win_Height);	
 	keys.push_back(Win_Maximize);	
 
 	for(int i = 0; i < keys.size(); i++){
