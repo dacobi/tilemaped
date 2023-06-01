@@ -603,7 +603,7 @@ void printUsage(){
 		std::cout << "TilemapEd Version: " << TilemapEd_Version  << std::endl;
 		std::cout << std::endl;	
 		std::cout << "Command Line Usage:" << std::endl;
-		std::cout << "tilemaped [ --opengl, --d3d, --software, --window, --maximize, --vsync, --novsync ] (options are saved to \""+mINIPath+"\")" << std::endl;		
+		std::cout << "tilemaped [ --opengl, --d3d, --software, --window, --maximize, --smallwindow, --vsync, --novsync ] (options are saved to \""+mINIPath+"\")" << std::endl;		
 		std::cout << "tilemaped -o <folder>" << std::endl;		
 		std::cout << "tilemaped -n <mapwidth> <mapheight> <tilewidth> <tileheight> <folder> [ -p <palette file> ]" << std::endl;
 		std::cout << "tilemaped -c <Gimp Palette> <palfile.bin>" << std::endl;		
@@ -843,6 +843,10 @@ int parseArgs(int argc, char *argv[]){
 			argpos++;
 			if(!(returnval & 0x400)) returnval += 0x400;
 			continue;	
+		} else if(std::string(argv[argpos]) == "--smallwindow"){
+			argpos++;
+			if(!(returnval & 0x800)) returnval += 0x800;
+			continue;	
 		}
 
 
@@ -866,6 +870,7 @@ int main( int argc, char* args[] )
 	bool bVsync = true;
 	bool bRenderD3D = false;
 	bool bMaximize = false;
+	bool bSmallWindow = false;
 	
 #ifdef MNIXHOME
 	fs::path inipath = std::string(getenv("HOME")) + DIRDEL + ".tilemaped";
@@ -969,6 +974,9 @@ int main( int argc, char* args[] )
 	if(argvals & 0x400){
 		bMaximize = true;
 	}
+	if(argvals & 0x800){
+		bSmallWindow = true;
+	}
 
 	mGlobalSettings.mINIFile.Sys_VSYNC->bvalue = bVsync;// ? 1 : 0;
 
@@ -989,8 +997,13 @@ int main( int argc, char* args[] )
 	mGlobalSettings.bVSync = bVsync;
 	mGlobalSettings.bMaximize = bMaximize;
 
-	mGlobalSettings.WindowWidth = mGlobalSettings.mINIFile.Win_Width->ivalue; 
-	mGlobalSettings.WindowHeight = mGlobalSettings.mINIFile.Win_Height->ivalue; 
+	if(bSmallWindow){
+		mGlobalSettings.WindowWidth = 900; 
+		mGlobalSettings.WindowHeight = 500; 
+	} else {
+		mGlobalSettings.WindowWidth = mGlobalSettings.mINIFile.Win_Width->ivalue; 
+		mGlobalSettings.WindowHeight = mGlobalSettings.mINIFile.Win_Height->ivalue; 
+	}
 
 	if( mGlobalSettings.initSettings() ){
 		std::cout << "SDL Init Failed!" << std::endl;
