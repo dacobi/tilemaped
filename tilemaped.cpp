@@ -458,7 +458,10 @@ void TSettings::settingsMenu(){
 			ImGui::Checkbox("VSYNC", &mINIFile.Sys_VSYNC->bvalue);
 			ImGui::Separator();
 			ImGui::Text("Window");
-			ImGui::Checkbox("Maximize", &mINIFile.Win_Maximize->bvalue);
+			ImGui::Checkbox("Restore", &mINIFile.Win_Restore->bvalue);
+			if(!mINIFile.Win_Restore->bvalue){
+				ImGui::Checkbox("Maximize", &mINIFile.Win_Maximize->bvalue);
+			}
 			ImGui::EndMenu();
 	}
 }
@@ -1069,8 +1072,23 @@ int main( int argc, char* args[] )
 		mGlobalSettings.shutdown();		
 	}
 
-	mGlobalSettings.mINIFile.Win_Width->ivalue = mGlobalSettings.WindowWidth;  
-	mGlobalSettings.mINIFile.Win_Height->ivalue = mGlobalSettings.WindowHeight; 
+	if(mGlobalSettings.mINIFile.Win_Restore->bvalue){
+
+		mGlobalSettings.mINIFile.Win_Width->ivalue = mGlobalSettings.WindowWidth;  
+		mGlobalSettings.mINIFile.Win_Height->ivalue = mGlobalSettings.WindowHeight; 
+
+		Uint32 cCurFlags = SDL_GetWindowFlags(mGlobalSettings.TWindow);
+
+		if(cCurFlags & SDL_WINDOW_MAXIMIZED){
+			mGlobalSettings.mINIFile.Win_Maximize->bvalue = true;
+		} else {
+			mGlobalSettings.mINIFile.Win_Maximize->bvalue = false;
+		}
+	} else {
+		mGlobalSettings.mINIFile.Win_Width->ivalue = SCREEN_WIDTH;  
+		mGlobalSettings.mINIFile.Win_Height->ivalue = SCREEN_HEIGHT; 
+	}
+
 
 #ifdef MNIXHOME
 	mGlobalSettings.mINIFile.writedefault(inipath.string()+DIRDEL+"tilemaped.ini");

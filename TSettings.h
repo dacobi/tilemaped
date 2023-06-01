@@ -158,6 +158,7 @@ public:
 	
 	sKey *Sys_Renderer;
 	sKey *Sys_VSYNC;
+	sKey *Win_Restore;
 	sKey *Win_Width;
 	sKey *Win_Height;	
 	sKey *Win_Maximize;	
