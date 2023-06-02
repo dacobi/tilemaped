@@ -162,6 +162,7 @@ public:
 	sKey *Win_Width;
 	sKey *Win_Height;	
 	sKey *Win_Maximize;	
+	sKey *Win_HighDPI;
 };
 
 struct TextureParameters{

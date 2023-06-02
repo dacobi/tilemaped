@@ -18,6 +18,10 @@
 #define SCREEN_WIDTH 1900
 #define SCREEN_HEIGHT 1000
 
+#define SCREEN_WIDTH_HIGHDPI 900
+#define SCREEN_HEIGHT_HIGHDPI 500
+
+
 #include "version.h"
 
 //#define MAPPIMAGE
@@ -603,7 +607,7 @@ void printUsage(){
 		std::cout << "TilemapEd Version: " << TilemapEd_Version  << std::endl;
 		std::cout << std::endl;	
 		std::cout << "Command Line Usage:" << std::endl;
-		std::cout << "tilemaped [ --opengl, --d3d, --software, --window, --maximize, --smallwindow, --vsync, --novsync ] (options are saved to \""+mINIPath+"\")" << std::endl;		
+		std::cout << "tilemaped [ --opengl, --d3d, --software, --window, --maximize, --highdpi, --nohighdpi, --vsync, --novsync ] (options are saved to \""+mINIPath+"\")" << std::endl;		
 		std::cout << "tilemaped -o <folder>" << std::endl;		
 		std::cout << "tilemaped -n <mapwidth> <mapheight> <tilewidth> <tileheight> <folder> [ -p <palette file> ]" << std::endl;
 		std::cout << "tilemaped -c <Gimp Palette> <palfile.bin>" << std::endl;		
@@ -843,9 +847,14 @@ int parseArgs(int argc, char *argv[]){
 			argpos++;
 			if(!(returnval & 0x400)) returnval += 0x400;
 			continue;	
-		} else if(std::string(argv[argpos]) == "--smallwindow"){
+		} else if(std::string(argv[argpos]) == "--highdpi"){
 			argpos++;
 			if(!(returnval & 0x800)) returnval += 0x800;
+			continue;	
+		}
+		 else if(std::string(argv[argpos]) == "--nohighdpi"){
+			argpos++;
+			if(!(returnval & 0x1000)) returnval += 0x1000;
 			continue;	
 		}
 
@@ -871,6 +880,7 @@ int main( int argc, char* args[] )
 	bool bRenderD3D = false;
 	bool bMaximize = false;
 	bool bSmallWindow = false;
+	bool bDisableHighDPI = false;
 	
 #ifdef MNIXHOME
 	fs::path inipath = std::string(getenv("HOME")) + DIRDEL + ".tilemaped";
@@ -977,6 +987,12 @@ int main( int argc, char* args[] )
 	if(argvals & 0x800){
 		bSmallWindow = true;
 	}
+	if(argvals & 0x1000){
+		bSmallWindow = false;
+		bDisableHighDPI = true;
+	}
+
+	
 
 	mGlobalSettings.mINIFile.Sys_VSYNC->bvalue = bVsync;// ? 1 : 0;
 
@@ -998,11 +1014,22 @@ int main( int argc, char* args[] )
 	mGlobalSettings.bMaximize = bMaximize;
 
 	if(bSmallWindow){
-		mGlobalSettings.WindowWidth = 900; 
-		mGlobalSettings.WindowHeight = 500; 
+		mGlobalSettings.WindowWidth = SCREEN_WIDTH_HIGHDPI; 
+		mGlobalSettings.WindowHeight = SCREEN_HEIGHT_HIGHDPI;
+		mGlobalSettings.mINIFile.Win_HighDPI->bvalue = true;
+		mGlobalSettings.mINIFile.Win_Width->ivalue = mGlobalSettings.WindowWidth;
+		mGlobalSettings.mINIFile.Win_Height->ivalue = mGlobalSettings.WindowHeight;
 	} else {
-		mGlobalSettings.WindowWidth = mGlobalSettings.mINIFile.Win_Width->ivalue; 
-		mGlobalSettings.WindowHeight = mGlobalSettings.mINIFile.Win_Height->ivalue; 
+		if(bDisableHighDPI){			
+			mGlobalSettings.WindowWidth = SCREEN_WIDTH; 
+			mGlobalSettings.WindowHeight = SCREEN_HEIGHT;
+			mGlobalSettings.mINIFile.Win_HighDPI->bvalue = false;
+			mGlobalSettings.mINIFile.Win_Width->ivalue = mGlobalSettings.WindowWidth;
+			mGlobalSettings.mINIFile.Win_Height->ivalue = mGlobalSettings.WindowHeight;
+		} else {
+			mGlobalSettings.WindowWidth = mGlobalSettings.mINIFile.Win_Width->ivalue; 
+			mGlobalSettings.WindowHeight = mGlobalSettings.mINIFile.Win_Height->ivalue; 
+		}
 	}
 
 	if( mGlobalSettings.initSettings() ){
@@ -1098,8 +1125,13 @@ int main( int argc, char* args[] )
 			mGlobalSettings.mINIFile.Win_Maximize->bvalue = false;
 		}
 	} else {
-		mGlobalSettings.mINIFile.Win_Width->ivalue = SCREEN_WIDTH;  
-		mGlobalSettings.mINIFile.Win_Height->ivalue = SCREEN_HEIGHT; 
+		if(mGlobalSettings.mINIFile.Win_HighDPI->bvalue){
+			mGlobalSettings.mINIFile.Win_Width->ivalue = SCREEN_WIDTH_HIGHDPI;  
+			mGlobalSettings.mINIFile.Win_Height->ivalue = SCREEN_HEIGHT_HIGHDPI; 
+		} else {
+			mGlobalSettings.mINIFile.Win_Width->ivalue = SCREEN_WIDTH;  
+			mGlobalSettings.mINIFile.Win_Height->ivalue = SCREEN_HEIGHT; 
+		}
 	}
 
 

@@ -149,7 +149,8 @@ ProgramSettings::ProgramSettings(){
 	Win_Restore = new sKey("Win_Restore", type_bool, true);
 	Win_Width = new sKey("Win_Width", type_int, 1900);
 	Win_Height = new sKey("Win_Height", type_int, 1000);
-	Win_Maximize = new sKey("Win_Maximize", type_bool, false);	
+	Win_Maximize = new sKey("Win_Maximize", type_bool, false);
+	Win_HighDPI = new sKey("Win_HighDPI", type_bool, false);
 
 	keys.push_back(Sys_Renderer);
 	keys.push_back(Sys_VSYNC);
@@ -157,6 +158,7 @@ ProgramSettings::ProgramSettings(){
 	keys.push_back(Win_Width);
 	keys.push_back(Win_Height);	
 	keys.push_back(Win_Maximize);	
+	keys.push_back(Win_HighDPI);
 
 	for(int i = 0; i < keys.size(); i++){
 		keyindex[keys[i]->kname] = i;
