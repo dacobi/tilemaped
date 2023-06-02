@@ -312,10 +312,10 @@ int TSettings::initSettings(){
 	builder.BuildRanges(&ranges);       
 
 	if(mGlobalSettings.mINIFile.Win_HighDPI->bvalue){
-		DFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 12.5,  NULL, ranges.Data);
+		DFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 14.0,  NULL, ranges.Data);
 		mio->Fonts->Build();
 
-		SFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 10.0,  NULL, ranges.Data);
+		SFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 12.0,  NULL, ranges.Data);
 		mio->Fonts->Build();
 	} else {
 		DFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 25.0,  NULL, ranges.Data);
@@ -449,6 +449,7 @@ void TSettings::settingsMenu(){
 			ImGui::Checkbox("Restore Size", &mINIFile.Win_Restore->bvalue);
 			if(!mINIFile.Win_Restore->bvalue){
 				ImGui::Checkbox("Maximize", &mINIFile.Win_Maximize->bvalue);
+				ImGui::Checkbox("HIGHDPI", &mINIFile.Win_HighDPI->bvalue);
 			}
 			ImGui::EndMenu();
 	}
