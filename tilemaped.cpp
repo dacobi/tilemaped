@@ -265,31 +265,7 @@ int TSettings::initSettings(){
 		std::cout << "SDL_image Error: " << IMG_GetError() << std::endl;
 		return 1;
  	}
-	
- 	//TTF_Init();
-	//TFont =  TTF_OpenFont(NERDFONT,20);
-
-	/*
-	if(TFont == NULL){
-		std::cout << "SDL_TTF Error: " << TTF_GetError() << std::endl;
-		return 1;
-	}
-
-	LFont =  TTF_OpenFont(NERDFONT,30);	
-	if(LFont == NULL){
-		std::cout << "SDL_TTF Error: " << TTF_GetError() << std::endl;
-		return 1;
-	}
-	UFont =  TTF_OpenFont(NERDFONT,20);	
-	if(UFont == NULL){
-		std::cout << "SDL_TTF Error: " << TTF_GetError() << std::endl;
-		return 1;
-	}
-	
-	TTF_SetFontStyle(LFont, TTF_STYLE_UNDERLINE);
-	TTF_SetFontStyle(UFont, TTF_STYLE_UNDERLINE);
-	*/
-	
+		
 	SDL_SetWindowResizable(TWindow, SDL_TRUE);
 
 	initHelpText();
@@ -335,12 +311,20 @@ int TSettings::initSettings(){
 	builder.AddRanges(io.Fonts->GetGlyphRangesDefault()); // Add one of the default ranges
 	builder.BuildRanges(&ranges);       
 
-	DFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 25.0,  NULL, ranges.Data);
-	mio->Fonts->Build();
+	if(mGlobalSettings.mINIFile.Win_HighDPI->bvalue){
+		DFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 12.5,  NULL, ranges.Data);
+		mio->Fonts->Build();
 
-	SFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 20.0,  NULL, ranges.Data);
-	mio->Fonts->Build();
-	
+		SFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 10.0,  NULL, ranges.Data);
+		mio->Fonts->Build();
+	} else {
+		DFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 25.0,  NULL, ranges.Data);
+		mio->Fonts->Build();
+
+		SFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 20.0,  NULL, ranges.Data);
+		mio->Fonts->Build();
+	}
+
     
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
