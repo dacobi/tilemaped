@@ -216,10 +216,10 @@ int TSettings::initSettings(){
 
 	//SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "1");
 
-	if (!SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "1")) {
+	//if (!SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "1")) {
     	// Warning: High DPI not disabled!
-    	std::cout << "WARNING: High DPI not disabled!" << std::endl;
-	}
+    //	std::cout << "WARNING: High DPI not disabled!" << std::endl;
+	//}
 
 	TWindow = SDL_CreateWindow( "TilemapEd", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WindowWidth, WindowHeight, window_flags);
 	if( TWindow == NULL ){
@@ -449,7 +449,7 @@ void TSettings::settingsMenu(){
 			ImGui::Checkbox("Restore Size", &mINIFile.Win_Restore->bvalue);
 			if(!mINIFile.Win_Restore->bvalue){
 				ImGui::Checkbox("Maximize", &mINIFile.Win_Maximize->bvalue);
-				ImGui::Checkbox("HIGHDPI", &mINIFile.Win_HighDPI->bvalue);
+				//ImGui::Checkbox("HIGHDPI", &mINIFile.Win_HighDPI->bvalue);
 			}
 			ImGui::EndMenu();
 	}
@@ -1097,17 +1097,15 @@ int main( int argc, char* args[] )
 		mGlobalSettings.shutdown();		
 	}
 
-	if(mGlobalSettings.mINIFile.Win_Restore->bvalue){
-
-		mGlobalSettings.mINIFile.Win_Width->ivalue = mGlobalSettings.WindowWidth;  
-		mGlobalSettings.mINIFile.Win_Height->ivalue = mGlobalSettings.WindowHeight; 
-
+	if(mGlobalSettings.mINIFile.Win_Restore->bvalue){		
 		Uint32 cCurFlags = SDL_GetWindowFlags(mGlobalSettings.TWindow);
 
 		if(cCurFlags & SDL_WINDOW_MAXIMIZED){
 			mGlobalSettings.mINIFile.Win_Maximize->bvalue = true;
 		} else {
 			mGlobalSettings.mINIFile.Win_Maximize->bvalue = false;
+			mGlobalSettings.mINIFile.Win_Width->ivalue = mGlobalSettings.WindowWidth;  
+			mGlobalSettings.mINIFile.Win_Height->ivalue = mGlobalSettings.WindowHeight; 
 		}
 	} else {
 		if(mGlobalSettings.mINIFile.Win_HighDPI->bvalue){
