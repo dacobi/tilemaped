@@ -151,6 +151,7 @@ ProgramSettings::ProgramSettings(){
 	Win_Height = new sKey("Win_Height", type_int, 1000);
 	Win_Maximize = new sKey("Win_Maximize", type_bool, false);
 	Win_HighDPI = new sKey("Win_HighDPI", type_bool, false);
+	Win_UIScale = new sKey("Win_UIScale", type_int, 100);
 
 	keys.push_back(Sys_Renderer);
 	keys.push_back(Sys_VSYNC);
@@ -159,6 +160,7 @@ ProgramSettings::ProgramSettings(){
 	keys.push_back(Win_Height);	
 	keys.push_back(Win_Maximize);	
 	keys.push_back(Win_HighDPI);
+	keys.push_back(Win_UIScale);
 
 	for(int i = 0; i < keys.size(); i++){
 		keyindex[keys[i]->kname] = i;
@@ -192,7 +194,7 @@ sKey* ProjectSettings::getSpriteScaleKey(int cSNum){
 	sKey *cSpriteKey = getKey(std::string("Sprite"+sSnum+"_PixelScale"));
 
 	if(cSpriteKey == keys[0]){
-		std::cout << "Sprite Key Not Found!" << std::endl;
+		//std::cout << "Sprite Key Not Found!" << std::endl;
 		return NULL;
 	}
 
@@ -257,7 +259,7 @@ int Settings::load(std::string filename){
 	//xmlFreeParserInputBuffer(buf);
 
 	if(xmlValidateDtd(mctxt, myDoc, myDtd)){
-		std::cout << "Settings are Valid" << std::endl;
+		//std::cout << "Settings are Valid" << std::endl;
 	} else {
 		std::cout << "Settings are INVALID" << std::endl;
 		xmlFreeDoc(myDoc);

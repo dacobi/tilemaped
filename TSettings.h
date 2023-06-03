@@ -163,6 +163,7 @@ public:
 	sKey *Win_Height;	
 	sKey *Win_Maximize;	
 	sKey *Win_HighDPI;
+	sKey *Win_UIScale;
 };
 
 struct TextureParameters{
@@ -186,6 +187,10 @@ class TSettings{
 		SDL_Window *TWindow;
 		ProjectSettings mProjectSettings;		
 		TextureParameters mGlobalTexParam;
+
+		std::string mErrorMessage = "";
+
+		int mNewUIScale = 0;
 		
 		int WindowWidth=1900;
 		int WindowHeight=1000;

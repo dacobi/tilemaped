@@ -18,10 +18,6 @@
 #define SCREEN_WIDTH 1900
 #define SCREEN_HEIGHT 1000
 
-#define SCREEN_WIDTH_HIGHDPI 900
-#define SCREEN_HEIGHT_HIGHDPI 500
-
-
 #include "version.h"
 
 //#define MAPPIMAGE
@@ -35,8 +31,6 @@
 #define MNIXHOME
 #include <stdlib.h>
 #endif
-
-
 
 namespace fs = std::filesystem;
 
@@ -206,20 +200,10 @@ int TSettings::initSettings(){
     SDL_WindowFlags window_flags;
 		
 	if(bRenderingD3D || bSoftwareRendering){
-		window_flags = (SDL_WindowFlags)( SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE); // SDL_WINDOW_ALLOW_HIGHDPI |
+		window_flags = (SDL_WindowFlags)( SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	} else {		
 		window_flags = (SDL_WindowFlags)( SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	}
-
-	//WindowWidth = SCREEN_WIDTH;
-	//WindowHeight = SCREEN_HEIGHT;
-
-	//SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "1");
-
-	//if (!SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "1")) {
-    	// Warning: High DPI not disabled!
-    //	std::cout << "WARNING: High DPI not disabled!" << std::endl;
-	//}
 
 	TWindow = SDL_CreateWindow( "TilemapEd", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WindowWidth, WindowHeight, window_flags);
 	if( TWindow == NULL ){
@@ -370,12 +354,9 @@ void TSettings::close(){
 	mGlobalTexParam.mTileEdScale = 4;
 	mGlobalTexParam.TileRenderSize=16;
 	
-	
-
-
 	bShowPaletteOffset = false;
 	
-	PaletteScale=2;
+	PaletteScale = 2;
 	ProjectPath = "";
 	
 	ProjectPalettePath = "";	
@@ -448,8 +429,7 @@ void TSettings::settingsMenu(){
 			ImGui::Text("Window");
 			ImGui::Checkbox("Restore Size", &mINIFile.Win_Restore->bvalue);
 			if(!mINIFile.Win_Restore->bvalue){
-				ImGui::Checkbox("Maximize", &mINIFile.Win_Maximize->bvalue);
-				//ImGui::Checkbox("HIGHDPI", &mINIFile.Win_HighDPI->bvalue);
+				ImGui::Checkbox("Maximize", &mINIFile.Win_Maximize->bvalue);				
 			}
 			ImGui::EndMenu();
 	}
@@ -479,8 +459,7 @@ int TSettings::runOCD(int mode){
 		}
 
 		if(mOpenCreate.bInputIsCancel){
-			bRunningOCD = false;
-			//mProjectOpenState = 0;
+			bRunningOCD = false;			
 			mEditorState = ESTATE_NONE;
 		}
 
@@ -592,7 +571,7 @@ void printUsage(){
 		std::cout << "TilemapEd Version: " << TilemapEd_Version  << std::endl;
 		std::cout << std::endl;	
 		std::cout << "Command Line Usage:" << std::endl;
-		std::cout << "tilemaped [ --opengl, --d3d, --software, --window, --maximize, --highdpi, --nohighdpi, --vsync, --novsync ] (options are saved to \""+mINIPath+"\")" << std::endl;		
+		std::cout << "tilemaped [ --opengl, --d3d, --software, --window, --maximize, --highdpi <UIScaleInPercent>, --nohighdpi, --vsync, --novsync ] (options are saved to \""+mINIPath+"\")" << std::endl;
 		std::cout << "tilemaped -o <folder>" << std::endl;		
 		std::cout << "tilemaped -n <mapwidth> <mapheight> <tilewidth> <tileheight> <folder> [ -p <palette file> ]" << std::endl;
 		std::cout << "tilemaped -c <Gimp Palette> <palfile.bin>" << std::endl;		
@@ -601,8 +580,6 @@ void printUsage(){
 
 void TSettings::printHelpText(){
 	initHelpText();
-
-
 	
 	std::cout << "General:" << std::endl;	
 
@@ -663,7 +640,6 @@ void TSettings::printHelpText(){
 
 	std::cout  << std::endl;	
 	
-
 	printUsage();
 }
 
@@ -696,13 +672,14 @@ int parseArgs(int argc, char *argv[]){
 			if((argc-argpos) >= 2){
 				argpos++;
 				if(fs::is_directory(fs::status(argv[argpos]))){
-					std::cout << "Folder found" << std::endl;
+					//std::cout << "Folder found" << std::endl;
 					mGlobalSettings.ProjectPath = std::string(argv[argpos]); 						
 					returnval += 2;
 					argpos++;
 					continue;	
 				} else {
-					std::cout << "Folder not found!" << std::endl;						
+					mGlobalSettings.mErrorMessage = "Error! Folder not found: " + std::string(argv[argpos]);
+					//std::cout << "Error! Folder not found: " << argv[argpos] << std::endl;						
 					return -1;
 				}
 			}
@@ -716,7 +693,13 @@ int parseArgs(int argc, char *argv[]){
 					returnval += 0x20;
 					argpos++;
 					continue;
-				} else { 
+				} else {
+					if(fs::exists(fs::status(argv[argpos]))){
+						mGlobalSettings.mErrorMessage = "Error! Palette file invalid: " + std::string(argv[argpos]);
+					} else {
+						mGlobalSettings.mErrorMessage = "Error! Palette file not found: " + std::string(argv[argpos]);
+					}					
+					//std::cout << "Error! Palette file invalid: " << argv[argpos] << std::endl;
 					return -1;
 				}
 			} else { 
@@ -731,8 +714,9 @@ int parseArgs(int argc, char *argv[]){
 				if((nMapSizeX == 32) || (nMapSizeX == 64) || (nMapSizeX == 128) || (nMapSizeX == 256)){				
 					mGlobalSettings.TileMapWidth = nMapSizeX;						
 				} else {
-					std::cout << "Wrong TileMap Size!" << std::endl;
-					std::cout << "Valid Values are: 32, 64, 128, 256" << std::endl;						
+					mGlobalSettings.mErrorMessage = "Wrong TileMap Size!\nValid values are: 32, 64, 128, 256";
+					//std::cout << "Wrong TileMap Size!" << std::endl;
+					//std::cout << "Valid Values are: 32, 64, 128, 256" << std::endl;						
 					return -1;
 				}
 
@@ -743,8 +727,9 @@ int parseArgs(int argc, char *argv[]){
 				if((nMapSizeY == 32) || (nMapSizeY == 64) || (nMapSizeY == 128) || (nMapSizeY == 256)){	
 					mGlobalSettings.TileMapHeight = nMapSizeY;
 				} else {
-					std::cout << "Wrong TileMap Size!" << std::endl;
-					std::cout << "Valid Values are: 32, 64, 128, 256" << std::endl;						
+					mGlobalSettings.mErrorMessage = "Wrong TileMap Size!\nValid values are: 32, 64, 128, 256";
+					//std::cout << "Wrong TileMap Size!" << std::endl;
+					//std::cout << "Valid Values are: 32, 64, 128, 256" << std::endl;						
 					return -1;
 				}			
 
@@ -755,8 +740,9 @@ int parseArgs(int argc, char *argv[]){
 				if((nTileSize == 16) || (nTileSize == 8)){	
 					mGlobalSettings.mGlobalTexParam.TileSizeX = nTileSize;	
 				} else {
-					std::cout << "Wrong TileSize!" << std::endl;
-					std::cout << "Valid Values are: 8, 16" << std::endl;						
+					mGlobalSettings.mErrorMessage = "Wrong TileSize!\nValid values are: 8, 16";
+					//std::cout << "Wrong TileSize!" << std::endl;
+					//std::cout << "Valid Values are: 8, 16" << std::endl;						
 					return -1;
 				}
 
@@ -767,14 +753,16 @@ int parseArgs(int argc, char *argv[]){
 				if((nTileSize == 16) || (nTileSize == 8)){	
 					mGlobalSettings.mGlobalTexParam.TileSizeY = nTileSize;	
 				} else {
-					std::cout << "Wrong TileSize!" << std::endl;
-					std::cout << "Valid Values are: 8, 16" << std::endl;						
+					mGlobalSettings.mErrorMessage = "Wrong TileSize!\nValid values are: 8, 16";
+					//std::cout << "Wrong TileSize!" << std::endl;
+					//std::cout << "Valid Values are: 8, 16" << std::endl;						
 					return -1;
 				}
 
 				argpos++;
 				if(fs::exists(fs::status(argv[argpos]))){
-					std::cout << "Error Folder Exists! " << std::endl;						
+					mGlobalSettings.mErrorMessage = "Error! Folder exists: " + std::string(argv[argpos]);
+					//std::cout << "Error! Folder Exists: " << argv[argpos] << std::endl;						
 					return -1;
 				} else {
 					mGlobalSettings.ProjectPath = std::string(argv[argpos]);						
@@ -790,14 +778,15 @@ int parseArgs(int argc, char *argv[]){
 					if(argpos == argc){					
 						return -1;
 					}	
-					if((fs::exists(fs::status(argv[argpos]))) && !(fs::is_directory(fs::status(argv[argpos])))){
-						std::cout << "Palette found" << std::endl;						
+					if((fs::exists(fs::status(argv[argpos]))) && !(fs::is_directory(fs::status(argv[argpos])))){						
+						//std::cout << "Palette found" << std::endl;						
 						mGlobalSettings.bProjectHasPalette = true;
 						mGlobalSettings.ProjectPalettePath = std::string(argv[argpos]);
 						argpos++;
 						continue;							
 					} else {
-						std::cout << "Palette file not found!" << std::endl;						
+						mGlobalSettings.mErrorMessage = "Error! Palette file not found: " + std::string(argv[argpos]);
+						//std::cout << "Error! Palette file not found: " << argv[argpos] << std::endl;						
 						return -1;
 					}
 				}								
@@ -832,9 +821,24 @@ int parseArgs(int argc, char *argv[]){
 			argpos++;
 			if(!(returnval & 0x400)) returnval += 0x400;
 			continue;	
-		} else if(std::string(argv[argpos]) == "--highdpi"){
-			argpos++;
-			if(!(returnval & 0x800)) returnval += 0x800;
+		} else if(std::string(argv[argpos]) == "--highdpi"){			
+			if((argc-argpos) >= 2){
+				argpos++;
+				mConvert << argv[argpos] << std::endl;
+				int cTmpUI;
+				mConvert >> cTmpUI;
+				if((cTmpUI >= 100) && (cTmpUI <= 500)){
+					mGlobalSettings.mNewUIScale = cTmpUI;
+					if(!(returnval & 0x800)) returnval += 0x800;
+				} else {
+					mGlobalSettings.mErrorMessage = "Error! Incorrect DPI value: " + std::string(argv[argpos]) + "\nValid values are bewteen: 100-500";
+					//std::cout << "Error! Incorrect DPI Value: " << cTmpUI << std::endl;					 	
+					return -1;
+				}
+			} else {
+				return -1;
+			} 
+			argpos++;			
 			continue;	
 		}
 		 else if(std::string(argv[argpos]) == "--nohighdpi"){
@@ -842,16 +846,14 @@ int parseArgs(int argc, char *argv[]){
 			if(!(returnval & 0x1000)) returnval += 0x1000;
 			continue;	
 		}
-
-
 		
 		looptime--;
 		if(looptime == 0){			
 			return -1;
 		}
 	}
-	return returnval;
 
+	return returnval;
 }
 
 
@@ -916,8 +918,10 @@ int main( int argc, char* args[] )
 
 	int argvals = parseArgs(argc, args);
 
-	if(argvals == -1){
+	if(argvals == -1){		
 		printUsage();
+		std::cout << std::endl;
+		std::cout << mGlobalSettings.mErrorMessage << std::endl;
 		return 1;
 	}
 
@@ -999,8 +1003,9 @@ int main( int argc, char* args[] )
 	mGlobalSettings.bMaximize = bMaximize;
 
 	if(bSmallWindow){
-		mGlobalSettings.WindowWidth = SCREEN_WIDTH_HIGHDPI; 
-		mGlobalSettings.WindowHeight = SCREEN_HEIGHT_HIGHDPI;
+		mGlobalSettings.mINIFile.Win_UIScale->ivalue = mGlobalSettings.mNewUIScale;
+		mGlobalSettings.WindowWidth = (int) (SCREEN_WIDTH / ((float)mGlobalSettings.mINIFile.Win_UIScale->ivalue/100.0)); 
+		mGlobalSettings.WindowHeight = (int) (SCREEN_HEIGHT / ((float)mGlobalSettings.mINIFile.Win_UIScale->ivalue/100.0)); 
 		mGlobalSettings.mINIFile.Win_HighDPI->bvalue = true;
 		mGlobalSettings.mINIFile.Win_Width->ivalue = mGlobalSettings.WindowWidth;
 		mGlobalSettings.mINIFile.Win_Height->ivalue = mGlobalSettings.WindowHeight;
@@ -1009,6 +1014,7 @@ int main( int argc, char* args[] )
 			mGlobalSettings.WindowWidth = SCREEN_WIDTH; 
 			mGlobalSettings.WindowHeight = SCREEN_HEIGHT;
 			mGlobalSettings.mINIFile.Win_HighDPI->bvalue = false;
+			mGlobalSettings.mINIFile.Win_UIScale->ivalue = 100;
 			mGlobalSettings.mINIFile.Win_Width->ivalue = mGlobalSettings.WindowWidth;
 			mGlobalSettings.mINIFile.Win_Height->ivalue = mGlobalSettings.WindowHeight;
 		} else {
@@ -1038,8 +1044,7 @@ int main( int argc, char* args[] )
 					}
 				} else {
 					std::cout << "Error in Project Folder: " << mGlobalSettings.ProjectPath << std::endl;
-					mEditor.bEditorRunning = false;
-					//return 1;
+					mEditor.bEditorRunning = false;					
 				}
 			}
 		
@@ -1109,8 +1114,8 @@ int main( int argc, char* args[] )
 		}
 	} else {
 		if(mGlobalSettings.mINIFile.Win_HighDPI->bvalue){
-			mGlobalSettings.mINIFile.Win_Width->ivalue = SCREEN_WIDTH_HIGHDPI;  
-			mGlobalSettings.mINIFile.Win_Height->ivalue = SCREEN_HEIGHT_HIGHDPI; 
+			mGlobalSettings.mINIFile.Win_Width->ivalue = (int) (SCREEN_WIDTH / ((float)mGlobalSettings.mINIFile.Win_UIScale->ivalue/100.0)); 
+			mGlobalSettings.mINIFile.Win_Height->ivalue = (int) (SCREEN_HEIGHT / ((float)mGlobalSettings.mINIFile.Win_UIScale->ivalue/100.0));  
 		} else {
 			mGlobalSettings.mINIFile.Win_Width->ivalue = SCREEN_WIDTH;  
 			mGlobalSettings.mINIFile.Win_Height->ivalue = SCREEN_HEIGHT; 
