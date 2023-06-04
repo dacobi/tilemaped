@@ -241,6 +241,7 @@ class TSettings{
 		int mNewSpriteY = 0;
 		int mNewSpriteBPP = 8;
 		int mNewTileSize = 0;
+		float mNewSpriteScale = 1.0;
 		int mDeleteTileMapState = 0;			
 		int mTileMapFileCount = 0;			
 		bool bShowTypeSelection = false;
@@ -351,6 +352,7 @@ enum {
 	ESTATE_SPRITEDELETE,
 	ESTATE_FRAMEIMPORT,
 	ESTATE_SPRITEIMPORT,
+	ESTATE_SPRITESCALEDCOPY,
 	ESTATE_FRAMESIMPORT,
 	ESTATE_FRAMEROTATE,
 	ESTATE_FRAMESCALE

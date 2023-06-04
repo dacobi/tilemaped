@@ -351,6 +351,19 @@ int TBDialog::render(){
 								}
 								ImGui::EndMenu();		
 							}
+
+							if(ImGui::BeginMenu("Sprite Create")){
+
+								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Copy")).c_str())){
+										mGlobalSettings.CurrentEditor->createNewSpriteCopy(mGlobalSettings.CurrentEditor->mSprite);
+								}
+
+								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Scaled Copy")).c_str())){
+										mGlobalSettings.CurrentEditor->activateNewScaledSpriteDialog();
+								}
+
+								ImGui::EndMenu();		
+							}
 						}
 						
 						ImGui::EndMenu();
@@ -3065,3 +3078,132 @@ int CCPDialog::render(){
 	
 	return 0;
 }
+
+/* Dialog Template */
+
+void DialogButton::render(){
+	DialogElement::render();
+
+	if(ImGui::Button(mLabel.c_str())){
+		mParent->recieveInput(mAction);
+	}
+}
+
+void DTDialog::init(){
+
+}
+
+int DTDialog::render(){
+
+	Dialog::render();
+
+	ImGui::Begin(mDialogTextTitle.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);
+
+	for(auto *cElem: mElements){
+		cElem->render();
+	}
+
+	ImGui::End();
+
+	return 0;
+}
+
+void DTDialog::recieveInput(int mKey){
+	if(mKey == SDLK_y){	
+		bInputIsAccept=true;	
+		for(auto cVal : mValues){
+			cVal->apply();			
+		}
+		mGlobalSettings.mEditorState = mTargetState;
+	}		
+	
+	if(mKey == SDLK_n){
+		bInputIsCancel=true;
+		for(auto cVal : mValues){
+			cVal->cancel();
+		}
+	}	
+
+	if(mKey == SDLK_TAB){
+		//mTextInput.autoComplete();		
+	}
+
+}
+
+void DTDialog::cancel(){
+	Dialog::cancel();
+
+	for(auto cVal : mValues){
+			cVal->cancel();
+	}
+}
+
+void DTDialog::addText(std::string cText, bool bSameline){
+	DialogElementText *nText = new DialogElementText(cText, bSameline);
+
+	mElements.push_back(nText);
+	mBasicElements.push_back(nText);
+}
+
+void DTDialog::addSeperator(){
+	DialogElementSeperator *nSep = new DialogElementSeperator();
+
+	mElements.push_back(nSep);
+	mBasicElements.push_back(nSep);
+
+}
+
+void DTDialog::addBool(std::string cLabel, bool cDefault, bool *cTarget, bool bSameline){
+	DialogValueBool *nBool = new DialogValueBool(cLabel, cDefault, cTarget, bSameline);
+
+	mElements.push_back(nBool);
+	mValues.push_back(nBool);
+
+}
+
+void DTDialog::addInt(std::string cLabel, int cDefault, int *cTarget, int cMin, int cMax, bool bSameline){
+	DialogValueInt *nInt = new DialogValueInt(cLabel, cDefault, cTarget, cMin, cMax, bSameline);
+
+	mElements.push_back(nInt);
+	mValues.push_back(nInt);
+
+}
+
+void DTDialog::addFloat(std::string cLabel, float cDefault, float *cTarget, float cMin, float cMax,std::string cFormat, bool bSameline){
+	
+	DialogValueFloat *nFloat = new DialogValueFloat(cLabel, cDefault, cTarget, cMin, cMax, cFormat, bSameline);
+
+	mElements.push_back(nFloat);
+	mValues.push_back(nFloat);
+
+}
+
+void DTDialog::addButton(std::string cLabel, int cAction, bool cSameline){
+	DialogButton * nBut = new DialogButton(this, cLabel, cAction, cSameline);
+
+	mElements.push_back(nBut);
+	mButtons.push_back(nBut);
+
+}
+
+DTDialog* Dialog::createSpriteScaledCopyDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Create Scaled Copy");
+
+	newDialog->setTarget(ESTATE_SPRITESCALEDCOPY);
+
+	newDialog->addText(mGlobalSettings.mFile + " Create Scaled Sprite Copy?");
+
+	newDialog->addFloat("Sprite Scale", 1.0, &mGlobalSettings.mNewSpriteScale, 0.5, 2.0);
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Create", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
+/* Dialog Template End */

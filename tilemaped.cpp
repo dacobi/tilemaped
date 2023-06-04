@@ -321,6 +321,8 @@ int TSettings::initSettings(){
 	mio->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	mio->ConfigFlags |= ImGuiConfigFlags_NavNoCaptureKeyboard;
 	
+	
+
 	return 0;	
 }
 
@@ -1030,6 +1032,7 @@ int main( int argc, char* args[] )
 	{	
 		mGlobalSettings.CurrentEditor = &mEditor;
 		SDL_Event e;
+		mEditor.createDialogs();
 
 		if(!mGlobalSettings.bRunningOCD) {
 

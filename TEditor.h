@@ -101,6 +101,7 @@ class TEditor{
 		int findSelSprite();
 		int handleSprite();
 		int resizeWindowEvent(SDL_Event* event);
+		void createDialogs();
 		void initDialogs();
 		int loadFromFolder(std::string path);
 		int saveToFolder(std::string path);
@@ -184,8 +185,10 @@ class TEditor{
 		RSFDialog mRemoveFrame;
 		RSDialog mRemoveSprite;
 		RTSDialog mRemoveSelUnused;
-		MEDialog mErrorMessage;
-		//RNDialog mInputNumber;
+
+		DTDialog* mScaledSpriteCopy;
+
+		MEDialog mErrorMessage;				
 		QDialog mQuitDialog;
 		CCPDialog mCloseProjectDialog;
 		PUDialog mPaletteUpdate;
@@ -200,6 +203,8 @@ class TEditor{
 		Tile* createNewTileCopy(Tile* cCopyTile);
 		Tile* createNewTileFromFile(std::string newTilePath);
 		TSFrame* createNewFrameFromFile(std::string newFramePath);
+		int createNewSpriteScaledCopy(TSprite *newSprite);
+		int createNewSpriteCopy(TSprite *newSprite);
 		int rotateTile();
 		int rotateTileLeft();
 		int moveTileUp();
@@ -231,6 +236,7 @@ class TEditor{
 		int activateOpenTileMapDialog();
 		int activateNewTileMapDialog();
 		int activateNewSpriteDialog();
+		int activateNewScaledSpriteDialog();
 		int activateRemoveSpriteDialog();
 		int activateRemoveTileMapDialog();
 		int activateColMapDialog(bool bCreateColMap=false);

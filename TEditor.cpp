@@ -134,6 +134,10 @@ int TEditor::createNewProject(){
 	return 0;
 }
 
+void TEditor::createDialogs(){
+	mScaledSpriteCopy = Dialog::createSpriteScaledCopyDialog();
+}
+
 void TEditor::initDialogs(){
 	mMapSelectedTile = 0;
 	mTileSelectedTile = mTileSet.TTiles[0];
@@ -1371,6 +1375,36 @@ int TEditor::removeSelectedFrame(){
 	return 0;
 }
 
+int TEditor::createNewSpriteScaledCopy(TSprite *newSprite){
+	mSprite = new TSprite(newSprite->mTexParam.TileSizeX,newSprite->mTexParam.TileSizeY,newSprite->mTexParam.TileSetBPP);
+
+	for(auto *cFrame : newSprite->mFrames){
+		mSprite->createNewFromBuffer(cFrame->FileData, &mPalette);
+		mSprite->mFrames[mSprite->mFrames.size()-1]->scale(mGlobalSettings.mNewSpriteScale);
+	}
+
+	mSprites.push_back(mSprite);
+	
+	switchSprite(mSprites.size()-1, 0);
+
+	return 0;
+}
+
+int TEditor::createNewSpriteCopy(TSprite *newSprite){
+	mSprite = new TSprite(newSprite->mTexParam.TileSizeX,newSprite->mTexParam.TileSizeY,newSprite->mTexParam.TileSetBPP);
+
+	for(auto *cFrame : newSprite->mFrames){
+		mSprite->createNewFromBuffer(cFrame->FileData, &mPalette);		
+	}
+
+	mSprites.push_back(mSprite);
+	
+	switchSprite(mSprites.size()-1, 0);
+
+	return 0;
+}
+
+
 Tile* TEditor::createNewTile(){
 	if(mCurMode == EMODE_MAP){	
 	Tile* newTile = mTileSet.createNew(&mPalette);
@@ -1781,6 +1815,12 @@ int TEditor::activateNewTileMapDialog(){
 	}
 	return 0;
 }
+
+int TEditor::activateNewScaledSpriteDialog(){
+	mActiveDialog = mScaledSpriteCopy;		
+	return 0;
+}
+
 
 int TEditor::activateNewSpriteDialog(){
 	//if(mCurMode == EMODE_MAP){
@@ -3203,7 +3243,16 @@ int TEditor::handleEvents(){
 				
 			}
 
+			if(mGlobalSettings.mEditorState == ESTATE_SPRITESCALEDCOPY){				
+				
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
 
+				createNewSpriteScaledCopy(mSprite);
+
+				cancelActiveDialog();					
+				return 0;
+			}
+			
 			if(mGlobalSettings.mEditorState == ESTATE_SPRITEIMPORT){				
 
 				mGlobalSettings.mEditorState = ESTATE_NONE;	

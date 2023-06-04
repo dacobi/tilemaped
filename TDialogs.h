@@ -6,6 +6,75 @@
 
 extern TSettings mGlobalSettings;
 
+class DialogElement{
+	public:
+		Dialog *mParent;		
+		bool bSameLine = false;
+		virtual void render(){if(bSameLine){ImGui::SameLine();}}
+};
+
+class DialogElementText : public DialogElement{
+	public:		
+		DialogElementText(std::string cText, bool cSameline){mText = cText; bSameLine = cSameline;};
+		std::string mText;
+		virtual void render(){DialogElement::render(); ImGui::Text("%s", mText.c_str()); }
+};
+
+class DialogElementSeperator : public DialogElement{
+	public:
+		virtual void render(){ImGui::Separator();}
+};
+
+class DialogValueBase : public DialogElement{	
+	public:
+		virtual void render(){}
+		virtual void apply(){}
+		virtual void cancel(){}
+};
+
+template <typename T> class DialogValueType : public DialogValueBase{
+	public:
+		std::string mLabel;
+		T mValue;
+		T mDefault;
+		T *mTarget;
+		virtual void apply(){*mTarget = mValue;}
+		virtual void cancel(){mValue = mDefault;}
+};
+
+class DialogValueBool : public DialogValueType<bool>{	
+	public:
+		DialogValueBool(std::string cLabel, bool cDefault, bool* cTarget, bool cSameline){mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; bSameLine = cSameline;}
+		virtual void render(){DialogElement::render(); ImGui::Checkbox(mLabel.c_str(), &mValue);}		
+};
+
+class DialogValueInt : public DialogValueType<int>{	
+	public:
+		int mMin = 0;
+		int mMax = 0;
+		DialogValueInt(std::string cLabel, int cDefault, int* cTarget, int cMin, int cMax, bool cSameline){mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mMin = cMin; mMax = cMax; bSameLine = cSameline;}
+		virtual void render(){DialogElement::render(); ImGui::SliderInt(mLabel.c_str(), &mValue, mMin, mMax);}		
+};
+
+class DialogValueFloat : public DialogValueType<float>{	
+	public:
+		float mMin = 0;
+		float mMax = 0;
+		std::string mFormat = "%.2f";
+		DialogValueFloat(std::string cLabel, float cDefault, float* cTarget, float cMin, float cMax, std::string cFormat, bool cSameline){mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mMin = cMin; mMax = cMax; mFormat = cFormat, bSameLine = cSameline;}
+		virtual void render(){DialogElement::render(); ImGui::SliderFloat(mLabel.c_str(), &mValue, mMin, mMax, mFormat.c_str());}		
+};
+
+class DialogButton : public DialogElement{
+	public:
+		DialogButton(Dialog *cParent, std::string cLabel, int cAction, bool cSameline){mParent = cParent; mLabel = cLabel; mAction = cAction; bSameLine = cSameline;};
+		std::string mLabel;
+		int mAction;
+		virtual void render();	
+};
+
+class DTDialog;
+
 class Dialog{
 	public:
 		SDL_Color mTextColor = mGlobalSettings.DefaultTextColor;
@@ -26,6 +95,8 @@ class Dialog{
 		virtual void init();
 		virtual void update();
 		virtual void cancel();
+
+		static DTDialog* createSpriteScaledCopyDialog();
 };
 
 class TIDialog: public Dialog{
@@ -58,6 +129,26 @@ class TIDialog: public Dialog{
 		bool bIsActive=false;
 };
 
+class DTDialog : public Dialog{
+	public:
+		std::vector<DialogElement*> mElements;
+		std::vector<DialogElement*> mBasicElements;
+		std::vector<DialogValueBase*> mValues;
+		std::vector<DialogButton*> mButtons;
+		int mTargetState = 0;
+		virtual void setLabel(std::string cLabel){mDialogTextTitle = cLabel;};
+		virtual void setTarget(int cTarget){mTargetState = cTarget;};
+		virtual void init();	
+		virtual int render();
+		virtual void recieveInput(int mKey);					
+		virtual void cancel();
+		void addText(std::string cText, bool bSameline = false);
+		void addSeperator();
+		void addBool(std::string cLabel, bool cDefault, bool *cTarget, bool bSameline = false);
+		void addInt(std::string cLabel, int cDefault, int *cTarget, int cMin, int cMax, bool bSameline = false);
+		void addFloat(std::string cLabel, float cDefault, float *cTarget, float cMin, float cMax, std::string cFormat = "%.2f", bool bSameline = false);
+		void addButton(std::string cLabel, int cAction, bool cSameline = false);
+};
 
 class SDialog: public Dialog{
 	public:
