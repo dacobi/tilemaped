@@ -30,6 +30,19 @@ void TSFrame::renderEd(int xpos, int ypos, TPalette* tpal){
 
 }
 
+TSFrame* TSprite::createNewUpscaledCopy(TSFrame* cCopyFrame, TPalette* tpal){
+	
+	TSFrame *newTile = createNew(tpal);
+	SDL_Rect newRect;
+
+	newTile->upscale(cCopyFrame);
+	
+	//FrameAreas.push_back(newRect);
+	//mFrames.push_back(newTile);
+	
+	return newTile;
+}
+
 TSFrame* TSprite::createNewFromBuffer(std::vector<unsigned char> &newBuf, TPalette* tpal){
 
 	TSFrame *newTile = new TSFrame(&mTexParam);

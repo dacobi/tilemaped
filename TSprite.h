@@ -46,6 +46,7 @@ class TSprite{
         TSFrame* createNew(TPalette* tpal);
 		TSFrame* createNewCopy(TSFrame* cCopyTile, TPalette* tpal);
 		TSFrame* createNewFromBuffer(std::vector<unsigned char> &newBuf, TPalette* tpal);
+        TSFrame* createNewUpscaledCopy(TSFrame* cCopyFrame, TPalette* tpal);
 		TSFrame* createNewFromFile(std::string newPath, TPalette* tpal);
         int removeFrame(int cDropFrame);
 		void appendFrame(TSFrame* addFrame);		

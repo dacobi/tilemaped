@@ -1505,6 +1505,75 @@ int Tile::applyFilter(){
 	return 1;
 }
 
+int Tile::upscale(Tile *cCopyTile){
+	if( (mTexParam->TileSetBPP == 8) || (mTexParam->TileSetBPP == 4) ){
+
+		std::vector<unsigned char> bitmap;
+		bitmap.resize((mTexParam->TileSizeX * mTexParam->TileSizeY)/mGlobalSettings.mTileBPPSize[mTexParam->TileSetBPP],0);
+		int *pixels = new int[mTexParam->TileSizeX * mTexParam->TileSizeY];
+		
+		if(mGlobalSettings.mUseTextureFiltering){
+			std::stringstream convert;
+			convert << mGlobalSettings.mUseTextureFiltering << std::endl;
+			std::string cQual;
+			convert >> cQual;
+			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, cQual.c_str());
+			if(mGlobalSettings.mUseTextureFiltering > 1){
+				recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);
+			}
+		}
+		
+		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX, mTexParam->TileSizeY);
+
+		if(SDL_SetRenderTarget(mGlobalSettings.TRenderer, rTexture)){
+			std::cout <<  "Unable to Set RenderTarget: " <<  SDL_GetError()  << std::endl;
+		}
+		
+		if(mTexParam->TileSetBPP == 4){
+			SDL_RenderCopyEx(mGlobalSettings.TRenderer, cCopyTile->TPOffset[0], NULL, NULL, 0, NULL, SDL_FLIP_NONE );
+			std::cout <<  "Render Target Sprite BPP 4" << std::endl;
+		} else {
+			SDL_RenderCopyEx(mGlobalSettings.TRenderer, cCopyTile->TileTex, NULL, NULL, 0, NULL, SDL_FLIP_NONE );
+			std::cout <<  "Render Target Sprite BPP 8" << std::endl;
+		}
+
+		SDL_RenderPresent( mGlobalSettings.TRenderer );
+		
+		if(SDL_RenderReadPixels(mGlobalSettings.TRenderer, NULL, SDL_PIXELFORMAT_RGBA8888, pixels, mTexParam->TileSizeX * 4 )){			
+			std::cout <<  "Unable to Read Pixels: " <<  SDL_GetError()  << std::endl;
+		}
+
+	    for (int y = 0; y < mTexParam->TileSizeY; y++) {
+    	    for (int x = 0; x < mTexParam->TileSizeX; x++) {
+				
+				SDL_Color cTestCol;
+				cTestCol.r = (pixels[(y * mTexParam->TileSizeX) + x] & 0xFF000000) >> 24;
+				cTestCol.g = (pixels[(y * mTexParam->TileSizeX) + x] & 0x00FF0000) >> 16;
+				cTestCol.b = (pixels[(y * mTexParam->TileSizeX) + x] & 0x0000FF00) >> 8;
+				cTestCol.a = (pixels[(y * mTexParam->TileSizeX) + x] & 0x000000FF);				
+				
+				if(mTexParam->TileSetBPP == 4){
+					TTexture::setPixel(y * mTexParam->TileSizeX + x, findClosestPaletteColor(cTestCol, 16), bitmap, mTexParam);					
+				} else {
+        	    	bitmap[y * mTexParam->TileSizeX + x] = findClosestPaletteColor(cTestCol, 256);
+				}
+   		     }
+    	}	
+   	
+		SDL_SetRenderTarget(mGlobalSettings.TRenderer, NULL);
+		SDL_DestroyTexture(rTexture);
+
+		if(mGlobalSettings.mUseTextureFiltering){
+			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+		}	
+
+		FileData = bitmap;
+		updateTexture(&mGlobalSettings.CurrentEditor->mPalette);
+		delete[] pixels;
+	}
+	return 0;
+}
+
 int Tile::scale(double cScale){
 
 	if(((mTexParam->TileSetBPP == 8) || (mTexParam->TileSetBPP == 4) ) && (mTexParam->TileSizeX == mTexParam->TileSizeY)){

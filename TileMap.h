@@ -128,6 +128,7 @@ class Tile: public TTexture{
 		int rotatel();
 		int rotate(double cAngle);
 		int scale(double cScale);
+		int upscale(Tile *cCopyTile);
 		int applyFilter();
 		bool bIsSelected = false;
 		const static int MaxScale = 24;

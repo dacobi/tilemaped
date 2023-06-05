@@ -73,6 +73,19 @@ class DialogButton : public DialogElement{
 		virtual void render();	
 };
 
+class DialogValueRadioButton : public DialogValueType<int>{
+	public:
+		DialogValueRadioButton(std::string cLabel, int cDefault, int* cTarget, bool cSameline){mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; bSameLine = cSameline;};
+		virtual void render(){DialogElement::render(); ImGui::RadioButton(mLabel.c_str(), mTarget, mDefault);}
+};
+
+class DialogValueRadioGroup : public DialogValueType<int>{
+	public:
+		DialogValueRadioGroup(int cDefault, int* cTarget){mDefault = cDefault; mValue = mDefault; mTarget = cTarget;};
+		std::vector<DialogValueRadioButton*> mButtons;
+		virtual void render();
+};
+
 class DTDialog;
 
 class Dialog{
@@ -97,6 +110,9 @@ class Dialog{
 		virtual void cancel();
 
 		static DTDialog* createSpriteScaledCopyDialog();
+		static DTDialog* createSpriteUpscaledCopyDialog8X();
+		static DTDialog* createSpriteUpscaledCopyDialog4X();
+		static DTDialog* createSpriteUpscaledCopyDialog2X();
 };
 
 class TIDialog: public Dialog{
@@ -144,10 +160,13 @@ class DTDialog : public Dialog{
 		virtual void cancel();
 		void addText(std::string cText, bool bSameline = false);
 		void addSeperator();
+		void addSameLine();
 		void addBool(std::string cLabel, bool cDefault, bool *cTarget, bool bSameline = false);
 		void addInt(std::string cLabel, int cDefault, int *cTarget, int cMin, int cMax, bool bSameline = false);
 		void addFloat(std::string cLabel, float cDefault, float *cTarget, float cMin, float cMax, std::string cFormat = "%.2f", bool bSameline = false);
 		void addButton(std::string cLabel, int cAction, bool cSameline = false);
+		void addRadioGroup(int cDefault, int* cTarget);
+		void addRadioButton(std::string cLabel, int cDefault, bool cSameline = false);
 };
 
 class SDialog: public Dialog{

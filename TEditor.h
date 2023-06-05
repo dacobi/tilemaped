@@ -188,6 +188,10 @@ class TEditor{
 
 		DTDialog* mScaledSpriteCopy;
 
+		DTDialog* mUpscaledSpriteCopy8X;
+		DTDialog* mUpscaledSpriteCopy4X;
+		DTDialog* mUpscaledSpriteCopy2X;
+
 		MEDialog mErrorMessage;				
 		QDialog mQuitDialog;
 		CCPDialog mCloseProjectDialog;
@@ -204,6 +208,7 @@ class TEditor{
 		Tile* createNewTileFromFile(std::string newTilePath);
 		TSFrame* createNewFrameFromFile(std::string newFramePath);
 		int createNewSpriteScaledCopy(TSprite *newSprite);
+		int createNewSpriteUpscaledCopy(TSprite *newSprite);
 		int createNewSpriteCopy(TSprite *newSprite);
 		int rotateTile();
 		int rotateTileLeft();
@@ -237,6 +242,7 @@ class TEditor{
 		int activateNewTileMapDialog();
 		int activateNewSpriteDialog();
 		int activateNewScaledSpriteDialog();
+		int activateNewUpscaledSpriteDialog(int cScale);
 		int activateRemoveSpriteDialog();
 		int activateRemoveTileMapDialog();
 		int activateColMapDialog(bool bCreateColMap=false);

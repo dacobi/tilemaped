@@ -136,6 +136,9 @@ int TEditor::createNewProject(){
 
 void TEditor::createDialogs(){
 	mScaledSpriteCopy = Dialog::createSpriteScaledCopyDialog();
+	mUpscaledSpriteCopy8X = Dialog::createSpriteUpscaledCopyDialog8X();
+	mUpscaledSpriteCopy4X = Dialog::createSpriteUpscaledCopyDialog4X();
+	mUpscaledSpriteCopy2X = Dialog::createSpriteUpscaledCopyDialog2X();
 }
 
 void TEditor::initDialogs(){
@@ -1375,6 +1378,22 @@ int TEditor::removeSelectedFrame(){
 	return 0;
 }
 
+int TEditor::createNewSpriteUpscaledCopy(TSprite *newSprite){
+	mSprite = new TSprite(newSprite->mTexParam.TileSizeX * mGlobalSettings.mNewSpriteUpscale, newSprite->mTexParam.TileSizeY * mGlobalSettings.mNewSpriteUpscale, newSprite->mTexParam.TileSetBPP);
+
+	std::cout << "Upscaled Sprite by X: " << mGlobalSettings.mNewSpriteUpscale << std::endl;
+
+	for(auto *cFrame : newSprite->mFrames){
+		mSprite->createNewUpscaledCopy(cFrame, &mPalette);		
+	}
+
+	mSprites.push_back(mSprite);
+	
+	switchSprite(mSprites.size()-1, 0);
+
+	return 0;
+}
+
 int TEditor::createNewSpriteScaledCopy(TSprite *newSprite){
 	mSprite = new TSprite(newSprite->mTexParam.TileSizeX,newSprite->mTexParam.TileSizeY,newSprite->mTexParam.TileSetBPP);
 
@@ -1813,6 +1832,26 @@ int TEditor::activateNewTileMapDialog(){
 	if(mCurMode == EMODE_MAP){
 		mActiveDialog = &mNewTileMapDialog;		
 	}
+	return 0;
+}
+
+int TEditor::activateNewUpscaledSpriteDialog(int cScale){
+	switch (cScale)
+	{
+	case 8:
+		mActiveDialog = mUpscaledSpriteCopy8X;	
+		break;
+	case 4:
+		mActiveDialog = mUpscaledSpriteCopy4X;	
+		break;
+	case 2:
+		mGlobalSettings.mNewSpriteUpscale = 2;
+		mActiveDialog = mUpscaledSpriteCopy2X;	
+		break;	
+	default:
+		break;
+	}
+
 	return 0;
 }
 
@@ -3243,11 +3282,25 @@ int TEditor::handleEvents(){
 				
 			}
 
+			if(mGlobalSettings.mEditorState == ESTATE_SPRITEUPSCALEDCOPY){				
+				
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
+
+				createNewSpriteUpscaledCopy(mSprite);
+
+				showMessage("Sprite Copied Successfully");
+
+				cancelActiveDialog();					
+				return 0;
+			}
+
 			if(mGlobalSettings.mEditorState == ESTATE_SPRITESCALEDCOPY){				
 				
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
 
 				createNewSpriteScaledCopy(mSprite);
+
+				showMessage("Sprite Copied Successfully");
 
 				cancelActiveDialog();					
 				return 0;
