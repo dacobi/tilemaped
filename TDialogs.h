@@ -31,15 +31,7 @@ class Dialog{
 		virtual int render();		
 		virtual void init();
 		virtual void update();
-		virtual void cancel();
-
-		static DTDialog* createSpriteScaledCopyDialog();
-
-		//static DTDialog* createSpriteUpscaledCopyDialog8X();
-		//static DTDialog* createSpriteUpscaledCopyDialog4X();
-		//static DTDialog* createSpriteUpscaledCopyDialog2X();
-
-		static DTDialog* createSpriteUpscaledCopyDialog();
+		virtual void cancel();		
 };
 
 
@@ -71,6 +63,10 @@ class DTDialog : public Dialog{
 		void addRadioGroup(int cDefault, int* cTarget);
 		void addRadioButton(std::string cLabel, int cDefault, bool cSameline = false);
 		void addIntTarget(int cDefault, int *cTarget);
+
+		static DTDialog* createSpriteScaledCopyDialog();
+		static DTDialog* createSpriteUpscaledCopyDialog();
+		static DTDialog* createSpriteDownscaledCopyDialog();
 };
 
 

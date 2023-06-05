@@ -1520,6 +1520,7 @@ int Tile::upscale(Tile *cCopyTile){
 			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, cQual.c_str());
 			if(mGlobalSettings.mUseTextureFiltering > 1){
 				recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);
+				cCopyTile->recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);
 			}
 		}
 		
@@ -1568,7 +1569,8 @@ int Tile::upscale(Tile *cCopyTile){
 		}	
 
 		FileData = bitmap;
-		updateTexture(&mGlobalSettings.CurrentEditor->mPalette);
+		recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);
+		cCopyTile->recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);
 		delete[] pixels;
 	}
 	return 0;

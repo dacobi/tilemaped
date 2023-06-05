@@ -135,15 +135,10 @@ int TEditor::createNewProject(){
 }
 
 void TEditor::createDialogs(){
-	mScaledSpriteCopy = Dialog::createSpriteScaledCopyDialog();
 
-	mUpscaledSpriteCopy = Dialog::createSpriteUpscaledCopyDialog();
-
-	/*
-	mUpscaledSpriteCopy8X = Dialog::createSpriteUpscaledCopyDialog8X();
-	mUpscaledSpriteCopy4X = Dialog::createSpriteUpscaledCopyDialog4X();
-	mUpscaledSpriteCopy2X = Dialog::createSpriteUpscaledCopyDialog2X();
-	*/
+	mScaledSpriteCopy = DTDialog::createSpriteScaledCopyDialog();
+	mUpscaledSpriteCopy = DTDialog::createSpriteUpscaledCopyDialog();	
+	mDownscaledSpriteCopy = DTDialog::createSpriteDownscaledCopyDialog();	
 }
 
 void TEditor::initDialogs(){
@@ -1383,6 +1378,23 @@ int TEditor::removeSelectedFrame(){
 	return 0;
 }
 
+int TEditor::createNewSpriteDownscaledCopy(TSprite *newSprite){
+	mSprite = new TSprite(newSprite->mTexParam.TileSizeX / mGlobalSettings.mNewSpriteDownscale, newSprite->mTexParam.TileSizeY / mGlobalSettings.mNewSpriteDownscale, newSprite->mTexParam.TileSetBPP);
+
+	std::cout << "Downscaled Sprite by X: " << mGlobalSettings.mNewSpriteUpscale << std::endl;
+
+	for(auto *cFrame : newSprite->mFrames){
+		mSprite->createNewUpscaledCopy(cFrame, &mPalette);		
+	}
+
+	mSprites.push_back(mSprite);
+	
+	switchSprite(mSprites.size()-1, 0);
+
+	return 0;
+}
+
+
 int TEditor::createNewSpriteUpscaledCopy(TSprite *newSprite){
 	mSprite = new TSprite(newSprite->mTexParam.TileSizeX * mGlobalSettings.mNewSpriteUpscale, newSprite->mTexParam.TileSizeY * mGlobalSettings.mNewSpriteUpscale, newSprite->mTexParam.TileSetBPP);
 
@@ -1840,26 +1852,16 @@ int TEditor::activateNewTileMapDialog(){
 	return 0;
 }
 
+int TEditor::activateNewDownscaledSpriteDialog(int cScale){
+
+	mDownscaledSpriteCopy->setCondition(cScale);
+	mActiveDialog = mDownscaledSpriteCopy;	
+
+	return 0;
+}
+
 int TEditor::activateNewUpscaledSpriteDialog(int cScale){
 	
-	/*
-	switch (cScale)
-	{
-	case 8:
-		mActiveDialog = mUpscaledSpriteCopy8X;	
-		break;
-	case 4:
-		mActiveDialog = mUpscaledSpriteCopy4X;	
-		break;
-	case 2:
-		//mGlobalSettings.mNewSpriteUpscale = 2;
-		mActiveDialog = mUpscaledSpriteCopy2X;	
-		break;	
-	default:
-		break;
-	}
-	*/
-
 	mUpscaledSpriteCopy->setCondition(cScale);
 	mActiveDialog = mUpscaledSpriteCopy;	
 
@@ -3298,6 +3300,18 @@ int TEditor::handleEvents(){
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
 
 				createNewSpriteUpscaledCopy(mSprite);
+
+				showMessage("Sprite Copied Successfully");
+
+				cancelActiveDialog();					
+				return 0;
+			}
+
+			if(mGlobalSettings.mEditorState == ESTATE_SPRITEDOWNSCALEDCOPY){				
+				
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
+
+				createNewSpriteDownscaledCopy(mSprite);
 
 				showMessage("Sprite Copied Successfully");
 

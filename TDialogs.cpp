@@ -381,9 +381,30 @@ int TBDialog::render(){
 									}																		
 								}
 
-								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Upscaled Copy")).c_str(), NULL, false, bAllowUpscale)){
+								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " UpScaled Copy")).c_str(), NULL, false, bAllowUpscale)){
 									mGlobalSettings.CurrentEditor->activateNewUpscaledSpriteDialog(cAllowedScale);
 								}
+
+
+								bool bAllowDownscale = false;
+								int cAllowedDownScale = 2;
+
+								if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX > 8) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY > 8) ){
+									bAllowDownscale = true;
+
+									if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX > 16) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY > 16) ){
+										cAllowedDownScale = 4;
+									}
+
+									if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX > 32) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY > 32) ){
+										cAllowedDownScale = 8;
+									}																		
+								}
+
+								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " DownScaled Copy")).c_str(), NULL, false, bAllowDownscale)){
+									mGlobalSettings.CurrentEditor->activateNewDownscaledSpriteDialog(cAllowedDownScale);
+								}
+
 								
 								ImGui::EndMenu();		
 							}
@@ -3253,21 +3274,21 @@ void DTDialog::addIntTarget(int cDefault, int *cTarget){
 	mValues.push_back(nInt);
 }
 
-DTDialog* Dialog::createSpriteUpscaledCopyDialog(){
+DTDialog* DTDialog::createSpriteUpscaledCopyDialog(){
 	DTDialog* newDialog = new DTDialog();
 
-	newDialog->setLabel("Create Upscaled Copy");
+	newDialog->setLabel("Create UpScaled Copy");
 
 	newDialog->setTarget(ESTATE_SPRITEUPSCALEDCOPY);
 
 	newDialog->setRequiredCondition(8);
-	newDialog->addText(mGlobalSettings.mFile + " Create Upscaled Sprite Copy?");
+	newDialog->addText(mGlobalSettings.mFile + " Create UpScaled Sprite Copy?");
 
 	newDialog->setRequiredCondition(4);
-	newDialog->addText(mGlobalSettings.mFile + " Create Upscaled Sprite Copy?");
+	newDialog->addText(mGlobalSettings.mFile + " Create UpScaled Sprite Copy?");
 
 	newDialog->setRequiredCondition(2);
-	newDialog->addText(mGlobalSettings.mFile + " Create Upscaled Sprite Copy by 2X?");
+	newDialog->addText(mGlobalSettings.mFile + " Create UpScaled Sprite Copy by 2X?");
 
 
 	newDialog->setRequiredCondition(8);
@@ -3287,7 +3308,7 @@ DTDialog* Dialog::createSpriteUpscaledCopyDialog(){
 	newDialog->addIntTarget(2, &mGlobalSettings.mNewSpriteUpscale);
 
 	newDialog->clearRequiredCondition();
-	
+
 	newDialog->addSeperator();
 
 	newDialog->addButton("Create", SDLK_y);
@@ -3297,45 +3318,41 @@ DTDialog* Dialog::createSpriteUpscaledCopyDialog(){
 	return newDialog;
 }
 
-/*
-DTDialog* Dialog::createSpriteUpscaledCopyDialog8X(){
+DTDialog* DTDialog::createSpriteDownscaledCopyDialog(){
 	DTDialog* newDialog = new DTDialog();
 
-	newDialog->setLabel("Create Upscaled Copy");
+	newDialog->setLabel("Create DownScaled Copy");
 
-	newDialog->setTarget(ESTATE_SPRITEUPSCALEDCOPY);
+	newDialog->setTarget(ESTATE_SPRITEDOWNSCALEDCOPY);
 
-	newDialog->addText(mGlobalSettings.mFile + " Create Upscaled Sprite Copy?");
+	newDialog->setRequiredCondition(8);
+	newDialog->addText(mGlobalSettings.mFile + " Create DownScaled Sprite Copy?");
 
-	newDialog->addRadioGroup(2, &mGlobalSettings.mNewSpriteUpscale);
+	newDialog->setRequiredCondition(4);
+	newDialog->addText(mGlobalSettings.mFile + " Create DownScaled Sprite Copy?");
+
+	newDialog->setRequiredCondition(2);
+	newDialog->addText(mGlobalSettings.mFile + " Create DownScaled Sprite Copy by 2X?");
+
+
+	newDialog->setRequiredCondition(8);
+	newDialog->addRadioGroup(2, &mGlobalSettings.mNewSpriteDownscale);
 
 	newDialog->addRadioButton("2X", 2, false);
 	newDialog->addRadioButton("4X", 4, true);
 	newDialog->addRadioButton("8X", 8, true);
 
-	newDialog->addSeperator();
-
-	newDialog->addButton("Create", SDLK_y);
-	
-	newDialog->addButton("Cancel", SDLK_n, true);
-
-	return newDialog;
-}
-
-DTDialog* Dialog::createSpriteUpscaledCopyDialog4X(){
-	DTDialog* newDialog = new DTDialog();
-
-	newDialog->setLabel("Create Upscaled Copy");
-
-	newDialog->setTarget(ESTATE_SPRITEUPSCALEDCOPY);
-
-	newDialog->addText(mGlobalSettings.mFile + " Create Upscaled Sprite Copy?");
-
-	newDialog->addRadioGroup(2, &mGlobalSettings.mNewSpriteUpscale);
+	newDialog->setRequiredCondition(4);
+	newDialog->addRadioGroup(2, &mGlobalSettings.mNewSpriteDownscale);
 
 	newDialog->addRadioButton("2X", 2, false);
 	newDialog->addRadioButton("4X", 4, true);
 	
+	newDialog->setRequiredCondition(2);
+	newDialog->addIntTarget(2, &mGlobalSettings.mNewSpriteDownscale);
+
+	newDialog->clearRequiredCondition();
+
 	newDialog->addSeperator();
 
 	newDialog->addButton("Create", SDLK_y);
@@ -3345,29 +3362,8 @@ DTDialog* Dialog::createSpriteUpscaledCopyDialog4X(){
 	return newDialog;
 }
 
-DTDialog* Dialog::createSpriteUpscaledCopyDialog2X(){
-	DTDialog* newDialog = new DTDialog();
 
-	newDialog->setLabel("Create Upscaled Copy");
-
-	newDialog->setTarget(ESTATE_SPRITEUPSCALEDCOPY);
-
-	newDialog->addText(mGlobalSettings.mFile + " Create Upscaled Sprite Copy by 2X?");
-
-	newDialog->addIntTarget(2, &mGlobalSettings.mNewSpriteUpscale);
-	
-	newDialog->addSeperator();
-
-	newDialog->addButton("Create", SDLK_y);
-	
-	newDialog->addButton("Cancel", SDLK_n, true);
-
-	return newDialog;
-}
-/*
-
-
-DTDialog* Dialog::createSpriteScaledCopyDialog(){
+DTDialog* DTDialog::createSpriteScaledCopyDialog(){
 	DTDialog* newDialog = new DTDialog();
 
 	newDialog->setLabel("Create Scaled Copy");

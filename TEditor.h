@@ -187,14 +187,8 @@ class TEditor{
 		RTSDialog mRemoveSelUnused;
 
 		DTDialog* mScaledSpriteCopy;
-
-		/*
-		DTDialog* mUpscaledSpriteCopy8X;
-		DTDialog* mUpscaledSpriteCopy4X;
-		DTDialog* mUpscaledSpriteCopy2X;
-		*/
-
 		DTDialog* mUpscaledSpriteCopy;
+		DTDialog* mDownscaledSpriteCopy;
 
 		MEDialog mErrorMessage;				
 		QDialog mQuitDialog;
@@ -213,6 +207,7 @@ class TEditor{
 		TSFrame* createNewFrameFromFile(std::string newFramePath);
 		int createNewSpriteScaledCopy(TSprite *newSprite);
 		int createNewSpriteUpscaledCopy(TSprite *newSprite);
+		int createNewSpriteDownscaledCopy(TSprite *newSprite);
 		int createNewSpriteCopy(TSprite *newSprite);
 		int rotateTile();
 		int rotateTileLeft();
@@ -247,6 +242,7 @@ class TEditor{
 		int activateNewSpriteDialog();
 		int activateNewScaledSpriteDialog();
 		int activateNewUpscaledSpriteDialog(int cScale);
+		int activateNewDownscaledSpriteDialog(int cScale);
 		int activateRemoveSpriteDialog();
 		int activateRemoveTileMapDialog();
 		int activateColMapDialog(bool bCreateColMap=false);
