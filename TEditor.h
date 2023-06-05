@@ -188,9 +188,13 @@ class TEditor{
 
 		DTDialog* mScaledSpriteCopy;
 
+		/*
 		DTDialog* mUpscaledSpriteCopy8X;
 		DTDialog* mUpscaledSpriteCopy4X;
 		DTDialog* mUpscaledSpriteCopy2X;
+		*/
+
+		DTDialog* mUpscaledSpriteCopy;
 
 		MEDialog mErrorMessage;				
 		QDialog mQuitDialog;

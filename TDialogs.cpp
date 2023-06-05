@@ -3105,6 +3105,8 @@ int CCPDialog::render(){
 /* Dialog Template */
 
 void DialogButton::render(){
+	if(mCondition > -1){if(mParent->mCondition != mCondition){return;}}
+
 	DialogElement::render();
 
 	if(ImGui::Button(mLabel.c_str())){
@@ -3113,6 +3115,8 @@ void DialogButton::render(){
 }
 
 void DialogValueRadioGroup::render(){
+	if(mCondition > -1){if(mParent->mCondition != mCondition){return;}}
+
 	for(auto *cBut : mButtons){
 		cBut->render();
 	}
@@ -3169,7 +3173,7 @@ void DTDialog::cancel(){
 }
 
 void DTDialog::addText(std::string cText, bool bSameline){
-	DialogElementText *nText = new DialogElementText(cText, bSameline);
+	DialogElementText *nText = new DialogElementText(this, mRequiredCondition, cText, bSameline);
 
 	mElements.push_back(nText);
 	mBasicElements.push_back(nText);
@@ -3177,6 +3181,9 @@ void DTDialog::addText(std::string cText, bool bSameline){
 
 void DTDialog::addSeperator(){
 	DialogElementSeperator *nSep = new DialogElementSeperator();
+
+	nSep->mParent = this;
+	nSep->mCondition = mRequiredCondition;
 
 	mElements.push_back(nSep);
 	mBasicElements.push_back(nSep);
@@ -3186,11 +3193,13 @@ void DTDialog::addSeperator(){
 void DTDialog::addSameLine(){
 	DialogElement *nSame = new DialogElement();
 	nSame->bSameLine = true;
+	nSame->mParent = this;
+	nSame->mCondition = mRequiredCondition;
 	mElements.push_back(nSame);
 }
 
 void DTDialog::addBool(std::string cLabel, bool cDefault, bool *cTarget, bool bSameline){
-	DialogValueBool *nBool = new DialogValueBool(cLabel, cDefault, cTarget, bSameline);
+	DialogValueBool *nBool = new DialogValueBool(this, mRequiredCondition, cLabel, cDefault, cTarget, bSameline);
 
 	mElements.push_back(nBool);
 	mValues.push_back(nBool);
@@ -3198,7 +3207,7 @@ void DTDialog::addBool(std::string cLabel, bool cDefault, bool *cTarget, bool bS
 }
 
 void DTDialog::addInt(std::string cLabel, int cDefault, int *cTarget, int cMin, int cMax, bool bSameline){
-	DialogValueInt *nInt = new DialogValueInt(cLabel, cDefault, cTarget, cMin, cMax, bSameline);
+	DialogValueInt *nInt = new DialogValueInt(this, mRequiredCondition, cLabel, cDefault, cTarget, cMin, cMax, bSameline);
 
 	mElements.push_back(nInt);
 	mValues.push_back(nInt);
@@ -3207,7 +3216,7 @@ void DTDialog::addInt(std::string cLabel, int cDefault, int *cTarget, int cMin, 
 
 void DTDialog::addFloat(std::string cLabel, float cDefault, float *cTarget, float cMin, float cMax,std::string cFormat, bool bSameline){
 	
-	DialogValueFloat *nFloat = new DialogValueFloat(cLabel, cDefault, cTarget, cMin, cMax, cFormat, bSameline);
+	DialogValueFloat *nFloat = new DialogValueFloat(this, mRequiredCondition, cLabel, cDefault, cTarget, cMin, cMax, cFormat, bSameline);
 
 	mElements.push_back(nFloat);
 	mValues.push_back(nFloat);
@@ -3215,7 +3224,7 @@ void DTDialog::addFloat(std::string cLabel, float cDefault, float *cTarget, floa
 }
 
 void DTDialog::addButton(std::string cLabel, int cAction, bool cSameline){
-	DialogButton * nBut = new DialogButton(this, cLabel, cAction, cSameline);
+	DialogButton * nBut = new DialogButton(this, mRequiredCondition, cLabel, cAction, cSameline);
 
 	mElements.push_back(nBut);
 	mButtons.push_back(nBut);
@@ -3223,7 +3232,7 @@ void DTDialog::addButton(std::string cLabel, int cAction, bool cSameline){
 }
 
 void DTDialog::addRadioGroup(int cDefault, int* cTarget){
-	DialogValueRadioGroup* nGroup = new DialogValueRadioGroup(cDefault, cTarget);
+	DialogValueRadioGroup* nGroup = new DialogValueRadioGroup(this, mRequiredCondition, cDefault, cTarget);
 
 	mElements.push_back(nGroup);
 	mValues.push_back(nGroup);
@@ -3239,11 +3248,56 @@ void DTDialog::addRadioButton(std::string cLabel, int cDefault, bool cSameline){
 }
 
 void DTDialog::addIntTarget(int cDefault, int *cTarget){
-	DialogValueIntTarget *nInt = new DialogValueIntTarget(cDefault, cTarget);
+	DialogValueIntTarget *nInt = new DialogValueIntTarget(this, mRequiredCondition, cDefault, cTarget);
 	
 	mValues.push_back(nInt);
 }
 
+DTDialog* Dialog::createSpriteUpscaledCopyDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Create Upscaled Copy");
+
+	newDialog->setTarget(ESTATE_SPRITEUPSCALEDCOPY);
+
+	newDialog->setRequiredCondition(8);
+	newDialog->addText(mGlobalSettings.mFile + " Create Upscaled Sprite Copy?");
+
+	newDialog->setRequiredCondition(4);
+	newDialog->addText(mGlobalSettings.mFile + " Create Upscaled Sprite Copy?");
+
+	newDialog->setRequiredCondition(2);
+	newDialog->addText(mGlobalSettings.mFile + " Create Upscaled Sprite Copy by 2X?");
+
+
+	newDialog->setRequiredCondition(8);
+	newDialog->addRadioGroup(2, &mGlobalSettings.mNewSpriteUpscale);
+
+	newDialog->addRadioButton("2X", 2, false);
+	newDialog->addRadioButton("4X", 4, true);
+	newDialog->addRadioButton("8X", 8, true);
+
+	newDialog->setRequiredCondition(4);
+	newDialog->addRadioGroup(2, &mGlobalSettings.mNewSpriteUpscale);
+
+	newDialog->addRadioButton("2X", 2, false);
+	newDialog->addRadioButton("4X", 4, true);
+	
+	newDialog->setRequiredCondition(2);
+	newDialog->addIntTarget(2, &mGlobalSettings.mNewSpriteUpscale);
+
+	newDialog->clearRequiredCondition();
+	
+	newDialog->addSeperator();
+
+	newDialog->addButton("Create", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
+/*
 DTDialog* Dialog::createSpriteUpscaledCopyDialog8X(){
 	DTDialog* newDialog = new DTDialog();
 
@@ -3310,6 +3364,7 @@ DTDialog* Dialog::createSpriteUpscaledCopyDialog2X(){
 
 	return newDialog;
 }
+/*
 
 
 DTDialog* Dialog::createSpriteScaledCopyDialog(){

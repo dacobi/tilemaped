@@ -6,92 +6,9 @@
 
 extern TSettings mGlobalSettings;
 
-class DialogElement{
-	public:
-		Dialog *mParent;		
-		bool bSameLine = false;
-		virtual void render(){if(bSameLine){ImGui::SameLine();}}
-};
-
-class DialogElementText : public DialogElement{
-	public:		
-		DialogElementText(std::string cText, bool cSameline){mText = cText; bSameLine = cSameline;};
-		std::string mText;
-		virtual void render(){DialogElement::render(); ImGui::Text("%s", mText.c_str()); }
-};
-
-class DialogElementSeperator : public DialogElement{
-	public:
-		virtual void render(){ImGui::Separator();}
-};
-
-class DialogValueBase : public DialogElement{	
-	public:
-		virtual void render(){}
-		virtual void apply(){}
-		virtual void cancel(){}
-};
-
-template <typename T> class DialogValueType : public DialogValueBase{
-	public:
-		std::string mLabel;
-		T mValue;
-		T mDefault;
-		T *mTarget;
-		virtual void apply(){*mTarget = mValue;}
-		virtual void cancel(){mValue = mDefault;}
-};
-
-class DialogValueBool : public DialogValueType<bool>{	
-	public:
-		DialogValueBool(std::string cLabel, bool cDefault, bool* cTarget, bool cSameline){mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; bSameLine = cSameline;}
-		virtual void render(){DialogElement::render(); ImGui::Checkbox(mLabel.c_str(), &mValue);}		
-};
-
-class DialogValueInt : public DialogValueType<int>{	
-	public:
-		int mMin = 0;
-		int mMax = 0;
-		DialogValueInt(std::string cLabel, int cDefault, int* cTarget, int cMin, int cMax, bool cSameline){mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mMin = cMin; mMax = cMax; bSameLine = cSameline;}
-		virtual void render(){DialogElement::render(); ImGui::SliderInt(mLabel.c_str(), &mValue, mMin, mMax);}		
-};
-
-class DialogValueFloat : public DialogValueType<float>{	
-	public:
-		float mMin = 0;
-		float mMax = 0;
-		std::string mFormat = "%.2f";
-		DialogValueFloat(std::string cLabel, float cDefault, float* cTarget, float cMin, float cMax, std::string cFormat, bool cSameline){mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mMin = cMin; mMax = cMax; mFormat = cFormat, bSameLine = cSameline;}
-		virtual void render(){DialogElement::render(); ImGui::SliderFloat(mLabel.c_str(), &mValue, mMin, mMax, mFormat.c_str());}		
-};
-
-class DialogButton : public DialogElement{
-	public:
-		DialogButton(Dialog *cParent, std::string cLabel, int cAction, bool cSameline){mParent = cParent; mLabel = cLabel; mAction = cAction; bSameLine = cSameline;};
-		std::string mLabel;
-		int mAction;
-		virtual void render();	
-};
-
-class DialogValueRadioButton : public DialogValueType<int>{
-	public:
-		DialogValueRadioButton(std::string cLabel, int cDefault, int* cTarget, bool cSameline){mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; bSameLine = cSameline;};
-		virtual void render(){DialogElement::render(); ImGui::RadioButton(mLabel.c_str(), mTarget, mDefault);}
-};
-
-class DialogValueRadioGroup : public DialogValueType<int>{
-	public:
-		DialogValueRadioGroup(int cDefault, int* cTarget){mDefault = cDefault; mValue = mDefault; mTarget = cTarget;};
-		std::vector<DialogValueRadioButton*> mButtons;
-		virtual void render();
-};
-
-class DialogValueIntTarget : public DialogValueType<int>{	
-	public:		
-		DialogValueIntTarget(int cDefault, int* cTarget){mDefault = cDefault; mValue = mDefault; mTarget = cTarget;}
-		virtual void render(){};
-};
-
+class DialogElement;
+class DialogValueBase;
+class DialogButton;
 
 class DTDialog;
 
@@ -117,9 +34,131 @@ class Dialog{
 		virtual void cancel();
 
 		static DTDialog* createSpriteScaledCopyDialog();
-		static DTDialog* createSpriteUpscaledCopyDialog8X();
-		static DTDialog* createSpriteUpscaledCopyDialog4X();
-		static DTDialog* createSpriteUpscaledCopyDialog2X();
+
+		//static DTDialog* createSpriteUpscaledCopyDialog8X();
+		//static DTDialog* createSpriteUpscaledCopyDialog4X();
+		//static DTDialog* createSpriteUpscaledCopyDialog2X();
+
+		static DTDialog* createSpriteUpscaledCopyDialog();
+};
+
+
+class DTDialog : public Dialog{
+	public:
+		std::vector<DialogElement*> mElements;
+		std::vector<DialogElement*> mBasicElements;
+		std::vector<DialogValueBase*> mValues;
+		std::vector<DialogButton*> mButtons;
+		int mCondition = -1;
+		int mRequiredCondition = -1;
+		int mTargetState = 0;
+		virtual void setLabel(std::string cLabel){mDialogTextTitle = cLabel;};
+		virtual void setTarget(int cTarget){mTargetState = cTarget;};
+		virtual void setCondition(int cCond){mCondition = cCond;};
+		virtual void setRequiredCondition(int cCond){mRequiredCondition = cCond;};
+		virtual void clearRequiredCondition(){mRequiredCondition = -1;};
+		virtual void init();	
+		virtual int render();
+		virtual void recieveInput(int mKey);					
+		virtual void cancel();
+		void addText(std::string cText, bool bSameline = false);
+		void addSeperator();
+		void addSameLine();
+		void addBool(std::string cLabel, bool cDefault, bool *cTarget, bool bSameline = false);
+		void addInt(std::string cLabel, int cDefault, int *cTarget, int cMin, int cMax, bool bSameline = false);
+		void addFloat(std::string cLabel, float cDefault, float *cTarget, float cMin, float cMax, std::string cFormat = "%.2f", bool bSameline = false);
+		void addButton(std::string cLabel, int cAction, bool cSameline = false);
+		void addRadioGroup(int cDefault, int* cTarget);
+		void addRadioButton(std::string cLabel, int cDefault, bool cSameline = false);
+		void addIntTarget(int cDefault, int *cTarget);
+};
+
+
+class DialogElement{
+	public:
+		DTDialog *mParent;
+		bool bSameLine = false;
+		int mCondition = -1;
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}}  if(bSameLine){ImGui::SameLine();}}
+};
+
+class DialogElementText : public DialogElement{
+	public:		
+		DialogElementText(DTDialog *cParent, int cCond, std::string cText, bool cSameline){mParent = cParent; mText = cText; bSameLine = cSameline; mCondition = cCond;};
+		std::string mText;
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::Text("%s", mText.c_str()); }
+};
+
+class DialogElementSeperator : public DialogElement{
+	public:
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} ImGui::Separator();}
+};
+
+class DialogValueBase : public DialogElement{	
+	public:
+		virtual void render(){}
+		virtual void apply(){}
+		virtual void cancel(){}
+};
+
+template <typename T> class DialogValueType : public DialogValueBase{
+	public:
+		std::string mLabel;
+		T mValue;
+		T mDefault;
+		T *mTarget;
+		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} *mTarget = mValue;}
+		virtual void cancel(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} mValue = mDefault;}
+};
+
+class DialogValueBool : public DialogValueType<bool>{	
+	public:
+		DialogValueBool(DTDialog *cParent, int cCond, std::string cLabel, bool cDefault, bool* cTarget, bool cSameline){mParent = cParent; mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; bSameLine = cSameline; mCondition = cCond;}
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::Checkbox(mLabel.c_str(), &mValue);}		
+};
+
+class DialogValueInt : public DialogValueType<int>{	
+	public:
+		int mMin = 0;
+		int mMax = 0;
+		DialogValueInt(DTDialog *cParent, int cCond, std::string cLabel, int cDefault, int* cTarget, int cMin, int cMax, bool cSameline){mParent = cParent; mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mMin = cMin; mMax = cMax; bSameLine = cSameline; mCondition = cCond;}
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::SliderInt(mLabel.c_str(), &mValue, mMin, mMax);}		
+};
+
+class DialogValueFloat : public DialogValueType<float>{	
+	public:
+		float mMin = 0;
+		float mMax = 0;
+		std::string mFormat = "%.2f";
+		DialogValueFloat(DTDialog *cParent, int cCond, std::string cLabel, float cDefault, float* cTarget, float cMin, float cMax, std::string cFormat, bool cSameline){mParent = cParent; mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mMin = cMin; mMax = cMax; mFormat = cFormat, bSameLine = cSameline; mCondition = cCond;}
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::SliderFloat(mLabel.c_str(), &mValue, mMin, mMax, mFormat.c_str());}		
+};
+
+class DialogButton : public DialogElement{
+	public:
+		DialogButton(DTDialog *cParent, int cCond, std::string cLabel, int cAction, bool cSameline){mParent = cParent; mLabel = cLabel; mAction = cAction; bSameLine = cSameline; mCondition = cCond;};
+		std::string mLabel;
+		int mAction;
+		virtual void render();	
+};
+
+class DialogValueRadioButton : public DialogValueType<int>{
+	public:
+		DialogValueRadioButton(std::string cLabel, int cDefault, int* cTarget, bool cSameline){mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; bSameLine = cSameline;};
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::RadioButton(mLabel.c_str(), mTarget, mDefault);}
+};
+
+class DialogValueRadioGroup : public DialogValueType<int>{
+	public:
+		DialogValueRadioGroup(DTDialog *cParent, int cCond, int cDefault, int* cTarget){mParent = cParent; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mCondition = cCond;};
+		std::vector<DialogValueRadioButton*> mButtons;
+		virtual void render();
+};
+
+class DialogValueIntTarget : public DialogValueType<int>{	
+	public:		
+		DialogValueIntTarget(DTDialog *cParent, int cCond, int cDefault, int* cTarget){mParent = cParent; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mCondition = cCond;}
+		virtual void render(){};
 };
 
 class TIDialog: public Dialog{
@@ -152,30 +191,6 @@ class TIDialog: public Dialog{
 		bool bIsActive=false;
 };
 
-class DTDialog : public Dialog{
-	public:
-		std::vector<DialogElement*> mElements;
-		std::vector<DialogElement*> mBasicElements;
-		std::vector<DialogValueBase*> mValues;
-		std::vector<DialogButton*> mButtons;
-		int mTargetState = 0;
-		virtual void setLabel(std::string cLabel){mDialogTextTitle = cLabel;};
-		virtual void setTarget(int cTarget){mTargetState = cTarget;};
-		virtual void init();	
-		virtual int render();
-		virtual void recieveInput(int mKey);					
-		virtual void cancel();
-		void addText(std::string cText, bool bSameline = false);
-		void addSeperator();
-		void addSameLine();
-		void addBool(std::string cLabel, bool cDefault, bool *cTarget, bool bSameline = false);
-		void addInt(std::string cLabel, int cDefault, int *cTarget, int cMin, int cMax, bool bSameline = false);
-		void addFloat(std::string cLabel, float cDefault, float *cTarget, float cMin, float cMax, std::string cFormat = "%.2f", bool bSameline = false);
-		void addButton(std::string cLabel, int cAction, bool cSameline = false);
-		void addRadioGroup(int cDefault, int* cTarget);
-		void addRadioButton(std::string cLabel, int cDefault, bool cSameline = false);
-		void addIntTarget(int cDefault, int *cTarget);
-};
 
 class SDialog: public Dialog{
 	public:

@@ -136,9 +136,14 @@ int TEditor::createNewProject(){
 
 void TEditor::createDialogs(){
 	mScaledSpriteCopy = Dialog::createSpriteScaledCopyDialog();
+
+	mUpscaledSpriteCopy = Dialog::createSpriteUpscaledCopyDialog();
+
+	/*
 	mUpscaledSpriteCopy8X = Dialog::createSpriteUpscaledCopyDialog8X();
 	mUpscaledSpriteCopy4X = Dialog::createSpriteUpscaledCopyDialog4X();
 	mUpscaledSpriteCopy2X = Dialog::createSpriteUpscaledCopyDialog2X();
+	*/
 }
 
 void TEditor::initDialogs(){
@@ -1836,6 +1841,8 @@ int TEditor::activateNewTileMapDialog(){
 }
 
 int TEditor::activateNewUpscaledSpriteDialog(int cScale){
+	
+	/*
 	switch (cScale)
 	{
 	case 8:
@@ -1851,6 +1858,10 @@ int TEditor::activateNewUpscaledSpriteDialog(int cScale){
 	default:
 		break;
 	}
+	*/
+
+	mUpscaledSpriteCopy->setCondition(cScale);
+	mActiveDialog = mUpscaledSpriteCopy;	
 
 	return 0;
 }
