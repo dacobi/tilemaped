@@ -310,6 +310,9 @@ int TBDialog::render(){
 						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Remove Sprite")).c_str())){				
 							mGlobalSettings.CurrentEditor->activateRemoveSpriteDialog();
 						}	
+
+
+						if(ImGui::BeginMenu("Sprite Create")){
 						
 						if(mGlobalSettings.CurrentEditor->mSprites.size() > 1){
 							bool bFrameCopyPosible = false;
@@ -352,7 +355,7 @@ int TBDialog::render(){
 								ImGui::EndMenu();		
 							}
 
-							if(ImGui::BeginMenu("Sprite Create")){
+							
 
 								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Copy")).c_str())){
 										mGlobalSettings.CurrentEditor->createNewSpriteCopy(mGlobalSettings.CurrentEditor->mSprite);
