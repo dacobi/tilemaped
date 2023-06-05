@@ -3238,6 +3238,12 @@ void DTDialog::addRadioButton(std::string cLabel, int cDefault, bool cSameline){
 	}
 }
 
+void DTDialog::addIntTarget(int cDefault, int *cTarget){
+	DialogValueIntTarget *nInt = new DialogValueIntTarget(cDefault, cTarget);
+	
+	mValues.push_back(nInt);
+}
+
 DTDialog* Dialog::createSpriteUpscaledCopyDialog8X(){
 	DTDialog* newDialog = new DTDialog();
 
@@ -3293,6 +3299,8 @@ DTDialog* Dialog::createSpriteUpscaledCopyDialog2X(){
 	newDialog->setTarget(ESTATE_SPRITEUPSCALEDCOPY);
 
 	newDialog->addText(mGlobalSettings.mFile + " Create Upscaled Sprite Copy by 2X?");
+
+	newDialog->addIntTarget(2, &mGlobalSettings.mNewSpriteUpscale);
 	
 	newDialog->addSeperator();
 

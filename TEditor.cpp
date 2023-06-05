@@ -1845,7 +1845,7 @@ int TEditor::activateNewUpscaledSpriteDialog(int cScale){
 		mActiveDialog = mUpscaledSpriteCopy4X;	
 		break;
 	case 2:
-		mGlobalSettings.mNewSpriteUpscale = 2;
+		//mGlobalSettings.mNewSpriteUpscale = 2;
 		mActiveDialog = mUpscaledSpriteCopy2X;	
 		break;	
 	default:

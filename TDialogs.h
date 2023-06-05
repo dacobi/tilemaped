@@ -86,6 +86,13 @@ class DialogValueRadioGroup : public DialogValueType<int>{
 		virtual void render();
 };
 
+class DialogValueIntTarget : public DialogValueType<int>{	
+	public:		
+		DialogValueIntTarget(int cDefault, int* cTarget){mDefault = cDefault; mValue = mDefault; mTarget = cTarget;}
+		virtual void render(){};
+};
+
+
 class DTDialog;
 
 class Dialog{
@@ -167,6 +174,7 @@ class DTDialog : public Dialog{
 		void addButton(std::string cLabel, int cAction, bool cSameline = false);
 		void addRadioGroup(int cDefault, int* cTarget);
 		void addRadioButton(std::string cLabel, int cDefault, bool cSameline = false);
+		void addIntTarget(int cDefault, int *cTarget);
 };
 
 class SDialog: public Dialog{
