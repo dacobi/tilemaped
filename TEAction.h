@@ -410,7 +410,7 @@ class TEActionSwapFrames: public TEAction{
 					return true;
 				}
 			}
-			 return false;
+			return false;
 		}
 };
 
@@ -428,7 +428,7 @@ class TEActionReplaceFrame: public TEAction{
 		virtual bool checkFrame();
 		virtual int getFrame();
 		virtual bool doCompare(const TEAction& rhs){
-			 return false;
+			return false;
 		}
 };
 

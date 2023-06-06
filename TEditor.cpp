@@ -3368,9 +3368,7 @@ int TEditor::handleEvents(){
 				cancelActiveDialog();
 
 				if(bFramesImportSuccess){
-
-					/**/
-
+					
 					mSprite->mActionStack.newActionGroup();
 				
 					for(auto cFrame : cNewFrames){
@@ -3379,10 +3377,7 @@ int TEditor::handleEvents(){
 	       				mSprite->mActionStack.addAction(newActionTile);
 	       				mSprite->mActionStack.mLastAction = newActionTile;	       			
 					}
-
-					/**/
-
-					//mSprite->mActionStack.undoClearStack();
+					
 					mSprite->mActionStack.redoClearStack();
 
 					showMessage("Frame(s) Imported Successfully");
