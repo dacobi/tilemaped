@@ -190,6 +190,7 @@ class TEditor{
 		DTDialog* mUpscaledSpriteCopy;
 		DTDialog* mDownscaledSpriteCopy;
 		DTDialog* mSpriteRotationRange;
+		DTDialog* mSpriteRotations;
 
 		MEDialog mErrorMessage;				
 		QDialog mQuitDialog;
@@ -211,6 +212,7 @@ class TEditor{
 		int createNewSpriteDownscaledCopy(TSprite *newSprite);
 		int createNewSpriteCopy(TSprite *newSprite);
 		int createSpriteRotationRange(int cRange, int cIntervals);
+		int createSpriteRotations(int cNum, float cInterval);
 		int rotateTile();
 		int rotateTileLeft();
 		int moveTileUp();
@@ -243,6 +245,7 @@ class TEditor{
 		int activateNewTileMapDialog();
 		int activateNewSpriteDialog();
 		int activateSpriteRotationRangeDialog();
+		int activateSpriteRotationsDialog();
 		int activateNewScaledSpriteDialog();
 		int activateNewUpscaledSpriteDialog(int cScale);
 		int activateNewDownscaledSpriteDialog(int cScale);

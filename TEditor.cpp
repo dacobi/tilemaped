@@ -140,6 +140,7 @@ void TEditor::createDialogs(){
 	mUpscaledSpriteCopy = DTDialog::createSpriteUpscaledCopyDialog();	
 	mDownscaledSpriteCopy = DTDialog::createSpriteDownscaledCopyDialog();	
 	mSpriteRotationRange = DTDialog::createSpriteRotationRangeDialog();	
+	mSpriteRotations = DTDialog::createSpriteRotationsDialog();	
 }
 
 void TEditor::initDialogs(){
@@ -1348,6 +1349,35 @@ TSFrame* TEditor::createNewFrame(){
 	return NULL;
 }
 
+int TEditor::createSpriteRotations(int cNum, float cInterval){
+
+		if(mCurMode == EMODE_SPRITE){	
+		TSFrame* orgFrame = mSprite->mFrame;
+		std::vector<TSFrame*> cNewFrames;
+	
+		for(int i = 0; i < cNum; i++){
+			TSFrame *newFrame = mSprite->createNewCopy(orgFrame, &mPalette); 
+
+			newFrame->rotate(cInterval*(i+1));
+
+			cNewFrames.push_back(newFrame);			
+		}
+
+		mSprite->mActionStack.newActionGroup();
+				
+		for(auto cFrame : cNewFrames){
+			TEActionAddFrames* newActionTile = new TEActionAddFrames();
+			newActionTile->doAction(cFrame, this, mSprite);	       			
+	    	mSprite->mActionStack.addAction(newActionTile);
+	    	mSprite->mActionStack.mLastAction = newActionTile;	       			
+		}
+
+		mSprite->mActionStack.redoClearStack();
+	}
+
+	return 0;
+}
+
 int TEditor::createSpriteRotationRange(int cRange, int cIntervals){
 
 	if(mCurMode == EMODE_SPRITE){	
@@ -1897,10 +1927,13 @@ int TEditor::activateNewTileMapDialog(){
 	return 0;
 }
 
-int TEditor::activateSpriteRotationRangeDialog(){
-	
-	mActiveDialog = mSpriteRotationRange;	
+int TEditor::activateSpriteRotationsDialog(){
+	mActiveDialog = mSpriteRotations;	
+	return 0;
+}
 
+int TEditor::activateSpriteRotationRangeDialog(){
+	mActiveDialog = mSpriteRotationRange;	
 	return 0;
 }
 
@@ -3371,6 +3404,18 @@ int TEditor::handleEvents(){
 				createSpriteRotationRange(mGlobalSettings.mNewSpriteRange, mGlobalSettings.mNewSpriteRangeIntervals);
 
 				showMessage("Sprite Rotation Range Complete");
+
+				cancelActiveDialog();					
+				return 0;
+			}
+
+			if(mGlobalSettings.mEditorState == ESTATE_SPRITEROTATIONS){				
+				
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
+
+				createSpriteRotations(mGlobalSettings.mNewSpriteRotations, mGlobalSettings.mNewSpriteRotationsAngle);
+
+				showMessage("Sprite Frame Rotations Complete");
 
 				cancelActiveDialog();					
 				return 0;

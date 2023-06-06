@@ -415,6 +415,10 @@ int TBDialog::render(){
 								if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotation Range")).c_str(), NULL, false, bAllowRange)){
 									mGlobalSettings.CurrentEditor->activateSpriteRotationRangeDialog();
 								}
+
+								if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Frame Rotations")).c_str(), NULL, false, bAllowRange)){
+									mGlobalSettings.CurrentEditor->activateSpriteRotationsDialog();
+								}
 															
 								ImGui::EndMenu();		
 							}
@@ -3289,6 +3293,34 @@ void DTDialog::addIntTarget(int cDefault, int *cTarget){
 	DialogValueIntTarget *nInt = new DialogValueIntTarget(this, mRequiredCondition, cDefault, cTarget);
 	
 	mValues.push_back(nInt);
+}
+
+DTDialog* DTDialog::createSpriteRotationsDialog(){
+	
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Create Frame Rotations");
+
+	newDialog->setTarget(ESTATE_SPRITEROTATIONS);
+
+	newDialog->addText(mGlobalSettings.mImage + " Create Rotations of Current Frame?");
+
+	newDialog->addText("Select Angle in Degrees between Frames:");
+
+	newDialog->addFloat("Angle", 0.0, &mGlobalSettings.mNewSpriteRotationsAngle, 0, 45.0);
+
+	newDialog->addText("Select Number of Rotations:");
+
+	newDialog->addInt("Rotations", 1,  &mGlobalSettings.mNewSpriteRotations, 1, 90);
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Create", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+
 }
 
 DTDialog* DTDialog::createSpriteRotationRangeDialog(){

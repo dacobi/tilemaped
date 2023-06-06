@@ -69,6 +69,7 @@ class DTDialog : public Dialog{
 		static DTDialog* createSpriteUpscaledCopyDialog();
 		static DTDialog* createSpriteDownscaledCopyDialog();
 		static DTDialog* createSpriteRotationRangeDialog();
+		static DTDialog* createSpriteRotationsDialog();
 };
 
 

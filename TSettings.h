@@ -245,6 +245,8 @@ class TSettings{
 		int mNewSpriteUpscale = 2;
 		int mNewSpriteRange = 90;
 		int mNewSpriteRangeIntervals = 1;
+		float mNewSpriteRotationsAngle = 0;
+		int mNewSpriteRotations = 1;
 		int mNewSpriteDownscale = 2;
 		int mDeleteTileMapState = 0;			
 		int mTileMapFileCount = 0;			
@@ -360,6 +362,7 @@ enum {
 	ESTATE_SPRITEUPSCALEDCOPY,
 	ESTATE_SPRITEDOWNSCALEDCOPY,
 	ESTATE_SPRITEROTATIONRANGE,
+	ESTATE_SPRITEROTATIONS,
 	ESTATE_FRAMESIMPORT,
 	ESTATE_FRAMEROTATE,
 	ESTATE_FRAMESCALE
