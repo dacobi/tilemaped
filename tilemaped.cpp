@@ -421,20 +421,22 @@ void TSettings::shutdown(){
 
 void TSettings::settingsMenu(){
 	if (ImGui::BeginMenu(std::string(mGear + " Settings").c_str())){
-			ImGui::Text("Renderer");
-			ImGui::RadioButton("OpenGL", &mINIFile.Sys_Renderer->ivalue, 0);
+		ImGui::Text("Renderer");
+		ImGui::RadioButton("OpenGL", &mINIFile.Sys_Renderer->ivalue, 0);
 #ifdef MWIN64
-			ImGui::RadioButton("DirectX", &mINIFile.Sys_Renderer->ivalue, 1);
+		ImGui::RadioButton("DirectX", &mINIFile.Sys_Renderer->ivalue, 1);
 #endif
-			ImGui::RadioButton("Software", &mINIFile.Sys_Renderer->ivalue, 2);
-			ImGui::Checkbox("VSYNC", &mINIFile.Sys_VSYNC->bvalue);
-			ImGui::Separator();
-			ImGui::Text("Window");
-			ImGui::Checkbox("Restore Size", &mINIFile.Win_Restore->bvalue);
-			if(!mINIFile.Win_Restore->bvalue){
-				ImGui::Checkbox("Maximize", &mINIFile.Win_Maximize->bvalue);				
-			}
-			ImGui::EndMenu();
+		ImGui::RadioButton("Software", &mINIFile.Sys_Renderer->ivalue, 2);
+		ImGui::Checkbox("VSYNC", &mINIFile.Sys_VSYNC->bvalue);
+		ImGui::Separator();
+		ImGui::Text("Window");
+		ImGui::Checkbox("Restore Size", &mINIFile.Win_Restore->bvalue);
+		
+		if(!mINIFile.Win_Restore->bvalue){
+			ImGui::Checkbox("Maximize", &mINIFile.Win_Maximize->bvalue);				
+		}
+		
+		ImGui::EndMenu();
 	}
 }
 
