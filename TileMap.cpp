@@ -1411,7 +1411,7 @@ int Tile::rotate(double cAngle){
 		}
 
 		FileData = bitmap;
-		updateTexture(&mGlobalSettings.CurrentEditor->mPalette);
+		recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);
 		delete[] pixels;
 
 	}
@@ -1496,7 +1496,7 @@ int Tile::applyFilter(){
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");			
 
 		FileData = bitmap;
-		updateTexture(&mGlobalSettings.CurrentEditor->mPalette);
+		recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);
 		delete[] pixels;
 
 		return 0;
@@ -1658,7 +1658,7 @@ int Tile::scale(double cScale){
 		}	
 
 		FileData = bitmap;
-		updateTexture(&mGlobalSettings.CurrentEditor->mPalette);
+		recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);
 		delete[] pixels;
 
 	}

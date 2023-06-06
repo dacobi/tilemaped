@@ -139,6 +139,7 @@ void TEditor::createDialogs(){
 	mScaledSpriteCopy = DTDialog::createSpriteScaledCopyDialog();
 	mUpscaledSpriteCopy = DTDialog::createSpriteUpscaledCopyDialog();	
 	mDownscaledSpriteCopy = DTDialog::createSpriteDownscaledCopyDialog();	
+	mSpriteRotationRange = DTDialog::createSpriteRotationRangeDialog();	
 }
 
 void TEditor::initDialogs(){
@@ -1347,6 +1348,36 @@ TSFrame* TEditor::createNewFrame(){
 	return NULL;
 }
 
+int TEditor::createSpriteRotationRange(int cRange, int cIntervals){
+
+	if(mCurMode == EMODE_SPRITE){	
+		TSFrame* orgFrame = mSprite->mFrame;
+	
+		int nIntervals = 1;
+
+		for(int ri = 0; ri < cIntervals; ri++){
+			nIntervals += nIntervals+1;
+		}
+
+		nIntervals++;
+		float nAngle = (float)cRange / (float)nIntervals;
+
+		//std::cout << "Creating Range: " << nIntervals << std::endl;
+		//std::cout << "Range Angle Interval: " << nAngle << std::endl;
+
+		for(int i = 0; i < nIntervals; i++){
+			TSFrame *newFrame = mSprite->createNewCopy(orgFrame, &mPalette); 
+
+			newFrame->rotate(nAngle*(i+1));
+
+			//std::cout << "Current Angle: " << (float)(nAngle*(i+1)) << std::endl;
+		}		 
+	}
+
+
+	return 0;
+}
+
 
 TSFrame* TEditor::createNewFrameCopy(TSFrame* cCopyFrame){
 if(mCurMode == EMODE_SPRITE){	
@@ -1381,7 +1412,7 @@ int TEditor::removeSelectedFrame(){
 int TEditor::createNewSpriteDownscaledCopy(TSprite *newSprite){
 	mSprite = new TSprite(newSprite->mTexParam.TileSizeX / mGlobalSettings.mNewSpriteDownscale, newSprite->mTexParam.TileSizeY / mGlobalSettings.mNewSpriteDownscale, newSprite->mTexParam.TileSetBPP);
 
-	std::cout << "Downscaled Sprite by X: " << mGlobalSettings.mNewSpriteUpscale << std::endl;
+	std::cout << "Downscaled Sprite by X: " << mGlobalSettings.mNewSpriteDownscale << std::endl;
 
 	for(auto *cFrame : newSprite->mFrames){
 		mSprite->createNewUpscaledCopy(cFrame, &mPalette);		
@@ -1849,6 +1880,13 @@ int TEditor::activateNewTileMapDialog(){
 	if(mCurMode == EMODE_MAP){
 		mActiveDialog = &mNewTileMapDialog;		
 	}
+	return 0;
+}
+
+int TEditor::activateSpriteRotationRangeDialog(){
+	
+	mActiveDialog = mSpriteRotationRange;	
+
 	return 0;
 }
 
@@ -3294,6 +3332,20 @@ int TEditor::handleEvents(){
 				return 0;
 				
 			}
+
+
+			if(mGlobalSettings.mEditorState == ESTATE_SPRITEROTATIONRANGE){				
+				
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
+
+				createSpriteRotationRange(mGlobalSettings.mNewSpriteRange, mGlobalSettings.mNewSpriteRangeIntervals);
+
+				showMessage("Sprite Rotation Range Complete");
+
+				cancelActiveDialog();					
+				return 0;
+			}
+
 
 			if(mGlobalSettings.mEditorState == ESTATE_SPRITEUPSCALEDCOPY){				
 				

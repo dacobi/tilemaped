@@ -58,6 +58,7 @@ class DTDialog : public Dialog{
 		void addSameLine();
 		void addBool(std::string cLabel, bool cDefault, bool *cTarget, bool bSameline = false);
 		void addInt(std::string cLabel, int cDefault, int *cTarget, int cMin, int cMax, bool bSameline = false);
+		void addIntStrings(std::string cLabel, int cDefault, int *cTarget, std::vector<std::string> &cStrings, bool bSameline = false);
 		void addFloat(std::string cLabel, float cDefault, float *cTarget, float cMin, float cMax, std::string cFormat = "%.2f", bool bSameline = false);
 		void addButton(std::string cLabel, int cAction, bool cSameline = false);
 		void addRadioGroup(int cDefault, int* cTarget);
@@ -67,6 +68,7 @@ class DTDialog : public Dialog{
 		static DTDialog* createSpriteScaledCopyDialog();
 		static DTDialog* createSpriteUpscaledCopyDialog();
 		static DTDialog* createSpriteDownscaledCopyDialog();
+		static DTDialog* createSpriteRotationRangeDialog();
 };
 
 
@@ -120,6 +122,16 @@ class DialogValueInt : public DialogValueType<int>{
 		DialogValueInt(DTDialog *cParent, int cCond, std::string cLabel, int cDefault, int* cTarget, int cMin, int cMax, bool cSameline){mParent = cParent; mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mMin = cMin; mMax = cMax; bSameLine = cSameline; mCondition = cCond;}
 		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::SliderInt(mLabel.c_str(), &mValue, mMin, mMax);}		
 };
+
+class DialogValueIntStrings : public DialogValueType<int>{
+	public:
+		int mMin = 0;
+		int mMax = 0;
+		std::vector<std::string> mStrings;
+		DialogValueIntStrings(DTDialog *cParent, int cCond, std::string cLabel, int cDefault, int* cTarget, std::vector<std::string> &cStrings, bool cSameline){mParent = cParent; mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mStrings = cStrings; mMin = 0; mMax = mStrings.size()-1; bSameLine = cSameline; mCondition = cCond;}
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); const char *cFormat = mStrings[mValue].c_str(); ImGui::SliderInt(mLabel.c_str(), &mValue, mMin, mMax, cFormat);}		
+};
+
 
 class DialogValueFloat : public DialogValueType<float>{	
 	public:

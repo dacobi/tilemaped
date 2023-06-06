@@ -405,7 +405,17 @@ int TBDialog::render(){
 									mGlobalSettings.CurrentEditor->activateNewDownscaledSpriteDialog(cAllowedDownScale);
 								}
 
-								
+								bool bAllowRange = false;
+
+								if( mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY){
+									bAllowRange = true;
+								}
+
+
+								if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotation Range")).c_str(), NULL, false, bAllowRange)){
+									mGlobalSettings.CurrentEditor->activateSpriteRotationRangeDialog();
+								}
+															
 								ImGui::EndMenu();		
 							}
 						}
@@ -3235,6 +3245,13 @@ void DTDialog::addInt(std::string cLabel, int cDefault, int *cTarget, int cMin, 
 
 }
 
+void DTDialog::addIntStrings(std::string cLabel, int cDefault, int *cTarget, std::vector<std::string> &cStrings, bool bSameline){
+	DialogValueIntStrings *nInt = new DialogValueIntStrings(this, mRequiredCondition, cLabel, cDefault, cTarget, cStrings, bSameline);
+
+	mElements.push_back(nInt);
+	mValues.push_back(nInt);
+}
+
 void DTDialog::addFloat(std::string cLabel, float cDefault, float *cTarget, float cMin, float cMax,std::string cFormat, bool bSameline){
 	
 	DialogValueFloat *nFloat = new DialogValueFloat(this, mRequiredCondition, cLabel, cDefault, cTarget, cMin, cMax, cFormat, bSameline);
@@ -3274,6 +3291,37 @@ void DTDialog::addIntTarget(int cDefault, int *cTarget){
 	mValues.push_back(nInt);
 }
 
+DTDialog* DTDialog::createSpriteRotationRangeDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Create Rotation Range");
+
+	newDialog->setTarget(ESTATE_SPRITEROTATIONRANGE);
+
+	newDialog->addText(mGlobalSettings.mImage + " Create Rotation Range from Current Frame?");
+	
+	newDialog->addText("Select Range in Degrees:");
+
+	newDialog->addRadioGroup(90, &mGlobalSettings.mNewSpriteRange);
+	newDialog->addRadioButton("0-90", 90, false);	
+	newDialog->addRadioButton("0-180", 180, true);
+
+	newDialog->addText("Intervals between Start and End angle:");
+
+	std::vector<std::string> cStrings = {"1", "3", "7", "15", "31", "63", "127"};
+	newDialog->addIntStrings("Intervals", 0, &mGlobalSettings.mNewSpriteRangeIntervals, cStrings);
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Create", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+
+	return newDialog;
+}
+
+
 DTDialog* DTDialog::createSpriteUpscaledCopyDialog(){
 	DTDialog* newDialog = new DTDialog();
 
@@ -3289,7 +3337,6 @@ DTDialog* DTDialog::createSpriteUpscaledCopyDialog(){
 
 	newDialog->setRequiredCondition(2);
 	newDialog->addText(mGlobalSettings.mFile + " Create UpScaled Sprite Copy by 2X?");
-
 
 	newDialog->setRequiredCondition(8);
 	newDialog->addRadioGroup(2, &mGlobalSettings.mNewSpriteUpscale);
@@ -3314,6 +3361,7 @@ DTDialog* DTDialog::createSpriteUpscaledCopyDialog(){
 	newDialog->addButton("Create", SDLK_y);
 	
 	newDialog->addButton("Cancel", SDLK_n, true);
+
 
 	return newDialog;
 }
