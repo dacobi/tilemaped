@@ -375,6 +375,23 @@ class TEActionAddFrame: public TEAction{
 		}
 };
 
+class TEActionAddFrames: public TEAction{
+	public:
+		~TEActionAddFrames();
+		TSFrame* mNewFrame;
+		TSFrame* mOldFrame;
+		TSprite *mSprite;
+		TEditor *mEditor;		
+		int mFrameIndex;
+		void doAction(TSFrame* cNewFrame, TEditor* cEditor, TSprite *cSprite);	
+		virtual void undo();
+		virtual void redo();
+		virtual bool doCompare(const TEAction& rhs){
+			 return false;
+		}
+};
+
+
 class TEActionSwapFrames: public TEAction{
 	public:
 		~TEActionSwapFrames();

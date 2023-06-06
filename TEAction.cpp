@@ -393,6 +393,10 @@ TEActionAddTiles::~TEActionAddTiles(){
 	mNewTile->freeTexture();
 }
 
+TEActionAddFrames::~TEActionAddFrames(){	
+	mNewFrame->freeTexture();
+}
+
 
 void TEActionReplaceTileSet::undo(){ 
 	mTile->replaceWithBuffer(mOldBuf, &mEditor->mPalette);
@@ -582,6 +586,47 @@ void TEActionAddTiles::redo(){
 	
 }
 
+/* AddFrames */
+
+void TEActionAddFrames::doAction(TSFrame* cNewFrame, TEditor* cEditor, TSprite *cSprite){
+	mSprite = cSprite;
+	mNewFrame = cNewFrame;
+	mEditor = cEditor;
+
+	mSprite->selectFrame(0);
+	
+	for(int i = 0; i < mSprite->mFrames.size(); i++){
+		if(mSprite->mFrames[i] == mNewFrame){
+			mFrameIndex = i;			
+		}
+	}
+
+	TEActionType=ACTION_FRAMESNEW;	
+}
+
+void TEActionAddFrames::undo(){
+	
+	for(int i = 0; i < mSprite->mFrames.size(); i++){
+		if(mSprite->mFrames[i] == mNewFrame){
+			mFrameIndex = i;			
+		}
+	}
+	mSprite->removeFrame(mFrameIndex);
+
+	mSprite->selectFrame(0);
+}
+
+void TEActionAddFrames::redo(){
+	
+	mSprite->appendFrame(mNewFrame);
+	mFrameIndex = mSprite->mFrames.size()-1;
+	
+	mSprite->selectFrame(0);
+}
+
+
+/* AddFrames End */
+
 
 void TEActionAddTile::undo(){	
 	mTiles->removeTile(mTileIndex);
@@ -755,7 +800,8 @@ void TEActionUndoStack::undoClearStack(){
 				TEActionAddTile* ddAction = dynamic_cast<TEActionAddTile*>(dAction);
 				TEActionAddTiles* dddAction = dynamic_cast<TEActionAddTiles*>(dAction);
 				TEActionAddFrame* ddddAction = dynamic_cast<TEActionAddFrame*>(dAction);
-				if(!ddAction && !dddAction && !ddddAction){
+				TEActionAddFrames* dddddAction = dynamic_cast<TEActionAddFrames*>(dAction);
+				if(!ddAction && !dddAction && !ddddAction && !dddddAction){
 					delete dAction;
 				}
 			}		

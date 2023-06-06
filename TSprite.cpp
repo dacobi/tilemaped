@@ -211,7 +211,7 @@ int TSprite::loadFromBuffer(std::vector<unsigned char> sBuf, TPalette* tpal){
 	return 0;
 }
 
-int TSprite::importFromBuffer(std::vector<unsigned char> sBuf, TPalette* tpal){
+int TSprite::importFromBuffer(std::vector<unsigned char> sBuf, TPalette* tpal, std::vector<TSFrame*> &cNewFrames){
 
 	int tmpFrameSize = ((mTexParam.TileSizeX * mTexParam.TileSizeY)/mGlobalSettings.mTileBPPSize[mTexParam.TileSetBPP]);
 
@@ -230,6 +230,7 @@ int TSprite::importFromBuffer(std::vector<unsigned char> sBuf, TPalette* tpal){
 		std::vector<unsigned char> tbuffer2(first, last);
 		cFrame->loadFromBuffer(tbuffer2 ,tpal);
 		mFrames.push_back(cFrame);	
+		cNewFrames.push_back(cFrame);
 	}
 
 	FrameAreas.resize(mFrames.size());
@@ -240,7 +241,7 @@ int TSprite::importFromBuffer(std::vector<unsigned char> sBuf, TPalette* tpal){
 
 }
 
-int TSprite::importPNG(SDL_Surface *newSurf, TPalette* tpal){
+int TSprite::importPNG(SDL_Surface *newSurf, TPalette* tpal, std::vector<TSFrame*> &cNewFrames){
 	if(newSurf->format->BitsPerPixel == 8){
 		if(!(newSurf->w % mTexParam.TileSizeX) && !(newSurf->h % mTexParam.TileSizeY)){
 			int cTilesX,cTilesY;
@@ -272,7 +273,8 @@ int TSprite::importPNG(SDL_Surface *newSurf, TPalette* tpal){
 			}
 
 			for(auto &tbufl : tbuffers){
-				createNewFromBuffer(tbufl, tpal);
+				TSFrame *newFrame = createNewFromBuffer(tbufl, tpal);
+				cNewFrames.push_back(newFrame);
 			}
 
 			FrameAreas.resize(mFrames.size());

@@ -314,7 +314,7 @@ int TBDialog::render(){
 
 						if(ImGui::BeginMenu("Sprite Create")){
 						
-						if(mGlobalSettings.CurrentEditor->mSprites.size() > 1){
+						//if(mGlobalSettings.CurrentEditor->mSprites.size() > 0){
 							bool bFrameCopyPosible = false;
 
 							for(auto *cSprt : mGlobalSettings.CurrentEditor->mSprites){
@@ -418,7 +418,7 @@ int TBDialog::render(){
 															
 								ImGui::EndMenu();		
 							}
-						}
+						//}
 						
 						ImGui::EndMenu();
 					}
@@ -2169,7 +2169,7 @@ int ISFSDialog::render(){
 	ImGui::Begin("Import Sprite Frame(s)", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
     		
 	ImGui::Text("Import Sprite Frame(s) from Projet File, PNG or RAW");
-	ImGui::Text("Undo Stack will be cleared");
+	//ImGui::Text("Undo Stack will be cleared");
 	
 
 	mTextInput.render();

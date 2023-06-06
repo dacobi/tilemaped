@@ -1352,6 +1352,7 @@ int TEditor::createSpriteRotationRange(int cRange, int cIntervals){
 
 	if(mCurMode == EMODE_SPRITE){	
 		TSFrame* orgFrame = mSprite->mFrame;
+		std::vector<TSFrame*> cNewFrames;
 	
 		int nIntervals = 1;
 
@@ -1370,8 +1371,21 @@ int TEditor::createSpriteRotationRange(int cRange, int cIntervals){
 
 			newFrame->rotate(nAngle*(i+1));
 
+			cNewFrames.push_back(newFrame);
+
 			//std::cout << "Current Angle: " << (float)(nAngle*(i+1)) << std::endl;
-		}		 
+		}
+
+		mSprite->mActionStack.newActionGroup();
+				
+		for(auto cFrame : cNewFrames){
+			TEActionAddFrames* newActionTile = new TEActionAddFrames();
+			newActionTile->doAction(cFrame, this, mSprite);	       			
+	    	mSprite->mActionStack.addAction(newActionTile);
+	    	mSprite->mActionStack.mLastAction = newActionTile;	       			
+		}
+
+		mSprite->mActionStack.redoClearStack();
 	}
 
 
@@ -3287,18 +3301,19 @@ int TEditor::handleEvents(){
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
 
 				std::vector<unsigned char> fbuffer;
+				std::vector<TSFrame*> cNewFrames;
 				fs::path cFramesPath;
 				SDL_Surface *newSurf;
 				bool bFramesImportSuccess = false;
 
 				newSurf = IMG_Load(mGlobalSettings.mNewFramesPath.c_str());
 				if(newSurf){
-					if(!mSprite->importPNG(newSurf, &mGlobalSettings.CurrentEditor->mPalette)){
+					if(!mSprite->importPNG(newSurf, &mGlobalSettings.CurrentEditor->mPalette, cNewFrames)){
 						bFramesImportSuccess = true;							
 					} 	
 				}else if (mGlobalSettings.getSpriteFileHeader(mGlobalSettings.mNewFramesPath, mGlobalSettings.mNewSpriteX,  mGlobalSettings.mNewSpriteY,  mGlobalSettings.mNewSpriteBPP, fbuffer)){
 					if( (mGlobalSettings.mNewSpriteX == mSprite->mTexParam.TileSizeX) && (mGlobalSettings.mNewSpriteY == mSprite->mTexParam.TileSizeY) && (mGlobalSettings.mNewSpriteBPP == mSprite->mTexParam.TileSetBPP) ){
-						if(!mSprite->importFromBuffer(fbuffer, &mPalette)){
+						if(!mSprite->importFromBuffer(fbuffer, &mPalette, cNewFrames)){
 							bFramesImportSuccess = true;
 						} 
 					} 
@@ -3310,7 +3325,7 @@ int TEditor::handleEvents(){
     					std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
 
 						if((tbuffer.size() % ((mSprite->mTexParam.TileSizeX * mSprite->mTexParam.TileSizeY) / mGlobalSettings.mTileBPPSize[mSprite->mTexParam.TileSetBPP])) == 0){							
-							if(!mSprite->importFromBuffer(tbuffer, &mPalette)){
+							if(!mSprite->importFromBuffer(tbuffer, &mPalette, cNewFrames)){
 								bFramesImportSuccess = true;
 							} 
 						}
@@ -3320,8 +3335,23 @@ int TEditor::handleEvents(){
 				cancelActiveDialog();
 
 				if(bFramesImportSuccess){
-					mSprite->mActionStack.undoClearStack();
+
+					/**/
+
+					mSprite->mActionStack.newActionGroup();
+				
+					for(auto cFrame : cNewFrames){
+						TEActionAddFrames* newActionTile = new TEActionAddFrames();
+						newActionTile->doAction(cFrame, this, mSprite);	       			
+	       				mSprite->mActionStack.addAction(newActionTile);
+	       				mSprite->mActionStack.mLastAction = newActionTile;	       			
+					}
+
+					/**/
+
+					//mSprite->mActionStack.undoClearStack();
 					mSprite->mActionStack.redoClearStack();
+
 					showMessage("Frame(s) Imported Successfully");
 					std::cout << "Frames Imported Successfully" << std::endl;
 					return 0;
@@ -3387,6 +3417,7 @@ int TEditor::handleEvents(){
 
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
 				std::vector<unsigned char> sbuffer;
+				std::vector<TSFrame*> cNewFrames;
 				fs::path cSpritePath;
 				SDL_Surface *newSurf;
 				bool bSpriteImportSuccess = false;
@@ -3409,7 +3440,7 @@ int TEditor::handleEvents(){
 						newSurf = IMG_Load(mGlobalSettings.mNewSpritePath.c_str());
 						if(newSurf){
 							TSprite *cSprite = new TSprite(mGlobalSettings.mNewSpriteX,  mGlobalSettings.mNewSpriteY,  mGlobalSettings.mNewSpriteBPP);
-							if(cSprite->importPNG(newSurf,  &mGlobalSettings.CurrentEditor->mPalette)){
+							if(cSprite->importPNG(newSurf,  &mGlobalSettings.CurrentEditor->mPalette, cNewFrames)){
 								std::cout << "Error Importing Sprite: " << mGlobalSettings.mNewSpritePath << std::endl;								
 								showMessage("Error Importing Sprite", true);
 							} else {
