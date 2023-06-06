@@ -311,10 +311,10 @@ int TBDialog::render(){
 							mGlobalSettings.CurrentEditor->activateRemoveSpriteDialog();
 						}	
 
-
+						/*
 						if(ImGui::BeginMenu("Sprite Create")){
 						
-						//if(mGlobalSettings.CurrentEditor->mSprites.size() > 0){
+							//if(mGlobalSettings.CurrentEditor->mSprites.size() > 0){
 							bool bFrameCopyPosible = false;
 
 							for(auto *cSprt : mGlobalSettings.CurrentEditor->mSprites){
@@ -326,34 +326,34 @@ int TBDialog::render(){
 							}
 
 							if(ImGui::BeginMenu((std::string(mGlobalSettings.mFile + " Copy Frame")).c_str(), bFrameCopyPosible)){
-								int fSCount = 0;
-								std::string sfSCount;
-								std::string cCSFrame;
-								for(auto *cSprt : mGlobalSettings.CurrentEditor->mSprites){
-									if(cSprt != mGlobalSettings.CurrentEditor->mSprite){
-										if((cSprt->mTexParam.TileSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX) && (cSprt->mTexParam.TileSizeY == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY) && (cSprt->mTexParam.TileSetBPP == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSetBPP)){
+									int fSCount = 0;
+									std::string sfSCount;
+									std::string cCSFrame;
+									for(auto *cSprt : mGlobalSettings.CurrentEditor->mSprites){
+										if(cSprt != mGlobalSettings.CurrentEditor->mSprite){
+											if((cSprt->mTexParam.TileSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX) && (cSprt->mTexParam.TileSizeY == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY) && (cSprt->mTexParam.TileSetBPP == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSetBPP)){
 											
-											fconv << fSCount << std::endl;
-											fconv >> sfSCount;
+												fconv << fSCount << std::endl;
+												fconv >> sfSCount;
 
-											if(ImGui::BeginMenu(std::string("Sprite " + sfSCount + ": " +  cSprt->getSpriteSize()).c_str())){
+												if(ImGui::BeginMenu(std::string("Sprite " + sfSCount + ": " +  cSprt->getSpriteSize()).c_str())){
 
-												for(int nf = 0; nf < cSprt->mFrames.size(); nf++){
-													fconv << nf << std::endl;									
-													fconv >> cCSFrame;
+													for(int nf = 0; nf < cSprt->mFrames.size(); nf++){
+														fconv << nf << std::endl;									
+														fconv >> cCSFrame;
 																								
-													if(ImGui::MenuItem((std::string("Frame " + cCSFrame).c_str()))){																					
-														mGlobalSettings.CurrentEditor->createNewFrameCopy(cSprt->mFrames[nf]);
-													}								
-												}	
-												ImGui::EndMenu();
-											}											
-										}	
+														if(ImGui::MenuItem((std::string("Frame " + cCSFrame).c_str()))){																					
+															mGlobalSettings.CurrentEditor->createNewFrameCopy(cSprt->mFrames[nf]);
+														}								
+													}	
+													ImGui::EndMenu();
+												}											
+											}	
+										}
+										fSCount++;
 									}
-									fSCount++;
-								}
 								ImGui::EndMenu();		
-							}
+								}
 
 							
 
@@ -422,6 +422,7 @@ int TBDialog::render(){
 															
 								ImGui::EndMenu();		
 							}
+							*/
 						//}
 						
 						ImGui::EndMenu();
@@ -544,6 +545,130 @@ int TBDialog::render(){
 						mGlobalSettings.CurrentEditor->activateRemoveSpriteDialog();
 					}
 				}
+				
+
+				if(mGlobalSettings.mUseTextureFiltering > 1){
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Filter Selected Frame")).c_str())){
+						mGlobalSettings.CurrentEditor->filterFrame();
+					}
+				}
+
+				/*  */
+
+				if(ImGui::BeginMenu(std::string(mGlobalSettings.mTool + " Sprite Tools").c_str())){
+						
+							//if(mGlobalSettings.CurrentEditor->mSprites.size() > 0){
+							bool bFrameCopyPosible = false;
+
+							for(auto *cSprt : mGlobalSettings.CurrentEditor->mSprites){
+								if(cSprt != mGlobalSettings.CurrentEditor->mSprite){
+									if((cSprt->mTexParam.TileSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX) && (cSprt->mTexParam.TileSizeY == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY) && (cSprt->mTexParam.TileSetBPP == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSetBPP)){
+										bFrameCopyPosible = true;
+									}
+								}
+							}
+
+							if(ImGui::BeginMenu((std::string(mGlobalSettings.mImage + " Copy Frame")).c_str(), bFrameCopyPosible)){
+									int fSCount = 0;
+									std::string sfSCount;
+									std::string cCSFrame;
+									std::stringstream fconv;
+									for(auto *cSprt : mGlobalSettings.CurrentEditor->mSprites){
+										if(cSprt != mGlobalSettings.CurrentEditor->mSprite){
+											if((cSprt->mTexParam.TileSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX) && (cSprt->mTexParam.TileSizeY == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY) && (cSprt->mTexParam.TileSetBPP == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSetBPP)){
+											
+												fconv << fSCount << std::endl;
+												fconv >> sfSCount;
+
+												if(ImGui::BeginMenu(std::string("Sprite " + sfSCount + ": " +  cSprt->getSpriteSize()).c_str())){
+
+													for(int nf = 0; nf < cSprt->mFrames.size(); nf++){
+														fconv << nf << std::endl;									
+														fconv >> cCSFrame;
+																								
+														if(ImGui::MenuItem((std::string("Frame " + cCSFrame).c_str()))){																					
+															mGlobalSettings.CurrentEditor->createNewFrameCopy(cSprt->mFrames[nf]);
+														}								
+													}	
+													ImGui::EndMenu();
+												}											
+											}	
+										}
+										fSCount++;
+									}
+								ImGui::EndMenu();		
+								}
+
+							
+
+								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Copy")).c_str())){
+										mGlobalSettings.CurrentEditor->createNewSpriteCopy(mGlobalSettings.CurrentEditor->mSprite);
+										mGlobalSettings.CurrentEditor->showMessage("Sprite Copied Successfully");
+								}
+
+								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Scaled Copy")).c_str())){
+										mGlobalSettings.CurrentEditor->activateNewScaledSpriteDialog();
+								}
+
+								bool bAllowUpscale = false;
+								int cAllowedScale = 2;
+
+								if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX < 64) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY < 64) ){
+									bAllowUpscale = true;
+
+									if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX < 32) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY < 32) ){
+										cAllowedScale = 4;
+									}
+
+									if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX < 16) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY < 16) ){
+										cAllowedScale = 8;
+									}																		
+								}
+
+								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Upscaled Copy")).c_str(), NULL, false, bAllowUpscale)){
+									mGlobalSettings.CurrentEditor->activateNewUpscaledSpriteDialog(cAllowedScale);
+								}
+
+
+								bool bAllowDownscale = false;
+								int cAllowedDownScale = 2;
+
+								if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX > 8) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY > 8) ){
+									bAllowDownscale = true;
+
+									if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX > 16) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY > 16) ){
+										cAllowedDownScale = 4;
+									}
+
+									if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX > 32) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY > 32) ){
+										cAllowedDownScale = 8;
+									}																		
+								}
+
+								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Downscaled Copy")).c_str(), NULL, false, bAllowDownscale)){
+									mGlobalSettings.CurrentEditor->activateNewDownscaledSpriteDialog(cAllowedDownScale);
+								}
+
+								bool bAllowRange = false;
+
+								if( mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY){
+									bAllowRange = true;
+								}
+
+
+								if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotation Range")).c_str(), NULL, false, bAllowRange)){
+									mGlobalSettings.CurrentEditor->activateSpriteRotationRangeDialog();
+								}
+
+								if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Frame Rotations")).c_str(), NULL, false, bAllowRange)){
+									mGlobalSettings.CurrentEditor->activateSpriteRotationsDialog();
+								}
+															
+								ImGui::EndMenu();		
+							}
+
+				/*  */	
+
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Sprite Frame Reordering").c_str()))){										
 					if(ImGui::MenuItem("Warn Before Frame Removal", NULL, &mGlobalSettings.bSpriteWarnBeforeDelete)){
 						
@@ -565,13 +690,7 @@ int TBDialog::render(){
 
 					ImGui::EndMenu();
 
-				}
-
-				if(mGlobalSettings.mUseTextureFiltering > 1){
-					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Filter Selected Frame")).c_str())){
-						mGlobalSettings.CurrentEditor->filterFrame();
-					}
-				}				
+				}		
 			}
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
@@ -3357,18 +3476,18 @@ DTDialog* DTDialog::createSpriteRotationRangeDialog(){
 DTDialog* DTDialog::createSpriteUpscaledCopyDialog(){
 	DTDialog* newDialog = new DTDialog();
 
-	newDialog->setLabel("Create UpScaled Copy");
+	newDialog->setLabel("Create Upscaled Copy");
 
 	newDialog->setTarget(ESTATE_SPRITEUPSCALEDCOPY);
 
 	newDialog->setRequiredCondition(8);
-	newDialog->addText(mGlobalSettings.mFile + " Create UpScaled Sprite Copy?");
+	newDialog->addText(mGlobalSettings.mFile + " Create Upscaled Sprite Copy?");
 
 	newDialog->setRequiredCondition(4);
-	newDialog->addText(mGlobalSettings.mFile + " Create UpScaled Sprite Copy?");
+	newDialog->addText(mGlobalSettings.mFile + " Create Upscaled Sprite Copy?");
 
 	newDialog->setRequiredCondition(2);
-	newDialog->addText(mGlobalSettings.mFile + " Create UpScaled Sprite Copy by 2X?");
+	newDialog->addText(mGlobalSettings.mFile + " Create Upscaled Sprite Copy by 2X?");
 
 	newDialog->setRequiredCondition(8);
 	newDialog->addRadioGroup(2, &mGlobalSettings.mNewSpriteUpscale);
@@ -3401,18 +3520,18 @@ DTDialog* DTDialog::createSpriteUpscaledCopyDialog(){
 DTDialog* DTDialog::createSpriteDownscaledCopyDialog(){
 	DTDialog* newDialog = new DTDialog();
 
-	newDialog->setLabel("Create DownScaled Copy");
+	newDialog->setLabel("Create Downscaled Copy");
 
 	newDialog->setTarget(ESTATE_SPRITEDOWNSCALEDCOPY);
 
 	newDialog->setRequiredCondition(8);
-	newDialog->addText(mGlobalSettings.mFile + " Create DownScaled Sprite Copy?");
+	newDialog->addText(mGlobalSettings.mFile + " Create Downscaled Sprite Copy?");
 
 	newDialog->setRequiredCondition(4);
-	newDialog->addText(mGlobalSettings.mFile + " Create DownScaled Sprite Copy?");
+	newDialog->addText(mGlobalSettings.mFile + " Create Downscaled Sprite Copy?");
 
 	newDialog->setRequiredCondition(2);
-	newDialog->addText(mGlobalSettings.mFile + " Create DownScaled Sprite Copy by 2X?");
+	newDialog->addText(mGlobalSettings.mFile + " Create Downscaled Sprite Copy by 2X?");
 
 
 	newDialog->setRequiredCondition(8);

@@ -318,6 +318,7 @@ class TSettings{
 		std::string mExit = "\uf705";
 		std::string mGear = "\uf013";
 		std::string mBall = "\uf111";
+		std::string mTool = "\ue20f";
 		bool bSelectionMode = true;
 		bool bSoftwareRendering = false;
 		bool bVSync = true;
