@@ -734,23 +734,6 @@ SDL_Rect TPalette::renderSpriteEd(int xpos,int ypos, int tcolor, TextureParamete
 	return TPixels[ccolor]->renderEd(xpos, ypos, mTexParam, mTexParam->TexEditScale,false,mGlobalSettings.bShowPixelGridSprite);	
 }
 
-
-/*
-int TPalette::render(int xpos,int ypos){
-	SDL_SetRenderDrawBlendMode(mGlobalSettings.TRenderer, SDL_BLENDMODE_NONE);
-	for(int i = 0; i < 16; i++){
-		for(int j = 0; j < 16; j++){
-			PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->render(
-					xpos + ((mGlobalSettings.mTexParam->TileRenderSize*mGlobalSettings.PaletteScale+2)*j),
-					ypos + ((mGlobalSettings.mTexParam->TileRenderSize*mGlobalSettings.PaletteScale+2)*i),
-					mGlobalSettings.PaletteScale,true,true);
-		}
-	}
-
-return 0;
-}
-*/
-
 int TPalette::renderIm(int xpos,int ypos, TextureParameters *mTexParam){
 	
 	ImVec2 cSize;
@@ -1739,29 +1722,10 @@ int Tile::initTile(){
 	return 0;
 }
 
-/*
-SDL_Rect Tile::render(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
-	
-
-	SDL_Rect tmpRect = TTexture::render(xpos, ypos, tscale, updateRect, drawGrid);
-	if(bIsSelected){
-		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.AltHighlightColor.r, mGlobalSettings.AltHighlightColor.g, mGlobalSettings.AltHighlightColor.b, 0xff); 
-		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &tmpRect);
-		SDL_Rect sndRect = tmpRect;
-		sndRect.x = sndRect.x-1;
-		sndRect.y = sndRect.y-1;
-		sndRect.w = sndRect.w+2;
-		sndRect.h = sndRect.h+2;
-		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &sndRect);
-	}
-	return tmpRect;
-}
-*/
 
 SDL_Rect Tile::renderImCol(int xpos, int ypos, int mIndex, int tscale, bool bColEditSelected){
-SDL_Rect tmpRect;
-
-	//ImGui::Image
+	
+	SDL_Rect tmpRect;
 
 	if(mTexParam->TexBPP < 0x8){
 		ImGui::ImageButton((ImTextureID)(intptr_t)TPOffset[mTexParam->PaletteOffset], ImVec2(mTexParam->TexSizeX * tscale, mTexParam->TexSizeY * tscale) , ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));	
@@ -1789,9 +1753,8 @@ SDL_Rect tmpRect;
 }
 
 SDL_Rect Tile::renderIm(int xpos, int ypos, int mIndex, int &mDragAndDropped, int tscale, bool updateRect ,bool drawGrid){
+	
 	SDL_Rect tmpRect;
-
-	//ImGui::Image
 
 	if(mTexParam->TexBPP < 0x8){
 		ImGui::ImageButton((ImTextureID)(intptr_t)TPOffset[mTexParam->PaletteOffset], ImVec2(mTexParam->TexSizeX * tscale, mTexParam->TexSizeY * tscale) , ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));	
