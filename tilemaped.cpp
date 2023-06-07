@@ -536,7 +536,7 @@ void TSettings::initHelpText(){
 	mHelpText.push_back("SELECTION: Tiles and Pixels can be selected using the mouse. Hold (LEFT SHIFT)\nand (LEFT MOUSE BUTTON) to select a range by dragging.\nHold (LEFT SHIFT) and press (RIGHT MOUSE BUTTON)\nto modify Selection on a Tile/Pixel basis.\nPress (A) to select All, (N) to select None and (I) to Invert selection.");
 	mHelpText.push_back("BRUSHES: Press (F8) to open the Brush List, then select <width> and <height>\nand Press <Add Brush>. Press (RIGHT MOUSE BUTTON) in TileSet or Palette to add Brush Elements.\nPress (F9) to activate (next) Brush and (F10) to drop selected Brush.");
 	mHelpText.push_back("INPUT: When entering a value using a Slider Widget hold (LEFT CONTROL) and press\n(LEFT MOUSE BUTTON) on the widget to turn it into a TextInput Widget.");
-	mHelpText.push_back("INI FILE: When using the CLI arguments \n\"--opengl, --d3d, --software, --window, --maximize, --vsync, --novsync\"\nthe chosen options will be saved to \""+mINIPath+"\"\nand used until other options are applied.");
+	mHelpText.push_back("INI FILE: When using the CLI arguments:\n\"--opengl, --d3d, --software, --window, --maximize, --highdpi <uiscaleinpercent>,\n--nohighdpi, --vsync, --novsync\"\nthe chosen options will be saved to \""+mINIPath+"\" and used until\nother options are applied. Options can also be changed in \"File->Settings\".");
 
 	mHelpTextMap.push_back("PLACE TILE: To place a Tile in the TileMap press (LEFT MOUSE BUTTON) to select\na Tile in the TileSet and then (LEFT MOUSE BUTTON) to place it in the TileMap.");
 	mHelpTextMap.push_back("SELECT TILE: Press (RIGHT MOUSE BUTTON) to select a Tile in the TileMap.\nPress (S) to show all Tiles of the Selected Tile Type.\nPress (RIGHT MOUSE BUTTON) on a Tile in the TileSet\nto replace all selected Tiles in the TileMap.");
@@ -568,7 +568,9 @@ void TSettings::initHelpText(){
 	mHelpTextImport.push_back("TILESET: TileSets can be imported from Project file or PNG.\nProject files must have the same BPP as current project.\nPNGs must have Width and Height where \"Width % TileSizeX\" equals zero.\nIf BPP is 4, Tile pixel values from PNG will be \"pixelvalue % 16\"."); 
 	mHelpTextImport.push_back("TILEMAP: TileMaps can be imported from Project files. A Tile value offset can be specified.\nThe final TileMap must not have any Tile values larger than the current TileSet.\nTo Import an existing TileMap with its TileSet, first Import the TileSet.\nThen open Project Info and take note of the Tile number of the first Tile in the TileSet.\nThen Import the TileMap with Tile offset set to the given Tile number.");
 
-	
+	mHelpTextSprite.push_back("EDITOR: The Sprite Editor works much like the Tile or TileSet Editor.\nSprite Frames can be Zoomed/Scrolled using (MOUSE SCROLL WHEEL)/(CTRL) + (LEFT MOUSE BUTTON)\nSprite Frames can be Scrolled through using (LSHIFT) + (MOUSE SCROLL WHEEL)\nSprites have their own Brush Lists. One for BPP 8 and one for BPP 4.");
+	mHelpTextSprite.push_back("SPRITE TOOLS: The \"Edit->Sprite Tools\" menu contains various tools for\nCopying/Scaling/Rotating Sprites/Sprite Frames.");
+	mHelpTextSprite.push_back("TEXTURE FILTERING: When using Sprite Scale/Rotate functions Texture Filtering can be\nenabled in \"Edit->Texture Filtering\". The Options are: \"None\", \"Some\", \"All\".");
 }
 
 void printUsage(){
@@ -576,7 +578,7 @@ void printUsage(){
 		std::cout << "TilemapEd Version: " << TilemapEd_Version  << std::endl;
 		std::cout << std::endl;	
 		std::cout << "Command Line Usage:" << std::endl;
-		std::cout << "tilemaped [ --opengl, --d3d, --software, --window, --maximize, --highdpi <UIScaleInPercent>, --nohighdpi, --vsync, --novsync ] (options are saved to \""+mINIPath+"\")" << std::endl;
+		std::cout << "tilemaped [ --opengl, --d3d, --software, --window, --maximize, --highdpi <uiscaleinpercent>, --nohighdpi, --vsync, --novsync ] (options are saved to \""+mINIPath+"\")" << std::endl;
 		std::cout << "tilemaped -o <folder>" << std::endl;		
 		std::cout << "tilemaped -n <mapwidth> <mapheight> <tilewidth> <tileheight> <folder> [ -p <palette file> ]" << std::endl;
 		std::cout << "tilemaped -c <Gimp Palette> <palfile.bin>" << std::endl;		
@@ -635,7 +637,13 @@ void TSettings::printHelpText(){
 	}
 
 	std::cout  << std::endl;	
+	std::cout << "Sprite Editor:" << std::endl;	
+	
+	for(const auto& cStr : mHelpTextSprite){
+		std::cout << cStr << std::endl;	
+	}
 
+	
 	std::cout  << std::endl;		
 	std::cout << "Import:" << std::endl;	
 

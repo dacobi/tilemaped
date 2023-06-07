@@ -443,6 +443,7 @@ class HDialog: public SDialog{
 		std::vector<std::string> mHelpTextGeneral;
 		std::vector<std::string> mHelpTextSelection;
 		std::vector<std::string> mHelpTextColMapEditor;
+		std::vector<std::string> mHelpTextSprite;
 		virtual void init();
 		virtual void recieveInput(int mKey);		
 		virtual int render();

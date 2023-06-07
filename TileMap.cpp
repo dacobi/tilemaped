@@ -753,10 +753,6 @@ return 0;
 
 int TPalette::renderIm(int xpos,int ypos, TextureParameters *mTexParam){
 	
-	Dialog::render(xpos, ypos);
-
-	ImGui::Begin("Palette", NULL, ImGuiWindowFlags_NoNav);
-
 	ImVec2 cSize;
 	if(mTexParam->TexBPP < 0x8){
 		cSize.x = 90 + ((mTexParam->TexRenderSize*mGlobalSettings.PaletteScale+4) * 16);
@@ -765,6 +761,16 @@ int TPalette::renderIm(int xpos,int ypos, TextureParameters *mTexParam){
 		cSize.x = 20 + ((mTexParam->TexRenderSize*mGlobalSettings.PaletteScale+4) * 16);
 		cSize.y = 50 + ((mTexParam->TexRenderSize*mGlobalSettings.PaletteScale+4) * 16);
 	}
+
+	int rXpos = xpos;
+
+	if(xpos > (mGlobalSettings.WindowWidth - cSize.x)){
+		rXpos = mGlobalSettings.WindowWidth - cSize.x;
+	}
+
+	Dialog::render(rXpos, ypos);
+
+	ImGui::Begin("Palette", NULL, ImGuiWindowFlags_NoNav);
 
 	ImGui::SetWindowSize(cSize, ImGuiCond_Once);
 
