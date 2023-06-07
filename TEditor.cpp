@@ -780,7 +780,7 @@ int TEditor::render(){
 
 		mPalette.renderIm(100+mSprite->mTexParam.mTileEdScale*mSprite->mTexParam.TileSizeX*mSprite->mTexParam.TilePixelSize,50+mTopBar.mDialogHeight, &mSprite->mTexParam);	
 		if(!mGlobalSettings.bShowPixelTypeSprite) mColorSelectedTile->bPixelSelected = false;
-		mSprite->renderEd(50,50+mTopBar.mDialogHeight,&mPalette);
+		mSprite->renderEd(mSprite->mSpriteScrollX + 50, mSprite->mSpriteScrollY + 50 + mTopBar.mDialogHeight,&mPalette);
 		mColorSelectedTile->bPixelSelected = true;
 
 		mSprite->mFrame->mSelection.renderSelection();	    
@@ -1052,12 +1052,25 @@ int TEditor::applyScroll(int mx,int my, int amount, int xamount){
 	}
 
 	if(mCurMode == EMODE_SPRITE){ 		
-		if(!mGlobalSettings.mio->WantCaptureMouse){
+		if(!mGlobalSettings.mio->WantCaptureMouse && bLShiftIsDown){
 			if(amount > 0){
 				mSprite->selectNext();
 			}
 			if(amount < 0){
 				mSprite->selectPrev();
+			}
+		} else if(!mGlobalSettings.mio->WantCaptureMouse){
+			if(amount > 0){
+				mSprite->mTexParam.TilePixelSize++;
+				if(mSprite->mTexParam.TilePixelSize > TSprite::MaxScale){
+					mSprite->mTexParam.TilePixelSize = TSprite::MaxScale;
+				}
+			}
+			if(amount < 0){
+				mSprite->mTexParam.TilePixelSize--;
+				if(mSprite->mTexParam.TilePixelSize < TSprite::MinScale){
+					mSprite->mTexParam.TilePixelSize = TSprite::MinScale;
+				}
 			}
 		}
 	}
@@ -2529,35 +2542,68 @@ int TEditor::findSelSprite(){
 			mSprite->mFrame->mSelection.confirmSelection(mSprite->mFrame->PixelAreas, mSprite->mTexParam.TilePixelSize * mSprite->mTexParam.mTileEdScale, mSprite->mTexParam.TilePixelSize * mSprite->mTexParam.mTileEdScale);
 		}
 		
-		if(leftMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
-			int tSel = -1;
-
-			if(mSprite->mCurrentBrushPixel){
-				TEActionBrushPixels* newAction = new TEActionBrushPixels();
-				newAction->doAction(mSprite->mFrame, *mSprite->mCurrentBrushPixel, &mPalette);
-				if(!(*newAction == *mSprite->mActionStack.mLastAction)){								
-					mSprite->mActionStack.mLastAction = newAction;
-					mSprite->mActionStack.newActionGroup();
-					mSprite->mActionStack.addSubActions(newAction->mSubActions);
-       				mSprite->mActionStack.redoClearStack();
-				}
+		if(leftMouseButtonDown && !bLShiftIsDown && !mGlobalSettings.mio->WantCaptureMouse){
+			if(bLCTRLisDown){
+				if(mSprite->bSpriteGrapped){
+					mSprite->mSpriteScrollX += rx;
+					mSprite->mSpriteScrollY += ry;
+					//std::cout << "Sprite Scroll X: " << mSprite->mSpriteScrollX << std::endl;
+					//std::cout << "Sprite Scroll Y: " << mSprite->mSpriteScrollY << std::endl;
+				} else {
+					mSprite->bSpriteGrapped = true;
+					//std::cout << "Sprite Grapped!" << std::endl;				
+				}				
 			} else {
-				tSel = searchRectsXY(mSprite->mFrame->PixelAreas, cx, cy);
-				if(tSel != -1){
+				int tSel = -1;
 
-					TEActionReplacePixel *mCurAction = new TEActionReplacePixel();
-					mCurAction->doAction(mSprite->mFrame, tSel, mSprite->mFrame->getPixel(tSel), mColorSelected, &mPalette);
+				if(mSprite->mCurrentBrushPixel){
+					TEActionBrushPixels* newAction = new TEActionBrushPixels();
+					newAction->doAction(mSprite->mFrame, *mSprite->mCurrentBrushPixel, &mPalette);
+					if(!(*newAction == *mSprite->mActionStack.mLastAction)){								
+						mSprite->mActionStack.mLastAction = newAction;
+						mSprite->mActionStack.newActionGroup();
+						mSprite->mActionStack.addSubActions(newAction->mSubActions);
+       					mSprite->mActionStack.redoClearStack();
+					}
+				} else {
+					tSel = searchRectsXY(mSprite->mFrame->PixelAreas, cx, cy);
+					if(tSel != -1){
+
+						TEActionReplacePixel *mCurAction = new TEActionReplacePixel();
+						mCurAction->doAction(mSprite->mFrame, tSel, mSprite->mFrame->getPixel(tSel), mColorSelected, &mPalette);
 				
-					if(!(*mCurAction == * mSprite->mActionStack.mLastAction)){
-   						mSprite->mActionStack.newActionGroup();	
-   						mSprite->mActionStack.addAction(mCurAction);
-   						mSprite->mActionStack.mLastAction = mCurAction;
-   						mSprite->mActionStack.redoClearStack();
-   					}
+						if(!(*mCurAction == * mSprite->mActionStack.mLastAction)){
+   							mSprite->mActionStack.newActionGroup();	
+   							mSprite->mActionStack.addAction(mCurAction);
+   							mSprite->mActionStack.mLastAction = mCurAction;
+   							mSprite->mActionStack.redoClearStack();
+   						}
+					}
 				}
 			}
 		}
 	}
+
+	/* */
+
+	int spriteWidthX = (mSprite->mTexParam.TileSizeX * mSprite->mTexParam.mTileEdScale * mSprite->mTexParam.TilePixelSize) +  mGlobalSettings.TopBarHeight;
+	int spriteWidthY = (mSprite->mTexParam.TileSizeY * mSprite->mTexParam.mTileEdScale * mSprite->mTexParam.TilePixelSize) +  mGlobalSettings.TopBarHeight;
+
+	if(mSprite->mSpriteScrollX > 0){mSprite->mSpriteScrollX = 0;}
+	if(mSprite->mSpriteScrollY > 0){mSprite->mSpriteScrollY = 0;}
+	
+	if(mSprite->mSpriteScrollX < -(spriteWidthX - (mGlobalSettings.WindowWidth - 50 - mSprite->SpriteWidth))){mSprite->mSpriteScrollX = -(spriteWidthX - (mGlobalSettings.WindowWidth -50 - mSprite->SpriteWidth));}
+	if(mSprite->mSpriteScrollY < -(spriteWidthY - (mGlobalSettings.WindowHeight - 50- mGlobalSettings.TopBarHeight))){mSprite->mSpriteScrollY = -(spriteWidthY - (mGlobalSettings.WindowHeight -50 - mGlobalSettings.TopBarHeight));}
+	
+	if(spriteWidthX < (mGlobalSettings.WindowWidth)){
+		mSprite->mSpriteScrollX = 0;
+	}
+	
+	if(spriteWidthY < (mGlobalSettings.WindowHeight-mGlobalSettings.TopBarHeight)){
+		mSprite->mSpriteScrollY = 0;
+	}
+
+	/* */
 
 	if((rightMouseButtonClicks && bLShiftIsDown) && !mGlobalSettings.mio->WantCaptureMouse){		
 		int tSel = -1;
@@ -3998,6 +4044,9 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			bTileSetGrapped = false;
 	  			bTileMapGrapped = false;
 				bSelEditGrapped = false;
+				if(mSprite){
+					mSprite->bSpriteGrapped = false;
+				}
 	  		}
 			if(cEvent->key.keysym.sym == SDLK_LSHIFT){
 	  			bLShiftIsDown = false;

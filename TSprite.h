@@ -18,8 +18,7 @@ class TSprite{
             mTexParam.TileSetBPP = cBPP;
 
             mTexParam.mTileEdScale = mGlobalSettings.mGlobalTexParam.mTileEdScale;
-            //mTexParam.TilePixelSize = 16; //mGlobalSettings.mPixelScaleSprite; //mGlobalSettings.mGlobalTexParam.TilePixelSize;
-
+            
             if((cSizeX > 8) || (cSizeY > 8)){
                 mTexParam.mTileEdScale--;
                 mCurFrameScale-=1;
@@ -59,11 +58,12 @@ class TSprite{
         int mCurFrameScale=10;
 		int mCurColumns=1;
 		int mColSpace = 10;
-        int SpriteWidth=200;
-		//int mMaxScrollY=0;
-        //int mFrameScrollY = 0;
-        const static int MaxScale = 24;
+        int SpriteWidth=200;		
+        const static int MaxScale = 32;
         const static int MinScale = 4;
+        bool bSpriteGrapped = false;
+        int mSpriteScrollX = 0;
+        int mSpriteScrollY = 0;
         SDL_Rect mFramesBackGround;
         bool updateWinPos=false;
         int mSelectedFrame = 0;
