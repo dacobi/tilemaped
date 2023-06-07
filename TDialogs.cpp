@@ -105,7 +105,7 @@ void TBDialog::init(){
 int TBDialog::render(){
 	mDialogWidth = mGlobalSettings.WindowWidth;
 
-	ImVec2 cTBSize;
+	//ImVec2 cTBSize;
 		
 	mDialogTextWindow = mGlobalSettings.mWindow;
 	switch(mEditor->mCurMode){
@@ -133,8 +133,9 @@ int TBDialog::render(){
 
 	ImGui::BeginMainMenuBar();
 
-		cTBSize = ImGui::GetWindowSize();
-		mDialogHeight = cTBSize.y;
+		//cTBSize = ImGui::GetWindowSize();
+		//mDialogHeight = cTBSize.y;
+		//mGlobalSettings.TopBarHeight = mDialogHeight;
 
 		if (ImGui::BeginMenu("File"))
 		{

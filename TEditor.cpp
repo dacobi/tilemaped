@@ -742,9 +742,9 @@ int TEditor::render(){
 			mCurrentBrushPixel->getBrushSelection(cx, cy, mTileSelectedTile->PixelAreas);
 		}
 
-		mPalette.renderIm(100+mGlobalSettings.mGlobalTexParam.TexEditScale*mGlobalSettings.mGlobalTexParam.TexSizeX*mGlobalSettings.mGlobalTexParam.TexPixelSize,50+mTopBar.mDialogHeight, &mGlobalSettings.mGlobalTexParam);	
+		mPalette.renderIm(100+mGlobalSettings.mGlobalTexParam.TexEditScale*mGlobalSettings.mGlobalTexParam.TexSizeX*mGlobalSettings.mGlobalTexParam.TexPixelSize,50+mGlobalSettings.TopBarHeight, &mGlobalSettings.mGlobalTexParam);	
 		if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
-		mTileSelectedTile->renderEd(50,50+mTopBar.mDialogHeight,&mPalette);
+		mTileSelectedTile->renderEd(50,50+mGlobalSettings.TopBarHeight,&mPalette);
 		mColorSelectedTile->bPixelSelected = true;
 
 		mTileSelectedTile->mSelection.renderSelection();	    
@@ -778,9 +778,9 @@ int TEditor::render(){
 			mSprite->mCurrentBrushPixel->getBrushSelection(cx, cy, mSprite->mFrame->PixelAreas);
 		}
 
-		mPalette.renderIm(100+mSprite->mTexParam.TexEditScale*mSprite->mTexParam.TexSizeX*mSprite->mTexParam.TexPixelSize,50+mTopBar.mDialogHeight, &mSprite->mTexParam);	
+		mPalette.renderIm(100+mSprite->mTexParam.TexEditScale*mSprite->mTexParam.TexSizeX*mSprite->mTexParam.TexPixelSize,50+mGlobalSettings.TopBarHeight, &mSprite->mTexParam);	
 		if(!mGlobalSettings.bShowPixelTypeSprite) mColorSelectedTile->bPixelSelected = false;
-		mSprite->renderEd(mSprite->mSpriteScrollX + 50, mSprite->mSpriteScrollY + 50 + mTopBar.mDialogHeight,&mPalette);
+		mSprite->renderEd(mSprite->mSpriteScrollX + 50, mSprite->mSpriteScrollY + 50 + mGlobalSettings.TopBarHeight,&mPalette);
 		mColorSelectedTile->bPixelSelected = true;
 
 		mSprite->mFrame->mSelection.renderSelection();	    
@@ -819,10 +819,10 @@ int TEditor::render(){
 			mCurrentBrushPixelTileSet->getBrushSelection(cx, cy, mTileSet.EditPixelAreas);
 		}
 
-		mPalette.renderIm(100 + (mGlobalSettings.CurrentEditor->mTileSet.mCurEdScale * mGlobalSettings.CurrentEditor->mTileSet.mSelectionAreaX),50+mTopBar.mDialogHeight, &mGlobalSettings.mGlobalTexParam);			
+		mPalette.renderIm(100 + (mGlobalSettings.CurrentEditor->mTileSet.mCurEdScale * mGlobalSettings.CurrentEditor->mTileSet.mSelectionAreaX),50+mGlobalSettings.TopBarHeight, &mGlobalSettings.mGlobalTexParam);			
 		
 		if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
-		mTileSet.renderEd(mTileSetScrollX + 50,mTileSetScrollY + 50+mTopBar.mDialogHeight);
+		mTileSet.renderEd(mTileSetScrollX + 50,mTileSetScrollY + 50+mGlobalSettings.TopBarHeight);
 		mColorSelectedTile->bPixelSelected = true;
 
 		if(mActiveDialog){			
@@ -858,10 +858,10 @@ int TEditor::render(){
 			mCurrentBrushPixelSelEdit->getBrushSelection(cx, cy, mSelEdit.EditPixelAreas);
 		}
 
-		mPalette.renderIm(100 + (mGlobalSettings.CurrentEditor->mSelEdit.mCurEdScale * mGlobalSettings.CurrentEditor->mSelEdit.mSelectionAreaX),50+mTopBar.mDialogHeight, &mGlobalSettings.mGlobalTexParam);			
+		mPalette.renderIm(100 + (mGlobalSettings.CurrentEditor->mSelEdit.mCurEdScale * mGlobalSettings.CurrentEditor->mSelEdit.mSelectionAreaX),50+mGlobalSettings.TopBarHeight, &mGlobalSettings.mGlobalTexParam);			
 		
 		if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
-		mSelEdit.renderEd(50 + mSelEditScrollX ,50 + mSelEditScrollY +mTopBar.mDialogHeight);
+		mSelEdit.renderEd(50 + mSelEditScrollX ,50 + mSelEditScrollY + mGlobalSettings.TopBarHeight);
 		mColorSelectedTile->bPixelSelected = true;
 
 		if(mActiveDialog){			
