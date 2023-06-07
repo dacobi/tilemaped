@@ -3,20 +3,20 @@
 #include "TEditor.h"
 
 void TSFrame::renderEd(int xpos, int ypos, TPalette* tpal){
-	for(int i=0; i < mTexParam->TileSizeY; i++){
-		for(int j=0; j < mTexParam->TileSizeX; j++){
-			PixelAreas[j+(mTexParam->TileSizeX*i)] = tpal->renderSpriteEd(xpos + (mTexParam->TilePixelSize * mTexParam->mTileEdScale)*j, ypos + (mTexParam->TilePixelSize * mTexParam->mTileEdScale)*i, getPixel(j+(i*mTexParam->TileSizeX)), mTexParam); 			
+	for(int i=0; i < mTexParam->TexSizeY; i++){
+		for(int j=0; j < mTexParam->TexSizeX; j++){
+			PixelAreas[j+(mTexParam->TexSizeX*i)] = tpal->renderSpriteEd(xpos + (mTexParam->TexPixelSize * mTexParam->TexEditScale)*j, ypos + (mTexParam->TexPixelSize * mTexParam->TexEditScale)*i, getPixel(j+(i*mTexParam->TexSizeX)), mTexParam); 			
 		}
 	}
 	
 	if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel && !mGlobalSettings.CurrentEditor->mBrushesSprite->bIsEditing){
 		if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->mSelected.size()){
-			for(int i=0; i < mTexParam->TileSizeY; i++){
-				for(int j=0; j < mTexParam->TileSizeX; j++){	
-					if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->findInSelection((j+(i*mTexParam->TileSizeX))) != -1){
-						int findex = mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->findInSelection((j+(i*mTexParam->TileSizeX)));
+			for(int i=0; i < mTexParam->TexSizeY; i++){
+				for(int j=0; j < mTexParam->TexSizeX; j++){	
+					if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->findInSelection((j+(i*mTexParam->TexSizeX))) != -1){
+						int findex = mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->findInSelection((j+(i*mTexParam->TexSizeX)));
 						if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->mBrushElements[findex] != -1){
-							tpal->renderSpriteEd(xpos + (mTexParam->TilePixelSize * mTexParam->mTileEdScale)*j, ypos + (mTexParam->TilePixelSize * mTexParam->mTileEdScale)*i, mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->mBrushElements[findex], mTexParam); 							
+							tpal->renderSpriteEd(xpos + (mTexParam->TexPixelSize * mTexParam->TexEditScale)*j, ypos + (mTexParam->TexPixelSize * mTexParam->TexEditScale)*i, mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->mBrushElements[findex], mTexParam); 							
 						}
 					}
 				}
@@ -62,7 +62,7 @@ TSFrame* TSprite::createNewCopy(TSFrame* cCopyTile, TPalette* tpal){
 
 TSFrame* TSprite::createNew(TPalette* tpal){	
 	std::vector<unsigned char> tbuf;	
-	tbuf.resize(((mTexParam.TileSizeX * mTexParam.TileSizeY)/mGlobalSettings.mTileBPPSize[mTexParam.TileSetBPP]),0);
+	tbuf.resize(((mTexParam.TexSizeX * mTexParam.TexSizeY)/mGlobalSettings.mTileBPPSize[mTexParam.TexBPP]),0);
 	return createNewFromBuffer(tbuf, tpal);
 }
 
@@ -129,10 +129,10 @@ std::string TSprite::getSpriteSize(){
 	std::string cSpriteHeight;
     std::string cSpriteNum;
 
-	convert << mTexParam.TileSizeX << std::endl;
+	convert << mTexParam.TexSizeX << std::endl;
 	convert >> cSpriteWidth;
 
-	convert << mTexParam.TileSizeY << std::endl;
+	convert << mTexParam.TexSizeY << std::endl;
 	convert >> cSpriteHeight;
 
     convert << mFrames.size() << std::endl;
@@ -165,10 +165,10 @@ int TSprite::saveToFile(std::string spath, std::string sfile){
 
 	int magic1, magic2;
 
-	magic1 = mGlobalSettings.mFrameSizeOut[mTexParam.TileSizeX];
-	magic1 = (magic1 << 4) + mGlobalSettings.mFrameSizeOut[mTexParam.TileSizeY];
+	magic1 = mGlobalSettings.mFrameSizeOut[mTexParam.TexSizeX];
+	magic1 = (magic1 << 4) + mGlobalSettings.mFrameSizeOut[mTexParam.TexSizeY];
 
-	magic2 = mTexParam.TileSetBPP;
+	magic2 = mTexParam.TexBPP;
 
 	obuffer.push_back(magic1);
 	obuffer.push_back(magic2);
@@ -186,7 +186,7 @@ int TSprite::saveToFile(std::string spath, std::string sfile){
 
 int TSprite::loadFromBuffer(std::vector<unsigned char> sBuf, TPalette* tpal){
 
-	int tmpFrameSize = ((mTexParam.TileSizeX * mTexParam.TileSizeY)/mGlobalSettings.mTileBPPSize[mTexParam.TileSetBPP]);
+	int tmpFrameSize = ((mTexParam.TexSizeX * mTexParam.TexSizeY)/mGlobalSettings.mTileBPPSize[mTexParam.TexBPP]);
 
 	if(sBuf.size() % tmpFrameSize){		
 		return 1;
@@ -213,7 +213,7 @@ int TSprite::loadFromBuffer(std::vector<unsigned char> sBuf, TPalette* tpal){
 
 int TSprite::importFromBuffer(std::vector<unsigned char> sBuf, TPalette* tpal, std::vector<TSFrame*> &cNewFrames){
 
-	int tmpFrameSize = ((mTexParam.TileSizeX * mTexParam.TileSizeY)/mGlobalSettings.mTileBPPSize[mTexParam.TileSetBPP]);
+	int tmpFrameSize = ((mTexParam.TexSizeX * mTexParam.TexSizeY)/mGlobalSettings.mTileBPPSize[mTexParam.TexBPP]);
 
 	if(sBuf.size() % tmpFrameSize){		
 		return 1;
@@ -243,10 +243,10 @@ int TSprite::importFromBuffer(std::vector<unsigned char> sBuf, TPalette* tpal, s
 
 int TSprite::importPNG(SDL_Surface *newSurf, TPalette* tpal, std::vector<TSFrame*> &cNewFrames){
 	if(newSurf->format->BitsPerPixel == 8){
-		if(!(newSurf->w % mTexParam.TileSizeX) && !(newSurf->h % mTexParam.TileSizeY)){
+		if(!(newSurf->w % mTexParam.TexSizeX) && !(newSurf->h % mTexParam.TexSizeY)){
 			int cTilesX,cTilesY;
-			cTilesX = newSurf->w / mTexParam.TileSizeX;
-			cTilesY = newSurf->h / mTexParam.TileSizeY;
+			cTilesX = newSurf->w / mTexParam.TexSizeX;
+			cTilesY = newSurf->h / mTexParam.TexSizeY;
 			
 			std::cout << "Import PNG: " << cTilesX << "," <<  cTilesY << std::endl;
 
@@ -255,7 +255,7 @@ int TSprite::importPNG(SDL_Surface *newSurf, TPalette* tpal, std::vector<TSFrame
 			tbuffers.resize(cTilesX*cTilesY);
 
 			for(auto &tbuf : tbuffers){
-				tbuf.resize((mTexParam.TileSizeX*mTexParam.TileSizeY) / mGlobalSettings.mTileBPPSize[mTexParam.TileSetBPP],0);
+				tbuf.resize((mTexParam.TexSizeX*mTexParam.TexSizeY) / mGlobalSettings.mTileBPPSize[mTexParam.TexBPP],0);
 			}
 
 			//Tile tmpTile;
@@ -299,14 +299,14 @@ TSFrame* TSprite::createNewFromFile(std::string newPath, TPalette* tpal){
 		}
 
 		SDL_Surface *newSurf = IMG_Load(newPath.c_str());
-		if(newSurf && (mTexParam.TileSetBPP > 0x2)){
+		if(newSurf && (mTexParam.TexBPP > 0x2)){
 			if(newSurf->format->BitsPerPixel == 8){
-				if((newSurf->w == mTexParam.TileSizeX) && (newSurf->h == mTexParam.TileSizeY)){
+				if((newSurf->w == mTexParam.TexSizeX) && (newSurf->h == mTexParam.TexSizeY)){
 					std::vector<unsigned char> tbuffer;
-					if(mTexParam.TileSetBPP == 0x4){
+					if(mTexParam.TexBPP == 0x4){
 						unsigned char tmpChar;
 						bool sndPix=false;
-						for(int i = 0; i < (mTexParam.TileSizeX*mTexParam.TileSizeY); i++){
+						for(int i = 0; i < (mTexParam.TexSizeX*mTexParam.TexSizeY); i++){
 							if(sndPix){
 								tmpChar = (tmpChar << 4) + ((unsigned char*)(newSurf->pixels))[i]%16;
 								tbuffer.push_back(tmpChar);
@@ -318,7 +318,7 @@ TSFrame* TSprite::createNewFromFile(std::string newPath, TPalette* tpal){
 							
 						}
 					} else {
-						for(int i = 0; i < (mTexParam.TileSizeX*mTexParam.TileSizeY); i++){
+						for(int i = 0; i < (mTexParam.TexSizeX*mTexParam.TexSizeY); i++){
 							tbuffer.push_back(((unsigned char*)(newSurf->pixels))[i]);
 						}
 					}
@@ -334,7 +334,7 @@ TSFrame* TSprite::createNewFromFile(std::string newPath, TPalette* tpal){
 
 			std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
 
-			if(tbuffer.size() == ((mTexParam.TileSizeX * mTexParam.TileSizeY)/mGlobalSettings.mTileBPPSize[mTexParam.TileSetBPP])){
+			if(tbuffer.size() == ((mTexParam.TexSizeX * mTexParam.TexSizeY)/mGlobalSettings.mTileBPPSize[mTexParam.TexBPP])){
 				return createNewFromBuffer(tbuffer, tpal);
 			} else {
 				return NULL;				
@@ -350,7 +350,7 @@ void TSprite::renderIm(int ypos, int mScroll){
     mFramesBackGround.h = mGlobalSettings.WindowHeight- mGlobalSettings.TopBarHeight;
 	
 	if(mCurColumns < 4){
-		if( (int)( (float)( ( ( (mCurFrameScale*mTexParam.TileSizeX ) +mColSpace ) * mFrames.size() )  / mCurColumns ) ) > mFramesBackGround.h ){	
+		if( (int)( (float)( ( ( (mCurFrameScale*mTexParam.TexSizeX ) +mColSpace ) * mFrames.size() )  / mCurColumns ) ) > mFramesBackGround.h ){	
 			mCurFrameScale--;
             if(mCurFrameScale == 0){
                 mCurFrameScale = 1;
@@ -363,7 +363,7 @@ void TSprite::renderIm(int ypos, int mScroll){
 		}
 	}
 
-	SpriteWidth = (((mCurFrameScale*mTexParam.TileSizeX)+mColSpace)*mCurColumns)+(mColSpace*3);
+	SpriteWidth = (((mCurFrameScale*mTexParam.TexSizeX)+mColSpace)*mCurColumns)+(mColSpace*3);
 
 	int isOdd = mFrames.size() % mCurColumns;
 	int cRowNum = mFrames.size() / mCurColumns;
@@ -414,7 +414,7 @@ void TSprite::renderIm(int ypos, int mScroll){
 	if(mCurColumns > 0){
 		for(int i = 0; i < cRowNum; i++){
 			for(int j = 0; j < mCurColumns; j++){
-				FrameAreas[(i * mCurColumns) + j] = mFrames[(i*mCurColumns) + j]->renderIm((mFramesBackGround.x+ (mColSpace*2) +  ((mCurFrameScale*mTexParam.TileSizeX)+mColSpace)*j),mFramesBackGround.y + mScroll + (mColSpace*2) + (((mTexParam.TileSizeY*mCurFrameScale)+mColSpace)*i), (i*mCurColumns) + j, mDragged, mCurFrameScale,true,true);								
+				FrameAreas[(i * mCurColumns) + j] = mFrames[(i*mCurColumns) + j]->renderIm((mFramesBackGround.x+ (mColSpace*2) +  ((mCurFrameScale*mTexParam.TexSizeX)+mColSpace)*j),mFramesBackGround.y + mScroll + (mColSpace*2) + (((mTexParam.TexSizeY*mCurFrameScale)+mColSpace)*i), (i*mCurColumns) + j, mDragged, mCurFrameScale,true,true);								
 				if((mDragged > -1) && !bIsDragged){
 					bIsDragged = true;
 					mDragSource = mDragged;
@@ -429,7 +429,7 @@ void TSprite::renderIm(int ypos, int mScroll){
 		if(isOdd){			
 			int i = mCurColumns;
 			for(int j = 0; j < isOdd; j++){
-				FrameAreas[(i * cRowNum) + j] = mFrames[(i*cRowNum)+j]->renderIm((mFramesBackGround.x+ (mColSpace*2) +  ((mCurFrameScale*mTexParam.TileSizeX)+mColSpace)*j),mFramesBackGround.y + mScroll + (mColSpace*2) + (((mTexParam.TileSizeY*mCurFrameScale)+mColSpace)*cRowNum), (i*cRowNum)+j, mDragged,  mCurFrameScale,true,true);				
+				FrameAreas[(i * cRowNum) + j] = mFrames[(i*cRowNum)+j]->renderIm((mFramesBackGround.x+ (mColSpace*2) +  ((mCurFrameScale*mTexParam.TexSizeX)+mColSpace)*j),mFramesBackGround.y + mScroll + (mColSpace*2) + (((mTexParam.TexSizeY*mCurFrameScale)+mColSpace)*cRowNum), (i*cRowNum)+j, mDragged,  mCurFrameScale,true,true);				
 				if((mDragged > -1) && !bIsDragged){
 					bIsDragged = true;
 					mDragSource = mDragged;

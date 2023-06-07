@@ -261,7 +261,7 @@ int TSettings::initSettings(){
 	SDL_GetCurrentDisplayMode(cWin, &mCurDispMode);
 
 	if(mCurDispMode.w <= 1920){
-		mGlobalTexParam.mTileEdScale--;		
+		mGlobalTexParam.TexEditScale--;		
 	}
 
 	if(bMaximize){
@@ -349,13 +349,13 @@ void TSettings::close(){
 	TileMapHeight=128;
 	TileMapWidth=128;		
 	
-	mGlobalTexParam.TileSizeX=16;
-	mGlobalTexParam.TileSizeY=16;
-	mGlobalTexParam.TileSetBPP=8;
-	mGlobalTexParam.TilePixelSize=16;	
+	mGlobalTexParam.TexSizeX=16;
+	mGlobalTexParam.TexSizeY=16;
+	mGlobalTexParam.TexBPP=8;
+	mGlobalTexParam.TexPixelSize=16;	
 	mGlobalTexParam.PaletteOffset=0;
-	mGlobalTexParam.mTileEdScale = 4;
-	mGlobalTexParam.TileRenderSize=16;
+	mGlobalTexParam.TexEditScale = 4;
+	mGlobalTexParam.TexRenderSize=16;
 	
 	bShowPaletteOffset = false;
 	
@@ -743,7 +743,7 @@ int parseArgs(int argc, char *argv[]){
 				mConvert >> nTileSize;
 			
 				if((nTileSize == 16) || (nTileSize == 8)){	
-					mGlobalSettings.mGlobalTexParam.TileSizeX = nTileSize;	
+					mGlobalSettings.mGlobalTexParam.TexSizeX = nTileSize;	
 				} else {
 					mGlobalSettings.mErrorMessage = "Wrong TileSize!\nValid values are: 8, 16";
 					//std::cout << "Wrong TileSize!" << std::endl;
@@ -756,7 +756,7 @@ int parseArgs(int argc, char *argv[]){
 				mConvert >> nTileSize;
 			
 				if((nTileSize == 16) || (nTileSize == 8)){	
-					mGlobalSettings.mGlobalTexParam.TileSizeY = nTileSize;	
+					mGlobalSettings.mGlobalTexParam.TexSizeY = nTileSize;	
 				} else {
 					mGlobalSettings.mErrorMessage = "Wrong TileSize!\nValid values are: 8, 16";
 					//std::cout << "Wrong TileSize!" << std::endl;

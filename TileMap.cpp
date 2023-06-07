@@ -37,7 +37,7 @@ int TTexture::loadFromBuffer(std::vector<unsigned char> &cTileBuf,TPalette* tpal
 }
 
 int TTexture::initTexture(){
-	TileTex = SDL_CreateTexture(mGlobalSettings.TRenderer,SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, mTexParam->TileSizeX,mTexParam->TileSizeY);
+	TileTex = SDL_CreateTexture(mGlobalSettings.TRenderer,SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, mTexParam->TexSizeX,mTexParam->TexSizeY);
 	SDL_SetTextureBlendMode(TileTex, SDL_BLENDMODE_BLEND);
 	return 0;
 }
@@ -47,11 +47,11 @@ int TTexture::updateTexture(TPalette* tpal){
 		PixelData.erase(PixelData.begin(),PixelData.end());
 	}
 
-	for(int i = 0; i < (mTexParam->TileSizeX * mTexParam->TileSizeY); i++){
+	for(int i = 0; i < (mTexParam->TexSizeX * mTexParam->TexSizeY); i++){
     		PixelData.push_back(tpal->mapPaletteColor(getPixel(i)));
 	}
 
-    SDL_UpdateTexture(TileTex, NULL, PixelData.data(), mTexParam->TileSizeX * sizeof(Uint32));
+    SDL_UpdateTexture(TileTex, NULL, PixelData.data(), mTexParam->TexSizeX * sizeof(Uint32));
 	return 0;
 }
 
@@ -91,15 +91,15 @@ int TPixel::setPixelColor(unsigned char tcolor, TPalette* tpal){
 }
 
 SDL_Rect TPixel::renderIm(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
-		CurrentArea = { xpos, ypos, mGlobalSettings.mGlobalTexParam.TileRenderSize*tscale, mGlobalSettings.mGlobalTexParam.TileRenderSize*tscale};
+		CurrentArea = { xpos, ypos, mGlobalSettings.mGlobalTexParam.TexRenderSize*tscale, mGlobalSettings.mGlobalTexParam.TexRenderSize*tscale};
 
 		ImVec2 elmin;
 		ImVec2 elmax;
 
 		elmin.x = xpos;
 		elmin.y = ypos;
-		elmax.x = xpos + mGlobalSettings.mGlobalTexParam.TileRenderSize*tscale;
-		elmax.y = ypos + mGlobalSettings.mGlobalTexParam.TileRenderSize*tscale;
+		elmax.x = xpos + mGlobalSettings.mGlobalTexParam.TexRenderSize*tscale;
+		elmax.y = ypos + mGlobalSettings.mGlobalTexParam.TexRenderSize*tscale;
 
 		ImDrawList *tList = ImGui::GetWindowDrawList();
 
@@ -132,8 +132,8 @@ SDL_Rect TPixel::renderImDisabled(int xpos, int ypos, int tscale, bool updateRec
 
 		elmin.x = xpos;
 		elmin.y = ypos;
-		elmax.x = xpos + mGlobalSettings.mGlobalTexParam.TileRenderSize*tscale;
-		elmax.y = ypos + mGlobalSettings.mGlobalTexParam.TileRenderSize*tscale;
+		elmax.x = xpos + mGlobalSettings.mGlobalTexParam.TexRenderSize*tscale;
+		elmax.y = ypos + mGlobalSettings.mGlobalTexParam.TexRenderSize*tscale;
 
 		ImDrawList *tList = ImGui::GetWindowDrawList();
 
@@ -155,15 +155,15 @@ SDL_Rect TPixel::renderImDisabled(int xpos, int ypos, int tscale, bool updateRec
 
 
 SDL_Rect TPixel::renderEditor(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
-		CurrentArea = { xpos, ypos, mGlobalSettings.mGlobalTexParam.TileRenderSize*tscale, mGlobalSettings.mGlobalTexParam.TileRenderSize*tscale};
+		CurrentArea = { xpos, ypos, mGlobalSettings.mGlobalTexParam.TexRenderSize*tscale, mGlobalSettings.mGlobalTexParam.TexRenderSize*tscale};
 
 		ImVec2 elmin;
 		ImVec2 elmax;
 
 		elmin.x = xpos;
 		elmin.y = ypos;
-		elmax.x = xpos + mGlobalSettings.mGlobalTexParam.TileRenderSize*tscale;
-		elmax.y = ypos + mGlobalSettings.mGlobalTexParam.TileRenderSize*tscale;
+		elmax.x = xpos + mGlobalSettings.mGlobalTexParam.TexRenderSize*tscale;
+		elmax.y = ypos + mGlobalSettings.mGlobalTexParam.TexRenderSize*tscale;
 
 		ImDrawList *tList = ImGui::GetWindowDrawList();
 
@@ -245,7 +245,7 @@ SDL_Rect TPixel::renderEdSel(int xpos, int ypos, int tscale, bool drawGrid){
 
 
 SDL_Rect TPixel::renderEd(int xpos, int ypos, TextureParameters *mTexParam, int tscale, bool updateRect ,bool drawGrid){
-	CurrentArea = { xpos, ypos, mTexParam->TilePixelSize*tscale, mTexParam->TilePixelSize*tscale};
+	CurrentArea = { xpos, ypos, mTexParam->TexPixelSize*tscale, mTexParam->TexPixelSize*tscale};
 
 	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, PixelColor.r,PixelColor.g,PixelColor.b,PixelColor.a);
 	
@@ -272,15 +272,15 @@ SDL_Rect TPixel::renderEd(int xpos, int ypos, TextureParameters *mTexParam, int 
 
 
 SDL_Rect TTexture::renderEx(int xpos, int ypos, int tscale, SDL_RendererFlip flip){
-	SDL_Rect renderQuad = { xpos, ypos, mTexParam->TileSizeX*tscale, mTexParam->TileSizeY*tscale};
+	SDL_Rect renderQuad = { xpos, ypos, mTexParam->TexSizeX*tscale, mTexParam->TexSizeY*tscale};
         SDL_RenderCopyEx(mGlobalSettings.TRenderer, TileTex, NULL, &renderQuad, 0, NULL, flip);	
         return renderQuad;
 }
 
 void TTexture::renderEd(int xpos, int ypos, TPalette* tpal){
-	for(int i=0; i < mTexParam->TileSizeY; i++){
-		for(int j=0; j < mTexParam->TileSizeX; j++){
-			tpal->renderTileEd(xpos + mTexParam->TileSizeX*j, ypos + mTexParam->TileSizeY*i, getPixel(j+(i*mTexParam->TileSizeX)), mTexParam); //FileData[j+(i*mGlobalSettings.TileSizeX)]);			
+	for(int i=0; i < mTexParam->TexSizeY; i++){
+		for(int j=0; j < mTexParam->TexSizeX; j++){
+			tpal->renderTileEd(xpos + mTexParam->TexSizeX*j, ypos + mTexParam->TexSizeY*i, getPixel(j+(i*mTexParam->TexSizeX)), mTexParam); //FileData[j+(i*mGlobalSettings.TileSizeX)]);			
 		}
 	}
 
@@ -724,14 +724,14 @@ SDL_Rect TPalette::renderTileEd(int xpos,int ypos, int tcolor, TextureParameters
 	SDL_SetRenderDrawBlendMode(mGlobalSettings.TRenderer, SDL_BLENDMODE_BLEND);
 	int ccolor=0;
 	if(tcolor != 0) ccolor = tcolor + (mTexParam->PaletteOffset*16);
-	return TPixels[ccolor]->renderEd(xpos, ypos, mTexParam, mTexParam->mTileEdScale,false,mGlobalSettings.bShowPixelGrid);	
+	return TPixels[ccolor]->renderEd(xpos, ypos, mTexParam, mTexParam->TexEditScale,false,mGlobalSettings.bShowPixelGrid);	
 }
 
 SDL_Rect TPalette::renderSpriteEd(int xpos,int ypos, int tcolor, TextureParameters *mTexParam){
 	SDL_SetRenderDrawBlendMode(mGlobalSettings.TRenderer, SDL_BLENDMODE_BLEND);
 	int ccolor=0;
 	if(tcolor != 0) ccolor = tcolor + (mTexParam->PaletteOffset*16);
-	return TPixels[ccolor]->renderEd(xpos, ypos, mTexParam, mTexParam->mTileEdScale,false,mGlobalSettings.bShowPixelGridSprite);	
+	return TPixels[ccolor]->renderEd(xpos, ypos, mTexParam, mTexParam->TexEditScale,false,mGlobalSettings.bShowPixelGridSprite);	
 }
 
 
@@ -758,12 +758,12 @@ int TPalette::renderIm(int xpos,int ypos, TextureParameters *mTexParam){
 	ImGui::Begin("Palette", NULL, ImGuiWindowFlags_NoNav);
 
 	ImVec2 cSize;
-	if(mTexParam->TileSetBPP < 0x8){
-		cSize.x = 90 + ((mTexParam->TileRenderSize*mGlobalSettings.PaletteScale+4) * 16);
-		cSize.y = 50 + ((mTexParam->TileRenderSize*mGlobalSettings.PaletteScale+4) * 16);
+	if(mTexParam->TexBPP < 0x8){
+		cSize.x = 90 + ((mTexParam->TexRenderSize*mGlobalSettings.PaletteScale+4) * 16);
+		cSize.y = 50 + ((mTexParam->TexRenderSize*mGlobalSettings.PaletteScale+4) * 16);
 	} else {
-		cSize.x = 20 + ((mTexParam->TileRenderSize*mGlobalSettings.PaletteScale+4) * 16);
-		cSize.y = 50 + ((mTexParam->TileRenderSize*mGlobalSettings.PaletteScale+4) * 16);
+		cSize.x = 20 + ((mTexParam->TexRenderSize*mGlobalSettings.PaletteScale+4) * 16);
+		cSize.y = 50 + ((mTexParam->TexRenderSize*mGlobalSettings.PaletteScale+4) * 16);
 	}
 
 	ImGui::SetWindowSize(cSize, ImGuiCond_Once);
@@ -772,7 +772,7 @@ int TPalette::renderIm(int xpos,int ypos, TextureParameters *mTexParam){
 	cPos.x += 10;
 	cPos.y += 40;
 
-	if(mTexParam->TileSetBPP < 0x8){
+	if(mTexParam->TexBPP < 0x8){
 
 	cPos.x += 70;
 
@@ -796,32 +796,32 @@ int TPalette::renderIm(int xpos,int ypos, TextureParameters *mTexParam){
 
 		for(int i = 0; i < 16; i++){
 			if(i == mTexParam->PaletteOffset){
-				if(mTexParam->TileSetBPP == 0x4){
+				if(mTexParam->TexBPP == 0x4){
 					for(int j = 0; j < 16; j++){
 						PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->renderIm(
-						cPos.x + ((mTexParam->TileRenderSize*mGlobalSettings.PaletteScale+3)*j),
-						cPos.y + ((mTexParam->TileRenderSize*mGlobalSettings.PaletteScale+3)*i),
+						cPos.x + ((mTexParam->TexRenderSize*mGlobalSettings.PaletteScale+3)*j),
+						cPos.y + ((mTexParam->TexRenderSize*mGlobalSettings.PaletteScale+3)*i),
 						mGlobalSettings.PaletteScale,true,true);
 					}
 				} else  {
 					for(int j = 0; j < 4; j++){
 						PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->renderIm(
-						cPos.x + ((mTexParam->TileRenderSize*mGlobalSettings.PaletteScale+3)*j),
-						cPos.y + ((mTexParam->TileRenderSize*mGlobalSettings.PaletteScale+3)*i),
+						cPos.x + ((mTexParam->TexRenderSize*mGlobalSettings.PaletteScale+3)*j),
+						cPos.y + ((mTexParam->TexRenderSize*mGlobalSettings.PaletteScale+3)*i),
 						mGlobalSettings.PaletteScale,true,true);
 					}
 					for(int j = 4; j < 16; j++){
 						PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->renderImDisabled(
-						cPos.x + ((mTexParam->TileRenderSize*mGlobalSettings.PaletteScale+3)*j),
-						cPos.y + ((mTexParam->TileRenderSize*mGlobalSettings.PaletteScale+3)*i),
+						cPos.x + ((mTexParam->TexRenderSize*mGlobalSettings.PaletteScale+3)*j),
+						cPos.y + ((mTexParam->TexRenderSize*mGlobalSettings.PaletteScale+3)*i),
 						mGlobalSettings.PaletteScale,true,true);
 					}
 				}
 			} else {
 				for(int j = 0; j < 16; j++){
 					PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->renderImDisabled(
-					cPos.x + ((mTexParam->TileRenderSize*mGlobalSettings.PaletteScale+3)*j),
-					cPos.y + ((mTexParam->TileRenderSize*mGlobalSettings.PaletteScale+3)*i),
+					cPos.x + ((mTexParam->TexRenderSize*mGlobalSettings.PaletteScale+3)*j),
+					cPos.y + ((mTexParam->TexRenderSize*mGlobalSettings.PaletteScale+3)*i),
 					mGlobalSettings.PaletteScale,true,true);
 				}
 			}
@@ -832,8 +832,8 @@ int TPalette::renderIm(int xpos,int ypos, TextureParameters *mTexParam){
 	for(int i = 0; i < 16; i++){
 		for(int j = 0; j < 16; j++){
 			PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->renderIm(
-					cPos.x + ((mTexParam->TileRenderSize*mGlobalSettings.PaletteScale+3)*j),
-					cPos.y + ((mTexParam->TileRenderSize*mGlobalSettings.PaletteScale+3)*i),
+					cPos.x + ((mTexParam->TexRenderSize*mGlobalSettings.PaletteScale+3)*j),
+					cPos.y + ((mTexParam->TexRenderSize*mGlobalSettings.PaletteScale+3)*i),
 					mGlobalSettings.PaletteScale,true,true);
 		}
 	}
@@ -947,8 +947,8 @@ int TPalette::renderEditor(int xpos,int ypos){
 
 
 	ImVec2 cSize;
-	cSize.x = 20 + ((mGlobalSettings.mGlobalTexParam.TileRenderSize*mGlobalSettings.PaletteScale+4) * 16);
-	cSize.y = 270 + ((mGlobalSettings.mGlobalTexParam.TileRenderSize*mGlobalSettings.PaletteScale+4) * 16);
+	cSize.x = 20 + ((mGlobalSettings.mGlobalTexParam.TexRenderSize*mGlobalSettings.PaletteScale+4) * 16);
+	cSize.y = 270 + ((mGlobalSettings.mGlobalTexParam.TexRenderSize*mGlobalSettings.PaletteScale+4) * 16);
 
 	ImGui::SetWindowSize(cSize, ImGuiCond_Once);
 
@@ -959,8 +959,8 @@ int TPalette::renderEditor(int xpos,int ypos){
 	for(int i = 0; i < 16; i++){
 		for(int j = 0; j < 16; j++){
 			PixelAreas[(i*16)+j] = TPixels[(i*16)+j]->renderEditor(
-					cPos.x + ((mGlobalSettings.mGlobalTexParam.TileRenderSize*mGlobalSettings.PaletteScale+4)*j),
-					cPos.y + ((mGlobalSettings.mGlobalTexParam.TileRenderSize*mGlobalSettings.PaletteScale+4)*i),
+					cPos.x + ((mGlobalSettings.mGlobalTexParam.TexRenderSize*mGlobalSettings.PaletteScale+4)*j),
+					cPos.y + ((mGlobalSettings.mGlobalTexParam.TexRenderSize*mGlobalSettings.PaletteScale+4)*i),
 					mGlobalSettings.PaletteScale,true,true);
 		}
 	}
@@ -996,7 +996,7 @@ Tile::~Tile(){
 }
 
 void Tile::freeTexture(){
-	if(mTexParam->TileSetBPP < 8){
+	if(mTexParam->TexBPP < 8){
 		std::cout << "SDL_DestroyTexture(Tile::TPOffset)" << std::endl;
 		for(auto * cTex : TPOffset){
 			if(cTex != NULL){				
@@ -1015,11 +1015,11 @@ void Tile::freeTexture(){
 
 int TTexture::setPixel(int pindex, unsigned char pcolor, std::vector<unsigned char> &tBuf, TextureParameters *cTexParam){
 	
-	if(cTexParam->TileSetBPP == 0x8){
+	if(cTexParam->TexBPP == 0x8){
 		tBuf[pindex] = pcolor;
 	}
 
-	if(cTexParam->TileSetBPP == 0x4){
+	if(cTexParam->TexBPP == 0x4){
 		int cindex = pindex / 2;
 		int crem = pindex % 2;
 		unsigned char ccolor = 0;
@@ -1040,11 +1040,11 @@ int TTexture::setPixel(int pindex, unsigned char pcolor, std::vector<unsigned ch
 }
 
 int TTexture::setPixel(int pindex, unsigned char pcolor, std::vector<unsigned char> &tBuf){
-	if(mTexParam->TileSetBPP == 0x8){
+	if(mTexParam->TexBPP == 0x8){
 		tBuf[pindex] = pcolor;
 	}
 
-	if(mTexParam->TileSetBPP == 0x4){
+	if(mTexParam->TexBPP == 0x4){
 		int cindex = pindex / 2;
 		int crem = pindex % 2;
 		unsigned char ccolor = 0;
@@ -1060,7 +1060,7 @@ int TTexture::setPixel(int pindex, unsigned char pcolor, std::vector<unsigned ch
 		tBuf[cindex] = ccolor;
 	}
 
-	if(mTexParam->TileSetBPP == 0x2){
+	if(mTexParam->TexBPP == 0x2){
 		int cindex = pindex / 4;
 		int crem = pindex % 4;
 		unsigned char ccolor = 0;
@@ -1090,10 +1090,10 @@ int TTexture::setPixel(int pindex, unsigned char pcolor, std::vector<unsigned ch
 }
 
 int TTexture::setPixel(int pindex, unsigned char pcolor){
-	if(mTexParam->TileSetBPP == 0x8){
+	if(mTexParam->TexBPP == 0x8){
 		FileData[pindex] = pcolor;
 	}
-	if(mTexParam->TileSetBPP == 0x4){
+	if(mTexParam->TexBPP == 0x4){
 		int cindex = pindex / 2;
 		int crem = pindex % 2;
 		unsigned char ccolor = 0;
@@ -1108,7 +1108,7 @@ int TTexture::setPixel(int pindex, unsigned char pcolor){
 
 		FileData[cindex] = ccolor;
 	}
-	if(mTexParam->TileSetBPP == 0x2){
+	if(mTexParam->TexBPP == 0x2){
 		int cindex = pindex / 4;
 		int crem = pindex % 4;
 		unsigned char ccolor = 0;
@@ -1140,15 +1140,15 @@ int TTexture::getFlipIndex(int pindex, int tflip){
 	int nindex = pindex;
 
 	if(tflip == 1){		
-		nindex = pindex - 2 * (pindex % mTexParam->TileSizeX ) + mTexParam->TileSizeX  - 1;	
+		nindex = pindex - 2 * (pindex % mTexParam->TexSizeX ) + mTexParam->TexSizeX  - 1;	
 	}
 
 	if(tflip == 2){				
-		nindex = (mTexParam->TileSizeY - 1 - pindex / mTexParam->TileSizeX) * mTexParam->TileSizeX + pindex % mTexParam->TileSizeX;		
+		nindex = (mTexParam->TexSizeY - 1 - pindex / mTexParam->TexSizeX) * mTexParam->TexSizeX + pindex % mTexParam->TexSizeX;		
 	}
 
 	if(tflip == 3){
-		nindex =  (mTexParam->TileSizeX *mTexParam->TileSizeY ) - pindex - 1;		
+		nindex =  (mTexParam->TexSizeX *mTexParam->TexSizeY ) - pindex - 1;		
 	}
 
 	return nindex;
@@ -1169,17 +1169,17 @@ unsigned char TTexture::getPixel(int pindex, int poffset, int tflip){
 	}
 
 	if(tflip == 1){		
-		nindex = pindex - 2 * (pindex % mTexParam->TileSizeX ) + mTexParam->TileSizeX  - 1;
+		nindex = pindex - 2 * (pindex % mTexParam->TexSizeX ) + mTexParam->TexSizeX  - 1;
 		tpix = getPixel(nindex);
 	}
 
 	if(tflip == 2){				
-		nindex = (mTexParam->TileSizeY - 1 - pindex / mTexParam->TileSizeX) * mTexParam->TileSizeX + pindex % mTexParam->TileSizeX;
+		nindex = (mTexParam->TexSizeY - 1 - pindex / mTexParam->TexSizeX) * mTexParam->TexSizeX + pindex % mTexParam->TexSizeX;
 		tpix = getPixel(nindex);
 	}
 
 	if(tflip == 3){
-		nindex =  (mTexParam->TileSizeX *mTexParam->TileSizeY ) - pindex - 1;
+		nindex =  (mTexParam->TexSizeX *mTexParam->TexSizeY ) - pindex - 1;
 		tpix = getPixel(nindex);
 	}
 
@@ -1197,10 +1197,10 @@ unsigned char TTexture::getPixel(int pindex, int poffset){
 }
 
 unsigned char TTexture::getPixel(int pindex){
-	if(mTexParam->TileSetBPP == 0x8){
+	if(mTexParam->TexBPP == 0x8){
 		 return FileData[pindex];
 	}
-	if(mTexParam->TileSetBPP == 0x4){
+	if(mTexParam->TexBPP == 0x4){
 		int cindex = pindex / 2;
 		int crem = pindex % 2;
 		unsigned char ccolor = 0;
@@ -1215,7 +1215,7 @@ unsigned char TTexture::getPixel(int pindex){
 
 		return ccolor;
 	}
-	if(mTexParam->TileSetBPP == 0x2){
+	if(mTexParam->TexBPP == 0x2){
 		int cindex = pindex / 4;
 		int crem = pindex % 4;
 		unsigned char ccolor = 0;
@@ -1243,18 +1243,18 @@ unsigned char TTexture::getPixel(int pindex){
 }
 
 int Tile::rotater(){
-	if(mTexParam->TileSizeX != mTexParam->TileSizeY){return 1;}
+	if(mTexParam->TexSizeX != mTexParam->TexSizeY){return 1;}
 
 	std::vector<unsigned char> tmpData;
 	tmpData.resize(FileData.size());
 
 	int index;
-	int lsize = mTexParam->TileSizeX;
+	int lsize = mTexParam->TexSizeX;
 	unsigned char tmpPix;
 
 	
-	for(int i = 0; i < mTexParam->TileSizeY; i++){
-		for(int j = 0; j < mTexParam->TileSizeX; j++){
+	for(int i = 0; i < mTexParam->TexSizeY; i++){
+		for(int j = 0; j < mTexParam->TexSizeX; j++){
 			index = (lsize*(lsize-j-1))+i;
 			tmpPix = getPixel(index);		
 			setPixel((i*(lsize))+j, tmpPix, tmpData);
@@ -1269,18 +1269,18 @@ int Tile::rotater(){
 }
 
 int Tile::rotatel(){
-	if(mTexParam->TileSizeX != mTexParam->TileSizeY){return 1;}
+	if(mTexParam->TexSizeX != mTexParam->TexSizeY){return 1;}
 
 	std::vector<unsigned char> tmpData;
 	tmpData.resize(FileData.size());
 
 	int index;
-	int lsize = mTexParam->TileSizeX;
+	int lsize = mTexParam->TexSizeX;
 	unsigned char tmpPix;
 
 	
-	for(int i = 0; i < mTexParam->TileSizeY; i++){
-		for(int j = 0; j < mTexParam->TileSizeX; j++){			
+	for(int i = 0; i < mTexParam->TexSizeY; i++){
+		for(int j = 0; j < mTexParam->TexSizeX; j++){			
 			index = (i*(lsize))+j;
 			tmpPix = getPixel(index);		
 			setPixel((lsize*(lsize-j-1))+i, tmpPix, tmpData);
@@ -1327,11 +1327,11 @@ unsigned char findClosestPaletteColor(const SDL_Color& color, int cMaxPal) {
 
 int Tile::rotate(double cAngle){
 
-	if(((mTexParam->TileSetBPP == 8) || (mTexParam->TileSetBPP == 4) ) && (mTexParam->TileSizeX == mTexParam->TileSizeY)){
+	if(((mTexParam->TexBPP == 8) || (mTexParam->TexBPP == 4) ) && (mTexParam->TexSizeX == mTexParam->TexSizeY)){
 		
 		std::vector<unsigned char> bitmap;
-		bitmap.resize((mTexParam->TileSizeX * mTexParam->TileSizeY)/mGlobalSettings.mTileBPPSize[mTexParam->TileSetBPP],0);
-		int *pixels = new int[mTexParam->TileSizeX * mTexParam->TileSizeY];
+		bitmap.resize((mTexParam->TexSizeX * mTexParam->TexSizeY)/mGlobalSettings.mTileBPPSize[mTexParam->TexBPP],0);
+		int *pixels = new int[mTexParam->TexSizeX * mTexParam->TexSizeY];
 
 		if(mGlobalSettings.mUseTextureFiltering){
 			std::stringstream convert;
@@ -1344,9 +1344,9 @@ int Tile::rotate(double cAngle){
 			}
 		}
 		
-		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX * 8, mTexParam->TileSizeY * 8);
-		SDL_Texture *rTexRot = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX * 8, mTexParam->TileSizeY * 8);
-		SDL_Texture *rTexDest = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX, mTexParam->TileSizeY );
+		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TexSizeX * 8, mTexParam->TexSizeY * 8);
+		SDL_Texture *rTexRot = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TexSizeX * 8, mTexParam->TexSizeY * 8);
+		SDL_Texture *rTexDest = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TexSizeX, mTexParam->TexSizeY );
 
  		if(rTexture == NULL){
         	std::cout <<  "Unable to Create Texture Target: " <<  SDL_GetError()  << std::endl;
@@ -1356,7 +1356,7 @@ int Tile::rotate(double cAngle){
 			std::cout <<  "Unable to Set RenderTarget: " <<  SDL_GetError()  << std::endl;
 		}
 
-		if(mTexParam->TileSetBPP == 4){
+		if(mTexParam->TexBPP == 4){
 			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TPOffset[0], NULL, NULL, 0, NULL, SDL_FLIP_NONE );
 		} else {
 			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TileTex, NULL, NULL, 0, NULL, SDL_FLIP_NONE );
@@ -1380,23 +1380,23 @@ int Tile::rotate(double cAngle){
 
 		SDL_RenderPresent( mGlobalSettings.TRenderer );
 		
-		if(SDL_RenderReadPixels(mGlobalSettings.TRenderer, NULL, SDL_PIXELFORMAT_RGBA8888, pixels, mTexParam->TileSizeX * 4 )){			
+		if(SDL_RenderReadPixels(mGlobalSettings.TRenderer, NULL, SDL_PIXELFORMAT_RGBA8888, pixels, mTexParam->TexSizeX * 4 )){			
 			std::cout <<  "Unable to Read Pixels: " <<  SDL_GetError()  << std::endl;
 		}
 
-	    for (int y = 0; y < mTexParam->TileSizeY; y++) {
-    	    for (int x = 0; x < mTexParam->TileSizeX; x++) {
+	    for (int y = 0; y < mTexParam->TexSizeY; y++) {
+    	    for (int x = 0; x < mTexParam->TexSizeX; x++) {
 				
 				SDL_Color cTestCol;
-				cTestCol.r = (pixels[(y * mTexParam->TileSizeX) + x] & 0xFF000000) >> 24;
-				cTestCol.g = (pixels[(y * mTexParam->TileSizeX) + x] & 0x00FF0000) >> 16;
-				cTestCol.b = (pixels[(y * mTexParam->TileSizeX) + x] & 0x0000FF00) >> 8;
-				cTestCol.a = (pixels[(y * mTexParam->TileSizeX) + x] & 0x000000FF);
+				cTestCol.r = (pixels[(y * mTexParam->TexSizeX) + x] & 0xFF000000) >> 24;
+				cTestCol.g = (pixels[(y * mTexParam->TexSizeX) + x] & 0x00FF0000) >> 16;
+				cTestCol.b = (pixels[(y * mTexParam->TexSizeX) + x] & 0x0000FF00) >> 8;
+				cTestCol.a = (pixels[(y * mTexParam->TexSizeX) + x] & 0x000000FF);
 				
-				if(mTexParam->TileSetBPP == 4){
-					TTexture::setPixel(y * mTexParam->TileSizeX + x, findClosestPaletteColor(cTestCol, 16), bitmap, mTexParam);					
+				if(mTexParam->TexBPP == 4){
+					TTexture::setPixel(y * mTexParam->TexSizeX + x, findClosestPaletteColor(cTestCol, 16), bitmap, mTexParam);					
 				} else {
-        	    	bitmap[y * mTexParam->TileSizeX + x] = findClosestPaletteColor(cTestCol, 256);
+        	    	bitmap[y * mTexParam->TexSizeX + x] = findClosestPaletteColor(cTestCol, 256);
 				}
    		     }
     	}	
@@ -1423,8 +1423,8 @@ int Tile::applyFilter(){
 	if(mGlobalSettings.mUseTextureFiltering){
 
 		std::vector<unsigned char> bitmap;
-		bitmap.resize((mTexParam->TileSizeX * mTexParam->TileSizeY)/mGlobalSettings.mTileBPPSize[mTexParam->TileSetBPP],0);
-		int *pixels = new int[mTexParam->TileSizeX * mTexParam->TileSizeY];
+		bitmap.resize((mTexParam->TexSizeX * mTexParam->TexSizeY)/mGlobalSettings.mTileBPPSize[mTexParam->TexBPP],0);
+		int *pixels = new int[mTexParam->TexSizeX * mTexParam->TexSizeY];
 
 
 		std::stringstream convert;
@@ -1436,15 +1436,15 @@ int Tile::applyFilter(){
 			recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);			
 		}
 
-		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX * 8, mTexParam->TileSizeY * 8);
-		SDL_Texture *rTexScale = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX * 8, mTexParam->TileSizeY * 8);
-		SDL_Texture *rTexDest = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX, mTexParam->TileSizeY );
+		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TexSizeX * 8, mTexParam->TexSizeY * 8);
+		SDL_Texture *rTexScale = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TexSizeX * 8, mTexParam->TexSizeY * 8);
+		SDL_Texture *rTexDest = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TexSizeX, mTexParam->TexSizeY );
 
 		if(SDL_SetRenderTarget(mGlobalSettings.TRenderer, rTexture)){
 			std::cout <<  "Unable to Set RenderTarget: " <<  SDL_GetError()  << std::endl;
 		}
 		
-		if(mTexParam->TileSetBPP == 4){
+		if(mTexParam->TexBPP == 4){
 			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TPOffset[0], NULL, NULL, 0, NULL, SDL_FLIP_NONE );
 		} else {
 			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TileTex, NULL, NULL, 0, NULL, SDL_FLIP_NONE );
@@ -1468,23 +1468,23 @@ int Tile::applyFilter(){
 
 		SDL_RenderPresent( mGlobalSettings.TRenderer );
 
-		if(SDL_RenderReadPixels(mGlobalSettings.TRenderer, NULL, SDL_PIXELFORMAT_RGBA8888, pixels, mTexParam->TileSizeX * 4 )){			
+		if(SDL_RenderReadPixels(mGlobalSettings.TRenderer, NULL, SDL_PIXELFORMAT_RGBA8888, pixels, mTexParam->TexSizeX * 4 )){			
 			std::cout <<  "Unable to Read Pixels: " <<  SDL_GetError()  << std::endl;
 		}
 
-	    for (int y = 0; y < mTexParam->TileSizeY; y++) {
-    	    for (int x = 0; x < mTexParam->TileSizeX; x++) {
+	    for (int y = 0; y < mTexParam->TexSizeY; y++) {
+    	    for (int x = 0; x < mTexParam->TexSizeX; x++) {
 				
 				SDL_Color cTestCol;
-				cTestCol.r = (pixels[(y * mTexParam->TileSizeX) + x] & 0xFF000000) >> 24;
-				cTestCol.g = (pixels[(y * mTexParam->TileSizeX) + x] & 0x00FF0000) >> 16;
-				cTestCol.b = (pixels[(y * mTexParam->TileSizeX) + x] & 0x0000FF00) >> 8;
-				cTestCol.a = (pixels[(y * mTexParam->TileSizeX) + x] & 0x000000FF);				
+				cTestCol.r = (pixels[(y * mTexParam->TexSizeX) + x] & 0xFF000000) >> 24;
+				cTestCol.g = (pixels[(y * mTexParam->TexSizeX) + x] & 0x00FF0000) >> 16;
+				cTestCol.b = (pixels[(y * mTexParam->TexSizeX) + x] & 0x0000FF00) >> 8;
+				cTestCol.a = (pixels[(y * mTexParam->TexSizeX) + x] & 0x000000FF);				
 				
-				if(mTexParam->TileSetBPP == 4){
-					TTexture::setPixel(y * mTexParam->TileSizeX + x, findClosestPaletteColor(cTestCol, 16), bitmap, mTexParam);					
+				if(mTexParam->TexBPP == 4){
+					TTexture::setPixel(y * mTexParam->TexSizeX + x, findClosestPaletteColor(cTestCol, 16), bitmap, mTexParam);					
 				} else {
-        	    	bitmap[y * mTexParam->TileSizeX + x] = findClosestPaletteColor(cTestCol, 256);
+        	    	bitmap[y * mTexParam->TexSizeX + x] = findClosestPaletteColor(cTestCol, 256);
 				}
    		     }
     	}	
@@ -1506,11 +1506,11 @@ int Tile::applyFilter(){
 }
 
 int Tile::upscale(Tile *cCopyTile){
-	if( (mTexParam->TileSetBPP == 8) || (mTexParam->TileSetBPP == 4) ){
+	if( (mTexParam->TexBPP == 8) || (mTexParam->TexBPP == 4) ){
 
 		std::vector<unsigned char> bitmap;
-		bitmap.resize((mTexParam->TileSizeX * mTexParam->TileSizeY)/mGlobalSettings.mTileBPPSize[mTexParam->TileSetBPP],0);
-		int *pixels = new int[mTexParam->TileSizeX * mTexParam->TileSizeY];
+		bitmap.resize((mTexParam->TexSizeX * mTexParam->TexSizeY)/mGlobalSettings.mTileBPPSize[mTexParam->TexBPP],0);
+		int *pixels = new int[mTexParam->TexSizeX * mTexParam->TexSizeY];
 		
 		if(mGlobalSettings.mUseTextureFiltering){
 			std::stringstream convert;
@@ -1524,13 +1524,13 @@ int Tile::upscale(Tile *cCopyTile){
 			}
 		}
 		
-		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX, mTexParam->TileSizeY);
+		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TexSizeX, mTexParam->TexSizeY);
 
 		if(SDL_SetRenderTarget(mGlobalSettings.TRenderer, rTexture)){
 			std::cout <<  "Unable to Set RenderTarget: " <<  SDL_GetError()  << std::endl;
 		}
 		
-		if(mTexParam->TileSetBPP == 4){
+		if(mTexParam->TexBPP == 4){
 			SDL_RenderCopyEx(mGlobalSettings.TRenderer, cCopyTile->TPOffset[0], NULL, NULL, 0, NULL, SDL_FLIP_NONE );
 			std::cout <<  "Render Target Sprite BPP 4" << std::endl;
 		} else {
@@ -1540,23 +1540,23 @@ int Tile::upscale(Tile *cCopyTile){
 
 		SDL_RenderPresent( mGlobalSettings.TRenderer );
 		
-		if(SDL_RenderReadPixels(mGlobalSettings.TRenderer, NULL, SDL_PIXELFORMAT_RGBA8888, pixels, mTexParam->TileSizeX * 4 )){			
+		if(SDL_RenderReadPixels(mGlobalSettings.TRenderer, NULL, SDL_PIXELFORMAT_RGBA8888, pixels, mTexParam->TexSizeX * 4 )){			
 			std::cout <<  "Unable to Read Pixels: " <<  SDL_GetError()  << std::endl;
 		}
 
-	    for (int y = 0; y < mTexParam->TileSizeY; y++) {
-    	    for (int x = 0; x < mTexParam->TileSizeX; x++) {
+	    for (int y = 0; y < mTexParam->TexSizeY; y++) {
+    	    for (int x = 0; x < mTexParam->TexSizeX; x++) {
 				
 				SDL_Color cTestCol;
-				cTestCol.r = (pixels[(y * mTexParam->TileSizeX) + x] & 0xFF000000) >> 24;
-				cTestCol.g = (pixels[(y * mTexParam->TileSizeX) + x] & 0x00FF0000) >> 16;
-				cTestCol.b = (pixels[(y * mTexParam->TileSizeX) + x] & 0x0000FF00) >> 8;
-				cTestCol.a = (pixels[(y * mTexParam->TileSizeX) + x] & 0x000000FF);				
+				cTestCol.r = (pixels[(y * mTexParam->TexSizeX) + x] & 0xFF000000) >> 24;
+				cTestCol.g = (pixels[(y * mTexParam->TexSizeX) + x] & 0x00FF0000) >> 16;
+				cTestCol.b = (pixels[(y * mTexParam->TexSizeX) + x] & 0x0000FF00) >> 8;
+				cTestCol.a = (pixels[(y * mTexParam->TexSizeX) + x] & 0x000000FF);				
 				
-				if(mTexParam->TileSetBPP == 4){
-					TTexture::setPixel(y * mTexParam->TileSizeX + x, findClosestPaletteColor(cTestCol, 16), bitmap, mTexParam);					
+				if(mTexParam->TexBPP == 4){
+					TTexture::setPixel(y * mTexParam->TexSizeX + x, findClosestPaletteColor(cTestCol, 16), bitmap, mTexParam);					
 				} else {
-        	    	bitmap[y * mTexParam->TileSizeX + x] = findClosestPaletteColor(cTestCol, 256);
+        	    	bitmap[y * mTexParam->TexSizeX + x] = findClosestPaletteColor(cTestCol, 256);
 				}
    		     }
     	}	
@@ -1578,11 +1578,11 @@ int Tile::upscale(Tile *cCopyTile){
 
 int Tile::scale(double cScale){
 
-	if(((mTexParam->TileSetBPP == 8) || (mTexParam->TileSetBPP == 4) ) && (mTexParam->TileSizeX == mTexParam->TileSizeY)){
+	if(((mTexParam->TexBPP == 8) || (mTexParam->TexBPP == 4) ) && (mTexParam->TexSizeX == mTexParam->TexSizeY)){
 		
 		std::vector<unsigned char> bitmap;
-		bitmap.resize((mTexParam->TileSizeX * mTexParam->TileSizeY)/mGlobalSettings.mTileBPPSize[mTexParam->TileSetBPP],0);
-		int *pixels = new int[mTexParam->TileSizeX * mTexParam->TileSizeY];
+		bitmap.resize((mTexParam->TexSizeX * mTexParam->TexSizeY)/mGlobalSettings.mTileBPPSize[mTexParam->TexBPP],0);
+		int *pixels = new int[mTexParam->TexSizeX * mTexParam->TexSizeY];
 		
 		if(mGlobalSettings.mUseTextureFiltering){
 			std::stringstream convert;
@@ -1595,7 +1595,7 @@ int Tile::scale(double cScale){
 			}
 		}
 		
-		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TileSizeX, mTexParam->TileSizeY);
+		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TexSizeX, mTexParam->TexSizeY);
 		
  		if(rTexture == NULL){
         	std::cout <<  "Unable to Create Texture Target: " <<  SDL_GetError()  << std::endl;
@@ -1604,24 +1604,24 @@ int Tile::scale(double cScale){
 		SDL_Rect tDest;
 		SDL_Rect tSrc;
 
-		int nWidth = (mTexParam->TileSizeX * cScale);
-		int nHeight = (mTexParam->TileSizeY * cScale);
+		int nWidth = (mTexParam->TexSizeX * cScale);
+		int nHeight = (mTexParam->TexSizeY * cScale);
 
-		tDest.x = -((nWidth - (mTexParam->TileSizeX))/2);
-		tDest.y = -((nHeight - (mTexParam->TileSizeY))/2);
+		tDest.x = -((nWidth - (mTexParam->TexSizeX))/2);
+		tDest.y = -((nHeight - (mTexParam->TexSizeY))/2);
 		tDest.h = nHeight;
 		tDest.w = nWidth;
 
 		tSrc.x = 0;
 		tSrc.y = 0;
-		tSrc.h = mTexParam->TileSizeY;;
-		tSrc.w = mTexParam->TileSizeX;
+		tSrc.h = mTexParam->TexSizeY;;
+		tSrc.w = mTexParam->TexSizeX;
 		
 		if(SDL_SetRenderTarget(mGlobalSettings.TRenderer, rTexture)){
 			std::cout <<  "Unable to Set RenderTarget: " <<  SDL_GetError()  << std::endl;
 		}
 		
-		if(mTexParam->TileSetBPP == 4){
+		if(mTexParam->TexBPP == 4){
 			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TPOffset[0], &tSrc, &tDest, 0, NULL, SDL_FLIP_NONE );
 		} else {
 			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TileTex, &tSrc, &tDest, 0, NULL, SDL_FLIP_NONE );
@@ -1629,23 +1629,23 @@ int Tile::scale(double cScale){
 
 		SDL_RenderPresent( mGlobalSettings.TRenderer );
 		
-		if(SDL_RenderReadPixels(mGlobalSettings.TRenderer, NULL, SDL_PIXELFORMAT_RGBA8888, pixels, mTexParam->TileSizeX * 4 )){			
+		if(SDL_RenderReadPixels(mGlobalSettings.TRenderer, NULL, SDL_PIXELFORMAT_RGBA8888, pixels, mTexParam->TexSizeX * 4 )){			
 			std::cout <<  "Unable to Read Pixels: " <<  SDL_GetError()  << std::endl;
 		}
 
-	    for (int y = 0; y < mTexParam->TileSizeY; y++) {
-    	    for (int x = 0; x < mTexParam->TileSizeX; x++) {
+	    for (int y = 0; y < mTexParam->TexSizeY; y++) {
+    	    for (int x = 0; x < mTexParam->TexSizeX; x++) {
 				
 				SDL_Color cTestCol;
-				cTestCol.r = (pixels[(y * mTexParam->TileSizeX) + x] & 0xFF000000) >> 24;
-				cTestCol.g = (pixels[(y * mTexParam->TileSizeX) + x] & 0x00FF0000) >> 16;
-				cTestCol.b = (pixels[(y * mTexParam->TileSizeX) + x] & 0x0000FF00) >> 8;
-				cTestCol.a = (pixels[(y * mTexParam->TileSizeX) + x] & 0x000000FF);				
+				cTestCol.r = (pixels[(y * mTexParam->TexSizeX) + x] & 0xFF000000) >> 24;
+				cTestCol.g = (pixels[(y * mTexParam->TexSizeX) + x] & 0x00FF0000) >> 16;
+				cTestCol.b = (pixels[(y * mTexParam->TexSizeX) + x] & 0x0000FF00) >> 8;
+				cTestCol.a = (pixels[(y * mTexParam->TexSizeX) + x] & 0x000000FF);				
 				
-				if(mTexParam->TileSetBPP == 4){
-					TTexture::setPixel(y * mTexParam->TileSizeX + x, findClosestPaletteColor(cTestCol, 16), bitmap, mTexParam);					
+				if(mTexParam->TexBPP == 4){
+					TTexture::setPixel(y * mTexParam->TexSizeX + x, findClosestPaletteColor(cTestCol, 16), bitmap, mTexParam);					
 				} else {
-        	    	bitmap[y * mTexParam->TileSizeX + x] = findClosestPaletteColor(cTestCol, 256);
+        	    	bitmap[y * mTexParam->TexSizeX + x] = findClosestPaletteColor(cTestCol, 256);
 				}
    		     }
     	}	
@@ -1670,7 +1670,7 @@ int Tile::recreateTexture(TPalette* tpal){
 	freeTexture();
 	initTile();
 	initTexture();
-    FileData.resize(((mTexParam->TileSizeX * mTexParam->TileSizeY)/mGlobalSettings.mTileBPPSize[mTexParam->TileSetBPP]), 0);	
+    FileData.resize(((mTexParam->TexSizeX * mTexParam->TexSizeY)/mGlobalSettings.mTileBPPSize[mTexParam->TexBPP]), 0);	
 	updateTexture(tpal);
 	
 	return 0;
@@ -1678,16 +1678,16 @@ int Tile::recreateTexture(TPalette* tpal){
 
 
 int Tile::updateTexture(TPalette* tpal){
-	if(mTexParam->TileSetBPP < 0x8){
+	if(mTexParam->TexBPP < 0x8){
 		for(int j = 0; j < 16; j++){
 			if(PixelData.size()){		
 				PixelData.erase(PixelData.begin(),PixelData.end());
 			}
 
-			for(int i = 0; i < (mTexParam->TileSizeX * mTexParam->TileSizeY); i++){
+			for(int i = 0; i < (mTexParam->TexSizeX * mTexParam->TexSizeY); i++){
     			PixelData.push_back(tpal->mapPaletteColor(getPixel(i, j)));
 			}			
-    		SDL_UpdateTexture(TPOffset[j], NULL, PixelData.data(), mTexParam->TileSizeX * sizeof(Uint32));		
+    		SDL_UpdateTexture(TPOffset[j], NULL, PixelData.data(), mTexParam->TexSizeX * sizeof(Uint32));		
 		}
 	} else {
 		TTexture::updateTexture(tpal);
@@ -1701,16 +1701,16 @@ int Tile::createNew(TPalette* tpal){
 	
 	initTile();
 	initTexture();
-    FileData.resize(((mTexParam->TileSizeX * mTexParam->TileSizeY)/mGlobalSettings.mTileBPPSize[mTexParam->TileSetBPP]), 0);	
+    FileData.resize(((mTexParam->TexSizeX * mTexParam->TexSizeY)/mGlobalSettings.mTileBPPSize[mTexParam->TexBPP]), 0);	
 	updateTexture(tpal);
 	
 	return 0;
 }
 
 int Tile::initTexture(){
-	if(mTexParam->TileSetBPP < 0x8){
+	if(mTexParam->TexBPP < 0x8){
 		for(int i = 0; i < 16; i++){			
-			TPOffset[i] = SDL_CreateTexture(mGlobalSettings.TRenderer,SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, mTexParam->TileSizeX,mTexParam->TileSizeY);
+			TPOffset[i] = SDL_CreateTexture(mGlobalSettings.TRenderer,SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, mTexParam->TexSizeX,mTexParam->TexSizeY);
 			SDL_SetTextureBlendMode(TPOffset[i], SDL_BLENDMODE_BLEND);
 		}
 
@@ -1725,11 +1725,11 @@ int Tile::initTexture(){
 
 int Tile::initTile(){
 	SDL_Rect eRect = {0,0,1,1};
-	PixelAreas.resize(mTexParam->TileSizeX*mTexParam->TileSizeY,eRect);
-	if(mTexParam->TileSetBPP < 0x8){
+	PixelAreas.resize(mTexParam->TexSizeX*mTexParam->TexSizeY,eRect);
+	if(mTexParam->TexBPP < 0x8){
 		TPOffset.resize(16, 0);
 	}
-	mSelection.init(mTexParam->TileSizeX, mTexParam->TileSizeY,&mTexParam->TilePixelSize, &mTexParam->TilePixelSize, &mTexParam->mTileEdScale);
+	mSelection.init(mTexParam->TexSizeX, mTexParam->TexSizeY,&mTexParam->TexPixelSize, &mTexParam->TexPixelSize, &mTexParam->TexEditScale);
 	return 0;
 }
 
@@ -1757,10 +1757,10 @@ SDL_Rect tmpRect;
 
 	//ImGui::Image
 
-	if(mTexParam->TileSetBPP < 0x8){
-		ImGui::ImageButton((ImTextureID)(intptr_t)TPOffset[mTexParam->PaletteOffset], ImVec2(mTexParam->TileSizeX * tscale, mTexParam->TileSizeY * tscale) , ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));	
+	if(mTexParam->TexBPP < 0x8){
+		ImGui::ImageButton((ImTextureID)(intptr_t)TPOffset[mTexParam->PaletteOffset], ImVec2(mTexParam->TexSizeX * tscale, mTexParam->TexSizeY * tscale) , ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));	
 	} else {
-		ImGui::ImageButton((ImTextureID)(intptr_t)TileTex, ImVec2(mTexParam->TileSizeX * tscale, mTexParam->TileSizeY * tscale), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
+		ImGui::ImageButton((ImTextureID)(intptr_t)TileTex, ImVec2(mTexParam->TexSizeX * tscale, mTexParam->TexSizeY * tscale), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
 	}
 
 	ImVec2 elmin = ImGui::GetItemRectMin();
@@ -1787,10 +1787,10 @@ SDL_Rect Tile::renderIm(int xpos, int ypos, int mIndex, int &mDragAndDropped, in
 
 	//ImGui::Image
 
-	if(mTexParam->TileSetBPP < 0x8){
-		ImGui::ImageButton((ImTextureID)(intptr_t)TPOffset[mTexParam->PaletteOffset], ImVec2(mTexParam->TileSizeX * tscale, mTexParam->TileSizeY * tscale) , ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));	
+	if(mTexParam->TexBPP < 0x8){
+		ImGui::ImageButton((ImTextureID)(intptr_t)TPOffset[mTexParam->PaletteOffset], ImVec2(mTexParam->TexSizeX * tscale, mTexParam->TexSizeY * tscale) , ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));	
 	} else {
-		ImGui::ImageButton((ImTextureID)(intptr_t)TileTex, ImVec2(mTexParam->TileSizeX * tscale, mTexParam->TileSizeY * tscale), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
+		ImGui::ImageButton((ImTextureID)(intptr_t)TileTex, ImVec2(mTexParam->TexSizeX * tscale, mTexParam->TexSizeY * tscale), ImVec2(0, 0), ImVec2(1, 1), 0, ImVec4(0, 0, 0, 0), ImVec4(1, 1, 1, 1));
 	}
 
 	int mode = 0;
@@ -1855,8 +1855,8 @@ SDL_Rect Tile::render(int xpos, int ypos, int tscale,TileProperties tProps){
 
 	SDL_Rect tmpRect;
 
-	if(mTexParam->TileSetBPP < 0x8){		
-		tmpRect = { xpos, ypos, mTexParam->TileSizeX*tscale, mTexParam->TileSizeY*tscale};
+	if(mTexParam->TexBPP < 0x8){		
+		tmpRect = { xpos, ypos, mTexParam->TexSizeX*tscale, mTexParam->TexSizeY*tscale};
         SDL_RenderCopyEx(mGlobalSettings.TRenderer, TPOffset[tProps.mPaletteOffset], NULL, &tmpRect, 0, NULL, flip);	        
 	} else {
 		tmpRect = TTexture::renderEx(xpos, ypos, tscale, flip);
@@ -1894,29 +1894,29 @@ int Tile::renderSelection(SDL_Rect &sRect, SDL_Color sColor){
 }
 
 void Tile::renderEdSel(int xpos, int ypos, TPalette* tpal, int cScale){
-	for(int i=0; i < mTexParam->TileSizeY; i++){
-		for(int j=0; j < mTexParam->TileSizeX; j++){
-			PixelAreas[j+(mTexParam->TileSizeX*i)] = tpal->renderTileEd(xpos + (cScale)*j, ypos + (cScale)*i, getPixel(j+(i*mTexParam->TileSizeX)), cScale, mTexParam); 			//mGlobalSettings.TilePixelSize * 
+	for(int i=0; i < mTexParam->TexSizeY; i++){
+		for(int j=0; j < mTexParam->TexSizeX; j++){
+			PixelAreas[j+(mTexParam->TexSizeX*i)] = tpal->renderTileEd(xpos + (cScale)*j, ypos + (cScale)*i, getPixel(j+(i*mTexParam->TexSizeX)), cScale, mTexParam); 			//mGlobalSettings.TilePixelSize * 
 		}
 	}
 
 }
 
 void Tile::renderEd(int xpos, int ypos, TPalette* tpal){
-	for(int i=0; i < mTexParam->TileSizeY; i++){
-		for(int j=0; j < mTexParam->TileSizeX; j++){
-			PixelAreas[j+(mTexParam->TileSizeX*i)] = tpal->renderTileEd(xpos + (mTexParam->TilePixelSize * mTexParam->mTileEdScale)*j, ypos + (mTexParam->TilePixelSize * mTexParam->mTileEdScale)*i, getPixel(j+(i*mTexParam->TileSizeX)), mTexParam); 			
+	for(int i=0; i < mTexParam->TexSizeY; i++){
+		for(int j=0; j < mTexParam->TexSizeX; j++){
+			PixelAreas[j+(mTexParam->TexSizeX*i)] = tpal->renderTileEd(xpos + (mTexParam->TexPixelSize * mTexParam->TexEditScale)*j, ypos + (mTexParam->TexPixelSize * mTexParam->TexEditScale)*i, getPixel(j+(i*mTexParam->TexSizeX)), mTexParam); 			
 		}
 	}
 	
 	if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel && !mGlobalSettings.CurrentEditor->mBrushesPixel.bIsEditing){
 		if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel->mSelected.size()){
-			for(int i=0; i < mTexParam->TileSizeY; i++){
-				for(int j=0; j < mTexParam->TileSizeX; j++){	
-					if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel->findInSelection((j+(i*mTexParam->TileSizeX))) != -1){
-						int findex = mGlobalSettings.CurrentEditor->mCurrentBrushPixel->findInSelection((j+(i*mTexParam->TileSizeX)));
+			for(int i=0; i < mTexParam->TexSizeY; i++){
+				for(int j=0; j < mTexParam->TexSizeX; j++){	
+					if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel->findInSelection((j+(i*mTexParam->TexSizeX))) != -1){
+						int findex = mGlobalSettings.CurrentEditor->mCurrentBrushPixel->findInSelection((j+(i*mTexParam->TexSizeX)));
 						if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel->mBrushElements[findex] != -1){
-							tpal->renderTileEd(xpos + (mTexParam->TilePixelSize * mTexParam->mTileEdScale)*j, ypos + (mTexParam->TilePixelSize * mTexParam->mTileEdScale)*i, mGlobalSettings.CurrentEditor->mCurrentBrushPixel->mBrushElements[findex], mTexParam); 							
+							tpal->renderTileEd(xpos + (mTexParam->TexPixelSize * mTexParam->TexEditScale)*j, ypos + (mTexParam->TexPixelSize * mTexParam->TexEditScale)*i, mGlobalSettings.CurrentEditor->mCurrentBrushPixel->mBrushElements[findex], mTexParam); 							
 						}
 					}
 				}
@@ -1969,14 +1969,14 @@ Tile* TileSet::createNewFromFile(std::string newPath, TPalette* tpal){
 		}
 
 		SDL_Surface *newSurf = IMG_Load(newPath.c_str());
-		if(newSurf && (mGlobalSettings.mGlobalTexParam.TileSetBPP > 0x2)){
+		if(newSurf && (mGlobalSettings.mGlobalTexParam.TexBPP > 0x2)){
 			if(newSurf->format->BitsPerPixel == 8){
-				if((newSurf->w == mGlobalSettings.mGlobalTexParam.TileSizeX) && (newSurf->h == mGlobalSettings.mGlobalTexParam.TileSizeY)){
+				if((newSurf->w == mGlobalSettings.mGlobalTexParam.TexSizeX) && (newSurf->h == mGlobalSettings.mGlobalTexParam.TexSizeY)){
 					std::vector<unsigned char> tbuffer;
-					if(mGlobalSettings.mGlobalTexParam.TileSetBPP == 0x4){
+					if(mGlobalSettings.mGlobalTexParam.TexBPP == 0x4){
 						unsigned char tmpChar;
 						bool sndPix=false;
-						for(int i = 0; i < (mGlobalSettings.mGlobalTexParam.TileSizeX*mGlobalSettings.mGlobalTexParam.TileSizeY); i++){
+						for(int i = 0; i < (mGlobalSettings.mGlobalTexParam.TexSizeX*mGlobalSettings.mGlobalTexParam.TexSizeY); i++){
 							if(sndPix){
 								tmpChar = (tmpChar << 4) + ((unsigned char*)(newSurf->pixels))[i]%16;
 								tbuffer.push_back(tmpChar);
@@ -1988,7 +1988,7 @@ Tile* TileSet::createNewFromFile(std::string newPath, TPalette* tpal){
 							
 						}
 					} else {
-						for(int i = 0; i < (mGlobalSettings.mGlobalTexParam.TileSizeX*mGlobalSettings.mGlobalTexParam.TileSizeY); i++){
+						for(int i = 0; i < (mGlobalSettings.mGlobalTexParam.TexSizeX*mGlobalSettings.mGlobalTexParam.TexSizeY); i++){
 							tbuffer.push_back(((unsigned char*)(newSurf->pixels))[i]);
 						}
 					}
@@ -2004,7 +2004,7 @@ Tile* TileSet::createNewFromFile(std::string newPath, TPalette* tpal){
 
 			std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
 
-			if(tbuffer.size() == ((mGlobalSettings.mGlobalTexParam.TileSizeX * mGlobalSettings.mGlobalTexParam.TileSizeY)/mGlobalSettings.mTileBPPSize[mGlobalSettings.mGlobalTexParam.TileSetBPP])){
+			if(tbuffer.size() == ((mGlobalSettings.mGlobalTexParam.TexSizeX * mGlobalSettings.mGlobalTexParam.TexSizeY)/mGlobalSettings.mTileBPPSize[mGlobalSettings.mGlobalTexParam.TexBPP])){
 				return createNewFromBuffer(tbuffer, tpal);
 			} else {
 				return NULL;				
@@ -2023,7 +2023,7 @@ int TileSet::importTileSet(std::string cTilePath, std::vector<Tile*> &cNewTiles)
 		int mTileNum = TTiles.size();
 
 		SDL_Surface *newSurf = IMG_Load(cTilePath.c_str());
-		if(newSurf && (mGlobalSettings.mGlobalTexParam.TileSetBPP > 0x2)){
+		if(newSurf && (mGlobalSettings.mGlobalTexParam.TexBPP > 0x2)){
 			if(importPNG(newSurf,  &mGlobalSettings.CurrentEditor->mPalette)){
 				std::cout << "Error Importing TileSet: " << cTilePath << std::endl;
 				return 1;
@@ -2050,10 +2050,10 @@ int TileSet::importTileSet(std::string cTilePath, std::vector<Tile*> &cNewTiles)
 
 int TileSet::importPNG(SDL_Surface *newSurf, TPalette* tpal){
 	if(newSurf->format->BitsPerPixel == 8){
-		if(!(newSurf->w % mGlobalSettings.mGlobalTexParam.TileSizeX) && !(newSurf->h % mGlobalSettings.mGlobalTexParam.TileSizeY)){
+		if(!(newSurf->w % mGlobalSettings.mGlobalTexParam.TexSizeX) && !(newSurf->h % mGlobalSettings.mGlobalTexParam.TexSizeY)){
 			int cTilesX,cTilesY;
-			cTilesX = newSurf->w / mGlobalSettings.mGlobalTexParam.TileSizeX;
-			cTilesY = newSurf->h / mGlobalSettings.mGlobalTexParam.TileSizeY;
+			cTilesX = newSurf->w / mGlobalSettings.mGlobalTexParam.TexSizeX;
+			cTilesY = newSurf->h / mGlobalSettings.mGlobalTexParam.TexSizeY;
 			
 			std::cout << "Import PNG: " << cTilesX << "," <<  cTilesY << std::endl;
 
@@ -2062,7 +2062,7 @@ int TileSet::importPNG(SDL_Surface *newSurf, TPalette* tpal){
 			tbuffers.resize(cTilesX*cTilesY);
 
 			for(auto &tbuf : tbuffers){
-				tbuf.resize((mGlobalSettings.mGlobalTexParam.TileSizeX*mGlobalSettings.mGlobalTexParam.TileSizeY) / mGlobalSettings.mTileBPPSize[mGlobalSettings.mGlobalTexParam.TileSetBPP],0);
+				tbuf.resize((mGlobalSettings.mGlobalTexParam.TexSizeX*mGlobalSettings.mGlobalTexParam.TexSizeY) / mGlobalSettings.mTileBPPSize[mGlobalSettings.mGlobalTexParam.TexBPP],0);
 			}
 
 			//Tile tmpTile;
@@ -2113,7 +2113,7 @@ Tile* TileSet::createNewCopy(Tile* cCopyTile, TPalette* tpal){
 
 Tile* TileSet::createNew(TPalette* tpal){	
 	std::vector<unsigned char> tbuf;	
-	tbuf.resize(((mGlobalSettings.mGlobalTexParam.TileSizeX * mGlobalSettings.mGlobalTexParam.TileSizeY)/mGlobalSettings.mTileBPPSize[mGlobalSettings.mGlobalTexParam.TileSetBPP]),0);
+	tbuf.resize(((mGlobalSettings.mGlobalTexParam.TexSizeX * mGlobalSettings.mGlobalTexParam.TexSizeY)/mGlobalSettings.mTileBPPSize[mGlobalSettings.mGlobalTexParam.TexBPP]),0);
 	return createNewFromBuffer(tbuf, tpal);
 }
 
@@ -2184,17 +2184,17 @@ int TileSet::importFile(std::string tpath,std::string tfile, TPalette* tpal){
 		return 1;	
 	}
 
-	if((mTileSizeIn[twidth] != mGlobalSettings.mGlobalTexParam.TileSizeX) || (mTileSizeIn[theight] != mGlobalSettings.mGlobalTexParam.TileSizeY)){
+	if((mTileSizeIn[twidth] != mGlobalSettings.mGlobalTexParam.TexSizeX) || (mTileSizeIn[theight] != mGlobalSettings.mGlobalTexParam.TexSizeY)){
 		std::cout << "Wrong Tile Size: " << cTileFile << std::endl;
 		return 1;	
 	}
 
-	if((magic2 != mGlobalSettings.mGlobalTexParam.TileSetBPP) ){
+	if((magic2 != mGlobalSettings.mGlobalTexParam.TexBPP) ){
 		std::cout << "Wrong Tile BPP: " << cTileFile << std::endl;
 		return 1;	
 	}
 
-	int tmpTileSize = ((mGlobalSettings.mGlobalTexParam.TileSizeX * mGlobalSettings.mGlobalTexParam.TileSizeY)/mGlobalSettings.mTileBPPSize[mGlobalSettings.mGlobalTexParam.TileSetBPP]);
+	int tmpTileSize = ((mGlobalSettings.mGlobalTexParam.TexSizeX * mGlobalSettings.mGlobalTexParam.TexSizeY)/mGlobalSettings.mTileBPPSize[mGlobalSettings.mGlobalTexParam.TexBPP]);
 
 	tbuffer.erase(tbuffer.begin());
 	tbuffer.erase(tbuffer.begin());
@@ -2258,17 +2258,17 @@ int TileSet::loadFromFile(std::string path,std::string filename, TPalette* tpal)
 		return 1;	
 	}
 
-	mGlobalSettings.mGlobalTexParam.TileSizeX = mTileSizeIn[twidth];
-	mGlobalSettings.mGlobalTexParam.TileSizeY = mTileSizeIn[theight];
+	mGlobalSettings.mGlobalTexParam.TexSizeX = mTileSizeIn[twidth];
+	mGlobalSettings.mGlobalTexParam.TexSizeY = mTileSizeIn[theight];
 
 	if( (magic2 == 0x8) ||(magic2 == 0x4) ||(magic2 == 0x2) ){
-		mGlobalSettings.mGlobalTexParam.TileSetBPP = magic2;
+		mGlobalSettings.mGlobalTexParam.TexBPP = magic2;
 	} else {
 		std::cout << "Error in Tile File: " << cTileFile << std::endl;
 		return 1;	
 	}
 
-	int tmpTileSize = ((mGlobalSettings.mGlobalTexParam.TileSizeX * mGlobalSettings.mGlobalTexParam.TileSizeY)/mGlobalSettings.mTileBPPSize[mGlobalSettings.mGlobalTexParam.TileSetBPP]);
+	int tmpTileSize = ((mGlobalSettings.mGlobalTexParam.TexSizeX * mGlobalSettings.mGlobalTexParam.TexSizeY)/mGlobalSettings.mTileBPPSize[mGlobalSettings.mGlobalTexParam.TexBPP]);
 
 	tbuffer.erase(tbuffer.begin());
 	tbuffer.erase(tbuffer.begin());
@@ -2304,10 +2304,10 @@ int TileSet::saveToFolder(std::string tpath){
 
 	int magic1, magic2;
 
-	magic1 = mTileSizeOut[mGlobalSettings.mGlobalTexParam.TileSizeX];
-	magic1 = (magic1 << 4) + mTileSizeOut[mGlobalSettings.mGlobalTexParam.TileSizeY];
+	magic1 = mTileSizeOut[mGlobalSettings.mGlobalTexParam.TexSizeX];
+	magic1 = (magic1 << 4) + mTileSizeOut[mGlobalSettings.mGlobalTexParam.TexSizeY];
 
-	magic2 = mGlobalSettings.mGlobalTexParam.TileSetBPP;
+	magic2 = mGlobalSettings.mGlobalTexParam.TexBPP;
 
 	obuffer.push_back(magic1);
 	obuffer.push_back(magic2);
@@ -2325,7 +2325,7 @@ int TileSet::saveToFolder(std::string tpath){
 int TileSet::reCalculateScale(){
 	if(mCurColumns > 1){
 		mTileSetBackGround.h = mGlobalSettings.WindowHeight-mGlobalSettings.TopBarHeight;
-		if( (int)( (float)( ( ( ((mCurTileScale+1)*mGlobalSettings.mGlobalTexParam.TileSizeX )+ mColSpace ) * TTiles.size() )  / ( mCurColumns - 1 ) ) ) < mTileSetBackGround.h ){
+		if( (int)( (float)( ( ( ((mCurTileScale+1)*mGlobalSettings.mGlobalTexParam.TexSizeX )+ mColSpace ) * TTiles.size() )  / ( mCurColumns - 1 ) ) ) < mTileSetBackGround.h ){
 			mCurTileScale++;
 			mCurColumns--;
 			return 1;		
@@ -2342,8 +2342,8 @@ std::vector<int> TileSet::getPadding(){
 	
 	if(isOdd){		
 		for(int i = 0 ; i < (mSelEdWidth-isOdd); i++){
-			for (int yy = 0; yy < mGlobalSettings.mGlobalTexParam.TileSizeY; yy++){
-				for (int xx = 0; xx < mGlobalSettings.mGlobalTexParam.TileSizeX; xx++){				
+			for (int yy = 0; yy < mGlobalSettings.mGlobalTexParam.TexSizeY; yy++){
+				for (int xx = 0; xx < mGlobalSettings.mGlobalTexParam.TexSizeX; xx++){				
 					cPadding.push_back(getXY(yy, xx,  i + isOdd, cRowNum));					
 				}				
 			}			
@@ -2370,8 +2370,8 @@ void TileSet::resizeEdit(){
 	rEmpty.w = 0;
 	rEmpty.h = 0;
 
-	mSelectionAreaX = mSelEdWidth * mGlobalSettings.mGlobalTexParam.TileSizeX;
-	mSelectionAreaY = mGlobalSettings.mGlobalTexParam.TileSizeY * (cRowNum + cPad);
+	mSelectionAreaX = mSelEdWidth * mGlobalSettings.mGlobalTexParam.TexSizeX;
+	mSelectionAreaY = mGlobalSettings.mGlobalTexParam.TexSizeY * (cRowNum + cPad);
 	
 	EditPixelAreas.resize(mSelectionAreaX*mSelectionAreaY);
 
@@ -2389,15 +2389,15 @@ void TileSet::resizeEdit(){
 int TileSet::getXY(int xpos, int ypos, int cxpos, int cypos){
 	int index;
 	int lineL = mSelectionAreaX; 
-	int fullL = lineL * mGlobalSettings.mGlobalTexParam.TileSizeY;
-	index = xpos + (ypos * lineL) + (cxpos * mGlobalSettings.mGlobalTexParam.TileSizeX) + (cypos * fullL);		
+	int fullL = lineL * mGlobalSettings.mGlobalTexParam.TexSizeY;
+	index = xpos + (ypos * lineL) + (cxpos * mGlobalSettings.mGlobalTexParam.TexSizeX) + (cypos * fullL);		
 	return index;
 }
 
 void TileSet::updateEditAreas(std::vector<SDL_Rect> &cTile, int xpos, int ypos){
-	for(int i = 0; i < mGlobalSettings.mGlobalTexParam.TileSizeY; i++){
-		for(int j = 0; j < mGlobalSettings.mGlobalTexParam.TileSizeX; j++){
-			EditPixelAreas[getXY(j,i, xpos, ypos)] = cTile[(i*mGlobalSettings.mGlobalTexParam.TileSizeX)+j];
+	for(int i = 0; i < mGlobalSettings.mGlobalTexParam.TexSizeY; i++){
+		for(int j = 0; j < mGlobalSettings.mGlobalTexParam.TexSizeX; j++){
+			EditPixelAreas[getXY(j,i, xpos, ypos)] = cTile[(i*mGlobalSettings.mGlobalTexParam.TexSizeX)+j];
 		}
 	}
 }
@@ -2431,20 +2431,20 @@ int TileSet::renderEd(int xpos, int ypos){
 	SDL_Rect cBorder;
 		for(int i = 0; i < mSelEdWidth; i++){
 			for(int j = 0; j <  cRowNum; j++){
-				int cxpos = xpos +  (mCurEdScale*mGlobalSettings.mGlobalTexParam.TileSizeX)*i;
-				int cypos = ypos + (mGlobalSettings.mGlobalTexParam.TileSizeY*mCurEdScale)*j;
+				int cxpos = xpos +  (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX)*i;
+				int cypos = ypos + (mGlobalSettings.mGlobalTexParam.TexSizeY*mCurEdScale)*j;
 
-				for(int ii=0; ii < mGlobalSettings.mGlobalTexParam.TileSizeY; ii++){
-					for(int jj=0; jj < mGlobalSettings.mGlobalTexParam.TileSizeX; jj++){
-						EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderTileEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, TTiles[(j*mSelEdWidth)+i]->getPixel(jj+(ii*mGlobalSettings.mGlobalTexParam.TileSizeX)), mCurEdScale, &mGlobalSettings.mGlobalTexParam); 			//mGlobalSettings.TilePixelSize * 
+				for(int ii=0; ii < mGlobalSettings.mGlobalTexParam.TexSizeY; ii++){
+					for(int jj=0; jj < mGlobalSettings.mGlobalTexParam.TexSizeX; jj++){
+						EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderTileEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, TTiles[(j*mSelEdWidth)+i]->getPixel(jj+(ii*mGlobalSettings.mGlobalTexParam.TexSizeX)), mCurEdScale, &mGlobalSettings.mGlobalTexParam); 			//mGlobalSettings.TilePixelSize * 
 					}
 				}
 			
 				if(mGlobalSettings.bShowTileGrid){				
-					cBorder.x = xpos + ((mCurEdScale*mGlobalSettings.mGlobalTexParam.TileSizeX)*i);
-					cBorder.y = ypos + ((mGlobalSettings.mGlobalTexParam.TileSizeY*mCurEdScale)*j);
-					cBorder.w = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TileSizeX);
-					cBorder.h = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TileSizeY);
+					cBorder.x = xpos + ((mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX)*i);
+					cBorder.y = ypos + ((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurEdScale)*j);
+					cBorder.w = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX);
+					cBorder.h = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeY);
 					Tile::renderSelection(cBorder, mGlobalSettings.DefaultHighlightColor);
 				}				
 			}								
@@ -2452,20 +2452,20 @@ int TileSet::renderEd(int xpos, int ypos){
 		if(isOdd){			
 			int i = mSelEdWidth;
 			for(int j = 0; j < isOdd; j++){			
-				int cxpos = xpos +  (mCurEdScale*mGlobalSettings.mGlobalTexParam.TileSizeX)*j;
-				int cypos = ypos + (mGlobalSettings.mGlobalTexParam.TileSizeY*mCurEdScale)*cRowNum;
+				int cxpos = xpos +  (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX)*j;
+				int cypos = ypos + (mGlobalSettings.mGlobalTexParam.TexSizeY*mCurEdScale)*cRowNum;
 
-				for(int ii=0; ii < mGlobalSettings.mGlobalTexParam.TileSizeY; ii++){
-					for(int jj=0; jj < mGlobalSettings.mGlobalTexParam.TileSizeX; jj++){
-						EditPixelAreas[getXY(jj,ii, j, cRowNum)] = mGlobalSettings.CurrentEditor->mPalette.renderTileEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, TTiles[(i*cRowNum)+j]->getPixel(jj+(ii*mGlobalSettings.mGlobalTexParam.TileSizeX)), mCurEdScale, &mGlobalSettings.mGlobalTexParam); 			//mGlobalSettings.TilePixelSize * 
+				for(int ii=0; ii < mGlobalSettings.mGlobalTexParam.TexSizeY; ii++){
+					for(int jj=0; jj < mGlobalSettings.mGlobalTexParam.TexSizeX; jj++){
+						EditPixelAreas[getXY(jj,ii, j, cRowNum)] = mGlobalSettings.CurrentEditor->mPalette.renderTileEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, TTiles[(i*cRowNum)+j]->getPixel(jj+(ii*mGlobalSettings.mGlobalTexParam.TexSizeX)), mCurEdScale, &mGlobalSettings.mGlobalTexParam); 			//mGlobalSettings.TilePixelSize * 
 					}
 				}
 
 				if(mGlobalSettings.bShowTileGrid){	
-					cBorder.x = xpos + ((mCurEdScale*mGlobalSettings.mGlobalTexParam.TileSizeX)*j);
-					cBorder.y = ypos + ((mGlobalSettings.mGlobalTexParam.TileSizeY*mCurEdScale)*cRowNum);
-					cBorder.w = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TileSizeX);
-					cBorder.h = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TileSizeY);
+					cBorder.x = xpos + ((mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX)*j);
+					cBorder.y = ypos + ((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurEdScale)*cRowNum);
+					cBorder.w = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX);
+					cBorder.h = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeY);
 					Tile::renderSelection(cBorder, mGlobalSettings.DefaultHighlightColor);
 				}
 			}
@@ -2475,11 +2475,11 @@ int TileSet::renderEd(int xpos, int ypos){
 			if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->mSelected.size()){
 				for(int i = 0; i < mSelEdWidth; i++){
 					for(int j = 0; j <  cRowNum; j++){
-						int cxpos = xpos +  (mCurEdScale*mGlobalSettings.mGlobalTexParam.TileSizeX)*i;
-						int cypos = ypos + (mGlobalSettings.mGlobalTexParam.TileSizeY*mCurEdScale)*j;
+						int cxpos = xpos +  (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX)*i;
+						int cypos = ypos + (mGlobalSettings.mGlobalTexParam.TexSizeY*mCurEdScale)*j;
 
-						for(int ii=0; ii < mGlobalSettings.mGlobalTexParam.TileSizeY; ii++){
-							for(int jj=0; jj < mGlobalSettings.mGlobalTexParam.TileSizeX; jj++){
+						for(int ii=0; ii < mGlobalSettings.mGlobalTexParam.TexSizeY; ii++){
+							for(int jj=0; jj < mGlobalSettings.mGlobalTexParam.TexSizeX; jj++){
 								if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->findInSelection(getXY(jj,ii, i, j)) != -1){
 									int findex = mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->findInSelection(getXY(jj,ii, i, j));
 									if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->mBrushElements[findex] != -1){
@@ -2494,11 +2494,11 @@ int TileSet::renderEd(int xpos, int ypos){
 				if(isOdd){			
 					int i = mSelEdWidth;
 					for(int j = 0; j < isOdd; j++){			
-						int cxpos = xpos +  (mCurEdScale*mGlobalSettings.mGlobalTexParam.TileSizeX)*j;
-						int cypos = ypos + (mGlobalSettings.mGlobalTexParam.TileSizeY*mCurEdScale)*cRowNum;
+						int cxpos = xpos +  (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX)*j;
+						int cypos = ypos + (mGlobalSettings.mGlobalTexParam.TexSizeY*mCurEdScale)*cRowNum;
 
-						for(int ii=0; ii < mGlobalSettings.mGlobalTexParam.TileSizeY; ii++){
-							for(int jj=0; jj < mGlobalSettings.mGlobalTexParam.TileSizeX; jj++){
+						for(int ii=0; ii < mGlobalSettings.mGlobalTexParam.TexSizeY; ii++){
+							for(int jj=0; jj < mGlobalSettings.mGlobalTexParam.TexSizeX; jj++){
 								if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->findInSelection(getXY(jj,ii, j, cRowNum)) != -1){
 									int findex = mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->findInSelection(getXY(jj,ii, j, cRowNum));
 									if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->mBrushElements[findex] != -1){
@@ -2599,7 +2599,7 @@ int TileSet::renderIm(int ypos, int mScroll){
 	mTileSetBackGround.h = mGlobalSettings.WindowHeight- mGlobalSettings.TopBarHeight;
 	
 	if(mCurColumns < 4){
-		if( (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.mGlobalTexParam.TileSizeX ) +mColSpace ) * TTiles.size() )  / mCurColumns ) ) > mTileSetBackGround.h ){	
+		if( (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX ) +mColSpace ) * TTiles.size() )  / mCurColumns ) ) > mTileSetBackGround.h ){	
 			mCurTileScale--;
 		
 			if(mCurTileScale < 5){
@@ -2609,7 +2609,7 @@ int TileSet::renderIm(int ypos, int mScroll){
 		}
 	}
 
-	mGlobalSettings.TileSetWidth = (((mCurTileScale*mGlobalSettings.mGlobalTexParam.TileSizeX)+mColSpace)*mCurColumns)+(mColSpace*3);
+	mGlobalSettings.TileSetWidth = (((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*mCurColumns)+(mColSpace*3);
 
 	int isOdd = TTiles.size() % mCurColumns;
 	int cRowNum = TTiles.size() / mCurColumns;
@@ -2660,7 +2660,7 @@ int TileSet::renderIm(int ypos, int mScroll){
 	if(mCurColumns > 0){
 		for(int i = 0; i < cRowNum; i++){
 			for(int j = 0; j < mCurColumns; j++){
-				TileAreas[(i * mCurColumns) + j] = TTiles[(i*mCurColumns) + j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TileSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TileSizeY*mCurTileScale)+mColSpace)*i), (i*mCurColumns) + j, mDragged, mCurTileScale,true,true);								
+				TileAreas[(i * mCurColumns) + j] = TTiles[(i*mCurColumns) + j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*i), (i*mCurColumns) + j, mDragged, mCurTileScale,true,true);								
 				if((mDragged > -1) && !bIsDragged){
 					bIsDragged = true;
 					mDragSource = mDragged;
@@ -2675,7 +2675,7 @@ int TileSet::renderIm(int ypos, int mScroll){
 		if(isOdd){			
 			int i = mCurColumns;
 			for(int j = 0; j < isOdd; j++){
-				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TileSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TileSizeY*mCurTileScale)+mColSpace)*cRowNum), (i*cRowNum)+j, mDragged,  mCurTileScale,true,true);				
+				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*cRowNum), (i*cRowNum)+j, mDragged,  mCurTileScale,true,true);				
 				if((mDragged > -1) && !bIsDragged){
 					bIsDragged = true;
 					mDragSource = mDragged;
@@ -2702,7 +2702,7 @@ int TileSet::renderIm(int ypos, int mScroll){
     ImGui::End();
 
 
-	int cMax = (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.mGlobalTexParam.TileSizeY ) +mColSpace ) * TTiles.size() )  / mCurColumns )) + (4 * mGlobalSettings.mGlobalTexParam.TileSizeY);
+	int cMax = (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeY ) +mColSpace ) * TTiles.size() )  / mCurColumns )) + (4 * mGlobalSettings.mGlobalTexParam.TexSizeY);
 	if((cMax - mTileSetBackGround.h) > 0 ){
 		mMaxScrollY = -(cMax - mTileSetBackGround.h);
 	} else {
@@ -2713,7 +2713,7 @@ return 0;
 }
 
 void TileMap::init(){
-	mSelection.init(TileMapWidth, TileMapHeight, &mGlobalSettings.mGlobalTexParam.TileSizeX, &mGlobalSettings.mGlobalTexParam.TileSizeY, &mGlobalSettings.TileMapScale);
+	mSelection.init(TileMapWidth, TileMapHeight, &mGlobalSettings.mGlobalTexParam.TexSizeX, &mGlobalSettings.mGlobalTexParam.TexSizeY, &mGlobalSettings.TileMapScale);
 }
 
 
@@ -3037,7 +3037,7 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 	for(int i=0; i < mGlobalSettings.TileMapHeight; i++){
 		for(int j=0; j < mGlobalSettings.TileMapWidth; j++){
 			int tIndex = getTile(j+(i*mGlobalSettings.TileMapWidth));			
-			TileAreas[j+(i*mGlobalSettings.TileMapWidth)] = mTiles->TTiles[tIndex]->render(xpos + (mGlobalSettings.mGlobalTexParam.TileSizeX * j * mGlobalSettings.TileMapScale), ypos + (mGlobalSettings.mGlobalTexParam.TileSizeY * i * mGlobalSettings.TileMapScale), mGlobalSettings.TileMapScale, getTileProp(j+(i*mGlobalSettings.TileMapWidth)));			
+			TileAreas[j+(i*mGlobalSettings.TileMapWidth)] = mTiles->TTiles[tIndex]->render(xpos + (mGlobalSettings.mGlobalTexParam.TexSizeX * j * mGlobalSettings.TileMapScale), ypos + (mGlobalSettings.mGlobalTexParam.TexSizeY * i * mGlobalSettings.TileMapScale), mGlobalSettings.TileMapScale, getTileProp(j+(i*mGlobalSettings.TileMapWidth)));			
 			if(mGlobalSettings.bShowSelectedTile){
 				if((mGlobalSettings.mSelectedTile == (j+(i*mGlobalSettings.TileMapWidth)))){
 					SDL_SetRenderDrawColor(mGlobalSettings.TRenderer,mGlobalSettings.DefaultHighlightColor.r,mGlobalSettings.DefaultHighlightColor.g,mGlobalSettings.DefaultHighlightColor.b, 0xff);
@@ -3054,7 +3054,7 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 					if(mGlobalSettings.CurrentEditor->mCurrentBrushTile->isInSelection((j+(i*mGlobalSettings.TileMapWidth)))){						
 						int findex = mGlobalSettings.CurrentEditor->mCurrentBrushTile->findInSelection((j+(i*mGlobalSettings.TileMapWidth)));
 						if(mGlobalSettings.CurrentEditor->mCurrentBrushTile->mBrushElements[findex] != -1){
-							mTiles->TTiles[mGlobalSettings.CurrentEditor->mCurrentBrushTile->mBrushElements[findex]]->render(xpos + (mGlobalSettings.mGlobalTexParam.TileSizeX * j * mGlobalSettings.TileMapScale), ypos + (mGlobalSettings.mGlobalTexParam.TileSizeY * i * mGlobalSettings.TileMapScale), mGlobalSettings.TileMapScale, mGlobalSettings.CurrentEditor->mCurrentBrushTile->getElementProps(findex));			
+							mTiles->TTiles[mGlobalSettings.CurrentEditor->mCurrentBrushTile->mBrushElements[findex]]->render(xpos + (mGlobalSettings.mGlobalTexParam.TexSizeX * j * mGlobalSettings.TileMapScale), ypos + (mGlobalSettings.mGlobalTexParam.TexSizeY * i * mGlobalSettings.TileMapScale), mGlobalSettings.TileMapScale, mGlobalSettings.CurrentEditor->mCurrentBrushTile->getElementProps(findex));			
 						}						
 					}
 				}
@@ -3065,8 +3065,8 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 
 	mBorder.x = TileAreas[0].x;
 	mBorder.y = TileAreas[0].y;
-	mBorder.w = mGlobalSettings.TileMapWidth * mGlobalSettings.mGlobalTexParam.TileSizeX * mGlobalSettings.TileMapScale;
-	mBorder.h = mGlobalSettings.TileMapHeight * mGlobalSettings.mGlobalTexParam.TileSizeY * mGlobalSettings.TileMapScale;
+	mBorder.w = mGlobalSettings.TileMapWidth * mGlobalSettings.mGlobalTexParam.TexSizeX * mGlobalSettings.TileMapScale;
+	mBorder.h = mGlobalSettings.TileMapHeight * mGlobalSettings.mGlobalTexParam.TexSizeY * mGlobalSettings.TileMapScale;
 
 	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer,mGlobalSettings.DefaultGUIBorderColor.r,mGlobalSettings.DefaultGUIBorderColor.g,mGlobalSettings.DefaultGUIBorderColor.b, 0xff);
 	SDL_RenderDrawRect(mGlobalSettings.TRenderer, &mBorder);

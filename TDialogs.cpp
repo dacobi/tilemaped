@@ -331,7 +331,7 @@ int TBDialog::render(){
 			
 			
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
-				if(mGlobalSettings.mGlobalTexParam.TileSetBPP < 0x8){
+				if(mGlobalSettings.mGlobalTexParam.TexBPP < 0x8){
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Palette Offset")).c_str(), NULL, &mGlobalSettings.bShowPaletteOffset) ){ 
 					}
 				}
@@ -397,7 +397,7 @@ int TBDialog::render(){
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Sprite Frame (F4)")).c_str())){
 					mGlobalSettings.CurrentEditor->createNewFrameCopy(mGlobalSettings.CurrentEditor->mSprite->mFrame);
 				}
-				if(mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY){					
+				if(mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeY){					
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Frame Left (F5)")).c_str())){
 						mGlobalSettings.CurrentEditor->rotateFrameLeft();
 					}
@@ -434,7 +434,7 @@ int TBDialog::render(){
 
 							for(auto *cSprt : mGlobalSettings.CurrentEditor->mSprites){
 								if(cSprt != mGlobalSettings.CurrentEditor->mSprite){
-									if((cSprt->mTexParam.TileSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX) && (cSprt->mTexParam.TileSizeY == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY) && (cSprt->mTexParam.TileSetBPP == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSetBPP)){
+									if((cSprt->mTexParam.TexSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeX) && (cSprt->mTexParam.TexSizeY == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeY) && (cSprt->mTexParam.TexBPP == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexBPP)){
 										bFrameCopyPosible = true;
 									}
 								}
@@ -447,7 +447,7 @@ int TBDialog::render(){
 									std::stringstream fconv;
 									for(auto *cSprt : mGlobalSettings.CurrentEditor->mSprites){
 										if(cSprt != mGlobalSettings.CurrentEditor->mSprite){
-											if((cSprt->mTexParam.TileSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX) && (cSprt->mTexParam.TileSizeY == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY) && (cSprt->mTexParam.TileSetBPP == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSetBPP)){
+											if((cSprt->mTexParam.TexSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeX) && (cSprt->mTexParam.TexSizeY == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeY) && (cSprt->mTexParam.TexBPP == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexBPP)){
 											
 												fconv << fSCount << std::endl;
 												fconv >> sfSCount;
@@ -485,14 +485,14 @@ int TBDialog::render(){
 								bool bAllowUpscale = false;
 								int cAllowedScale = 2;
 
-								if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX < 64) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY < 64) ){
+								if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeX < 64) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeY < 64) ){
 									bAllowUpscale = true;
 
-									if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX < 32) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY < 32) ){
+									if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeX < 32) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeY < 32) ){
 										cAllowedScale = 4;
 									}
 
-									if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX < 16) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY < 16) ){
+									if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeX < 16) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeY < 16) ){
 										cAllowedScale = 8;
 									}																		
 								}
@@ -505,14 +505,14 @@ int TBDialog::render(){
 								bool bAllowDownscale = false;
 								int cAllowedDownScale = 2;
 
-								if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX > 8) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY > 8) ){
+								if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeX > 8) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeY > 8) ){
 									bAllowDownscale = true;
 
-									if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX > 16) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY > 16) ){
+									if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeX > 16) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeY > 16) ){
 										cAllowedDownScale = 4;
 									}
 
-									if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX > 32) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY > 32) ){
+									if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeX > 32) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeY > 32) ){
 										cAllowedDownScale = 8;
 									}																		
 								}
@@ -523,7 +523,7 @@ int TBDialog::render(){
 
 								bool bAllowRange = false;
 
-								if( mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TileSizeY){
+								if( mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeY){
 									bAllowRange = true;
 								}
 
@@ -548,7 +548,7 @@ int TBDialog::render(){
 					ImGui::EndMenu();
 				}
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Sprite Edit").c_str()))){					
-					if(ImGui::SliderInt("Frame Scale", &mGlobalSettings.CurrentEditor->mSprite->mTexParam.TilePixelSize, TSprite::MinScale, TSprite::MaxScale,"%d", ImGuiSliderFlags_NoInput)){						
+					if(ImGui::SliderInt("Frame Scale", &mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexPixelSize, TSprite::MinScale, TSprite::MaxScale,"%d", ImGuiSliderFlags_NoInput)){						
 						mGlobalSettings.CurrentEditor->setSpriteBrushes();						
 					}
 											
@@ -576,7 +576,7 @@ int TBDialog::render(){
 					mGlobalSettings.CurrentEditor->createNewTileCopy(mGlobalSettings.CurrentEditor->mTileSelectedTile);
 				}
 
-				if(mGlobalSettings.mGlobalTexParam.TileSizeX == mGlobalSettings.mGlobalTexParam.TileSizeY){					
+				if(mGlobalSettings.mGlobalTexParam.TexSizeX == mGlobalSettings.mGlobalTexParam.TexSizeY){					
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Tile Left (F5)")).c_str())){
 						mGlobalSettings.CurrentEditor->rotateTileLeft();
 					}
@@ -648,8 +648,8 @@ int TBDialog::render(){
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE){
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Tile Edit").c_str()))){					
-					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mGlobalTexParam.TilePixelSize, Tile::MinScale, Tile::MaxScale,"%d", ImGuiSliderFlags_NoInput)){						
-						mGlobalSettings.CurrentEditor->mBrushesPixel.setBrushDeltas(mGlobalSettings.mGlobalTexParam.TilePixelSize, mGlobalSettings.mGlobalTexParam.TilePixelSize, &mGlobalSettings.mGlobalTexParam.mTileEdScale, mGlobalSettings.mGlobalTexParam.mTileEdScale, &mGlobalSettings.mGlobalTexParam);
+					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mGlobalTexParam.TexPixelSize, Tile::MinScale, Tile::MaxScale,"%d", ImGuiSliderFlags_NoInput)){						
+						mGlobalSettings.CurrentEditor->mBrushesPixel.setBrushDeltas(mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mGlobalTexParam);
 					}
 											
 					ImGui::EndMenu();
@@ -1372,9 +1372,9 @@ void OCDialog::recieveInput(int mKey){
 								
 				mGlobalSettings.TileMapWidth = mCreateProject.tmapx;
 				mGlobalSettings.TileMapHeight = mCreateProject.tmapy;
-				mGlobalSettings.mGlobalTexParam.TileSetBPP = mCreateProject.tbpp;
-				mGlobalSettings.mGlobalTexParam.TileSizeX = mCreateProject.tilex;
-				mGlobalSettings.mGlobalTexParam.TileSizeY = mCreateProject.tiley;
+				mGlobalSettings.mGlobalTexParam.TexBPP = mCreateProject.tbpp;
+				mGlobalSettings.mGlobalTexParam.TexSizeX = mCreateProject.tilex;
+				mGlobalSettings.mGlobalTexParam.TexSizeY = mCreateProject.tiley;
 				mGlobalSettings.ProjectPath = mCreateProject.mReadPath.mDialogTextMain;
 
 				if(mCreateProject.bHasTileSet){
@@ -1524,7 +1524,7 @@ int CTMDialog::render(){
 		int mMax = mGlobalSettings.CurrentEditor->mTileSet.TTiles.size();
 		ImGui::SliderInt("Initial Tile Value", &toffset, 1, mMax,"%d", ImGuiSliderFlags_AlwaysClamp);
 
-		if(mGlobalSettings.mGlobalTexParam.TileSetBPP < 0x8){
+		if(mGlobalSettings.mGlobalTexParam.TexBPP < 0x8){
 			ImGui::SliderInt("Initial Palette Offset", &mPaletteOffset, 0, 15,"%d", ImGuiSliderFlags_AlwaysClamp);
 		}
 
@@ -2481,7 +2481,7 @@ int ITMDialog::render(){
 		ImGui::SliderInt("Tile Offset", &mTileOffset, 1, mMax,"%d", ImGuiSliderFlags_AlwaysClamp);
 	}
 
-	if(mGlobalSettings.mGlobalTexParam.TileSetBPP < 0x8){
+	if(mGlobalSettings.mGlobalTexParam.TexBPP < 0x8){
 			ImGui::SliderInt("Palette Offset", &mPaletteOffset, 0, 15,"%d", ImGuiSliderFlags_AlwaysClamp);
 	}
 	
@@ -2955,10 +2955,10 @@ void PIDialog::init(){
 	convert >> cMapHeight;
 
 
-	convert << mGlobalSettings.mGlobalTexParam.TileSizeX << std::endl;
+	convert << mGlobalSettings.mGlobalTexParam.TexSizeX << std::endl;
 	convert >> cTileSizeX;
 
-	convert << mGlobalSettings.mGlobalTexParam.TileSizeY << std::endl;
+	convert << mGlobalSettings.mGlobalTexParam.TexSizeY << std::endl;
 	convert >> cTileSizeY;
 
 	fliph=0;

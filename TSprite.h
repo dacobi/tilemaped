@@ -13,28 +13,28 @@ class TSprite{
     public:
         void close();
         TSprite(int cSizeX, int cSizeY, int cBPP){
-            mTexParam.TileSizeX = cSizeX;
-            mTexParam.TileSizeY = cSizeY;
-            mTexParam.TileSetBPP = cBPP;
+            mTexParam.TexSizeX = cSizeX;
+            mTexParam.TexSizeY = cSizeY;
+            mTexParam.TexBPP = cBPP;
 
-            mTexParam.mTileEdScale = mGlobalSettings.mGlobalTexParam.mTileEdScale;
+            mTexParam.TexEditScale = mGlobalSettings.mGlobalTexParam.TexEditScale;
             
             if((cSizeX > 8) || (cSizeY > 8)){
-                mTexParam.mTileEdScale--;
+                mTexParam.TexEditScale--;
                 mCurFrameScale-=1;
             }
             if((cSizeX > 16) || (cSizeY > 16)){
-                mTexParam.mTileEdScale--;
+                mTexParam.TexEditScale--;
                 mCurFrameScale-=4;
             }
             if((cSizeX > 32) || (cSizeY > 32)){
-                mTexParam.mTileEdScale--;
+                mTexParam.TexEditScale--;
                 mCurFrameScale-=3;
             }
 
-            if(mTexParam.mTileEdScale < 1){
-                mTexParam.mTileEdScale = 1;
-                mTexParam.TilePixelSize-=4;
+            if(mTexParam.TexEditScale < 1){
+                mTexParam.TexEditScale = 1;
+                mTexParam.TexPixelSize-=4;
             }
 
         };

@@ -167,13 +167,13 @@ public:
 };
 
 struct TextureParameters{
-	int TileSizeX=16;
-	int TileSizeY=16;
-	int TileSetBPP=8;
-	int TilePixelSize=16;
+	int TexSizeX=16;
+	int TexSizeY=16;
+	int TexBPP=8;
+	int TexPixelSize=16;
 	int PaletteOffset=0;
-	int mTileEdScale = 4;
-	int TileRenderSize=16;	
+	int TexEditScale = 4;
+	int TexRenderSize=16;	
 };
 
 class TSettings{
