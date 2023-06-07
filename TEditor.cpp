@@ -2595,7 +2595,7 @@ int TEditor::findSelSprite(){
 	if(mSprite->mSpriteScrollX < -(spriteWidthX - (mGlobalSettings.WindowWidth - 50 - mSprite->SpriteWidth))){mSprite->mSpriteScrollX = -(spriteWidthX - (mGlobalSettings.WindowWidth -50 - mSprite->SpriteWidth));}
 	if(mSprite->mSpriteScrollY < -(spriteWidthY - (mGlobalSettings.WindowHeight - 50- mGlobalSettings.TopBarHeight))){mSprite->mSpriteScrollY = -(spriteWidthY - (mGlobalSettings.WindowHeight -50 - mGlobalSettings.TopBarHeight));}
 	
-	if(spriteWidthX < (mGlobalSettings.WindowWidth)){
+	if(spriteWidthX < (mGlobalSettings.WindowWidth - mSprite->SpriteWidth)){
 		mSprite->mSpriteScrollX = 0;
 	}
 	
