@@ -134,6 +134,7 @@ class TEditor{
 		bool bTileMapGrapped = false;
 		bool bTileSetGrapped = false;
 		bool bSelEditGrapped = false;
+        bool bSpriteGrapped = false;
 		bool bShowBrushesTile = false;
 		bool bShowBrushesPixel = false;
 		bool bShowBrushesPixelTileSet = false;		

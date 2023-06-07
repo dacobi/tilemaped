@@ -61,7 +61,6 @@ class TSprite{
         int SpriteWidth=200;		
         const static int MaxScale = 32;
         const static int MinScale = 4;
-        bool bSpriteGrapped = false;
         int mSpriteScrollX = 0;
         int mSpriteScrollY = 0;
         SDL_Rect mFramesBackGround;

@@ -1059,7 +1059,7 @@ int TEditor::applyScroll(int mx,int my, int amount, int xamount){
 			if(amount < 0){
 				mSprite->selectPrev();
 			}
-		} else if(!mGlobalSettings.mio->WantCaptureMouse){
+		} else if(!mGlobalSettings.mio->WantCaptureMouse && !bLShiftIsDown){
 			if(amount > 0){
 				mSprite->mTexParam.TexPixelSize++;
 				if(mSprite->mTexParam.TexPixelSize > TSprite::MaxScale){
@@ -1072,6 +1072,7 @@ int TEditor::applyScroll(int mx,int my, int amount, int xamount){
 					mSprite->mTexParam.TexPixelSize = TSprite::MinScale;
 				}
 			}
+			setSpriteBrushes();
 		}
 	}
 
@@ -2544,13 +2545,13 @@ int TEditor::findSelSprite(){
 		
 		if(leftMouseButtonDown && !bLShiftIsDown && !mGlobalSettings.mio->WantCaptureMouse){
 			if(bLCTRLisDown){
-				if(mSprite->bSpriteGrapped){
+				if(bSpriteGrapped){
 					mSprite->mSpriteScrollX += rx;
 					mSprite->mSpriteScrollY += ry;
 					//std::cout << "Sprite Scroll X: " << mSprite->mSpriteScrollX << std::endl;
 					//std::cout << "Sprite Scroll Y: " << mSprite->mSpriteScrollY << std::endl;
 				} else {
-					mSprite->bSpriteGrapped = true;
+					bSpriteGrapped = true;
 					//std::cout << "Sprite Grapped!" << std::endl;				
 				}				
 			} else {
@@ -4044,9 +4045,8 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			bTileSetGrapped = false;
 	  			bTileMapGrapped = false;
 				bSelEditGrapped = false;
-				if(mSprite){
-					mSprite->bSpriteGrapped = false;
-				}
+				bSpriteGrapped = false;
+				
 	  		}
 			if(cEvent->key.keysym.sym == SDLK_LSHIFT){
 	  			bLShiftIsDown = false;
