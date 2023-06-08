@@ -187,11 +187,16 @@ class TEditor{
 		RSDialog mRemoveSprite;
 		RTSDialog mRemoveSelUnused;
 
+		/*
 		DTDialog* mScaledSpriteCopy;
 		DTDialog* mUpscaledSpriteCopy;
 		DTDialog* mDownscaledSpriteCopy;
 		DTDialog* mSpriteRotationRange;
 		DTDialog* mSpriteRotations;
+		*/
+
+		std::map<int, DTDialog*> mDTDialogs;
+		int activateDTDialog(int cOpenDialog, int cCond = -1);
 
 		MEDialog mErrorMessage;				
 		QDialog mQuitDialog;
@@ -245,11 +250,15 @@ class TEditor{
 		int activateOpenTileMapDialog();
 		int activateNewTileMapDialog();
 		int activateNewSpriteDialog();
+
+		/*
 		int activateSpriteRotationRangeDialog();
 		int activateSpriteRotationsDialog();
 		int activateNewScaledSpriteDialog();
 		int activateNewUpscaledSpriteDialog(int cScale);
 		int activateNewDownscaledSpriteDialog(int cScale);
+		*/
+
 		int activateRemoveSpriteDialog();
 		int activateRemoveTileMapDialog();
 		int activateColMapDialog(bool bCreateColMap=false);

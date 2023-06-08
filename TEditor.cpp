@@ -136,11 +136,34 @@ int TEditor::createNewProject(){
 
 void TEditor::createDialogs(){
 
+	/*
 	mScaledSpriteCopy = DTDialog::createSpriteScaledCopyDialog();
 	mUpscaledSpriteCopy = DTDialog::createSpriteUpscaledCopyDialog();	
 	mDownscaledSpriteCopy = DTDialog::createSpriteDownscaledCopyDialog();	
 	mSpriteRotationRange = DTDialog::createSpriteRotationRangeDialog();	
 	mSpriteRotations = DTDialog::createSpriteRotationsDialog();	
+	*/
+
+	mDTDialogs[EDIALOG_ERROR] = NULL;
+	mDTDialogs[EDIALOG_SPRITECREATECOPY] = NULL;
+	mDTDialogs[EDIALOG_SPRITECREATESCALEDCOPY] = DTDialog::createSpriteScaledCopyDialog();
+	mDTDialogs[EDIALOG_SPRITECREATEUPSCALEDCOPY] = DTDialog::createSpriteUpscaledCopyDialog();
+	mDTDialogs[EDIALOG_SPRITECREATEDOWNSCALEDCOPY] = DTDialog::createSpriteDownscaledCopyDialog();
+	mDTDialogs[EDIALOG_SPRITECREATEROTATIONRANGE] = DTDialog::createSpriteRotationRangeDialog();
+	mDTDialogs[EDIALOG_SPRITECREATEFRAMEROTATIONS] = DTDialog::createSpriteRotationsDialog();	
+}
+
+int TEditor::activateDTDialog(int cOpenDialog, int cCond ){
+	
+	DTDialog* cDialog = mDTDialogs[cOpenDialog];
+
+	if(cDialog){
+		cDialog->setCondition(cCond);
+		mActiveDialog = cDialog;
+		return 0;
+	}
+
+	return 1;
 }
 
 void TEditor::initDialogs(){
@@ -1941,6 +1964,7 @@ int TEditor::activateNewTileMapDialog(){
 	return 0;
 }
 
+/*
 int TEditor::activateSpriteRotationsDialog(){
 	mActiveDialog = mSpriteRotations;	
 	return 0;
@@ -1972,6 +1996,7 @@ int TEditor::activateNewScaledSpriteDialog(){
 	return 0;
 }
 
+*/
 
 int TEditor::activateNewSpriteDialog(){
 	//if(mCurMode == EMODE_MAP){

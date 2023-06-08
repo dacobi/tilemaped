@@ -479,7 +479,8 @@ int TBDialog::render(){
 								}
 
 								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Scaled Copy")).c_str())){
-										mGlobalSettings.CurrentEditor->activateNewScaledSpriteDialog();
+										//mGlobalSettings.CurrentEditor->activateNewScaledSpriteDialog();
+										mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATESCALEDCOPY);
 								}
 
 								bool bAllowUpscale = false;
@@ -498,7 +499,8 @@ int TBDialog::render(){
 								}
 
 								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Upscaled Copy")).c_str(), NULL, false, bAllowUpscale)){
-									mGlobalSettings.CurrentEditor->activateNewUpscaledSpriteDialog(cAllowedScale);
+									//mGlobalSettings.CurrentEditor->activateNewUpscaledSpriteDialog(cAllowedScale);
+									mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATEUPSCALEDCOPY, cAllowedScale);
 								}
 
 
@@ -518,7 +520,8 @@ int TBDialog::render(){
 								}
 
 								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Downscaled Copy")).c_str(), NULL, false, bAllowDownscale)){
-									mGlobalSettings.CurrentEditor->activateNewDownscaledSpriteDialog(cAllowedDownScale);
+									//mGlobalSettings.CurrentEditor->activateNewDownscaledSpriteDialog(cAllowedDownScale);
+									mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATEDOWNSCALEDCOPY, cAllowedDownScale);
 								}
 
 								bool bAllowRange = false;
@@ -529,11 +532,13 @@ int TBDialog::render(){
 
 
 								if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotation Range")).c_str(), NULL, false, bAllowRange)){
-									mGlobalSettings.CurrentEditor->activateSpriteRotationRangeDialog();
+									//mGlobalSettings.CurrentEditor->activateSpriteRotationRangeDialog();
+									mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATEROTATIONRANGE);
 								}
 
 								if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Frame Rotations")).c_str(), NULL, false, bAllowRange)){
-									mGlobalSettings.CurrentEditor->activateSpriteRotationsDialog();
+									//mGlobalSettings.CurrentEditor->activateSpriteRotationsDialog();
+									mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATEFRAMEROTATIONS);
 								}
 															
 								ImGui::EndMenu();		
