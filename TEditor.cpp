@@ -3613,6 +3613,7 @@ int TEditor::handleEvents(){
 				return 0;
 			}
 			
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_TILEMAPIMPORTOFFSET){				
 								
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
@@ -3647,6 +3648,7 @@ int TEditor::handleEvents(){
 
 				return 0;
 			}
+			*/
 			
 			if(mGlobalSettings.mEditorState == ESTATE_TILEMAPIMPORT){				
 								

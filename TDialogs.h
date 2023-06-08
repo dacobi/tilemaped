@@ -393,6 +393,7 @@ class ITSDialog: public ITDialog{
 		virtual void recieveInput(int mKey);		
 };
 
+/*
 class ITMDialog: public ITDialog{
 	public:	
 		bool bUseOffset = false;
@@ -402,6 +403,7 @@ class ITMDialog: public ITDialog{
 		virtual int render();
 		virtual void recieveInput(int mKey);		
 };
+*/
 
 /*
 class RNDialog: public ITDialog{

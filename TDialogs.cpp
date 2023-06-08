@@ -2439,6 +2439,7 @@ int ITSDialog::render(){
 	return 0;
 }
 
+/*
 void ITMDialog::cancel(){
 		Dialog::cancel();
 		mTextInput.mTextColor =  mGlobalSettings.DefaultTextColor;
@@ -2535,7 +2536,7 @@ int ITMDialog::render(){
 	return 0;
 }
 
-
+*/
 
 void TIDialog::init(){
 	
