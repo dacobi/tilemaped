@@ -145,14 +145,17 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_SPRITECREATEFRAMEROTATIONS] = DTDialog::createSpriteRotationsDialog();	
 	mDTDialogs[EDIALOG_SPRITEFRAMEIMPORT] =  DTDialog::createSpriteFrameImportDialog();
 	mDTDialogs[EDIALOG_SPRITEFRAMESIMPORT] =  DTDialog::createSpriteFramesImportDialog();
+	mDTDialogs[EDIALOG_TILEMAPIMPORT] = DTDialog::createTileMapImportDialog();
 }
 
-int TEditor::activateDTDialog(int cOpenDialog, int cCond ){
+int TEditor::activateDTDialog(int cOpenDialog, int cCond, int cVal0, int cVal1){
 	
 	DTDialog* cDialog = mDTDialogs[cOpenDialog];
 
 	if(cDialog){
 		cDialog->setCondition(cCond);
+		cDialog->setValue(0, cVal0);
+		cDialog->setValue(1, cVal1);
 		mActiveDialog = cDialog;
 		return 0;
 	}
@@ -189,7 +192,9 @@ void TEditor::initDialogs(){
 	mScaleFrame.init();
 	mOpenSpriteDialog.init();
 	mOpenTileSetDialog.init();
-	mOpenTileMapDialog.init();
+	
+	//mOpenTileMapDialog.init();
+
 	mNewTileMapDialog.init();
 	mNewSpriteDialog.init();
 	mInfoMessage.init();
@@ -1967,7 +1972,7 @@ int TEditor::activateNewSpriteDialog(){
 	return 0;
 }
 
-
+/*
 int TEditor::activateOpenTileMapDialog(){
 	if(mCurMode == EMODE_MAP){
 		mActiveDialog = &mOpenTileMapDialog;
@@ -1975,6 +1980,7 @@ int TEditor::activateOpenTileMapDialog(){
 	}
 	return 0;
 }
+*/
 
 int TEditor::removeColMapDialog(){
 	if(mCurMode == EMODE_MAP){
@@ -3607,7 +3613,7 @@ int TEditor::handleEvents(){
 				return 0;
 			}
 			
-			if(mGlobalSettings.mEditorState == ESTATE_TILEMAPIMPORT){				
+			if(mGlobalSettings.mEditorState == ESTATE_TILEMAPIMPORTOFFSET){				
 								
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
 				int cretval = 0;
@@ -3642,18 +3648,27 @@ int TEditor::handleEvents(){
 				return 0;
 			}
 			
-			if(mGlobalSettings.mEditorState == ESTATE_TILEMAPIMPORTOFFSET){				
+			if(mGlobalSettings.mEditorState == ESTATE_TILEMAPIMPORT){				
 								
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
 				int cretval = 0;
-				std::cout << "Importing TileMap with offset: " << mGlobalSettings.mNewTileMapOffset << std::endl;
-
-				if(mGlobalSettings.mGlobalTexParam.TexBPP < 0x8){
-					cretval = importTileMap(mGlobalSettings.mNewTileMapPath, mGlobalSettings.mNewTileMapOffset, mGlobalSettings.mNewTileMapPaletteOffset);
+				
+				if(mGlobalSettings.bNewTileMapOffset){
+					std::cout << "Importing TileMap with offset: " << mGlobalSettings.mNewTileMapOffset << std::endl;
+				
+					if(mGlobalSettings.mGlobalTexParam.TexBPP < 0x8){
+						cretval = importTileMap(mGlobalSettings.mNewTileMapPath, mGlobalSettings.mNewTileMapOffset, mGlobalSettings.mNewTileMapPaletteOffset);
+					} else {
+				 		cretval = importTileMap(mGlobalSettings.mNewTileMapPath, mGlobalSettings.mNewTileMapOffset, 0);
+					}
 				} else {
-				 	cretval = importTileMap(mGlobalSettings.mNewTileMapPath, mGlobalSettings.mNewTileMapOffset, 0);
+					if(mGlobalSettings.mGlobalTexParam.TexBPP < 0x8){
+						cretval = importTileMap(mGlobalSettings.mNewTileMapPath, 0, mGlobalSettings.mNewTileMapPaletteOffset);
+					} else {
+				 		cretval = importTileMap(mGlobalSettings.mNewTileMapPath, 0, 0);
+					}
 				}
-
+				
 				if(cretval){
 					cancelActiveDialog();
 					if(cretval == 2){
@@ -4099,11 +4114,12 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	mSaveAsDialog.bUpdateWinPos = true;
 	mOpenTileDialog.bUpdateWinPos = true;
 	mOpenTileSetDialog.bUpdateWinPos = true;
-	mOpenTileMapDialog.bUpdateWinPos = true;
+	
 	mNewTileMapDialog.bUpdateWinPos = true;
 
 	//mOpenFrameDialog.bUpdateWinPos = true;
 	//mOpenFramesDialog.bUpdateWinPos = true;
+	//mOpenTileMapDialog.bUpdateWinPos = true;
 
 	mRotateFrame.bUpdateWinPos = true;
 	mScaleFrame.bUpdateWinPos = true;

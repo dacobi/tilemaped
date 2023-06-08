@@ -158,7 +158,11 @@ int TBDialog::render(){
 						mGlobalSettings.CurrentEditor->activateOpenTileSetDialog();		  			
 					}
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import TileMap")).c_str())){
-						mGlobalSettings.CurrentEditor->activateOpenTileMapDialog();		  			
+						//mGlobalSettings.CurrentEditor->activateOpenTileMapDialog();	  			
+						int cTileMapCond = -1;
+						if(mGlobalSettings.mGlobalTexParam.TexBPP < 0x8){cTileMapCond = 8;}
+						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_TILEMAPIMPORT, cTileMapCond, 0, mGlobalSettings.CurrentEditor->mTileSet.TTiles.size()-1);
+
 					}
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import Sprite")).c_str())){
 						mGlobalSettings.CurrentEditor->activateOpenSpriteDialog();		  			
@@ -2045,6 +2049,8 @@ void ITDialog::recieveInput(int mKey){
 
 /* Frame Import*/
 
+/*
+
 int ISFDialog::render(){	
 	
 	Dialog::render();
@@ -2201,6 +2207,7 @@ int ISFSDialog::render(){
 	return 0;
 }
 
+*/
 
 /* End*/
 
@@ -2907,7 +2914,7 @@ void PIDialog::update(){
 	fliph = (cTileFlip & 0x1) ? 1 : 0;
 	flipv = (cTileFlip & 0x2) ? 1 : 0;
 
-	convert << (curtile + 1) << std::endl;
+	convert << curtile << std::endl; //was +1
 	convert >> cCurTile;
 
 	convert << tilenum << std::endl;
@@ -3230,7 +3237,7 @@ void DTDialog::recieveInput(int mKey){
 		for(auto cVal : mValues){
 			cVal->apply();			
 		}
-		
+
 		mGlobalSettings.mEditorState = mTargetState;
 	}		
 	
@@ -3289,12 +3296,23 @@ void DTDialog::addSameLine(){
 	mElements.push_back(nSame);
 }
 
+void DTDialog::addConditionRestore(){
+	DialogConditionRestore *nCondRes = new DialogConditionRestore(this);
+	mElements.push_back(nCondRes);
+}
+
 void DTDialog::addBool(std::string cLabel, bool cDefault, bool *cTarget, bool bSameline){
 	DialogValueBool *nBool = new DialogValueBool(this, mRequiredCondition, cLabel, cDefault, cTarget, bSameline);
 
 	mElements.push_back(nBool);
 	mValues.push_back(nBool);
+}
 
+void DTDialog::addBoolCondition(std::string cLabel, bool cDefault, bool *cTarget, int cTargCond, bool bSameline){
+	DialogValueBoolCondition *nBool = new DialogValueBoolCondition(this, mRequiredCondition, cLabel, cDefault, cTarget, cTargCond, bSameline);
+
+	mElements.push_back(nBool);
+	mValues.push_back(nBool);
 }
 
 void DTDialog::addInt(std::string cLabel, int cDefault, int *cTarget, int cMin, int cMax, bool bSameline){
@@ -3304,6 +3322,15 @@ void DTDialog::addInt(std::string cLabel, int cDefault, int *cTarget, int cMin, 
 	mValues.push_back(nInt);
 
 }
+
+void DTDialog::addIntMinMax(std::string cLabel, int cDefault, int *cTarget, int *cMin, int *cMax, bool bSameline){
+	DialogValueIntMinMax *nInt = new DialogValueIntMinMax(this, mRequiredCondition, cLabel, cDefault, cTarget, cMin, cMax, bSameline);
+
+	mElements.push_back(nInt);
+	mValues.push_back(nInt);
+
+}
+
 
 void DTDialog::addIntStrings(std::string cLabel, int cDefault, int *cTarget, std::vector<std::string> &cStrings, bool bSameline){
 	DialogValueIntStrings *nInt = new DialogValueIntStrings(this, mRequiredCondition, cLabel, cDefault, cTarget, cStrings, bSameline);
@@ -3592,5 +3619,47 @@ DTDialog* DTDialog::createSpriteFramesImportDialog(){
 	return newDialog;
 }
 
+DTDialog* DTDialog::createTileMapImportDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Import TileMap");
+
+	newDialog->setTarget(ESTATE_TILEMAPIMPORT);
+
+	newDialog->createValues(2);
+
+	newDialog->addText(mGlobalSettings.mFile + " Import TileMap from File?");
+	newDialog->addText(mGlobalSettings.mInfo + " Undo Stack will be cleared!");
+
+	newDialog->addSeperator();
+	newDialog->addBoolCondition("Use Tile Offset", false, &mGlobalSettings.bNewTileMapOffset, 1);
+
+	newDialog->setRequiredCondition(1);
+	newDialog->addText(mGlobalSettings.mInfo + " Choose Tile Offset");
+	newDialog->addIntMinMax("Tile Offset", 0, &mGlobalSettings.mNewTileMapOffset, newDialog->getValue(0), newDialog->getValue(1));	
+	newDialog->clearRequiredCondition();
+	
+	newDialog->addSeperator();
+
+	newDialog->addConditionRestore();
+
+	newDialog->setRequiredCondition(8);
+	newDialog->addText(mGlobalSettings.mInfo + " Choose Palette Offset");
+	newDialog->addInt("Palette Offset", 0, &mGlobalSettings.mNewTileMapPaletteOffset, 0, 15);
+	newDialog->addSeperator();
+	newDialog->clearRequiredCondition();
+
+	newDialog->addFile("Choose TileMap File", ".bin", "ITileMap", "", &mGlobalSettings.mNewTileMapPath);
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Import", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+
+
+}
 
 /* Dialog Template End */

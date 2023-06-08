@@ -36,6 +36,9 @@ class Dialog{
 		virtual void cancel();		
 };
 
+struct DialogValueOptionInt{
+	int mValue = 0;
+};
 
 class DTDialog : public Dialog{
 	public:
@@ -44,15 +47,20 @@ class DTDialog : public Dialog{
 		std::vector<DialogValueBase*> mValues;
 		std::vector<DialogButton*> mButtons;
 		std::vector<DialogValueFile*> mFiles;
+		std::vector<DialogValueOptionInt> mOptionValues;
 		TIDialog* mActiveInput = NULL;
 		int mCondition = -1;
+		int mConditionBackup = -1;
 		int mRequiredCondition = -1;
 		int mTargetState = 0;
 		virtual void setLabel(std::string cLabel){mDialogTextTitle = cLabel;};
 		virtual void setTarget(int cTarget){mTargetState = cTarget;};
-		virtual void setCondition(int cCond){mCondition = cCond;if(mFiles.size()){bDialogIsWatingForText = true;}};
+		virtual void setCondition(int cCond){mCondition = cCond; mConditionBackup = mCondition; if(mFiles.size()){bDialogIsWatingForText = true;}};
 		virtual void setRequiredCondition(int cCond){mRequiredCondition = cCond;};
 		virtual void clearRequiredCondition(){mRequiredCondition = -1;};
+		virtual void createValues(int cValNums){mOptionValues.resize(cValNums);};
+		virtual void setValue(int cIndex, int cVal){if(mOptionValues.size()){if( (cIndex >= 0) && (cIndex < mOptionValues.size()) ){mOptionValues[cIndex].mValue = cVal;}}};
+		virtual int* getValue(int cIndex){if(mOptionValues.size()){if( (cIndex >= 0) && (cIndex < mOptionValues.size()) ){return &mOptionValues[cIndex].mValue;}} return NULL;};
 		virtual void init();	
 		virtual int render();
 		virtual void recieveInput(int mKey);
@@ -61,8 +69,11 @@ class DTDialog : public Dialog{
 		void addText(std::string cText, bool bSameline = false);
 		void addSeperator();
 		void addSameLine();
+		void addConditionRestore();
 		void addBool(std::string cLabel, bool cDefault, bool *cTarget, bool bSameline = false);
+		void addBoolCondition(std::string cLabel, bool cDefault, bool *cTarget, int cTargCond, bool bSameline = false);
 		void addInt(std::string cLabel, int cDefault, int *cTarget, int cMin, int cMax, bool bSameline = false);
+		void addIntMinMax(std::string cLabel, int cDefault, int *cTarget, int *cMin, int *cMax, bool bSameline = false);
 		void addIntStrings(std::string cLabel, int cDefault, int *cTarget, std::vector<std::string> &cStrings, bool bSameline = false);
 		void addFloat(std::string cLabel, float cDefault, float *cTarget, float cMin, float cMax, std::string cFormat = "%.2f", bool bSameline = false);
 		void addButton(std::string cLabel, int cAction, bool cSameline = false);
@@ -79,6 +90,7 @@ class DTDialog : public Dialog{
 		static DTDialog* createSpriteDownscaledCopyDialog();
 		static DTDialog* createSpriteRotationRangeDialog();
 		static DTDialog* createSpriteRotationsDialog();
+		static DTDialog* createTileMapImportDialog();
 };
 
 
@@ -125,6 +137,13 @@ class DialogValueBool : public DialogValueType<bool>{
 		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::Checkbox(mLabel.c_str(), &mValue);}		
 };
 
+class DialogValueBoolCondition : public DialogValueType<bool>{	
+	public:
+		int mTargetCondition = -1;
+		DialogValueBoolCondition(DTDialog *cParent, int cCond, std::string cLabel, bool cDefault, bool* cTarget, int cTargetCond, bool cSameline){mParent = cParent; mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; bSameLine = cSameline; mCondition = cCond; mTargetCondition = cTargetCond;}
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::Checkbox(mLabel.c_str(), &mValue); if(mValue){mParent->mCondition = mTargetCondition;}else{mParent->mCondition = mParent->mConditionBackup;}}		
+};
+
 class DialogValueInt : public DialogValueType<int>{	
 	public:
 		int mMin = 0;
@@ -132,6 +151,15 @@ class DialogValueInt : public DialogValueType<int>{
 		DialogValueInt(DTDialog *cParent, int cCond, std::string cLabel, int cDefault, int* cTarget, int cMin, int cMax, bool cSameline){mParent = cParent; mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mMin = cMin; mMax = cMax; bSameLine = cSameline; mCondition = cCond;}
 		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::SliderInt(mLabel.c_str(), &mValue, mMin, mMax);}		
 };
+
+class DialogValueIntMinMax : public DialogValueType<int>{	
+	public:
+		int *mMin = NULL;
+		int *mMax = NULL;
+		DialogValueIntMinMax(DTDialog *cParent, int cCond, std::string cLabel, int cDefault, int* cTarget, int *cMin, int *cMax, bool cSameline){mParent = cParent; mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mMin = cMin; mMax = cMax; bSameLine = cSameline; mCondition = cCond;}
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::SliderInt(mLabel.c_str(), &mValue, *mMin, *mMax);}		
+};
+
 
 class DialogValueIntStrings : public DialogValueType<int>{
 	public:
@@ -177,6 +205,12 @@ class DialogValueIntTarget : public DialogValueType<int>{
 	public:		
 		DialogValueIntTarget(DTDialog *cParent, int cCond, int cDefault, int* cTarget){mParent = cParent; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mCondition = cCond;}
 		virtual void render(){};
+};
+
+class DialogConditionRestore : public DialogElement{
+	public:
+		DialogConditionRestore(DTDialog *cParent){mParent = cParent;};		
+		virtual void render(){mParent->mCondition = mParent->mConditionBackup;};	
 };
 
 class TIDialog: public Dialog{
@@ -300,6 +334,7 @@ class ITDialog: public SADialog{
 		virtual void recieveInput(int mKey);		
 };
 
+/*
 class ISFDialog: public SADialog{
 	public:
 		virtual void init();
@@ -313,6 +348,7 @@ class ISFSDialog: public ISFDialog{
 		virtual int render();
 		virtual void recieveInput(int mKey);		
 };
+*/
 
 class RTSFDialog: public Dialog{
 	public:

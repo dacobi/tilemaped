@@ -225,6 +225,7 @@ class TSettings{
 		bool bRunningOCD = false;		
 		std::string mNewTileMapPath = "";
 		int mNewTileMapPaletteOffset = 0;
+		bool bNewTileMapOffset = false;
 		int mNewTileMapOffset = 0;
 		int mNewTileMapState = 0;
 		int mNewTileMapX = 0;
@@ -347,7 +348,8 @@ enum {
 	EDIALOG_SPRITECREATEROTATIONRANGE,
 	EDIALOG_SPRITECREATEFRAMEROTATIONS,
 	EDIALOG_SPRITEFRAMEIMPORT,
-	EDIALOG_SPRITEFRAMESIMPORT
+	EDIALOG_SPRITEFRAMESIMPORT,
+	EDIALOG_TILEMAPIMPORT
 } edialogs;
 
 enum {

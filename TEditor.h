@@ -172,13 +172,14 @@ class TEditor{
 
 		//ISFDialog mOpenFrameDialog;
 		//ISFSDialog mOpenFramesDialog;
+		//ITMDialog mOpenTileMapDialog;
 
 
 		RTSFDialog mRotateFrame;
 		SSFDialog mScaleFrame;
 		ISDialog mOpenSpriteDialog;
 		ITSDialog mOpenTileSetDialog;
-		ITMDialog mOpenTileMapDialog;
+		
 		CTMDialog mNewTileMapDialog;
 		CSDialog mNewSpriteDialog;
 		HDialog mHelpDialog;
@@ -192,7 +193,7 @@ class TEditor{
 		RTSDialog mRemoveSelUnused;
 		
 		std::map<int, DTDialog*> mDTDialogs;
-		int activateDTDialog(int cOpenDialog, int cCond = -1);
+		int activateDTDialog(int cOpenDialog, int cCond = -1, int cVal0 = 0, int cVal1 = 0);
 
 		MEDialog mErrorMessage;				
 		QDialog mQuitDialog;
@@ -248,7 +249,9 @@ class TEditor{
 		
 		int activateOpenSpriteDialog();
 		int activateOpenTileSetDialog();
-		int activateOpenTileMapDialog();
+		
+		//int activateOpenTileMapDialog();
+
 		int activateNewTileMapDialog();
 		int activateNewSpriteDialog();
 		int activateRemoveSpriteDialog();
