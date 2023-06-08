@@ -175,7 +175,8 @@ int TBDialog::render(){
 					}
 
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Sprite Frame")).c_str())){
-						mGlobalSettings.CurrentEditor->activateOpenFrameDialog();		  			
+						//mGlobalSettings.CurrentEditor->activateOpenFrameDialog();		  			
+						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITEFRAMEIMPORT);
 					}
 
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Sprite Frame(s)")).c_str())){
@@ -474,14 +475,11 @@ int TBDialog::render(){
 							
 
 								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Copy")).c_str())){
-										mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATECOPY);
-										//mGlobalSettings.CurrentEditor->createNewSpriteCopy(mGlobalSettings.CurrentEditor->mSprite);
-										//mGlobalSettings.CurrentEditor->showMessage("Sprite Copied Successfully");
+									mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATECOPY);										
 								}
 
-								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Scaled Copy")).c_str())){
-										//mGlobalSettings.CurrentEditor->activateNewScaledSpriteDialog();
-										mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATESCALEDCOPY);
+								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Scaled Copy")).c_str())){										
+									mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATESCALEDCOPY);
 								}
 
 								bool bAllowUpscale = false;
@@ -499,8 +497,7 @@ int TBDialog::render(){
 									}																		
 								}
 
-								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Upscaled Copy")).c_str(), NULL, false, bAllowUpscale)){
-									//mGlobalSettings.CurrentEditor->activateNewUpscaledSpriteDialog(cAllowedScale);
+								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Upscaled Copy")).c_str(), NULL, false, bAllowUpscale)){									
 									mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATEUPSCALEDCOPY, cAllowedScale);
 								}
 
@@ -520,8 +517,7 @@ int TBDialog::render(){
 									}																		
 								}
 
-								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Downscaled Copy")).c_str(), NULL, false, bAllowDownscale)){
-									//mGlobalSettings.CurrentEditor->activateNewDownscaledSpriteDialog(cAllowedDownScale);
+								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Downscaled Copy")).c_str(), NULL, false, bAllowDownscale)){									
 									mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATEDOWNSCALEDCOPY, cAllowedDownScale);
 								}
 
@@ -532,13 +528,11 @@ int TBDialog::render(){
 								}
 
 
-								if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotation Range")).c_str(), NULL, false, bAllowRange)){
-									//mGlobalSettings.CurrentEditor->activateSpriteRotationRangeDialog();
+								if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotation Range")).c_str(), NULL, false, bAllowRange)){									
 									mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATEROTATIONRANGE);
 								}
 
-								if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Frame Rotations")).c_str(), NULL, false, bAllowRange)){
-									//mGlobalSettings.CurrentEditor->activateSpriteRotationsDialog();
+								if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Frame Rotations")).c_str(), NULL, false, bAllowRange)){									
 									mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATEFRAMEROTATIONS);
 								}
 															
@@ -3155,12 +3149,56 @@ void DialogValueRadioGroup::render(){
 	}
 }
 
+void DialogValueFile::render(){
+	if(mCondition > -1){if(mParent->mCondition != mCondition){return;}}
+
+	mTextInput.render();
+
+	if(mTextInput.bInputIsAccepted){
+		bIsValid = true;
+		mValue = mTextInput.mDialogTextMain;
+	} else {
+		bIsValid = false;
+	}
+
+	DialogElement::render();
+
+	if(ImGui::Button(mLabel.c_str())){
+		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+		ImGui::SetNextWindowSize(ImVec2(800, 600));
+    	ImGuiFileDialog::Instance()->OpenDialog(mFileKey.c_str(), mLabel.c_str(), mFileExt.c_str(), ".");
+	}
+
+	if (ImGuiFileDialog::Instance()->Display(mFileKey.c_str())){
+    	
+    	if (ImGuiFileDialog::Instance()->IsOk()){
+      		std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+      		std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+	  		mTextInput.mDialogTextMain = filePathName;
+			mTextInput.checkCurrentText();
+			if(mTextInput.bInputIsAccepted){
+				bIsValid = true;
+				mValue = mTextInput.mDialogTextMain;
+			} else {
+				bIsValid = false;
+			}
+      	
+    	}    
+    
+    	ImGuiFileDialog::Instance()->Close();
+  	}
+
+}
 
 void DTDialog::init(){
 
 }
 
 int DTDialog::render(){
+
+	if(mFiles.size()){
+		bDialogIsWatingForText = true;
+	}
 
 	Dialog::render();
 
@@ -3176,8 +3214,17 @@ int DTDialog::render(){
 }
 
 void DTDialog::recieveInput(int mKey){
-	if(mKey == SDLK_y){	
+	if(mKey == SDLK_y){
+
+		for(auto *cInput : mFiles){
+			if(!cInput->bIsValid){
+				return;
+			}
+		}
+
 		bInputIsAccept=true;	
+		bDialogIsWatingForText = false;
+
 		for(auto cVal : mValues){
 			cVal->apply();			
 		}
@@ -3186,15 +3233,23 @@ void DTDialog::recieveInput(int mKey){
 	
 	if(mKey == SDLK_n){
 		bInputIsCancel=true;
+		bDialogIsWatingForText = false;
 		for(auto cVal : mValues){
 			cVal->cancel();
 		}
 	}	
 
 	if(mKey == SDLK_TAB){
-		//mTextInput.autoComplete();		
+		if(mActiveInput){
+			mActiveInput->autoComplete();
+		}		 
 	}
+}
 
+void DTDialog::dropLastInputChar(){	
+	if(mActiveInput){
+		mActiveInput->dropLastInputChar();
+	}	
 }
 
 void DTDialog::cancel(){
@@ -3291,6 +3346,19 @@ void DTDialog::addIntTarget(int cDefault, int *cTarget){
 	DialogValueIntTarget *nInt = new DialogValueIntTarget(this, mRequiredCondition, cDefault, cTarget);
 	
 	mValues.push_back(nInt);
+}
+
+void DTDialog::addFile(std::string cLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist, bool cMustBeFile, bool cMustBeFolder, bool cMustNotBeFile, bool cMustNotExist, bool cMustBeProject){
+
+	DialogValueFile *nFile = new DialogValueFile(this, mRequiredCondition, cLabel, cFileExt, cFileKey, cDefault, cTarget, cMustExist, cMustBeFile, cMustBeFolder, cMustNotBeFile, cMustNotExist, cMustBeProject);
+
+	mElements.push_back(nFile);
+	mValues.push_back(nFile);
+	mFiles.push_back(nFile);
+
+	mActiveInput = &nFile->mTextInput;
+
+	bDialogIsWatingForText = true;
 }
 
 DTDialog* DTDialog::createSpriteRotationsDialog(){
@@ -3473,6 +3541,26 @@ DTDialog* DTDialog::createSpriteCopyDialog(){
 	newDialog->addSeperator();
 
 	newDialog->addButton("Create", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
+DTDialog* DTDialog::createSpriteFrameImportDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Import Frame");
+
+	newDialog->setTarget(ESTATE_FRAMEIMPORT);
+
+	newDialog->addText(mGlobalSettings.mImage + " Import Sprite Frame from File?");
+
+	newDialog->addFile("Choose Frame File", ".png,.bin,.data,.raw", "SFrame", "", &mGlobalSettings.mNewFramePath);
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Import", SDLK_y);
 	
 	newDialog->addButton("Cancel", SDLK_n, true);
 

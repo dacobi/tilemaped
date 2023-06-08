@@ -165,10 +165,13 @@ class TEditor{
 		int updatePalette();
 		Dialog *mActiveDialog = NULL;
 		Dialog *mActiveMessage = NULL;
+
 		SDialog mSaveDialog;
 		SADialog mSaveAsDialog;
 		ITDialog mOpenTileDialog;
-		ISFDialog mOpenFrameDialog;
+
+		//ISFDialog mOpenFrameDialog;
+
 		ISFSDialog mOpenFramesDialog;
 		RTSFDialog mRotateFrame;
 		SSFDialog mScaleFrame;
@@ -186,15 +189,7 @@ class TEditor{
 		RSFDialog mRemoveFrame;
 		RSDialog mRemoveSprite;
 		RTSDialog mRemoveSelUnused;
-
-		/*
-		DTDialog* mScaledSpriteCopy;
-		DTDialog* mUpscaledSpriteCopy;
-		DTDialog* mDownscaledSpriteCopy;
-		DTDialog* mSpriteRotationRange;
-		DTDialog* mSpriteRotations;
-		*/
-
+		
 		std::map<int, DTDialog*> mDTDialogs;
 		int activateDTDialog(int cOpenDialog, int cCond = -1);
 
@@ -203,6 +198,7 @@ class TEditor{
 		CCPDialog mCloseProjectDialog;
 		PUDialog mPaletteUpdate;
 		PODialog mPaletteOffset;
+
 		TCollisionMapEditor mColMapEdit;
 		int importTileMap(std::string cNewTileMap);
 		int createTileMap(int nMapX, int nMapy, int nTileValue);
@@ -239,9 +235,12 @@ class TEditor{
 		int showMessage(std::string cMessage, bool isError=false);
 		bool checkQuit();
 		void setSpriteBrushes();
+
 		int activateSaveDialog();
 		int activateOpenTileDialog();
-		int activateOpenFrameDialog();
+
+		//int activateOpenFrameDialog();
+
 		int activateRotateFrameDialog();
 		int activateScaleFrameDialog();
 		int activateOpenFramesDialog();
@@ -250,15 +249,6 @@ class TEditor{
 		int activateOpenTileMapDialog();
 		int activateNewTileMapDialog();
 		int activateNewSpriteDialog();
-
-		/*
-		int activateSpriteRotationRangeDialog();
-		int activateSpriteRotationsDialog();
-		int activateNewScaledSpriteDialog();
-		int activateNewUpscaledSpriteDialog(int cScale);
-		int activateNewDownscaledSpriteDialog(int cScale);
-		*/
-
 		int activateRemoveSpriteDialog();
 		int activateRemoveTileMapDialog();
 		int activateColMapDialog(bool bCreateColMap=false);
@@ -274,6 +264,7 @@ class TEditor{
 		int activateDropUnusedTiles();
 		int activateDropUnusedTile();
 		int activateRemoveFrame();
+		
 		int activateBrushes();
 		int activateBrush();
 		int dropBrush();

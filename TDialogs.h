@@ -9,6 +9,8 @@ extern TSettings mGlobalSettings;
 class DialogElement;
 class DialogValueBase;
 class DialogButton;
+class DialogValueFile;
+class TIDialog;
 
 class DTDialog;
 
@@ -41,6 +43,8 @@ class DTDialog : public Dialog{
 		std::vector<DialogElement*> mBasicElements;
 		std::vector<DialogValueBase*> mValues;
 		std::vector<DialogButton*> mButtons;
+		std::vector<DialogValueFile*> mFiles;
+		TIDialog* mActiveInput = NULL;
 		int mCondition = -1;
 		int mRequiredCondition = -1;
 		int mTargetState = 0;
@@ -51,7 +55,8 @@ class DTDialog : public Dialog{
 		virtual void clearRequiredCondition(){mRequiredCondition = -1;};
 		virtual void init();	
 		virtual int render();
-		virtual void recieveInput(int mKey);					
+		virtual void recieveInput(int mKey);
+		virtual void dropLastInputChar();				
 		virtual void cancel();
 		void addText(std::string cText, bool bSameline = false);
 		void addSeperator();
@@ -64,7 +69,9 @@ class DTDialog : public Dialog{
 		void addRadioGroup(int cDefault, int* cTarget);
 		void addRadioButton(std::string cLabel, int cDefault, bool cSameline = false);
 		void addIntTarget(int cDefault, int *cTarget);
+		void addFile(std::string cLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist = true, bool cMustBeFile = true, bool cMustBeFolder = false, bool cMustNotBeFile = false, bool cMustNotExist = false, bool cMustBeProject = false);
 
+		static DTDialog* createSpriteFrameImportDialog();
 		static DTDialog* createSpriteCopyDialog();
 		static DTDialog* createSpriteScaledCopyDialog();
 		static DTDialog* createSpriteUpscaledCopyDialog();
@@ -199,6 +206,20 @@ class TIDialog: public Dialog{
 		virtual int render();		
 		std::string mInputLabel = "Filename";
 		bool bIsActive=false;
+};
+
+class DialogValueFile : public DialogValueType<std::string>{	
+	public:
+		TIDialog mTextInput;
+		std::string mLabel;
+		std::string mFileExt;
+		std::string mFileKey;
+
+		bool bIsValid = false;
+		
+		DialogValueFile(DTDialog *cParent, int cCond, std::string cLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist, bool cMustBeFile, bool cMustBeFolder, bool cMustNotBeFile, bool cMustNotExist, bool cMustBeProject){mParent = cParent; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mCondition = cCond; mTextInput.bMustExist = cMustExist; mTextInput.bMustBeFile = cMustBeFile; mTextInput.bMustBeFolder = cMustBeFolder; mTextInput.bMustNotBeFile = cMustNotBeFile; mTextInput.bMustNotExist = cMustNotExist; mTextInput.bMustBeProject = cMustBeProject; mLabel = cLabel; mFileKey = "ChooseFileDlgKey" + cFileKey; mFileExt = cFileExt; mTextInput.bIsInputActive = true; mTextInput.bAutoComplete = true;}		
+		virtual void render();
+		virtual void cancel(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} mValue = mDefault; mTextInput.mDialogTextMain = mDefault; bIsValid = false;}
 };
 
 

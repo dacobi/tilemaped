@@ -143,6 +143,7 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_SPRITECREATEDOWNSCALEDCOPY] = DTDialog::createSpriteDownscaledCopyDialog();
 	mDTDialogs[EDIALOG_SPRITECREATEROTATIONRANGE] = DTDialog::createSpriteRotationRangeDialog();
 	mDTDialogs[EDIALOG_SPRITECREATEFRAMEROTATIONS] = DTDialog::createSpriteRotationsDialog();	
+	mDTDialogs[EDIALOG_SPRITEFRAMEIMPORT] =  DTDialog::createSpriteFrameImportDialog();
 }
 
 int TEditor::activateDTDialog(int cOpenDialog, int cCond ){
@@ -178,7 +179,10 @@ void TEditor::initDialogs(){
 	mProjectInfo.mEditor = this;
 	mProjectInfo.init();
 	mOpenTileDialog.init();
-	mOpenFrameDialog.init();
+
+	
+	//mOpenFrameDialog.init();
+
 	mOpenFramesDialog.init();
 	mRotateFrame.init();
 	mScaleFrame.init();
@@ -1422,17 +1426,12 @@ int TEditor::createSpriteRotationRange(int cRange, int cIntervals){
 		nIntervals++;
 		float nAngle = (float)cRange / (float)nIntervals;
 
-		//std::cout << "Creating Range: " << nIntervals << std::endl;
-		//std::cout << "Range Angle Interval: " << nAngle << std::endl;
-
 		for(int i = 0; i < nIntervals; i++){
 			TSFrame *newFrame = mSprite->createNewCopy(orgFrame, &mPalette); 
 
 			newFrame->rotate(nAngle*(i+1));
 
-			cNewFrames.push_back(newFrame);
-
-			//std::cout << "Current Angle: " << (float)(nAngle*(i+1)) << std::endl;
+			cNewFrames.push_back(newFrame);			
 		}
 
 		mSprite->mActionStack.newActionGroup();
@@ -1916,6 +1915,7 @@ int TEditor::activateRotateFrameDialog(){
 	return 0;
 }
 
+/*
 int TEditor::activateOpenFrameDialog(){
 	if(mCurMode == EMODE_SPRITE){
 		mActiveDialog = &mOpenFrameDialog;
@@ -1923,6 +1923,7 @@ int TEditor::activateOpenFrameDialog(){
 	}
 	return 0;
 }
+*/
 
 int TEditor::activateOpenTileDialog(){
 	if(mCurMode == EMODE_MAP){
@@ -1955,40 +1956,6 @@ int TEditor::activateNewTileMapDialog(){
 	}
 	return 0;
 }
-
-/*
-int TEditor::activateSpriteRotationsDialog(){
-	mActiveDialog = mSpriteRotations;	
-	return 0;
-}
-
-int TEditor::activateSpriteRotationRangeDialog(){
-	mActiveDialog = mSpriteRotationRange;	
-	return 0;
-}
-
-int TEditor::activateNewDownscaledSpriteDialog(int cScale){
-
-	mDownscaledSpriteCopy->setCondition(cScale);
-	mActiveDialog = mDownscaledSpriteCopy;	
-
-	return 0;
-}
-
-int TEditor::activateNewUpscaledSpriteDialog(int cScale){
-	
-	mUpscaledSpriteCopy->setCondition(cScale);
-	mActiveDialog = mUpscaledSpriteCopy;	
-
-	return 0;
-}
-
-int TEditor::activateNewScaledSpriteDialog(){
-	mActiveDialog = mScaledSpriteCopy;		
-	return 0;
-}
-
-*/
 
 int TEditor::activateNewSpriteDialog(){
 	//if(mCurMode == EMODE_MAP){
@@ -4132,7 +4099,8 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	mOpenTileMapDialog.bUpdateWinPos = true;
 	mNewTileMapDialog.bUpdateWinPos = true;
 
-	mOpenFrameDialog.bUpdateWinPos = true;
+	//mOpenFrameDialog.bUpdateWinPos = true;
+
 	mOpenFramesDialog.bUpdateWinPos = true;
 	mRotateFrame.bUpdateWinPos = true;
 	mScaleFrame.bUpdateWinPos = true;
@@ -4150,6 +4118,10 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	mColMapEdit.bUpdateWinPos = true;
 
 	mPalette.bUpdateWinPos = true;
+
+	for(int di = 1; di < mDTDialogs.size(); di++){
+		mDTDialogs[di]->bUpdateWinPos = true;
+	}
 
 	for(auto *cSprite : mSprites){
 		cSprite->updateWinPos = true;
