@@ -129,20 +129,21 @@ template <typename T> class DialogValueType : public DialogValueBase{
 		T mDefault;
 		T *mTarget;
 		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} *mTarget = mValue;}
-		virtual void cancel(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} mValue = mDefault;}
+		virtual void cancel(){mValue = mDefault;}
 };
 
 class DialogValueBool : public DialogValueType<bool>{	
 	public:
 		DialogValueBool(DTDialog *cParent, int cCond, std::string cLabel, bool cDefault, bool* cTarget, bool cSameline){mParent = cParent; mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; bSameLine = cSameline; mCondition = cCond;}
-		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::Checkbox(mLabel.c_str(), &mValue);}		
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::Checkbox(mLabel.c_str(), &mValue);}
 };
 
 class DialogValueBoolCondition : public DialogValueType<bool>{	
 	public:
 		int mTargetCondition = -1;
 		DialogValueBoolCondition(DTDialog *cParent, int cCond, std::string cLabel, bool cDefault, bool* cTarget, int cTargetCond, bool cSameline){mParent = cParent; mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; bSameLine = cSameline; mCondition = cCond; mTargetCondition = cTargetCond;}
-		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::Checkbox(mLabel.c_str(), &mValue); if(mValue){mParent->mCondition = mTargetCondition;}else{mParent->mCondition = mParent->mConditionBackup;}}		
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::Checkbox(mLabel.c_str(), &mValue); if(mValue){ mParent->mCondition = mTargetCondition; } else { mParent->mCondition = mParent->mConditionBackup; } }		
+		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} *mTarget = mValue; if(mValue){ mParent->mCondition = mTargetCondition; } else { mParent->mCondition = mParent->mConditionBackup; } }
 };
 
 class DialogValueInt : public DialogValueType<int>{	
@@ -208,10 +209,11 @@ class DialogValueIntTarget : public DialogValueType<int>{
 		virtual void render(){};
 };
 
-class DialogConditionRestore : public DialogElement{
+class DialogConditionRestore : public DialogValueBase{
 	public:
 		DialogConditionRestore(DTDialog *cParent){mParent = cParent;};		
-		virtual void render(){mParent->mCondition = mParent->mConditionBackup;};	
+		virtual void render(){mParent->mCondition = mParent->mConditionBackup;};
+		virtual void apply(){mParent->mCondition = mParent->mConditionBackup;}		
 };
 
 class TIDialog: public Dialog{

@@ -3299,6 +3299,7 @@ void DTDialog::addSameLine(){
 void DTDialog::addConditionRestore(){
 	DialogConditionRestore *nCondRes = new DialogConditionRestore(this);
 	mElements.push_back(nCondRes);
+	mValues.push_back(nCondRes);
 }
 
 void DTDialog::addBool(std::string cLabel, bool cDefault, bool *cTarget, bool bSameline){
