@@ -50,7 +50,7 @@ class DTDialog : public Dialog{
 		int mTargetState = 0;
 		virtual void setLabel(std::string cLabel){mDialogTextTitle = cLabel;};
 		virtual void setTarget(int cTarget){mTargetState = cTarget;};
-		virtual void setCondition(int cCond){mCondition = cCond;};
+		virtual void setCondition(int cCond){mCondition = cCond;if(mFiles.size()){bDialogIsWatingForText = true;}};
 		virtual void setRequiredCondition(int cCond){mRequiredCondition = cCond;};
 		virtual void clearRequiredCondition(){mRequiredCondition = -1;};
 		virtual void init();	
@@ -69,9 +69,10 @@ class DTDialog : public Dialog{
 		void addRadioGroup(int cDefault, int* cTarget);
 		void addRadioButton(std::string cLabel, int cDefault, bool cSameline = false);
 		void addIntTarget(int cDefault, int *cTarget);
-		void addFile(std::string cLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist = true, bool cMustBeFile = true, bool cMustBeFolder = false, bool cMustNotBeFile = false, bool cMustNotExist = false, bool cMustBeProject = false);
+		void addFile(std::string cLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist = true, bool cMustBeFile = true, bool cMustBeFolder = false, bool cMustNotBeFile = false, bool cMustNotExist = false, bool cMustBeProject = false, bool cSameline = false);
 
 		static DTDialog* createSpriteFrameImportDialog();
+		static DTDialog* createSpriteFramesImportDialog();
 		static DTDialog* createSpriteCopyDialog();
 		static DTDialog* createSpriteScaledCopyDialog();
 		static DTDialog* createSpriteUpscaledCopyDialog();

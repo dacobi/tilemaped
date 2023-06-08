@@ -171,8 +171,9 @@ class TEditor{
 		ITDialog mOpenTileDialog;
 
 		//ISFDialog mOpenFrameDialog;
+		//ISFSDialog mOpenFramesDialog;
 
-		ISFSDialog mOpenFramesDialog;
+
 		RTSFDialog mRotateFrame;
 		SSFDialog mScaleFrame;
 		ISDialog mOpenSpriteDialog;
@@ -240,10 +241,11 @@ class TEditor{
 		int activateOpenTileDialog();
 
 		//int activateOpenFrameDialog();
+		//int activateOpenFramesDialog();
 
 		int activateRotateFrameDialog();
 		int activateScaleFrameDialog();
-		int activateOpenFramesDialog();
+		
 		int activateOpenSpriteDialog();
 		int activateOpenTileSetDialog();
 		int activateOpenTileMapDialog();

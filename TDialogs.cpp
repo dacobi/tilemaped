@@ -180,7 +180,8 @@ int TBDialog::render(){
 					}
 
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Sprite Frame(s)")).c_str())){
-						mGlobalSettings.CurrentEditor->activateOpenFramesDialog();		  			
+						//mGlobalSettings.CurrentEditor->activateOpenFramesDialog();		  			
+						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITEFRAMESIMPORT);
 					}
 
 					ImGui::EndMenu();
@@ -3150,7 +3151,12 @@ void DialogValueRadioGroup::render(){
 }
 
 void DialogValueFile::render(){
-	if(mCondition > -1){if(mParent->mCondition != mCondition){return;}}
+	if(mCondition > -1){
+		if(mParent->mCondition != mCondition){
+			bIsValid = true;
+			return;
+		}
+	}
 
 	mTextInput.render();
 
@@ -3196,10 +3202,6 @@ void DTDialog::init(){
 
 int DTDialog::render(){
 
-	if(mFiles.size()){
-		bDialogIsWatingForText = true;
-	}
-
 	Dialog::render();
 
 	ImGui::Begin(mDialogTextTitle.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);
@@ -3228,6 +3230,7 @@ void DTDialog::recieveInput(int mKey){
 		for(auto cVal : mValues){
 			cVal->apply();			
 		}
+		
 		mGlobalSettings.mEditorState = mTargetState;
 	}		
 	
@@ -3348,9 +3351,11 @@ void DTDialog::addIntTarget(int cDefault, int *cTarget){
 	mValues.push_back(nInt);
 }
 
-void DTDialog::addFile(std::string cLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist, bool cMustBeFile, bool cMustBeFolder, bool cMustNotBeFile, bool cMustNotExist, bool cMustBeProject){
+void DTDialog::addFile(std::string cLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist, bool cMustBeFile, bool cMustBeFolder, bool cMustNotBeFile, bool cMustNotExist, bool cMustBeProject, bool cSameline){
 
 	DialogValueFile *nFile = new DialogValueFile(this, mRequiredCondition, cLabel, cFileExt, cFileKey, cDefault, cTarget, cMustExist, cMustBeFile, cMustBeFolder, cMustNotBeFile, cMustNotExist, cMustBeProject);
+
+	nFile->bSameLine = cSameline;
 
 	mElements.push_back(nFile);
 	mValues.push_back(nFile);
@@ -3566,5 +3571,26 @@ DTDialog* DTDialog::createSpriteFrameImportDialog(){
 
 	return newDialog;
 }
+
+DTDialog* DTDialog::createSpriteFramesImportDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Import Frame(s)");
+
+	newDialog->setTarget(ESTATE_FRAMESIMPORT);
+
+	newDialog->addText(mGlobalSettings.mImage + " Import Sprite Frame(s) from File?");
+
+	newDialog->addFile("Choose Frame(s) File", ".png,.bin,.data,.raw", "SFrames", "", &mGlobalSettings.mNewFramesPath);
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Import", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
 
 /* Dialog Template End */
