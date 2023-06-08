@@ -48,11 +48,12 @@ class DTDialog : public Dialog{
 		std::vector<DialogButton*> mButtons;
 		std::vector<DialogValueFile*> mFiles;
 		std::vector<DialogValueOptionInt> mOptionValues;
+		int mDefaultValue = 0;
 		TIDialog* mActiveInput = NULL;
 		int mCondition = -1;
 		int mConditionBackup = -1;
 		int mRequiredCondition = -1;
-		int mTargetState = 0;
+		int mTargetState = 0;		
 		virtual void setLabel(std::string cLabel){mDialogTextTitle = cLabel;};
 		virtual void setTarget(int cTarget){mTargetState = cTarget;};
 		virtual void setCondition(int cCond){mCondition = cCond; mConditionBackup = mCondition; if(mFiles.size()){bDialogIsWatingForText = true;}};
@@ -60,7 +61,7 @@ class DTDialog : public Dialog{
 		virtual void clearRequiredCondition(){mRequiredCondition = -1;};
 		virtual void createValues(int cValNums){mOptionValues.resize(cValNums);};
 		virtual void setValue(int cIndex, int cVal){if(mOptionValues.size()){if( (cIndex >= 0) && (cIndex < mOptionValues.size()) ){mOptionValues[cIndex].mValue = cVal;}}};
-		virtual int* getValue(int cIndex){if(mOptionValues.size()){if( (cIndex >= 0) && (cIndex < mOptionValues.size()) ){return &mOptionValues[cIndex].mValue;}} return NULL;};
+		virtual int* getValue(int cIndex){if(mOptionValues.size()){if( (cIndex >= 0) && (cIndex < mOptionValues.size()) ){return &mOptionValues[cIndex].mValue;}} return &mDefaultValue;};
 		virtual void init();	
 		virtual int render();
 		virtual void recieveInput(int mKey);
