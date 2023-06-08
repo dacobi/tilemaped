@@ -135,17 +135,9 @@ int TEditor::createNewProject(){
 }
 
 void TEditor::createDialogs(){
-
-	/*
-	mScaledSpriteCopy = DTDialog::createSpriteScaledCopyDialog();
-	mUpscaledSpriteCopy = DTDialog::createSpriteUpscaledCopyDialog();	
-	mDownscaledSpriteCopy = DTDialog::createSpriteDownscaledCopyDialog();	
-	mSpriteRotationRange = DTDialog::createSpriteRotationRangeDialog();	
-	mSpriteRotations = DTDialog::createSpriteRotationsDialog();	
-	*/
-
+	
 	mDTDialogs[EDIALOG_ERROR] = NULL;
-	mDTDialogs[EDIALOG_SPRITECREATECOPY] = NULL;
+	mDTDialogs[EDIALOG_SPRITECREATECOPY] = DTDialog::createSpriteCopyDialog();
 	mDTDialogs[EDIALOG_SPRITECREATESCALEDCOPY] = DTDialog::createSpriteScaledCopyDialog();
 	mDTDialogs[EDIALOG_SPRITECREATEUPSCALEDCOPY] = DTDialog::createSpriteUpscaledCopyDialog();
 	mDTDialogs[EDIALOG_SPRITECREATEDOWNSCALEDCOPY] = DTDialog::createSpriteDownscaledCopyDialog();
@@ -3518,6 +3510,18 @@ int TEditor::handleEvents(){
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
 
 				createNewSpriteScaledCopy(mSprite);
+
+				showMessage("Sprite Copied Successfully");
+
+				cancelActiveDialog();					
+				return 0;
+			}
+
+			if(mGlobalSettings.mEditorState == ESTATE_SPRITECOPY){				
+				
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
+
+				createNewSpriteCopy(mSprite);
 
 				showMessage("Sprite Copied Successfully");
 

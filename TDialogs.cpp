@@ -474,8 +474,9 @@ int TBDialog::render(){
 							
 
 								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Copy")).c_str())){
-										mGlobalSettings.CurrentEditor->createNewSpriteCopy(mGlobalSettings.CurrentEditor->mSprite);
-										mGlobalSettings.CurrentEditor->showMessage("Sprite Copied Successfully");
+										mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATECOPY);
+										//mGlobalSettings.CurrentEditor->createNewSpriteCopy(mGlobalSettings.CurrentEditor->mSprite);
+										//mGlobalSettings.CurrentEditor->showMessage("Sprite Copied Successfully");
 								}
 
 								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Scaled Copy")).c_str())){
@@ -3450,6 +3451,24 @@ DTDialog* DTDialog::createSpriteScaledCopyDialog(){
 	newDialog->addText(mGlobalSettings.mFile + " Create Scaled Sprite Copy?");
 
 	newDialog->addFloat("Sprite Scale", 1.0, &mGlobalSettings.mNewSpriteScale, 0.5, 2.0);
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Create", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
+DTDialog* DTDialog::createSpriteCopyDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Create Copy");
+
+	newDialog->setTarget(ESTATE_SPRITECOPY);
+
+	newDialog->addText(mGlobalSettings.mFile + " Create Copy of Current Sprite?");
 
 	newDialog->addSeperator();
 

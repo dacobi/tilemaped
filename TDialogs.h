@@ -65,6 +65,7 @@ class DTDialog : public Dialog{
 		void addRadioButton(std::string cLabel, int cDefault, bool cSameline = false);
 		void addIntTarget(int cDefault, int *cTarget);
 
+		static DTDialog* createSpriteCopyDialog();
 		static DTDialog* createSpriteScaledCopyDialog();
 		static DTDialog* createSpriteUpscaledCopyDialog();
 		static DTDialog* createSpriteDownscaledCopyDialog();
