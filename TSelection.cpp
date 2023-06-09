@@ -534,7 +534,7 @@ SDL_Rect TBrush::renderPixel(int xpos, int ypos){
     ImVec2 cPos = ImGui::GetWindowPos();
 
     int cDeltaX = mParent->mLocalTexParam.TexPixelSize * mParent->mLocalTexParam.TexEditScale; //mParent->mDeltaBaseX * mParent->mRenderScale;
-    int cDeltaY = mParent->mLocalTexParam.TexPixelSize * mParent->mLocalTexParam.TexEditScale;//mParent->mDeltaBaseY * mParent->mRenderScale;
+    int cDeltaY = mParent->mLocalTexParam.TexPixelSize * mParent->mLocalTexParam.TexEditScale; //mParent->mDeltaBaseY * mParent->mRenderScale;
 
     elmin.x = xpos + cPos.x;
     elmin.y = ypos + cPos.y;
