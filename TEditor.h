@@ -115,6 +115,8 @@ class TEditor{
 		int mouseSelY=0;
 		int mTileMapScrollX = 0;
 		int mTileMapScrollY = 0;
+		int mTileScrollX = 0;
+		int mTileScrollY = 0;
 		int mTileSetScrollY = 0;
 		int mTileSetScrollX = 0;		
 		int mSelEditScrollY = 0;
@@ -132,6 +134,7 @@ class TEditor{
 		bool bLCTRLisDown = false;
 		bool bLShiftIsDown = false;
 		bool bTileMapGrapped = false;
+		bool bTileGrapped = false;
 		bool bTileSetGrapped = false;
 		bool bSelEditGrapped = false;
         bool bSpriteGrapped = false;

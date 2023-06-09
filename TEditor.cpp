@@ -769,7 +769,7 @@ int TEditor::render(){
 
 		mPalette.renderIm(100+mGlobalSettings.mGlobalTexParam.TexEditScale*mGlobalSettings.mGlobalTexParam.TexSizeX*mGlobalSettings.mGlobalTexParam.TexPixelSize,50+mGlobalSettings.TopBarHeight, &mGlobalSettings.mGlobalTexParam);	
 		if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
-		mTileSelectedTile->renderEd(50,50+mGlobalSettings.TopBarHeight,&mPalette);
+		mTileSelectedTile->renderEd(mTileScrollX + 50,mTileScrollY + 50 + mGlobalSettings.TopBarHeight,&mPalette);
 		mColorSelectedTile->bPixelSelected = true;
 
 		mTileSelectedTile->mSelection.renderSelection();	    
@@ -1073,6 +1073,24 @@ int TEditor::applyScroll(int mx,int my, int amount, int xamount){
 					mGlobalSettings.mTileSetEditScale = 2; 
 				}
 			}
+		}
+	}
+
+	if(mCurMode == EMODE_TILE){
+		if(!mGlobalSettings.mio->WantCaptureMouse){
+			if(amount > 0){
+				mGlobalSettings.mGlobalTexParam.TexPixelSize++;
+				if(mGlobalSettings.mGlobalTexParam.TexPixelSize > Tile::MaxScale){
+					mGlobalSettings.mGlobalTexParam.TexPixelSize = Tile::MaxScale;
+				}
+			}
+			if(amount < 0){
+				mGlobalSettings.mGlobalTexParam.TexPixelSize--;
+				if(mGlobalSettings.mGlobalTexParam.TexPixelSize < Tile::MinScale){
+					mGlobalSettings.mGlobalTexParam.TexPixelSize = Tile::MinScale;
+				}
+			}
+			mBrushesPixel.setBrushDeltas(mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mGlobalTexParam);
 		}
 	}
 
@@ -2540,12 +2558,9 @@ int TEditor::findSelSprite(){
 			if(bLCTRLisDown){
 				if(bSpriteGrapped){
 					mSprite->mSpriteScrollX += rx;
-					mSprite->mSpriteScrollY += ry;
-					//std::cout << "Sprite Scroll X: " << mSprite->mSpriteScrollX << std::endl;
-					//std::cout << "Sprite Scroll Y: " << mSprite->mSpriteScrollY << std::endl;
+					mSprite->mSpriteScrollY += ry;					
 				} else {
-					bSpriteGrapped = true;
-					//std::cout << "Sprite Grapped!" << std::endl;				
+					bSpriteGrapped = true;					
 				}				
 			} else {
 				int tSel = -1;
@@ -2639,34 +2654,65 @@ int TEditor::findSelTile(){
 		}
 		
 		if(leftMouseButtonDown && !mGlobalSettings.mio->WantCaptureMouse){
-			int tSel = -1;
-
-			if(mCurrentBrushPixel){
-				TEActionBrushPixels* newAction = new TEActionBrushPixels();
-				newAction->doAction(mTileSelectedTile, *mCurrentBrushPixel, &mPalette);
-				if(!(*newAction == *mTileSelectedTile->mActionStack.mLastAction)){								
-					mTileSelectedTile->mActionStack.mLastAction = newAction;
-					mTileSelectedTile->mActionStack.newActionGroup();
-					mTileSelectedTile->mActionStack.addSubActions(newAction->mSubActions);
-       				mTileSelectedTile->mActionStack.redoClearStack();
-				}
+			if(bLCTRLisDown){
+				if(bTileGrapped){
+					mTileScrollX += rx;
+					mTileScrollY += ry;					
+				} else {
+					bTileGrapped = true;					
+				}				
 			} else {
-				tSel = searchRectsXY(mTileSelectedTile->PixelAreas, cx, cy);
-				if(tSel != -1){
+				int tSel = -1;
 
-					TEActionReplacePixel *mCurAction = new TEActionReplacePixel();
-					mCurAction->doAction(mTileSelectedTile, tSel, mTileSelectedTile->getPixel(tSel), mColorSelected, &mPalette);
+				if(mCurrentBrushPixel){
+					TEActionBrushPixels* newAction = new TEActionBrushPixels();
+					newAction->doAction(mTileSelectedTile, *mCurrentBrushPixel, &mPalette);
+					if(!(*newAction == *mTileSelectedTile->mActionStack.mLastAction)){								
+						mTileSelectedTile->mActionStack.mLastAction = newAction;
+						mTileSelectedTile->mActionStack.newActionGroup();
+						mTileSelectedTile->mActionStack.addSubActions(newAction->mSubActions);
+       					mTileSelectedTile->mActionStack.redoClearStack();
+					}
+				} else {
+					tSel = searchRectsXY(mTileSelectedTile->PixelAreas, cx, cy);
+					if(tSel != -1){
+
+						TEActionReplacePixel *mCurAction = new TEActionReplacePixel();
+						mCurAction->doAction(mTileSelectedTile, tSel, mTileSelectedTile->getPixel(tSel), mColorSelected, &mPalette);
 				
-					if(!(*mCurAction == * mTileSelectedTile->mActionStack.mLastAction)){
-   						mTileSelectedTile->mActionStack.newActionGroup();	
-   						mTileSelectedTile->mActionStack.addAction(mCurAction);
-   						mTileSelectedTile->mActionStack.mLastAction = mCurAction;
-   						mTileSelectedTile->mActionStack.redoClearStack();
-   					}
+						if(!(*mCurAction == * mTileSelectedTile->mActionStack.mLastAction)){
+   							mTileSelectedTile->mActionStack.newActionGroup();	
+   							mTileSelectedTile->mActionStack.addAction(mCurAction);
+   							mTileSelectedTile->mActionStack.mLastAction = mCurAction;
+   							mTileSelectedTile->mActionStack.redoClearStack();
+   						}
+					}
 				}
 			}
 		}
 	}
+	
+	/* */
+
+	int tileSizeX = (mGlobalSettings.mGlobalTexParam.TexSizeX * mGlobalSettings.mGlobalTexParam.TexEditScale * mGlobalSettings.mGlobalTexParam.TexPixelSize) +  mGlobalSettings.TopBarHeight;
+	int tileSizeY = (mGlobalSettings.mGlobalTexParam.TexSizeY * mGlobalSettings.mGlobalTexParam.TexEditScale * mGlobalSettings.mGlobalTexParam.TexPixelSize) +  mGlobalSettings.TopBarHeight;
+
+	if(mTileScrollX > 0){mTileScrollX = 0;}
+	if(mTileScrollY > 0){mTileScrollY = 0;}
+	
+	if(mTileScrollX < -(tileSizeX - (mGlobalSettings.WindowWidth - 50 ))){mTileScrollX = -(tileSizeX - (mGlobalSettings.WindowWidth -50));}
+	if(mTileScrollY < -(tileSizeY - (mGlobalSettings.WindowHeight - 50 - mGlobalSettings.TopBarHeight))){mTileScrollY = -(tileSizeY - (mGlobalSettings.WindowHeight - 50 - mGlobalSettings.TopBarHeight));}
+	
+	if(tileSizeX < (mGlobalSettings.WindowWidth)){
+		mTileScrollX = 0;
+	}
+	
+	if(tileSizeY < (mGlobalSettings.WindowHeight - mGlobalSettings.TopBarHeight)){
+		mTileScrollY = 0;
+	}
+
+	/* */
+
 
 	if((rightMouseButtonClicks && bLShiftIsDown) && !mGlobalSettings.mio->WantCaptureMouse){		
 		int tSel = -1;
@@ -4062,6 +4108,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			bTileMapGrapped = false;
 				bSelEditGrapped = false;
 				bSpriteGrapped = false;
+				bTileGrapped = false;
 				
 	  		}
 			if(cEvent->key.keysym.sym == SDLK_LSHIFT){
