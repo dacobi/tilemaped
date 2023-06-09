@@ -104,6 +104,7 @@ class TBrushList{
         std::string mTitle;
         std::string mType;
         TextureParameters *mTexParam;
+        TextureParameters mLocalTexParam;
         bool *bIsShown;
         int *mDeltaScale;
         bool bIsEditing = false;

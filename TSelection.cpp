@@ -533,8 +533,8 @@ SDL_Rect TBrush::renderPixel(int xpos, int ypos){
 
     ImVec2 cPos = ImGui::GetWindowPos();
 
-    int cDeltaX = mParent->mDeltaBaseX * mParent->mRenderScale;
-    int cDeltaY = mParent->mDeltaBaseY * mParent->mRenderScale;
+    int cDeltaX = mParent->mLocalTexParam.TexPixelSize * mParent->mLocalTexParam.TexEditScale; //mParent->mDeltaBaseX * mParent->mRenderScale;
+    int cDeltaY = mParent->mLocalTexParam.TexPixelSize * mParent->mLocalTexParam.TexEditScale;//mParent->mDeltaBaseY * mParent->mRenderScale;
 
     elmin.x = xpos + cPos.x;
     elmin.y = ypos + cPos.y;
@@ -774,6 +774,8 @@ int TBrushList::init(std::string cTitle, std::string cType, int cBrushType, bool
     mDeltaBaseX = nDeltaX;
     mDeltaBaseY = nDeltaY;
     mTexParam = cTexParam;
+
+    mLocalTexParam.TexEditScale--;
 
     //FIXME TODO
 
@@ -1047,7 +1049,7 @@ int TBrushList::renderIm(){
             tmpWinH += cbrushs.h + 10;
         }
 
-        if(tmpWinH > 800){
+        if(tmpWinH > 700){
             mWinHeight = tmpWinH;
             ImGui::SetNextWindowContentSize(ImVec2(600,mWinHeight + 20));
         } else if ((tmpWinH < 750) && (mWinHeight > 800)){
