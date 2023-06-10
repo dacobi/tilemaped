@@ -810,6 +810,33 @@ void TBrush::clearAllElements(){
     }
 }
 
+void TBrush::makeCircle(bool bInvert, float ms){
+    float ma = (float)mBrushWidth / 2;
+    float mb = (float)mBrushHeight / 2;
+
+
+    for(int by = 0; by < mBrushHeight; by++){
+        for(int bx = 0; bx < mBrushWidth; bx++){
+            float fx = (float)bx+0.5;
+            float fy = (float)by+0.5;
+            fx -= ma;
+            fy -= mb;
+            float cRes = (fx/ma)*(fx/ma) +  (fy/mb)*(fy/ma) - 1;
+            
+            if(bInvert){            
+                if(!(cRes < ms)){
+                    mBrushElements[bx + (by * mBrushWidth)] = -1;
+                }
+            } else {
+                if((cRes < ms)){
+                    mBrushElements[bx + (by * mBrushWidth)] = -1;
+                }
+            }
+        }
+    }
+
+}
+
 int TBrush::setElementNext(int element){
     if(mParent->bSetAllElements){
         for(auto &cElem : mBrushElements){
@@ -1016,6 +1043,27 @@ int TBrushList::renderIm(){
                 mBrushes[mSelectedBrush]->flipElementV();
             }
         }
+
+        if(ImGui::Button("Make Circle")){
+            mBrushes[mSelectedBrush]->makeCircle(true);
+        }
+
+        ImGui::SameLine();
+
+        if(ImGui::Button("Make Circle Inverted")){
+            mBrushes[mSelectedBrush]->makeCircle(false);
+        }
+
+        if(ImGui::Button("Make Circle Small")){
+            mBrushes[mSelectedBrush]->makeCircle(true, -0.5);
+        }
+
+        ImGui::SameLine();
+
+        if(ImGui::Button("Make Circle Small Inverted")){
+            mBrushes[mSelectedBrush]->makeCircle(false, -0.5);
+        }
+
 
         if(bSetAllElements){ 
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(mGlobalSettings.ErrorTextColor.r-80,mGlobalSettings.ErrorTextColor.g,mGlobalSettings.ErrorTextColor.b)));

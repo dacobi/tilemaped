@@ -77,6 +77,7 @@ class TBrush: public TSelection{
         bool bIsEditing = false;
         int setElementNext(int element);
         void clearAllElements();
+        void makeCircle(bool bInvert, float ms = 0.0);
         int flipElementV();
         int flipElementH();
         int nextElement();
