@@ -134,6 +134,20 @@ int TEditor::createNewProject(){
 	return 0;
 }
 
+void TEditor::showProjectInfo(){
+
+	mProjectInfo->setValue(0, mGlobalSettings.mSelectedTile % mGlobalSettings.TileMapWidth);
+	mProjectInfo->setValue(1, mGlobalSettings.mSelectedTile / mGlobalSettings.TileMapWidth);
+	mProjectInfo->setValue(2, (mTileMap->getFlip(mGlobalSettings.mSelectedTile) & 0x1) ? 1 : 0);
+	mProjectInfo->setValue(3, (mTileMap->getFlip(mGlobalSettings.mSelectedTile) & 0x2) ? 1 : 0);
+
+	mProjectInfo->setCondition(mSprites.size() > 0 ? 1 : -1);
+
+	mProjectInfo->update();
+
+	mProjectInfo->render(0,mGlobalSettings.TopBarHeight);
+}
+
 void TEditor::createDialogs(){
 	
 	mDTDialogs[EDIALOG_ERROR] = NULL;
@@ -146,6 +160,8 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_SPRITEFRAMEIMPORT] =  DTDialog::createSpriteFrameImportDialog();
 	mDTDialogs[EDIALOG_SPRITEFRAMESIMPORT] =  DTDialog::createSpriteFramesImportDialog();
 	mDTDialogs[EDIALOG_TILEMAPIMPORT] = DTDialog::createTileMapImportDialog();
+
+	mProjectInfo = IDDialog::createProjectInfoDialog();
 }
 
 int TEditor::activateDTDialog(int cOpenDialog, int cCond, int cVal0, int cVal1){
@@ -180,8 +196,10 @@ void TEditor::initDialogs(){
 
 	mTopBar.mEditor = this;
 	mTopBar.init();
-	mProjectInfo.mEditor = this;
-	mProjectInfo.init();
+	
+	//mProjectInfo.mEditor = this;
+	//mProjectInfo.init();
+
 	mOpenTileDialog.init();
 
 	
@@ -681,6 +699,7 @@ int TEditor::switchSprite(int cSprite){
 		mSprite = mSprites[cSprite];		
 		mPalette.bUpdateWinPos = true;
 		mSprite->updateWinPos = true;
+		mSelectedSprite = cSprite;
 		setSpriteBrushes();
 		return 0;
 	}
@@ -709,6 +728,8 @@ int TEditor::switchTileMap(int cTileMap){
 		mTileMapScrollX = mTileMap->mTileMapScrollX;
 		mTileMapScrollY = mTileMap->mTileMapScrollY;
 		mGlobalSettings.TileMapScale = mTileMap->TileMapScale;
+
+		mSelectedTileMap = cTileMap;
 
 		bTileMapWasChanged = true;
 		bShowCollisionEditor = false;
@@ -740,11 +761,12 @@ int TEditor::render(){
 		mTopBar.render();
 		mTileSet.renderIm(mGlobalSettings.TopBarHeight, 0);//mTileSetScrollY);
 		if(mGlobalSettings.bShowProjectInfo){
-			mProjectInfo.update();
-			mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
+			//mProjectInfo.update();
+			//mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
+			showProjectInfo();
 		}
 		if(mGlobalSettings.bShowPaletteOffset){			
-			mPaletteOffset.render(mProjectInfo.mDialogWidth,mGlobalSettings.TopBarHeight, &mGlobalSettings.mGlobalTexParam);
+			mPaletteOffset.render(mProjectInfo->mDialogWidth,mGlobalSettings.TopBarHeight, &mGlobalSettings.mGlobalTexParam);
 		}
 
 		mTileMap->mSelection.renderSelection();	 
@@ -785,8 +807,9 @@ int TEditor::render(){
 
 
 		if(mGlobalSettings.bShowProjectInfo){
-			mProjectInfo.update();
-			mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
+			//mProjectInfo.update();
+			//mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
+			showProjectInfo();
 		}	
 
 		if(mCurrentBrushPixel){
@@ -824,8 +847,9 @@ int TEditor::render(){
 		}
 
 		if(mGlobalSettings.bShowProjectInfo){
-			mProjectInfo.update();
-			mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
+			//mProjectInfo.update();
+			//mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
+			showProjectInfo();
 		}	
 
 		if(mSprite->mCurrentBrushPixel){
@@ -860,8 +884,9 @@ int TEditor::render(){
 		mTopBar.render();
 
 		if(mGlobalSettings.bShowProjectInfo){
-			mProjectInfo.update();
-			mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
+			//mProjectInfo.update();
+			//mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
+			showProjectInfo();
 		}
 
 		if(mCurrentBrushPixelTileSet){
@@ -899,8 +924,9 @@ int TEditor::render(){
 		mTopBar.render();
 
 		if(mGlobalSettings.bShowProjectInfo){
-			mProjectInfo.update();
-			mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
+			//mProjectInfo.update();
+			//mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
+			showProjectInfo();
 		}
 
 		if(mCurrentBrushPixelSelEdit){
@@ -4153,7 +4179,9 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 
 	mPaletteOffset.bUpdateWinPos = true;
 	mHelpDialog.bUpdateWinPos = true;
-	mProjectInfo.bUpdateWinPos = true;
+	
+	mProjectInfo->bUpdateWinPos = true;
+	
 	mInfoMessage.bUpdateWinPos = true;
 	mRemoveUnused.bUpdateWinPos = true;
 	mErrorMessage.bUpdateWinPos = true;

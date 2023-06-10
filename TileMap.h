@@ -202,6 +202,7 @@ public:
 	int mTileMapScrollY = 0;
 	void init();
 	std::string getMapSize();
+	std::string getSize(){return getMapSize();};
 	std::vector<unsigned char> FileData;
 	int getTile(int cTile);
 	int setTile(int cTile, int cTileVal);

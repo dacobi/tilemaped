@@ -3395,6 +3395,137 @@ void DTDialog::addFile(std::string cLabel, std::string cFileExt, std::string cFi
 	bDialogIsWatingForText = true;
 }
 
+/* IDDialog */
+
+int IDDialog::render(int xpos, int ypos){
+
+	Dialog::render(xpos, ypos);
+
+	if(bSmallFonts){
+		ImGui::PushFont(mGlobalSettings.SFont);
+	}
+
+	ImGui::Begin(mDialogTextTitle.c_str(), bCloseBool, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);
+
+	for(auto *cElem: mElements){
+		cElem->render();
+	}
+
+	ImGui::End();
+
+
+	if(bSmallFonts){
+		ImGui::PopFont();
+	}
+
+	return 0;
+}
+
+void IDDialog::update(){
+
+	for(auto *cDisps : mDisplays){
+		cDisps->update();
+	}
+
+}
+
+void IDDialog::setCloseBool(bool *cClose){bCloseBool = cClose;}
+
+void IDDialog::setFontsSmall(bool cSmall){bSmallFonts = cSmall;}
+
+void IDDialog::addDisplayInt(std::string cLabel, int* cTarget, bool cSameline){
+	DialogDisplayInt *nInt = new DialogDisplayInt(this, mRequiredCondition, cLabel, cTarget, cSameline);
+
+	mDisplays.push_back(nInt);
+	mElements.push_back(nInt);
+}
+
+void IDDialog::addDisplayIntDual(std::string cLabel,std::string cCenter,std::string cEnd, int* cTarget1, int* cTarget2, bool cSameline){
+	DialogDisplayIntDual *nInt = new DialogDisplayIntDual(this, mRequiredCondition, cLabel, cCenter, cEnd, cTarget1, cTarget2, cSameline);
+
+	mDisplays.push_back(nInt);
+	mElements.push_back(nInt);
+
+}
+		
+void IDDialog::addDisplayTileCount(std::string cLabel, std::vector<Tile*> *cTarget, bool cSameline){
+	DialogDisplayTileCount *nTlC = new DialogDisplayTileCount(this, mRequiredCondition, cLabel, cTarget, cSameline);
+
+	mDisplays.push_back(nTlC);
+	mElements.push_back(nTlC);
+}
+
+void IDDialog::addDisplayTileMapCount(std::string cLabel, std::vector<TileMap*> *cTarget, bool cSameline){
+	DialogDisplayTileMapCount *nTMC = new DialogDisplayTileMapCount(this, mRequiredCondition, cLabel, cTarget, cSameline);
+
+	mDisplays.push_back(nTMC);
+	mElements.push_back(nTMC);
+}
+
+void IDDialog::addDisplaySpriteCount(std::string cLabel, std::vector<TSprite*> *cTarget, bool cSameline){
+	DialogDisplaySpriteCount *nSC = new DialogDisplaySpriteCount(this, mRequiredCondition, cLabel, cTarget, cSameline);
+
+	mDisplays.push_back(nSC);
+	mElements.push_back(nSC);
+
+}
+
+void IDDialog::addDisplayTileMapSize(std::string cLabel, TileMap **cTarget, bool cSameline){
+	DialogDisplayTileMapGetSize *nTMGS = new DialogDisplayTileMapGetSize(this, mRequiredCondition, cLabel, cTarget, cSameline);
+
+	mDisplays.push_back(nTMGS);
+	mElements.push_back(nTMGS);
+
+}
+
+void IDDialog::addDisplaySpriteSize(std::string cLabel,  TSprite **cTarget, bool cSameline){
+	DialogDisplaySpriteGetSize *nSGS = new DialogDisplaySpriteGetSize(this, mRequiredCondition, cLabel, cTarget, cSameline);
+
+	mDisplays.push_back(nSGS);
+	mElements.push_back(nSGS);
+
+}
+
+/* IDDialog create */
+
+IDDialog* IDDialog::createProjectInfoDialog(){
+	IDDialog *newDialog = new IDDialog();
+
+	newDialog->setLabel(mGlobalSettings.mInfo + " Project Info");
+
+	newDialog->setCloseBool(&mGlobalSettings.bShowProjectInfo);
+
+	newDialog->setFontsSmall(true);
+
+	newDialog->createValues(4);
+
+	newDialog->addDisplayTileMapSize("TileMap: ", &mGlobalSettings.CurrentEditor->mTileMap);
+
+	newDialog->addDisplayTileMapCount("TileMaps in Project: ", &mGlobalSettings.CurrentEditor->mTileMaps);
+
+	newDialog->addDisplayInt("Selected TileMap: ",  &mGlobalSettings.CurrentEditor->mSelectedTileMap);
+
+	newDialog->addDisplayTileCount("Tiles in TileSet: ", &mGlobalSettings.CurrentEditor->mTileSet.TTiles);
+	newDialog->addDisplayInt("Selected Tile: ", &mGlobalSettings.CurrentEditor->mMapSelectedTile);
+
+	newDialog->addDisplayIntDual("Selected Tile in TileMap: (", ",", ")", newDialog->getValue(0), newDialog->getValue(1));
+	newDialog->addDisplayIntDual("Tile Flip (H/V): (", "/", ")", newDialog->getValue(2), newDialog->getValue(3));
+
+	newDialog->setRequiredCondition(1);
+
+	newDialog->addDisplaySpriteSize("Sprite: ", &mGlobalSettings.CurrentEditor->mSprite);
+	newDialog->addDisplaySpriteCount("Sprites in Project: ", &mGlobalSettings.CurrentEditor->mSprites);
+	newDialog->addDisplayInt("Selected Sprite: ",  &mGlobalSettings.CurrentEditor->mSelectedSprite);
+
+	newDialog->clearRequiredCondition();
+	
+	return newDialog;
+}
+
+/* */
+
+/* DTDialog create */
+
 DTDialog* DTDialog::createSpriteRotationsDialog(){
 	
 	DTDialog* newDialog = new DTDialog();

@@ -82,6 +82,8 @@ class TEditor{
 		TPixel* mColorSelectedTileEdit = NULL;
 		int mLastPixelOffset = 0;		
 		bool bEditorRunning=true;
+		int mSelectedTileMap = 0;
+		int mSelectedSprite = 0;
 		int handleSelection(int SELMODE);
 		int handleEvents(SDL_Event* cEvent);
 		int handleEvents();
@@ -186,7 +188,12 @@ class TEditor{
 		CTMDialog mNewTileMapDialog;
 		CSDialog mNewSpriteDialog;
 		HDialog mHelpDialog;
-		PIDialog mProjectInfo;
+
+		//PIDialog mProjectInfo;
+		IDDialog *mProjectInfo;
+
+		void showProjectInfo();
+
 		MEDialog mInfoMessage;
 		RTMDialog mRemoveTileMap;
 		RCMDialog mRemoveColMap;

@@ -73,6 +73,7 @@ class TSprite{
         TBrush *mCurrentBrushPixel = NULL;
         bool bShowBrushesPixel = false;
         std::string getSpriteSize();        
+        std::string getSize(){return getSpriteSize();};
         std::vector<SDL_Rect> FrameAreas;		
         TEActionUndoStack mActionStack;
 };
