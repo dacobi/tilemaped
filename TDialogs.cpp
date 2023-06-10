@@ -3041,25 +3041,25 @@ IDDialog* IDDialog::createProjectInfoDialog(){
 
 	newDialog->setFontsSmall(true);
 
-	newDialog->createValues(4);
+	newDialog->createValues(5);
 
-	newDialog->addDisplayTileMapSize("TileMap: ", &mGlobalSettings.CurrentEditor->mTileMap);
-
+	newDialog->addDisplayTileMapSize("TileMap Size: ", &mGlobalSettings.CurrentEditor->mTileMap);
 	newDialog->addDisplayTileMapCount("TileMaps in Project: ", &mGlobalSettings.CurrentEditor->mTileMaps);
-
 	newDialog->addDisplayInt("Selected TileMap: ",  &mGlobalSettings.CurrentEditor->mSelectedTileMap);
 
 	newDialog->addDisplayTileCount("Tiles in TileSet: ", &mGlobalSettings.CurrentEditor->mTileSet.TTiles);
+	newDialog->addDisplayIntDual("Tile Size: ","x","",&mGlobalSettings.mGlobalTexParam.TexSizeX, &mGlobalSettings.mGlobalTexParam.TexSizeY);
+	newDialog->addDisplayInt("Tile BPP: ",&mGlobalSettings.mGlobalTexParam.TexBPP);
 	newDialog->addDisplayInt("Selected Tile: ", &mGlobalSettings.CurrentEditor->mMapSelectedTile);
-
 	newDialog->addDisplayIntDual("Selected Tile in TileMap: (", ",", ")", newDialog->getValue(0), newDialog->getValue(1));
 	newDialog->addDisplayIntDual("Tile Flip (H/V): (", "/", ")", newDialog->getValue(2), newDialog->getValue(3));
 
 	newDialog->setRequiredCondition(1);
 
-	newDialog->addDisplaySpriteSize("Sprite: ", &mGlobalSettings.CurrentEditor->mSprite);
+	newDialog->addDisplaySpriteSize("Sprite Size: ", &mGlobalSettings.CurrentEditor->mSprite);
 	newDialog->addDisplaySpriteCount("Sprites in Project: ", &mGlobalSettings.CurrentEditor->mSprites);
 	newDialog->addDisplayInt("Selected Sprite: ",  &mGlobalSettings.CurrentEditor->mSelectedSprite);
+	newDialog->addDisplayInt("Sprite BPP: ",  newDialog->getValue(4));
 
 	newDialog->clearRequiredCondition();
 	

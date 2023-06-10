@@ -141,6 +141,14 @@ void TEditor::showProjectInfo(){
 	mProjectInfo->setValue(2, (mTileMap->getFlip(mGlobalSettings.mSelectedTile) & 0x1) ? 1 : 0);
 	mProjectInfo->setValue(3, (mTileMap->getFlip(mGlobalSettings.mSelectedTile) & 0x2) ? 1 : 0);
 
+	int cSpriteBPP = 0;
+
+	if(mSprites.size()){
+		cSpriteBPP = mSprite->mTexParam.TexBPP;
+	}
+
+	mProjectInfo->setValue(4, cSpriteBPP);
+
 	mProjectInfo->setCondition(mSprites.size() > 0 ? 1 : -1);
 
 	mProjectInfo->update();
