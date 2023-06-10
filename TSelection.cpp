@@ -1049,8 +1049,14 @@ int TBrushList::renderIm(){
             tmpWinH += cbrushs.h + 10;
         }
 
-        if(tmpWinH > 700){
-            mWinHeight = tmpWinH;
+        int cSizeCheck = 750;
+
+        if(bIsEditing){
+            cSizeCheck-=150;
+        }
+
+        if(tmpWinH > cSizeCheck){
+            mWinHeight = tmpWinH - 150;
             ImGui::SetNextWindowContentSize(ImVec2(600,mWinHeight + 20));
         } else if ((tmpWinH < 750) && (mWinHeight > 800)){
             mWinHeight = 800;
