@@ -1009,6 +1009,7 @@ int TBrushList::renderIm(){
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(mGlobalSettings.ErrorTextColor.r,mGlobalSettings.ErrorTextColor.g,mGlobalSettings.ErrorTextColor.b)));
         if(ImGui::Button("Brushes Edit Done")){
             bIsEditing = false;
+            bSetAllElements = false;                
             mBrushes[mSelectedBrush]->bIsEditing = false;
         }
         ImGui::PopStyleColor();
