@@ -1025,6 +1025,8 @@ int TBrushList::renderIm(){
             mBrushes[mSelectedBrush]->setElementNext(-1);
         }
 
+
+        /*
         if(ImGui::Button("Next Element")){
             mBrushes[mSelectedBrush]->nextElement();
         }
@@ -1044,6 +1046,8 @@ int TBrushList::renderIm(){
         if(ImGui::Button("Prev Line")){
             mBrushes[mSelectedBrush]->prevLine();
         }
+
+        */
 
         if(mBrushType == TBRUSH_TILE){
 
