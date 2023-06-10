@@ -438,22 +438,6 @@ class ITDialog: public SADialog{
 		virtual void recieveInput(int mKey);		
 };
 
-/*
-class ISFDialog: public SADialog{
-	public:
-		virtual void init();
-		virtual void cancel();
-		virtual int render();
-		virtual void recieveInput(int mKey);		
-};
-
-class ISFSDialog: public ISFDialog{
-	public:		
-		virtual int render();
-		virtual void recieveInput(int mKey);		
-};
-*/
-
 class RTSFDialog: public Dialog{
 	public:
 		virtual void init();
@@ -471,7 +455,6 @@ class SSFDialog: public RTSFDialog{
 		virtual void recieveInput(int mKey);
 		float fscalefactor = 0;	
 };
-
 
 
 class ISDialog: public SADialog{
@@ -493,42 +476,6 @@ class ITSDialog: public ITDialog{
 		virtual int render();
 		virtual void recieveInput(int mKey);		
 };
-
-/*
-class ITMDialog: public ITDialog{
-	public:	
-		bool bUseOffset = false;
-		int mTileOffset = 1;
-		int mPaletteOffset = 0;
-		virtual void cancel();
-		virtual int render();
-		virtual void recieveInput(int mKey);		
-};
-*/
-
-/*
-class RNDialog: public ITDialog{
-	public:
-		int mNumber = 0;
-		bool show_another_window = false;
-		bool show_demo_window = false;
-		float f = 0;
-    	int counter = 0;
-		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-		virtual void init();
-		virtual void cancel();
-		virtual void dropLastInputChar();
-		virtual int render(int xpos, int ypos);
-		virtual void recieveInput(int mKey);
-		bool isShown = true;
-		float wx,wy;
-		ImVec2 wpos;
-		ImVec2 wsize;
-		ImVec2 elmin;
-		ImVec2 elmax;
-		ImVec2 esize;		
-};
-*/
 
 class OPDialog: public ITDialog{
 	public:
@@ -619,28 +566,6 @@ class PODialog: public Dialog{
 		virtual void init();
 		virtual int render(int xpos, int ypos, TextureParameters *mTexParam);
 };
-
-/*
-class PIDialog: public Dialog{
-	public:
-		TEditor* mEditor;
-		virtual void init();
-		virtual void update();
-		int fliph,flipv,tilenum,curtile;
-		std::string TileMap;
-		std::string cMapWidth;
-		std::string cMapHeight;
-		std::string TileSizeX;
-		std::string TileSizeY;
-		std::string Flip;		
-		std::string CurrentTile;
-		std::string TilesInSet;
-		std::string SelectedTile;
-		std::string cTileSizeX;
-		std::string cTileSizeY;
-		virtual int render(int xpos, int ypos);
-};
-*/
 
 class TBDialog: public Dialog{
 	public:
