@@ -2899,6 +2899,8 @@ int MEDialog::render(){
 	return 0;
 }
 
+
+/*
 void PIDialog::update(){
 	std::stringstream convert;
 	
@@ -3014,6 +3016,7 @@ int PIDialog::render(int xpos, int ypos){
 
 	return 0;
 }
+*/
 
 void PODialog::init(){
 	mDialogTextMain = mGlobalSettings.mImage + " Palette Offset";

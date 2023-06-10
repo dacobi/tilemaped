@@ -189,9 +189,7 @@ class TEditor{
 		CSDialog mNewSpriteDialog;
 		HDialog mHelpDialog;
 
-		//PIDialog mProjectInfo;
 		IDDialog *mProjectInfo;
-
 		void showProjectInfo();
 
 		MEDialog mInfoMessage;

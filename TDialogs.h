@@ -271,15 +271,13 @@ template <typename T> class DialogDisplayTypeDual : public DialogDisplayBase{
 
 template <class T> class DialogDisplayClassGetSize : public DialogDisplayBase{
 	public:
-		T** mTarget;
-		//virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::Text(mOutput.c_str());};
+		T** mTarget;		
 		virtual void update(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} mOutput = mLabel + (*mTarget)->getSize();};
 };
 
 template <class T> class DialogDisplayVectorSize : public DialogDisplayBase{
 	public:
-		std::vector<T*> *mTarget;
-		//virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::Text(mOutput.c_str());};
+		std::vector<T*> *mTarget;		
 		virtual void update(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} std::string tStr; mConv << mTarget->size() << std::endl; mConv >> tStr;  mOutput = mLabel + tStr;};
 };
 
@@ -294,33 +292,24 @@ class DialogDisplayIntDual : public DialogDisplayTypeDual<int>{
 		DialogDisplayIntDual(DTDialog *cParent, int cCond, std::string cLabel,std::string cCenter,std::string cEnd, int* cTarget1, int* cTarget2, bool cSameline){mParent = cParent; mLabel = cLabel; mCenter = cCenter; mEnd = cEnd; mTarget1 = cTarget1; mTarget2 = cTarget2; mCondition = cCond; bSameLine = cSameline;};
 };
 
-
 class DialogDisplaySpriteGetSize : public DialogDisplayClassGetSize<TSprite>{
 	public:
-		DialogDisplaySpriteGetSize(DTDialog *cParent, int cCond, std::string cLabel, TSprite** cTarget, bool cSameline){mParent = cParent; mLabel = cLabel; mTarget = cTarget; mCondition = cCond; bSameLine = cSameline;};
-		//virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::Text(mOutput.c_str());};
-		//virtual void update(){mOutput = mLabel + (*mTarget)->getSize();};
+		DialogDisplaySpriteGetSize(DTDialog *cParent, int cCond, std::string cLabel, TSprite** cTarget, bool cSameline){mParent = cParent; mLabel = cLabel; mTarget = cTarget; mCondition = cCond; bSameLine = cSameline;};		
 };
 
 class DialogDisplayTileMapGetSize : public DialogDisplayClassGetSize<TileMap>{
 	public:
-		DialogDisplayTileMapGetSize(DTDialog *cParent, int cCond, std::string cLabel, TileMap** cTarget, bool cSameline){mParent = cParent; mLabel = cLabel; mTarget = cTarget; mCondition = cCond; bSameLine = cSameline;};
-		//virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::Text(mOutput.c_str());};
-		//virtual void update(){mOutput = mLabel + (*mTarget)->getSize();};
+		DialogDisplayTileMapGetSize(DTDialog *cParent, int cCond, std::string cLabel, TileMap** cTarget, bool cSameline){mParent = cParent; mLabel = cLabel; mTarget = cTarget; mCondition = cCond; bSameLine = cSameline;};		
 };
 
 class DialogDisplayTileMapCount : public DialogDisplayVectorSize<TileMap>{
 	public:
-		DialogDisplayTileMapCount(DTDialog *cParent, int cCond, std::string cLabel, std::vector<TileMap*> *cTarget, bool cSameline){mParent = cParent; mLabel = cLabel; mTarget = cTarget; mCondition = cCond; bSameLine = cSameline;};
-		//virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::Text(mOutput.c_str());};
-		//virtual void update(){std::string tStr; mConv << mTarget->size() << std::endl; mConv >> tStr;  mOutput = mLabel + tStr;};
+		DialogDisplayTileMapCount(DTDialog *cParent, int cCond, std::string cLabel, std::vector<TileMap*> *cTarget, bool cSameline){mParent = cParent; mLabel = cLabel; mTarget = cTarget; mCondition = cCond; bSameLine = cSameline;};		
 };
 
 class DialogDisplayTileCount : public DialogDisplayVectorSize<Tile>{
 	public:
-		DialogDisplayTileCount(DTDialog *cParent, int cCond, std::string cLabel, std::vector<Tile*> *cTarget, bool cSameline){mParent = cParent; mLabel = cLabel; mTarget = cTarget; mCondition = cCond; bSameLine = cSameline;};
-		//virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::Text(mOutput.c_str());};
-		//virtual void update(){std::string tStr; mConv << mTarget->size() << std::endl; mConv >> tStr;  mOutput = mLabel + tStr;};
+		DialogDisplayTileCount(DTDialog *cParent, int cCond, std::string cLabel, std::vector<Tile*> *cTarget, bool cSameline){mParent = cParent; mLabel = cLabel; mTarget = cTarget; mCondition = cCond; bSameLine = cSameline;};		
 };
 
 class DialogDisplaySpriteCount : public DialogDisplayVectorSize<TSprite>{
@@ -631,6 +620,7 @@ class PODialog: public Dialog{
 		virtual int render(int xpos, int ypos, TextureParameters *mTexParam);
 };
 
+/*
 class PIDialog: public Dialog{
 	public:
 		TEditor* mEditor;
@@ -650,6 +640,7 @@ class PIDialog: public Dialog{
 		std::string cTileSizeY;
 		virtual int render(int xpos, int ypos);
 };
+*/
 
 class TBDialog: public Dialog{
 	public:

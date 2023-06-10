@@ -760,9 +760,7 @@ int TEditor::render(){
 		}
 		mTopBar.render();
 		mTileSet.renderIm(mGlobalSettings.TopBarHeight, 0);//mTileSetScrollY);
-		if(mGlobalSettings.bShowProjectInfo){
-			//mProjectInfo.update();
-			//mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
+		if(mGlobalSettings.bShowProjectInfo){			
 			showProjectInfo();
 		}
 		if(mGlobalSettings.bShowPaletteOffset){			
@@ -806,9 +804,7 @@ int TEditor::render(){
 		mTopBar.render();
 
 
-		if(mGlobalSettings.bShowProjectInfo){
-			//mProjectInfo.update();
-			//mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
+		if(mGlobalSettings.bShowProjectInfo){			
 			showProjectInfo();
 		}	
 
@@ -846,9 +842,7 @@ int TEditor::render(){
 			mSprite->renderIm(mGlobalSettings.TopBarHeight, 0);// mSprite->mFrameScrollY);
 		}
 
-		if(mGlobalSettings.bShowProjectInfo){
-			//mProjectInfo.update();
-			//mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
+		if(mGlobalSettings.bShowProjectInfo){			
 			showProjectInfo();
 		}	
 
@@ -883,9 +877,7 @@ int TEditor::render(){
 
 		mTopBar.render();
 
-		if(mGlobalSettings.bShowProjectInfo){
-			//mProjectInfo.update();
-			//mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
+		if(mGlobalSettings.bShowProjectInfo){			
 			showProjectInfo();
 		}
 
@@ -923,9 +915,7 @@ int TEditor::render(){
 
 		mTopBar.render();
 
-		if(mGlobalSettings.bShowProjectInfo){
-			//mProjectInfo.update();
-			//mProjectInfo.render(0,mGlobalSettings.TopBarHeight);
+		if(mGlobalSettings.bShowProjectInfo){			
 			showProjectInfo();
 		}
 
