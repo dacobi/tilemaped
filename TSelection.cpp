@@ -443,6 +443,7 @@ int TBrush::configBrush(int nWidth, int nHeight, int bType, TBrushList* cParent)
 
     mBrushElements.resize(mBrushWidth*mBrushHeight, -1);
     mElementProps.resize(mBrushWidth*mBrushHeight);
+    BrushElementAreas.resize(mBrushWidth*mBrushHeight);
 
     return 0;
 }
@@ -556,8 +557,14 @@ SDL_Rect TBrush::renderPixel(int xpos, int ypos){
     for(int i=0; i < mBrushHeight; i++){
             for(int j=0; j < mBrushWidth; j++){
                 if(mBrushElements[j+(i*mBrushWidth)] > -1){                    
-                    tList->AddRectFilled(telmin, telmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(mGlobalSettings.CurrentEditor->mPalette.TPalette[mBrushElements[j+(i*mBrushWidth)] + (16 * mParent->mTexParam->PaletteOffset) ] ));
+                    tList->AddRectFilled(telmin, telmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(mGlobalSettings.CurrentEditor->mPalette.TPalette[mBrushElements[j+(i*mBrushWidth)] + (16 * mParent->mTexParam->PaletteOffset) ] ));                    
                 }
+                
+                BrushElementAreas[j+(i*mBrushWidth)].x = telmin.x;
+                BrushElementAreas[j+(i*mBrushWidth)].y = telmin.y;
+                BrushElementAreas[j+(i*mBrushWidth)].w = telmax.x - telmin.x;
+                BrushElementAreas[j+(i*mBrushWidth)].h = telmax.y - telmin.y;
+
                 if(bIsEditing){
                     if((j+(i*mBrushWidth)) == mCursorPos){
                         tList->AddRect(telmin, telmax, mGlobalSettings.ImHighLightColor);
@@ -655,6 +662,12 @@ SDL_Rect TBrush::renderTile(int xpos, int ypos){
                         
                     }
                 }
+
+                BrushElementAreas[j+(i*mBrushWidth)].x = telmin.x;
+                BrushElementAreas[j+(i*mBrushWidth)].y = telmin.y;
+                BrushElementAreas[j+(i*mBrushWidth)].w = telmax.x - telmin.x;
+                BrushElementAreas[j+(i*mBrushWidth)].h = telmax.y - telmin.y;
+
                 if(bIsEditing){
                     if((j+(i*mBrushWidth)) == mCursorPos){
                         tList->AddRect(telmin, telmax, mGlobalSettings.ImHighLightColor);

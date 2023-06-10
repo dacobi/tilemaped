@@ -64,6 +64,7 @@ class TBrush: public TSelection{
         std::vector<int> mBrushElements;
         std::vector<TileProperties> mElementProps;
         TBrushList *mParent;
+        std::vector<SDL_Rect> BrushElementAreas;
         int UUID;
         int mBrushType;
         int mBrushWidth = 1;

@@ -3135,6 +3135,10 @@ int TEditor::handleBrushes(){
 			if(tSel != -1){
 				mBrushesTile.mSelectedBrush = tSel;
 				mCurrentBrushTile = mBrushesTile.mBrushes[tSel];
+				tSel = searchRectsXY(mBrushesTile.mBrushes[mBrushesTile.mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
+				if(tSel > -1){
+					mBrushesTile.mBrushes[mBrushesTile.mSelectedBrush]->mCursorPos = tSel;
+				}
 			}		
 		}
 	}
@@ -3146,6 +3150,10 @@ int TEditor::handleBrushes(){
 			if(tSel != -1){
 				mBrushesPixel.mSelectedBrush = tSel;
 				mCurrentBrushPixel = mBrushesPixel.mBrushes[tSel];
+				tSel = searchRectsXY(mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
+				if(tSel > -1){
+					mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->mCursorPos = tSel;
+				}
 			}		
 		}
 	}
@@ -3157,6 +3165,10 @@ int TEditor::handleBrushes(){
 			if(tSel != -1){
 				mBrushesSprite->mSelectedBrush = tSel;
 				mSprite->mCurrentBrushPixel = mBrushesSprite->mBrushes[tSel];
+				tSel = searchRectsXY(mBrushesSprite->mBrushes[mBrushesSprite->mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
+				if(tSel > -1){
+					mBrushesSprite->mBrushes[mBrushesSprite->mSelectedBrush]->mCursorPos = tSel;
+				}
 			}		
 		}
 	}
@@ -3169,6 +3181,10 @@ int TEditor::handleBrushes(){
             if(tSel != -1){
                 mBrushesPixel.mSelectedBrush = tSel;
                 mCurrentBrushPixelTileSet = mBrushesPixel.mBrushes[tSel];
+				tSel = searchRectsXY(mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
+				if(tSel > -1){
+					mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->mCursorPos = tSel;
+				}
             }               
         }
     }
@@ -3181,6 +3197,10 @@ int TEditor::handleBrushes(){
             if(tSel != -1){
                 mBrushesPixel.mSelectedBrush = tSel;
                 mCurrentBrushPixelSelEdit = mBrushesPixel.mBrushes[tSel];
+				tSel = searchRectsXY(mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
+				if(tSel > -1){
+					mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->mCursorPos = tSel;
+				}
             }               
         }
     }
