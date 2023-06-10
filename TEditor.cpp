@@ -436,10 +436,12 @@ int TEditor::loadFromFolder(std::string path){
 			
 			mTileSet.mSelEdWidth = mGlobalSettings.mProjectSettings.TileSet_EditWidth->getInteger();
 			mGlobalSettings.mTileSetEditWidth = mTileSet.mSelEdWidth;
+			mGlobalSettings.mTileSetEditScale = mGlobalSettings.mProjectSettings.TileSet_PixelScale->getInteger();
 			mTileSet.resizeEdit();		
 
 			mGlobalSettings.bShowTilePixelSelGrid = mGlobalSettings.mProjectSettings.SelectionEdit_ShowPixelGrid->getBool();
 			mGlobalSettings.bShowTileSelGrid = mGlobalSettings.mProjectSettings.SelectionEdit_ShowTileGrid->getBool();
+			mGlobalSettings.mSelectionEditScale = mGlobalSettings.mProjectSettings.SelectionEdit_PixelScale->getInteger();
 
 			mGlobalSettings.bShowPixelGridSprite = mGlobalSettings.mProjectSettings.Sprite_ShowPixelGrid->getBool();
 			mGlobalSettings.bSpriteWarnBeforeDelete = mGlobalSettings.mProjectSettings.Sprite_WarnBeforeDelete->getBool();
@@ -686,9 +688,11 @@ int TEditor::saveToFolder(std::string path){
  	mGlobalSettings.mProjectSettings.TileSet_UpdateMaps->bvalue = mGlobalSettings.bTileSetOrderUpdateTileMap;
 	mGlobalSettings.mProjectSettings.TileSet_WarnBeforeDelete->bvalue = mGlobalSettings.bTileSetWarnBeforeDelete;
  	mGlobalSettings.mProjectSettings.TileSet_EditWidth->ivalue = mTileSet.mSelEdWidth;
+	mGlobalSettings.mProjectSettings.TileSet_PixelScale->ivalue = mGlobalSettings.mTileSetEditScale;
 
 	mGlobalSettings.mProjectSettings.SelectionEdit_ShowPixelGrid->bvalue = mGlobalSettings.bShowTilePixelSelGrid;
 	mGlobalSettings.mProjectSettings.SelectionEdit_ShowTileGrid->bvalue = mGlobalSettings.bShowTileSelGrid;
+	mGlobalSettings.mProjectSettings.SelectionEdit_PixelScale->ivalue = mGlobalSettings.mSelectionEditScale;
 
 	mGlobalSettings.mProjectSettings.Sprite_ShowPixelGrid->bvalue = mGlobalSettings.bShowPixelGridSprite;
 	mGlobalSettings.mProjectSettings.Sprite_WarnBeforeDelete->bvalue = mGlobalSettings.bSpriteWarnBeforeDelete;

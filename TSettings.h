@@ -137,18 +137,20 @@ public:
 	int removeSpriteScaleKey(int cSNum);
 	
 	sKey *Editor_SelectionAppend;
+	sKey *Editor_UseTextureFiltering;
+	sKey *Editor_PixelScale;	
 	sKey *Tile_ShowPixelGrid;
 	sKey *TileSet_ShowPixelGrid;
 	sKey *TileSet_ShowTileGrid;	
 	sKey *TileSet_UpdateMaps;
 	sKey *TileSet_WarnBeforeDelete;
 	sKey *TileSet_EditWidth;
+	sKey *TileSet_PixelScale;	
 	sKey *SelectionEdit_ShowPixelGrid;
 	sKey *SelectionEdit_ShowTileGrid;
+	sKey *SelectionEdit_PixelScale;	
 	sKey *Sprite_ShowPixelGrid;
 	sKey *Sprite_WarnBeforeDelete;
-	sKey *Editor_UseTextureFiltering;
-	sKey *Editor_PixelScale;	
 };
 
 class ProgramSettings : public Settings{

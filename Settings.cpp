@@ -110,33 +110,38 @@ Settings::Settings(){
 
 ProjectSettings::ProjectSettings(){	
     Editor_SelectionAppend = new sKey("Editor_SelectionAppend", type_bool, true);
+	Editor_UseTextureFiltering = new sKey("Editor_UseTextureFiltering", type_int, 0);
+	Editor_PixelScale = new sKey("Editor_PixelScale", type_int, 16);
 	Tile_ShowPixelGrid = new sKey("Tile_ShowPixelGrid", type_bool, true);
 	TileSet_ShowPixelGrid = new sKey("TileSet_ShowPixelGrid", type_bool, true);
 	TileSet_ShowTileGrid = new sKey("TileSet_ShowTileGrid", type_bool, true);
 	TileSet_UpdateMaps = new sKey("TileSet_UpdateMaps", type_bool, true);
 	TileSet_WarnBeforeDelete = new sKey("TileSet_WarnBeforeDelete", type_bool, true);
 	TileSet_EditWidth = new sKey("TileSet_EditWidth", type_int, 4);
+	TileSet_PixelScale = new sKey("TileSet_PixelScale", type_int, 10);	
 	SelectionEdit_ShowPixelGrid = new sKey("SelectionEdit_ShowPixelGrid", type_bool, true);
 	SelectionEdit_ShowTileGrid = new sKey("SelectionEdit_ShowTileGrid", type_bool, true);
+	SelectionEdit_PixelScale = new sKey("SelectionEdit_PixelScale", type_int, 10);	
 	Sprite_ShowPixelGrid = new sKey("Sprite_ShowPixelGrid", type_bool, true);
 	Sprite_WarnBeforeDelete = new sKey("Sprite_WarnBeforeDelete", type_bool, true);
-	Editor_UseTextureFiltering = new sKey("Editor_UseTextureFiltering", type_int, 0);
-	Editor_PixelScale = new sKey("Editor_PixelScale", type_int, 16);
+	
 		
     keys.push_back(Editor_SelectionAppend);
+	keys.push_back(Editor_UseTextureFiltering);
+	keys.push_back(Editor_PixelScale);
 	keys.push_back(Tile_ShowPixelGrid);
 	keys.push_back(TileSet_ShowPixelGrid);
 	keys.push_back(TileSet_ShowTileGrid);
     keys.push_back(TileSet_UpdateMaps);
 	keys.push_back(TileSet_WarnBeforeDelete);
     keys.push_back(TileSet_EditWidth);
+	keys.push_back(TileSet_PixelScale);
 	keys.push_back(SelectionEdit_ShowPixelGrid);
 	keys.push_back(SelectionEdit_ShowTileGrid);
+	keys.push_back(SelectionEdit_PixelScale);
 	keys.push_back(Sprite_ShowPixelGrid);
 	keys.push_back(Sprite_WarnBeforeDelete);
-	keys.push_back(Editor_UseTextureFiltering);
-	keys.push_back(Editor_PixelScale);
-	
+		
     for(int i = 0; i < keys.size(); i++){
 		keyindex[keys[i]->kname] = i;
 	}
