@@ -15,7 +15,7 @@ file(GLOB Tilemaped_SRC "*.cpp" ".h")
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	add_executable(tilemaped ${Tilemaped_SRC} "tilemaped.rc")
 else()
-	if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+	#if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 	add_executable(tilemaped ${Tilemaped_SRC})
 endif()
 
