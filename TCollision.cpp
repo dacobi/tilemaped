@@ -162,20 +162,28 @@ int TCollisionMapEditor::render(){
     int isOdd = mGlobalSettings.CurrentEditor->mTileSet.TTiles.size() % mCurColumns;
 	int cRowNum = mGlobalSettings.CurrentEditor->mTileSet.TTiles.size() / mCurColumns;
 
-    ImGui::SetNextWindowSize(ImVec2(700,900), ImGuiCond_Once);
+    if(mGlobalSettings.bHighDPI){
+        ImGui::SetNextWindowSize(ImVec2(700,900), ImGuiCond_Once);
+    } else {
+        ImGui::SetNextWindowSize(ImVec2(700,900), ImGuiCond_Once);
+    }
+
+    ImVec2 cNewPos = ImGui::GetMainViewport()->GetCenter();
+	cNewPos.x /= mGlobalSettings.mUIScale;
+	cNewPos.y /= mGlobalSettings.mUIScale;
 
     if(bUpdateWinPos){
-		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+		ImGui::SetNextWindowPos(cNewPos, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 		bUpdateWinPos = false;
 	} else {
-		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Once, ImVec2(0.5f, 0.5f));
+		ImGui::SetNextWindowPos(cNewPos, ImGuiCond_Once, ImVec2(0.5f, 0.5f));
 	}
 
     ImGui::Begin("Collision Map", &mGlobalSettings.CurrentEditor->bShowCollisionEditor, ImGuiWindowFlags_NoNav); 
 
     std::stringstream convert;
     std::string sTile;
-    convert <<  (mSelectedTile + 1) << std::endl;
+    convert <<  (mSelectedTile) << std::endl;
     convert >> sTile;
 
     std::string cCurTile = "Selected Tile: " + sTile;
@@ -183,6 +191,7 @@ int TCollisionMapEditor::render(){
     ImGui::Text("%s",cCurTile.c_str());
 
     ImGui::SameLine();
+     
 
     ImGuiStyle& style2 = ImGui::GetStyle();
 
@@ -192,7 +201,7 @@ int TCollisionMapEditor::render(){
     float off2 = (avail2 - size2) - 10;
     if(off2 > 0.0f){
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off2);
-	}
+	} 
 
     if(ImGui::Button("Set All Values")){
         for(auto &cTVal : mTileMap->mColMap.MapData){

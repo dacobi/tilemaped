@@ -30,10 +30,17 @@ void Dialog::dropLastInputChar(){
 
 int Dialog::render(){
 	if(bUpdateWinPos){
-		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+		ImVec2 cNewPos = ImGui::GetMainViewport()->GetCenter();
+		cNewPos.x /= mGlobalSettings.mUIScale;
+		cNewPos.y /= mGlobalSettings.mUIScale;
+		ImGui::SetNextWindowPos(cNewPos, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 		bUpdateWinPos = false;		
 	} else {
-		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Once, ImVec2(0.5f, 0.5f));
+		ImVec2 cNewPos = ImGui::GetMainViewport()->GetCenter();
+		cNewPos.x /= mGlobalSettings.mUIScale;
+		cNewPos.y /= mGlobalSettings.mUIScale;
+		ImGui::SetNextWindowPos(cNewPos, ImGuiCond_Once, ImVec2(0.5f, 0.5f));
+		//ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Once, ImVec2(0.5f, 0.5f));
 	}
 	ImVec2 cWinSize = ImGui::GetWindowSize();
 	mDialogWidth = cWinSize.x;
@@ -43,6 +50,8 @@ int Dialog::render(){
 
 int Dialog::render(int ypos){
 	ImVec2 cCenter = ImGui::GetMainViewport()->GetCenter();
+	cCenter.x /= mGlobalSettings.mUIScale;
+	cCenter.y /= mGlobalSettings.mUIScale;
 	cCenter.y = ypos;
 	if(bUpdateWinPos){
 		ImGui::SetNextWindowPos(cCenter, ImGuiCond_Always, ImVec2(0.5f, 0.0f));
@@ -2722,7 +2731,11 @@ void DialogValueFile::render(){
 	DialogElement::render();
 
 	if(ImGui::Button(mLabel.c_str())){
-		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+		ImVec2 cNewPos = ImGui::GetMainViewport()->GetCenter();
+		cNewPos.x /= mGlobalSettings.mUIScale;
+		cNewPos.y /= mGlobalSettings.mUIScale;
+
+		ImGui::SetNextWindowPos(cNewPos, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 		ImGui::SetNextWindowSize(ImVec2(800, 600));
     	ImGuiFileDialog::Instance()->OpenDialog(mFileKey.c_str(), mLabel.c_str(), mFileExt.c_str(), ".");
 	}

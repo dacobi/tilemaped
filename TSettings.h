@@ -187,8 +187,12 @@ class TSettings{
 		TEditor* CurrentEditor;		
 		SDL_Renderer *TRenderer;
 		SDL_Window *TWindow;
+		SDL_Texture *TTarget = NULL;
 		ProjectSettings mProjectSettings;		
 		TextureParameters mGlobalTexParam;
+		
+		void windowResizeHighDPI(int cWidth, int cHeight);
+		void renderShow();
 
 		std::string mErrorMessage = "";
 
@@ -196,6 +200,10 @@ class TSettings{
 		
 		int WindowWidth=1900;
 		int WindowHeight=1000;
+
+		int WindowWidthActual=1900;
+		int WindowHeightActual=1000;
+
 		int TopBarHeight = 50;
 		int TileSetWidth=200;
 		//int SpriteWidth=200;
@@ -328,6 +336,8 @@ class TSettings{
 		bool bVSync = true;
 		bool bMaximize = false;
 		bool bRenderingD3D = false;
+		bool bHighDPI = false;
+		float mUIScale = 1.0;
 		int mUseTextureFiltering = 0;
 		ProgramSettings mINIFile;		
 };

@@ -971,7 +971,12 @@ TBrush* TBrushList::getNextBrush(){
 
 int TBrushList::renderIm(){
 
-    ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Once, ImVec2(0.5f, 0.5f));
+    ImVec2 cNewPos = ImGui::GetMainViewport()->GetCenter();
+
+    cNewPos.x /= mGlobalSettings.mUIScale;
+    cNewPos.y /= mGlobalSettings.mUIScale;
+
+    ImGui::SetNextWindowPos(cNewPos, ImGuiCond_Once, ImVec2(0.5f, 0.5f));
 	ImGui::SetNextWindowSize(ImVec2(600,800), ImGuiCond_Once);
 
     std::string cTitleType = "Brushes: " + mTitle;
@@ -998,7 +1003,9 @@ int TBrushList::renderIm(){
         if(ImGui::Button("Brushes Edit")){
             if(mBrushes.size()){
                 bIsEditing = true;
-                mBrushes[mSelectedBrush]->mCursorPos = 0;
+                for(auto *cBrush : mBrushes){
+                    cBrush->mCursorPos = 0;
+                }                
             }
         }
     }
@@ -1124,7 +1131,7 @@ int TBrushList::renderIm(){
         if(tmpWinH > cSizeCheck){
             mWinHeight = tmpWinH - 150;
             ImGui::SetNextWindowContentSize(ImVec2(600,mWinHeight + 20));
-        } else if ((tmpWinH < 750) && (mWinHeight > 800)){
+        } else if ((tmpWinH < (750)) && (mWinHeight > (800))){
             mWinHeight = 800;
             ImGui::SetNextWindowContentSize(ImVec2(600,mWinHeight));
         }

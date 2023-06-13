@@ -1,5 +1,6 @@
 #include "TSettings.h"
 #include "TEditor.h"
+#include "imgui_internal.h"
 
 extern TSettings mGlobalSettings;
 
@@ -3135,9 +3136,11 @@ int TEditor::handleBrushes(){
 			if(tSel != -1){
 				mBrushesTile.mSelectedBrush = tSel;
 				mCurrentBrushTile = mBrushesTile.mBrushes[tSel];
-				tSel = searchRectsXY(mBrushesTile.mBrushes[mBrushesTile.mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
-				if(tSel > -1){
-					mBrushesTile.mBrushes[mBrushesTile.mSelectedBrush]->mCursorPos = tSel;
+				if(mBrushesTile.bIsEditing){
+					tSel = searchRectsXY(mBrushesTile.mBrushes[mBrushesTile.mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
+					if(tSel > -1){
+						mBrushesTile.mBrushes[mBrushesTile.mSelectedBrush]->mCursorPos = tSel;
+					}
 				}
 			}		
 		}
@@ -3150,9 +3153,11 @@ int TEditor::handleBrushes(){
 			if(tSel != -1){
 				mBrushesPixel.mSelectedBrush = tSel;
 				mCurrentBrushPixel = mBrushesPixel.mBrushes[tSel];
-				tSel = searchRectsXY(mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
-				if(tSel > -1){
-					mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->mCursorPos = tSel;
+				if(mBrushesPixel.bIsEditing){
+					tSel = searchRectsXY(mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
+					if(tSel > -1){
+						mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->mCursorPos = tSel;
+					}
 				}
 			}		
 		}
@@ -3165,9 +3170,11 @@ int TEditor::handleBrushes(){
 			if(tSel != -1){
 				mBrushesSprite->mSelectedBrush = tSel;
 				mSprite->mCurrentBrushPixel = mBrushesSprite->mBrushes[tSel];
-				tSel = searchRectsXY(mBrushesSprite->mBrushes[mBrushesSprite->mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
-				if(tSel > -1){
-					mBrushesSprite->mBrushes[mBrushesSprite->mSelectedBrush]->mCursorPos = tSel;
+				if(mBrushesSprite->bIsEditing){
+					tSel = searchRectsXY(mBrushesSprite->mBrushes[mBrushesSprite->mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
+					if(tSel > -1){
+						mBrushesSprite->mBrushes[mBrushesSprite->mSelectedBrush]->mCursorPos = tSel;
+					}
 				}
 			}		
 		}
@@ -3181,9 +3188,11 @@ int TEditor::handleBrushes(){
             if(tSel != -1){
                 mBrushesPixel.mSelectedBrush = tSel;
                 mCurrentBrushPixelTileSet = mBrushesPixel.mBrushes[tSel];
-				tSel = searchRectsXY(mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
-				if(tSel > -1){
-					mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->mCursorPos = tSel;
+				if(mBrushesPixel.bIsEditing){
+					tSel = searchRectsXY(mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
+					if(tSel > -1){
+						mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->mCursorPos = tSel;
+					}
 				}
             }               
         }
@@ -3197,9 +3206,11 @@ int TEditor::handleBrushes(){
             if(tSel != -1){
                 mBrushesPixel.mSelectedBrush = tSel;
                 mCurrentBrushPixelSelEdit = mBrushesPixel.mBrushes[tSel];
-				tSel = searchRectsXY(mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
-				if(tSel > -1){
-					mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->mCursorPos = tSel;
+				if(mBrushesPixel.bIsEditing){
+					tSel = searchRectsXY(mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
+					if(tSel > -1){
+						mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->mCursorPos = tSel;
+					}
 				}
             }               
         }
@@ -3322,6 +3333,20 @@ int TEditor::handleEvents(){
 	
 	SDL_GetRelativeMouseState(&rx, &ry);
 	mButtonState = SDL_GetMouseState(&cx, &cy);
+	rx /= mGlobalSettings.mUIScale;
+	ry /= mGlobalSettings.mUIScale;
+
+	cx /= mGlobalSettings.mUIScale;
+	cy /= mGlobalSettings.mUIScale;
+
+	/*
+	rx = (int)((float)rx / mGlobalSettings.mUIScale);
+	ry = (int)((float)ry / mGlobalSettings.mUIScale);
+
+	cx = (int)((float)cx / mGlobalSettings.mUIScale);
+	cy = (int)((float)cy / mGlobalSettings.mUIScale);
+	*/
+
 	int mapWidthX = mGlobalSettings.TileMapWidth*mGlobalSettings.mGlobalTexParam.TexSizeX*mGlobalSettings.TileMapScale;					
 	int mapWidthY = mGlobalSettings.TileMapHeight*mGlobalSettings.mGlobalTexParam.TexSizeY*mGlobalSettings.TileMapScale;
 	
@@ -4165,8 +4190,8 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  		break;
 	  	case SDL_MOUSEBUTTONDOWN:
 	        if (cEvent->button.button == SDL_BUTTON_LEFT){	  		
-			    mouseSelX = cEvent->motion.x;
-			    mouseSelY = cEvent->motion.y;			    
+			    mouseSelX = cEvent->motion.x / mGlobalSettings.mUIScale;
+			    mouseSelY = cEvent->motion.y / mGlobalSettings.mUIScale;
 	    	}
 	    	break;
 	    	case SDL_MOUSEBUTTONUP:
@@ -4180,6 +4205,8 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	    	case SDL_MOUSEWHEEL:
 	    		int x,y;
 				SDL_GetMouseState(&x, &y);
+				x /= mGlobalSettings.mUIScale;
+				y /= mGlobalSettings.mUIScale;
 	    		applyScroll(x,y,cEvent->wheel.y,cEvent->wheel.x);
 	    		break;
 	}
@@ -4193,8 +4220,13 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
  	
 	int newWidth,newHeight;
  	SDL_GetWindowSize(mGlobalSettings.TWindow, &newWidth, &newHeight);
- 	mGlobalSettings.WindowWidth = newWidth;
- 	mGlobalSettings.WindowHeight = newHeight; 
+
+	if(mGlobalSettings.bHighDPI){
+		mGlobalSettings.windowResizeHighDPI(newWidth, newHeight);
+	} else {
+ 		mGlobalSettings.WindowWidth = newWidth;
+ 		mGlobalSettings.WindowHeight = newHeight; 		
+	}
 		
 	mTileSet.updateWinPos = true;
 	mTileSet.reCalculateScale();

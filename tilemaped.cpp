@@ -205,10 +205,25 @@ int TSettings::initSettings(){
 		window_flags = (SDL_WindowFlags)( SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	}
 
-	TWindow = SDL_CreateWindow( "TilemapEd", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WindowWidth, WindowHeight, window_flags);
-	if( TWindow == NULL ){
-		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
-		return 1;
+	if(mINIFile.Win_HighDPI->bvalue){
+		bHighDPI = true;
+		mUIScale = (float)mINIFile.Win_UIScale->ivalue / 100.0;
+		WindowWidthActual = WindowWidth;
+		WindowHeightActual = WindowHeight;
+		WindowWidth = (int)((float)WindowWidthActual / mUIScale);
+		WindowHeight = (int)((float)WindowHeightActual / mUIScale);
+		
+		TWindow = SDL_CreateWindow( "TilemapEd", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WindowWidthActual, WindowHeightActual, window_flags);
+		if( TWindow == NULL ){
+			std::cout << "SDL Error: " << SDL_GetError() << std::endl;
+			return 1;
+		}		
+	} else {
+		TWindow = SDL_CreateWindow( "TilemapEd", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WindowWidth, WindowHeight, window_flags);
+		if( TWindow == NULL ){
+			std::cout << "SDL Error: " << SDL_GetError() << std::endl;
+			return 1;
+		}
 	}
 
 	Uint32 mFlags = SDL_RENDERER_TARGETTEXTURE;
@@ -268,12 +283,25 @@ int TSettings::initSettings(){
 		SDL_MaximizeWindow(TWindow);		
 	}
 
+	if(bHighDPI){		
+		/*	ImGuiStyle &mStype = ImGui::GetStyle(); //(void)mStype;
+		mStype.ScaleAllSizes(2.0);
+		std::cout << "ImGui set Scale: " << mUIScale << std::endl;
+		mio->FontGlobalScale =  2.0;
+		*/
+		SDL_RenderSetScale(TRenderer, mUIScale, mUIScale);
+		std::cout << "SDL set Scale: " << (mUIScale) << std::endl;
+	}
+	
+
 	srand(time(0));
 
 	IMGUI_CHECKVERSION();
     ImGuiContext* mg = ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO(); (void)io;
 	mio = &io;
+
+	
 
 	mg->ConfigNavWindowingKeyNext = 0; //ImGuiMod_Ctrl | ImGuiKey_Tab;
 	mg->ConfigNavWindowingKeyPrev = 0; //ImGuiMod_Ctrl | ImGuiMod_Shift | ImGuiKey_Tab;
@@ -296,34 +324,28 @@ int TSettings::initSettings(){
 	builder.AddRanges(io.Fonts->GetGlyphRangesDefault()); // Add one of the default ranges
 	builder.BuildRanges(&ranges);       
 
-	if(mGlobalSettings.mINIFile.Win_HighDPI->bvalue){
-		DFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 14.0,  NULL, ranges.Data);
-		mio->Fonts->Build();
+	DFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 20.0,  NULL, ranges.Data);
+	mio->Fonts->Build();
 
-		SFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 12.0,  NULL, ranges.Data);
-		mio->Fonts->Build();
-	} else {
-		DFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 25.0,  NULL, ranges.Data);
-		mio->Fonts->Build();
+	SFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 18.0,  NULL, ranges.Data);
+	mio->Fonts->Build();
+	
 
-		SFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 20.0,  NULL, ranges.Data);
-		mio->Fonts->Build();
-	}
-
-    
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
-    //ImGui::StyleColorsLight();
+    //ImGui::StyleColorsLight();	
 
     // Setup Platform/Renderer backends
     ImGui_ImplSDL2_InitForSDLRenderer(mGlobalSettings.TWindow, mGlobalSettings.TRenderer);
     ImGui_ImplSDLRenderer_Init(mGlobalSettings.TRenderer);
 
+	
+	//mio->DisplayFramebufferScale = ImVec2(1.0/mUIScale, 1.0/mUIScale);
+	//mio->DisplaySize = ImVec2(WindowWidth/mUIScale, WindowHeight/mUIScale);
+	
 	mio->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	mio->ConfigFlags |= ImGuiConfigFlags_NavNoCaptureKeyboard;
 	
-	
-
 	return 0;	
 }
 
@@ -440,6 +462,19 @@ void TSettings::settingsMenu(){
 	}
 }
 
+void TSettings::renderShow(){
+	SDL_RenderPresent( TRenderer );
+}
+
+void TSettings::windowResizeHighDPI(int cWidth, int cHeight){
+	WindowWidthActual = cWidth;
+	WindowHeightActual = cHeight;
+
+	WindowWidth =  (int)((float)WindowWidthActual / mUIScale);
+	WindowHeight = (int)((float)WindowHeightActual / mUIScale);
+}
+		
+
 int TSettings::runOCD(int mode){
 
 	OCDialog mOpenCreate;
@@ -480,7 +515,7 @@ int TSettings::runOCD(int mode){
 
        	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
  
-		SDL_RenderPresent( TRenderer );
+		renderShow();
 
 		SDL_Event e;
 
@@ -516,8 +551,12 @@ int TSettings::runOCD(int mode){
 				if (e.window.event == SDL_WINDOWEVENT_RESIZED){
 					int newWidth,newHeight;
  					SDL_GetWindowSize(TWindow, &newWidth, &newHeight);
- 					WindowWidth = newWidth;
- 					WindowHeight = newHeight; 	
+					if(mINIFile.Win_HighDPI->bvalue){
+						windowResizeHighDPI(newWidth, newHeight);
+					} else {
+ 						WindowWidth = newWidth;
+ 						WindowHeight = newHeight; 	
+					}
 				}
 			break;
 			}
@@ -880,7 +919,7 @@ int main( int argc, char* args[] )
 	bool bVsync = true;
 	bool bRenderD3D = false;
 	bool bMaximize = false;
-	bool bSmallWindow = false;
+	bool bHighDPI = false;
 	bool bDisableHighDPI = false;
 	
 #ifdef MNIXHOME
@@ -988,14 +1027,17 @@ int main( int argc, char* args[] )
 		bMaximize = true;
 	}
 	if(argvals & 0x800){
-		bSmallWindow = true;
+		if(mGlobalSettings.mNewUIScale == 100){
+			bHighDPI = false;
+			bDisableHighDPI = true;	
+		} else {
+			bHighDPI = true;
+		}
 	}
 	if(argvals & 0x1000){
-		bSmallWindow = false;
+		bHighDPI = false;
 		bDisableHighDPI = true;
 	}
-
-	
 
 	mGlobalSettings.mINIFile.Sys_VSYNC->bvalue = bVsync;// ? 1 : 0;
 
@@ -1016,10 +1058,14 @@ int main( int argc, char* args[] )
 	mGlobalSettings.bVSync = bVsync;
 	mGlobalSettings.bMaximize = bMaximize;
 
-	if(bSmallWindow){
+	if(bHighDPI){
 		mGlobalSettings.mINIFile.Win_UIScale->ivalue = mGlobalSettings.mNewUIScale;
-		mGlobalSettings.WindowWidth = (int) (SCREEN_WIDTH / ((float)mGlobalSettings.mINIFile.Win_UIScale->ivalue/100.0)); 
-		mGlobalSettings.WindowHeight = (int) (SCREEN_HEIGHT / ((float)mGlobalSettings.mINIFile.Win_UIScale->ivalue/100.0)); 
+		float tmpUIScale = mGlobalSettings.mNewUIScale / 100.0;
+		if(tmpUIScale > 2){
+			tmpUIScale = 2.0;
+		}
+		mGlobalSettings.WindowWidth = SCREEN_WIDTH * tmpUIScale; 
+		mGlobalSettings.WindowHeight = SCREEN_HEIGHT * tmpUIScale; 
 		mGlobalSettings.mINIFile.Win_HighDPI->bvalue = true;
 		mGlobalSettings.mINIFile.Win_Width->ivalue = mGlobalSettings.WindowWidth;
 		mGlobalSettings.mINIFile.Win_Height->ivalue = mGlobalSettings.WindowHeight;
@@ -1103,7 +1149,8 @@ int main( int argc, char* args[] )
 						
         		ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
  
-				SDL_RenderPresent( mGlobalSettings.TRenderer );
+				//SDL_RenderPresent( mGlobalSettings.TRenderer );
+				mGlobalSettings.renderShow();
 
 				while( SDL_PollEvent( &e ) != 0 ){
 					ImGui_ImplSDL2_ProcessEvent(&e);
@@ -1124,17 +1171,17 @@ int main( int argc, char* args[] )
 			mGlobalSettings.mINIFile.Win_Maximize->bvalue = true;
 		} else {
 			mGlobalSettings.mINIFile.Win_Maximize->bvalue = false;
-			mGlobalSettings.mINIFile.Win_Width->ivalue = mGlobalSettings.WindowWidth;  
-			mGlobalSettings.mINIFile.Win_Height->ivalue = mGlobalSettings.WindowHeight; 
+			if(mGlobalSettings.bHighDPI){
+				mGlobalSettings.mINIFile.Win_Width->ivalue = mGlobalSettings.WindowWidthActual;  
+				mGlobalSettings.mINIFile.Win_Height->ivalue = mGlobalSettings.WindowHeightActual; 
+			} else {
+				mGlobalSettings.mINIFile.Win_Width->ivalue = mGlobalSettings.WindowWidth;  
+				mGlobalSettings.mINIFile.Win_Height->ivalue = mGlobalSettings.WindowHeight; 
+			}
 		}
 	} else {
-		if(mGlobalSettings.mINIFile.Win_HighDPI->bvalue){
-			mGlobalSettings.mINIFile.Win_Width->ivalue = (int) (SCREEN_WIDTH / ((float)mGlobalSettings.mINIFile.Win_UIScale->ivalue/100.0)); 
-			mGlobalSettings.mINIFile.Win_Height->ivalue = (int) (SCREEN_HEIGHT / ((float)mGlobalSettings.mINIFile.Win_UIScale->ivalue/100.0));  
-		} else {
-			mGlobalSettings.mINIFile.Win_Width->ivalue = SCREEN_WIDTH;  
-			mGlobalSettings.mINIFile.Win_Height->ivalue = SCREEN_HEIGHT; 
-		}
+		mGlobalSettings.mINIFile.Win_Width->ivalue = SCREEN_WIDTH;  
+		mGlobalSettings.mINIFile.Win_Height->ivalue = SCREEN_HEIGHT; 
 	}
 
 
