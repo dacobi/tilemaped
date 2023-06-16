@@ -902,6 +902,7 @@ int TBrush::prevLine(){
 int TBrushList::addBrushElement(int element){
     if(bIsEditing){
         mBrushes[mSelectedBrush]->setElementNext(element);
+        mLastElement = element;
     }
     return 0;
 }

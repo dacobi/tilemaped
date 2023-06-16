@@ -3144,6 +3144,17 @@ int TEditor::handleBrushes(){
 				}
 			}		
 		}
+		if(ImButtonsBrushes.mRight.bButtonIsDown){ 
+			if(ImButtonsBrushes.mRight.mMousePos.y < mBrushesTile.mBrushOffset) {return 0;}			
+			
+			if(mBrushesTile.bIsEditing){
+				int tSel = searchRectsXY(mBrushesTile.mBrushes[mBrushesTile.mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mRight.mMousePos.x, ImButtonsBrushes.mRight.mMousePos.y);
+				if(tSel > -1){
+					mBrushesTile.mBrushes[mBrushesTile.mSelectedBrush]->mCursorPos = tSel;
+					mBrushesTile.addBrushElement(mBrushesTile.mLastElement);
+				}
+			}
+		}
 	}
 	if(mCurMode == EMODE_TILE){
 		if(ImButtonsBrushes.mLeft.bButtonIsDown){ 
@@ -3161,6 +3172,17 @@ int TEditor::handleBrushes(){
 				}
 			}		
 		}
+		if(ImButtonsBrushes.mRight.bButtonIsDown){ 
+			if(ImButtonsBrushes.mRight.mMousePos.y < mBrushesPixel.mBrushOffset) {return 0;}			
+			
+			if(mBrushesPixel.bIsEditing){
+				int tSel = searchRectsXY(mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mRight.mMousePos.x, ImButtonsBrushes.mRight.mMousePos.y);
+				if(tSel > -1){
+					mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->mCursorPos = tSel;
+					mBrushesPixel.addBrushElement(mBrushesPixel.mLastElement);
+				}
+			}
+		}				
 	}
 	if(mCurMode == EMODE_SPRITE){
 		if(ImButtonsBrushes.mLeft.bButtonIsDown){ 
@@ -3177,6 +3199,17 @@ int TEditor::handleBrushes(){
 					}
 				}
 			}		
+		}
+		if(ImButtonsBrushes.mRight.bButtonIsDown){ 
+			if(ImButtonsBrushes.mRight.mMousePos.y < mBrushesSprite->mBrushOffset) {return 0;}			
+			
+			if(mBrushesSprite->bIsEditing){
+				int tSel = searchRectsXY(mBrushesSprite->mBrushes[mBrushesSprite->mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mRight.mMousePos.x, ImButtonsBrushes.mRight.mMousePos.y);
+				if(tSel > -1){
+					mBrushesSprite->mBrushes[mBrushesSprite->mSelectedBrush]->mCursorPos = tSel;
+					mBrushesSprite->addBrushElement(mBrushesSprite->mLastElement);
+				}
+			}
 		}
 	}
 	
@@ -3196,6 +3229,17 @@ int TEditor::handleBrushes(){
 				}
             }               
         }
+		if(ImButtonsBrushes.mRight.bButtonIsDown){ 
+			if(ImButtonsBrushes.mRight.mMousePos.y < mBrushesPixel.mBrushOffset) {return 0;}			
+			
+			if(mBrushesPixel.bIsEditing){
+				int tSel = searchRectsXY(mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mRight.mMousePos.x, ImButtonsBrushes.mRight.mMousePos.y);
+				if(tSel > -1){
+					mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->mCursorPos = tSel;
+					mBrushesPixel.addBrushElement(mBrushesPixel.mLastElement);
+				}
+			}
+		}
     }
 
 	if(mCurMode == EMODE_SELEDIT){
@@ -3214,6 +3258,17 @@ int TEditor::handleBrushes(){
 				}
             }               
         }
+		if(ImButtonsBrushes.mRight.bButtonIsDown){ 
+			if(ImButtonsBrushes.mRight.mMousePos.y < mBrushesPixel.mBrushOffset) {return 0;}			
+			
+			if(mBrushesPixel.bIsEditing){
+				int tSel = searchRectsXY(mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mRight.mMousePos.x, ImButtonsBrushes.mRight.mMousePos.y);
+				if(tSel > -1){
+					mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->mCursorPos = tSel;
+					mBrushesPixel.addBrushElement(mBrushesPixel.mLastElement);
+				}
+			}
+		}
     }
 
 

@@ -111,6 +111,7 @@ class TBrushList{
         int *mDeltaScale;
         bool bIsEditing = false;
         bool bSetAllElements = false;
+        int mLastElement = -1;
         int mWinHeight = 600;
         int mMaxX = 9;
         int mMaxY = 9;
