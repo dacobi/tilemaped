@@ -121,6 +121,8 @@ class TBrushList{
         int mNewBrushY=1;
         int mSelectedBrush=0;
         int mBrushOffset = 0;
+        bool bCircleInvert = false;
+        int mCircleSize = 0;
         int setBrushDeltas(int nDeltaX, int nDeltaY, int *nDeltaScale, int nRenderScale, TextureParameters *mTexParam);
    		std::vector<SDL_Rect> BrushAreas;
         int init(std::string cTitle, std::string cType, int cBrushType, bool *cIsShown, int nDeltaX, int nDeltaY, int *cDeltaScale, int cRenderScale, TBrush **cCurrentBrush, TextureParameters *mTexParam);

@@ -837,11 +837,11 @@ void TBrush::makeCircle(bool bInvert, float ms){
             float cRes = (fx/ma)*(fx/ma) +  (fy/mb)*(fy/ma) - 1;
             
             if(bInvert){            
-                if(!(cRes < ms)){
+                if((cRes < ms)){
                     mBrushElements[bx + (by * mBrushWidth)] = -1;
                 }
             } else {
-                if((cRes < ms)){
+                if(!(cRes < ms)){
                     mBrushElements[bx + (by * mBrushWidth)] = -1;
                 }
             }
@@ -1070,11 +1070,20 @@ int TBrushList::renderIm(){
         }
 
         if(ImGui::Button("Make Circle")){
-            mBrushes[mSelectedBrush]->makeCircle(true);
+            mBrushes[mSelectedBrush]->makeCircle(bCircleInvert, mCircleSize ? -0.5 : 0);
         }
 
         ImGui::SameLine();
+        ImGui::Checkbox("Invert Circle", &bCircleInvert);
 
+        ImGui::SameLine();
+        ImGui::RadioButton("Full Size", &mCircleSize, 0);
+
+        ImGui::SameLine();
+        ImGui::RadioButton("Small Size", &mCircleSize, 1);
+
+
+        /*
         if(ImGui::Button("Make Circle Inverted")){
             mBrushes[mSelectedBrush]->makeCircle(false);
         }
@@ -1088,6 +1097,7 @@ int TBrushList::renderIm(){
         if(ImGui::Button("Make Circle Small Inverted")){
             mBrushes[mSelectedBrush]->makeCircle(false, -0.5);
         }
+        */
 
 
         if(bSetAllElements){ 
