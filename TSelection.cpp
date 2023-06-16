@@ -1031,6 +1031,7 @@ int TBrushList::renderIm(){
 
         if(ImGui::Button("Empty Element")){
             mBrushes[mSelectedBrush]->setElementNext(-1);
+            mLastElement = -1;
         }
 
 
