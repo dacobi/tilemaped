@@ -759,12 +759,14 @@ int TPalette::renderIm(int xpos,int ypos, TextureParameters *mTexParam){
 
 	ImVec2 cPos = ImGui::GetWindowPos();
 	cPos.x += 10;
-	cPos.y += 40;
+	cPos.y += 35;
 
 	if(mTexParam->TexBPP < 0x8){
 
 	cPos.x += 70;
 
+	ImGui::PushFont(mGlobalSettings.LFont);
+		
 	ImGui::RadioButton("0", &mTexParam->PaletteOffset, 0);
 	ImGui::RadioButton("1", &mTexParam->PaletteOffset, 1);	
 	ImGui::RadioButton("2", &mTexParam->PaletteOffset, 2);
@@ -781,6 +783,8 @@ int TPalette::renderIm(int xpos,int ypos, TextureParameters *mTexParam){
 	ImGui::RadioButton("13", &mTexParam->PaletteOffset, 13);
 	ImGui::RadioButton("14", &mTexParam->PaletteOffset, 14);
 	ImGui::RadioButton("15", &mTexParam->PaletteOffset, 15);
+
+	ImGui::PopFont();
 
 
 		for(int i = 0; i < 16; i++){
@@ -1390,7 +1394,7 @@ int Tile::rotate(double cAngle){
    		     }
     	}	
    	
-		SDL_SetRenderTarget(mGlobalSettings.TRenderer, NULL);
+		SDL_SetRenderTarget(mGlobalSettings.TRenderer, mGlobalSettings.TTarget);
 		SDL_DestroyTexture(rTexture);		
 		SDL_DestroyTexture(rTexRot);
 		SDL_DestroyTexture(rTexDest);
@@ -1478,7 +1482,7 @@ int Tile::applyFilter(){
    		     }
     	}	
    	
-		SDL_SetRenderTarget(mGlobalSettings.TRenderer, NULL);
+		SDL_SetRenderTarget(mGlobalSettings.TRenderer, mGlobalSettings.TTarget);
 		SDL_DestroyTexture(rTexture);
 
 		
@@ -1550,7 +1554,7 @@ int Tile::upscale(Tile *cCopyTile){
    		     }
     	}	
    	
-		SDL_SetRenderTarget(mGlobalSettings.TRenderer, NULL);
+		SDL_SetRenderTarget(mGlobalSettings.TRenderer, mGlobalSettings.TTarget);
 		SDL_DestroyTexture(rTexture);
 
 		if(mGlobalSettings.mUseTextureFiltering){
@@ -1639,7 +1643,7 @@ int Tile::scale(double cScale){
    		     }
     	}	
    	
-		SDL_SetRenderTarget(mGlobalSettings.TRenderer, NULL);
+		SDL_SetRenderTarget(mGlobalSettings.TRenderer, mGlobalSettings.TTarget);
 		SDL_DestroyTexture(rTexture);
 
 		if(mGlobalSettings.mUseTextureFiltering){

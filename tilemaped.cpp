@@ -329,6 +329,10 @@ int TSettings::initSettings(){
 
 	SFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 18.0,  NULL, ranges.Data);
 	mio->Fonts->Build();
+
+	LFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 25.0,  NULL, ranges.Data);
+	mio->Fonts->Build();
+
 	
 
     // Setup Dear ImGui style

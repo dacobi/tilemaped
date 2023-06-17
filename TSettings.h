@@ -282,6 +282,7 @@ class TSettings{
 		int mSelectedTile = 0;		
 		ImFont* DFont;
 		ImFont* SFont;
+		ImFont* LFont;
 		SDL_Color DefaultBGColor = {0xc0,0xc0,0xc0,0xff};
 		SDL_Color DefaultDarkBGColor = {0xb0,0xb0,0xb0,0xff};
 		SDL_Color DefaultTextColor = {0xff,0xff,0xff,0xff};
