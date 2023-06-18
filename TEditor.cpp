@@ -438,6 +438,9 @@ int TEditor::loadFromFolder(std::string path){
 			mTileSet.mSelEdWidth = mGlobalSettings.mProjectSettings.TileSet_EditWidth->getInteger();
 			mGlobalSettings.mTileSetEditWidth = mTileSet.mSelEdWidth;
 			mGlobalSettings.mTileSetEditScale = mGlobalSettings.mProjectSettings.TileSet_PixelScale->getInteger();
+
+			mTileSet.mMaxColumns = mGlobalSettings.mProjectSettings.TileSet_MaxGridWidth->getInteger();
+
 			mTileSet.resizeEdit();		
 
 			mGlobalSettings.bShowTilePixelSelGrid = mGlobalSettings.mProjectSettings.SelectionEdit_ShowPixelGrid->getBool();
@@ -482,6 +485,12 @@ int TEditor::loadFromFolder(std::string path){
 
 			if(cSKey){				
 				mSprite->mTexParam.TexPixelSize = cSKey->getInteger();
+			}
+
+			cSKey = mGlobalSettings.mProjectSettings.getSpriteGridKey(nSpriteNum);
+
+			if(cSKey){				
+				mSprite->mMaxColumns = cSKey->getInteger();
 			}
 
 		} else {
@@ -628,6 +637,15 @@ int TEditor::saveToFolder(std::string path){
 				cNewSKey->ivalue = mSprites[i]->mTexParam.TexPixelSize;
 			}
 
+			cSKey = mGlobalSettings.mProjectSettings.getSpriteGridKey(nSpriteNum);
+
+			if(cSKey){
+				cSKey->ivalue = mSprites[i]->mMaxColumns;
+			} else {
+				sKey *cNewSKey = mGlobalSettings.mProjectSettings.createSpriteGridKey(nSpriteNum);
+				cNewSKey->ivalue = mSprites[i]->mMaxColumns;
+			}
+
 			nSpriteNum++;
 		}
 
@@ -670,6 +688,12 @@ int TEditor::saveToFolder(std::string path){
 		if(cDelSKey){
 			mGlobalSettings.mProjectSettings.removeSpriteScaleKey(nSpriteNum);
 		}
+
+		cDelSKey = mGlobalSettings.mProjectSettings.getSpriteGridKey(nSpriteNum);
+
+		if(cDelSKey){
+			mGlobalSettings.mProjectSettings.removeSpriteGridKey(nSpriteNum);
+		}
 					
 		nSpriteNum++;
 		convert << nSpriteNum << std::endl;
@@ -690,6 +714,8 @@ int TEditor::saveToFolder(std::string path){
 	mGlobalSettings.mProjectSettings.TileSet_WarnBeforeDelete->bvalue = mGlobalSettings.bTileSetWarnBeforeDelete;
  	mGlobalSettings.mProjectSettings.TileSet_EditWidth->ivalue = mTileSet.mSelEdWidth;
 	mGlobalSettings.mProjectSettings.TileSet_PixelScale->ivalue = mGlobalSettings.mTileSetEditScale;
+
+	mGlobalSettings.mProjectSettings.TileSet_MaxGridWidth->ivalue = mTileSet.mMaxColumns;
 
 	mGlobalSettings.mProjectSettings.SelectionEdit_ShowPixelGrid->bvalue = mGlobalSettings.bShowTilePixelSelGrid;
 	mGlobalSettings.mProjectSettings.SelectionEdit_ShowTileGrid->bvalue = mGlobalSettings.bShowTileSelGrid;

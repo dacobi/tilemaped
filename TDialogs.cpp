@@ -565,6 +565,10 @@ int TBDialog::render(){
 					if(ImGui::SliderInt("Frame Scale", &mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexPixelSize, TSprite::MinScale, TSprite::MaxScale,"%d", ImGuiSliderFlags_NoInput)){						
 						mGlobalSettings.CurrentEditor->setSpriteBrushes();						
 					}
+					if(ImGui::SliderInt("Max Grid Width", &mGlobalSettings.CurrentEditor->mSprite->mMaxColumns, TSprite::MinCol, TSprite::MaxCol,"%d", ImGuiSliderFlags_NoInput)){
+						mGlobalSettings.CurrentEditor->mSprite->mCurColumns = 1;
+						mGlobalSettings.CurrentEditor->mSprite->mCurFrameScale = 10;
+					}
 											
 					ImGui::EndMenu();
 				}
@@ -622,6 +626,14 @@ int TBDialog::render(){
 						}
 					}
 
+					ImGui::EndMenu();
+				}
+
+				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " TileSet Edit").c_str()))){
+					if(ImGui::SliderInt("Max Grid Width", &mGlobalSettings.CurrentEditor->mTileSet.mMaxColumns, TileSet::MinCol, TileSet::MaxCol,"%d", ImGuiSliderFlags_NoInput)){
+						mGlobalSettings.CurrentEditor->mTileSet.mCurColumns = 1;
+						mGlobalSettings.CurrentEditor->mTileSet.mCurTileScale = 10;
+					}
 					ImGui::EndMenu();
 				}
 

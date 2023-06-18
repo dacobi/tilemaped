@@ -149,10 +149,13 @@ public:
 	int mSelEdWidth = 4;
 	int mCurEdScale = 10;
 	int mPixelScale = 1;
+	int mMaxColumns = 4;
 	const static int MaxScale = 24;
 	const static int MinScale = 4;
 	const static int MaxGrid = 16;
 	const static int MinGrid = 2;
+	const static int MaxCol = 5;
+    const static int MinCol = 2;
 	int mSelectionAreaX;
 	int mSelectionAreaY;
 	int reCalculateScale();

@@ -119,6 +119,7 @@ ProjectSettings::ProjectSettings(){
 	TileSet_WarnBeforeDelete = new sKey("TileSet_WarnBeforeDelete", type_bool, true);
 	TileSet_EditWidth = new sKey("TileSet_EditWidth", type_int, 4);
 	TileSet_PixelScale = new sKey("TileSet_PixelScale", type_int, 10);	
+	TileSet_MaxGridWidth = new sKey("TileSet_MaxGridWidth", type_int, 4);	
 	SelectionEdit_ShowPixelGrid = new sKey("SelectionEdit_ShowPixelGrid", type_bool, true);
 	SelectionEdit_ShowTileGrid = new sKey("SelectionEdit_ShowTileGrid", type_bool, true);
 	SelectionEdit_PixelScale = new sKey("SelectionEdit_PixelScale", type_int, 10);	
@@ -136,6 +137,7 @@ ProjectSettings::ProjectSettings(){
 	keys.push_back(TileSet_WarnBeforeDelete);
     keys.push_back(TileSet_EditWidth);
 	keys.push_back(TileSet_PixelScale);
+	keys.push_back(TileSet_MaxGridWidth);
 	keys.push_back(SelectionEdit_ShowPixelGrid);
 	keys.push_back(SelectionEdit_ShowTileGrid);
 	keys.push_back(SelectionEdit_PixelScale);
@@ -180,6 +182,8 @@ void ProjectSettings::close(){
 	TileSet_UpdateMaps->bvalue = true;
 	TileSet_WarnBeforeDelete->bvalue = true;
 	TileSet_EditWidth->ivalue = 4;
+	TileSet_PixelScale->ivalue = 10;
+	TileSet_MaxGridWidth->ivalue = 4;
 	SelectionEdit_ShowPixelGrid->bvalue = true;
 	SelectionEdit_ShowTileGrid->bvalue = true;
 	Sprite_ShowPixelGrid->bvalue = true;
@@ -239,6 +243,58 @@ int ProjectSettings::removeSpriteScaleKey(int cSNum){
 
 	return 1;	
 }
+
+
+sKey* ProjectSettings::getSpriteGridKey(int cSNum){
+
+	std::stringstream sconv;
+	std::string sSnum;
+	sconv << cSNum << std::endl;
+	sconv >> sSnum;
+	sKey *cSpriteKey = getKey(std::string("Sprite"+sSnum+"_MaxGridWidth"));
+
+	if(cSpriteKey == keys[0]){
+		//std::cout << "Sprite Key Not Found!" << std::endl;
+		return NULL;
+	}
+
+	return cSpriteKey;	
+}
+
+sKey* ProjectSettings::createSpriteGridKey(int cSNum){
+	std::stringstream sconv;
+	std::string sSnum;
+	sconv << cSNum << std::endl;
+	sconv >> sSnum;
+	sKey *cSpriteKey = createNewKey(std::string("Sprite"+sSnum+"_MaxGridWidth"), type_int, 4);
+	return cSpriteKey;
+}
+
+int ProjectSettings::removeSpriteGridKey(int cSNum){
+	std::stringstream sconv;
+	std::string sSnum;
+	sconv << cSNum << std::endl;
+	sconv >> sSnum;
+	sKey *cSpriteKey = getKey(std::string("Sprite"+sSnum+"_MaxGridWidth"));
+
+	if(cSpriteKey == keys[0]){
+		return 1;
+	}
+
+	for(int ki = 0;  ki < keys.size(); ki++){
+		if(cSpriteKey == keys[ki]){
+			keys.erase(keys.begin()+ki);
+			
+			for(int i = 0; i < keys.size(); i++){
+				keyindex[keys[i]->kname] = i;
+			}
+			return 0;
+		}
+	}
+
+	return 1;	
+}
+
 
 int Settings::load(std::string filename){
 	if(bLoaded) return 0;

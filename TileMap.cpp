@@ -2571,7 +2571,7 @@ int TileSet::renderIm(int ypos, int mScroll){
 	
 	mTileSetBackGround.h = mGlobalSettings.WindowHeight- mGlobalSettings.TopBarHeight;
 	
-	if(mCurColumns < 4){
+	if(mCurColumns < mMaxColumns){
 		if( (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX ) +mColSpace ) * TTiles.size() )  / mCurColumns ) ) > mTileSetBackGround.h ){	
 			mCurTileScale--;
 		

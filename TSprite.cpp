@@ -349,7 +349,7 @@ TSFrame* TSprite::createNewFromFile(std::string newPath, TPalette* tpal){
 void TSprite::renderIm(int ypos, int mScroll){
     mFramesBackGround.h = mGlobalSettings.WindowHeight- mGlobalSettings.TopBarHeight;
 	
-	if(mCurColumns < 4){
+	if(mCurColumns < mMaxColumns){
 		if( (int)( (float)( ( ( (mCurFrameScale*mTexParam.TexSizeX ) +mColSpace ) * mFrames.size() )  / mCurColumns ) ) > mFramesBackGround.h ){	
 			mCurFrameScale--;
             if(mCurFrameScale == 0){

@@ -132,9 +132,14 @@ class ProjectSettings : public Settings{
 public:
 	ProjectSettings();
 	void close();
+
 	sKey* getSpriteScaleKey(int cSNum);
 	sKey* createSpriteScaleKey(int cSNum);
 	int removeSpriteScaleKey(int cSNum);
+
+	sKey* getSpriteGridKey(int cSNum);
+	sKey* createSpriteGridKey(int cSNum);
+	int removeSpriteGridKey(int cSNum);
 	
 	sKey *Editor_SelectionAppend;
 	sKey *Editor_UseTextureFiltering;
@@ -146,6 +151,7 @@ public:
 	sKey *TileSet_WarnBeforeDelete;
 	sKey *TileSet_EditWidth;
 	sKey *TileSet_PixelScale;	
+	sKey *TileSet_MaxGridWidth;	
 	sKey *SelectionEdit_ShowPixelGrid;
 	sKey *SelectionEdit_ShowTileGrid;
 	sKey *SelectionEdit_PixelScale;	

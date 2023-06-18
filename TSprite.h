@@ -57,6 +57,9 @@ class TSprite{
         int importPNG(SDL_Surface *cTiles, TPalette* tpal, std::vector<TSFrame*> &cNewFrames);   
         int mCurFrameScale=10;
 		int mCurColumns=1;
+        int mMaxColumns = 4;
+        const static int MaxCol = 5;
+        const static int MinCol = 2;
 		int mColSpace = 10;
         int SpriteWidth=200;		
         const static int MaxScale = 32;
