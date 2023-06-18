@@ -202,8 +202,7 @@ sKey* ProjectSettings::getSpriteScaleKey(int cSNum){
 	sconv >> sSnum;
 	sKey *cSpriteKey = getKey(std::string("Sprite"+sSnum+"_PixelScale"));
 
-	if(cSpriteKey == keys[0]){
-		//std::cout << "Sprite Key Not Found!" << std::endl;
+	if(cSpriteKey == keys[0]){		
 		return NULL;
 	}
 
@@ -253,8 +252,7 @@ sKey* ProjectSettings::getSpriteGridKey(int cSNum){
 	sconv >> sSnum;
 	sKey *cSpriteKey = getKey(std::string("Sprite"+sSnum+"_MaxGridWidth"));
 
-	if(cSpriteKey == keys[0]){
-		//std::cout << "Sprite Key Not Found!" << std::endl;
+	if(cSpriteKey == keys[0]){		
 		return NULL;
 	}
 
