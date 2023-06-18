@@ -814,6 +814,8 @@ int TEditor::render(){
 
 		if(bShowBrushesTile){
 			mBrushesTile.renderIm();
+		} else {
+			mBrushesTile.closeEdit();
 		}
 
 		if(bShowCollisionEditor){
@@ -853,7 +855,10 @@ int TEditor::render(){
 
 		if(bShowBrushesPixel){
 			mBrushesPixel.renderIm();
+		} else {
+			mBrushesPixel.closeEdit();
 		}
+
 	}
 
 	if(mCurMode == EMODE_SPRITE){
@@ -891,7 +896,10 @@ int TEditor::render(){
 
 		if(mSprite->bShowBrushesPixel){
 			mBrushesSprite->renderIm();
+		} else {
+			mBrushesSprite->closeEdit();
 		}
+
 	}
 
 
@@ -926,7 +934,10 @@ int TEditor::render(){
 
 		if(bShowBrushesPixelTileSet){
 			mBrushesPixel.renderIm();
+		} else {
+			mBrushesPixel.closeEdit();
 		}
+
 
 
 		mTileSet.mSelection.renderSelection();	 
@@ -964,7 +975,10 @@ int TEditor::render(){
 
 		if(bShowBrushesPixelSelEdit){
 			mBrushesPixel.renderIm();
+		} else {
+			mBrushesPixel.closeEdit();
 		}
+
 
 
 		mSelEdit.mSelection.renderSelection();	 

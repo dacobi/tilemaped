@@ -138,6 +138,7 @@ class TBrushList{
         int saveToFile(std::string cBrushPath);
         int loadFromFile(std::string cBrushPath);
         void close();
+        void closeEdit();
 };
 
 class TSelectionEditor{

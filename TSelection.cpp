@@ -1213,6 +1213,15 @@ void TBrushList::close(){
 	}
 }
 
+void TBrushList::closeEdit(){
+    if(bIsEditing){
+        bIsEditing = false;
+        bSetAllElements = false;                
+        mBrushes[mSelectedBrush]->bIsEditing = false;
+    }
+}
+
+
 int TBrushList::loadFromFile(std::string cBrushPath){
 
     std::string tmpStr,tmpStr2;
