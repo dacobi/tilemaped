@@ -72,7 +72,12 @@
         "locale": "cpp",
         "target": "cpp",
         "list": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "__hash_table": "cpp",
+        "__split_buffer": "cpp",
+        "__tree": "cpp",
+        "queue": "cpp",
+        "stack": "cpp"
     },
     "editor.autoClosingQuotes": "never",
     "editor.autoSurround": "never",

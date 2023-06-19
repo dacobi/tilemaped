@@ -697,6 +697,22 @@ int TBDialog::render(){
 					
 					ImGui::EndMenu();
 				}
+
+				if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE){
+					if(ImGui::MenuItem("Copy Selection (C)")){						
+						mGlobalSettings.CurrentEditor->handleCopyPaste();		
+					}
+					if(ImGui::MenuItem("Move/Cut Selection (M)")){						
+						mGlobalSettings.CurrentEditor->handleCopyPaste(true);		
+					}
+					if(ImGui::MenuItem("Paste Selection (V)")){						
+						mGlobalSettings.CurrentEditor->handleClipBoard();
+					}
+					if(ImGui::MenuItem("Cycle Selection (CTRL + V)")){						
+						mGlobalSettings.CurrentEditor->handleClipBoard(true);
+					}
+				}				
+
 				if(ImGui::MenuItem("Select All (A)")){
 					mGlobalSettings.CurrentEditor->handleSelection(SELMODE_ALL);
 				}

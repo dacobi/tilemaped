@@ -102,6 +102,8 @@ class TEditor{
 		int findSelTile();
 		int findSelSprite();
 		int handleSprite();
+		int handleCopyPaste(bool cCutSelection = false);
+		int handleClipBoard(bool cCycle = false);
 		int resizeWindowEvent(SDL_Event* event);
 		void createDialogs();
 		void initDialogs();

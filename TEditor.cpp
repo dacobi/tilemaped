@@ -1008,7 +1008,47 @@ void TEditor::setSpriteBrushes(){
 
 		mBrushesSprite->setBrushDeltas(mSprite->mTexParam.TexPixelSize, mSprite->mTexParam.TexPixelSize, &mSprite->mTexParam.TexEditScale, mSprite->mTexParam.TexEditScale, &mSprite->mTexParam);
 		mBrushesSprite->bIsShown = &mSprite->bShowBrushesPixel;
+
+		mSprite->mClipBoard.setBrushDeltas(mSprite->mTexParam.TexPixelSize, mSprite->mTexParam.TexPixelSize, &mSprite->mTexParam.TexEditScale, mSprite->mTexParam.TexEditScale, &mSprite->mTexParam);
 }
+
+int TEditor::handleCopyPaste(bool cCutSelection){
+
+	if(mCurMode == EMODE_SPRITE){
+
+		mSprite->mCurrentBrushPixel = mSprite->mClipBoard.createClipTile(mSprite->mFrame);
+
+		if(cCutSelection && mSprite->mCurrentBrushPixel){
+			if(mSprite->mFrame->mSelection.mSelected.size()){
+				TEActionReplacePixels* newAction = new TEActionReplacePixels();
+				newAction->doAction(mSprite->mFrame, mSprite->mFrame->mSelection.mSelected, -1, 0, &mPalette);
+				
+				if(!(newAction == mSprite->mActionStack.mLastAction)){
+					mSprite->mActionStack.mLastAction = newAction;
+					mSprite->mActionStack.newActionGroup();
+					mSprite->mActionStack.addSubActions(newAction->mSubActions);
+					mSprite->mActionStack.redoClearStack();
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
+int TEditor::handleClipBoard(bool cCycle){
+
+	if(mCurMode == EMODE_SPRITE){
+		if(cCycle){
+			mSprite->mCurrentBrushPixel = mSprite->mClipBoard.getNextBrush();
+		} else {
+			mSprite->mCurrentBrushPixel = mSprite->mClipBoard.getLastClip();
+		}
+	}
+	
+	return 0;
+}
+
 
 int TEditor::setMode(int newMode){
 
@@ -4182,6 +4222,19 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 				if(cEvent->key.keysym.sym == SDLK_y){
 		  			flipSelectedTile(2);
 	  			}
+				if(cEvent->key.keysym.sym == SDLK_c){
+					handleCopyPaste();
+				}
+				if(cEvent->key.keysym.sym == SDLK_m){
+					handleCopyPaste(true);
+				}
+				if(cEvent->key.keysym.sym == SDLK_v){
+					if(bLCTRLisDown){
+						handleClipBoard(true);
+					} else {
+						handleClipBoard();
+					}
+				}
 	  			if(cEvent->key.keysym.sym == SDLK_t){
 		  			toggleSelectedTile();
 	  			}				

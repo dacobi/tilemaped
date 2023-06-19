@@ -36,8 +36,11 @@ class TSprite{
                 mTexParam.TexEditScale = 1;
                 mTexParam.TexPixelSize-=4;
             }
-
+            
+            mClipBoard.init("Pixels","Pixel", TBRUSH_PIXEL, &bShowClipBoard, mTexParam.TexPixelSize, mTexParam.TexPixelSize, &mTexParam.TexEditScale, mTexParam.TexEditScale, &mCurrentBrushPixel, &mTexParam);
         };
+
+        bool bShowClipBoard = false;
         TSFrame *mFrame = NULL;
         std::vector<TSFrame*> mFrames;
         TextureParameters mTexParam;
@@ -79,6 +82,7 @@ class TSprite{
         std::string getSize(){return getSpriteSize();};
         std::vector<SDL_Rect> FrameAreas;		
         TEActionUndoStack mActionStack;
+        TClipBoard mClipBoard;
 };
 
 #endif

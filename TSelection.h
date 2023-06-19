@@ -164,4 +164,10 @@ class TSelectionEditor{
         TEActionUndoStack mActionStack;
 };
 
+class TClipBoard : public TBrushList{
+    public:
+        TBrush* createClipTile(Tile* cNewTile);        
+        TBrush* getLastClip();
+};
+
 #endif
