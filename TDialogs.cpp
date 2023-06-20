@@ -368,8 +368,10 @@ int TBDialog::render(){
 				}
 			}
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE){
-				if(ImGui::MenuItem("Brushes (F8)", NULL , &mGlobalSettings.CurrentEditor->mSprite->bShowBrushesPixel)){										
+				if(ImGui::MenuItem("Clipboard (F7)", NULL , &mGlobalSettings.CurrentEditor->mSprite->bShowClipboard)){										
 				}
+				if(ImGui::MenuItem("Brushes (F8)", NULL , &mGlobalSettings.CurrentEditor->mSprite->bShowBrushesPixel)){										
+				}				
 				if(ImGui::MenuItem("Selected Color (S)", NULL , &mGlobalSettings.bShowPixelTypeSprite)){										
 				}
 				if(ImGui::MenuItem("Pixel Grid (P)", NULL , &mGlobalSettings.bShowPixelGridSprite)){										
@@ -706,10 +708,10 @@ int TBDialog::render(){
 						mGlobalSettings.CurrentEditor->handleCopyPaste(true);		
 					}
 					if(ImGui::MenuItem("Paste Selection (V)")){						
-						mGlobalSettings.CurrentEditor->handleClipBoard();
+						mGlobalSettings.CurrentEditor->handleClipboardPaste();
 					}
 					if(ImGui::MenuItem("Cycle Selection (CTRL + V)")){						
-						mGlobalSettings.CurrentEditor->handleClipBoard(true);
+						mGlobalSettings.CurrentEditor->handleClipboardPaste(true);
 					}
 				}				
 

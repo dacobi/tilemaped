@@ -103,7 +103,8 @@ class TEditor{
 		int findSelSprite();
 		int handleSprite();
 		int handleCopyPaste(bool cCutSelection = false);
-		int handleClipBoard(bool cCycle = false);
+		int handleClipboardPaste(bool cCycle = false);
+		int handleClipboard();
 		int resizeWindowEvent(SDL_Event* event);
 		void createDialogs();
 		void initDialogs();
@@ -129,6 +130,7 @@ class TEditor{
 		ImWinMouseState ImButtonsTileSet;		
 		ImWinMouseState ImButtonsPalette;		
 		ImWinMouseState ImButtonsBrushes;		
+		ImWinMouseState ImButtonsClipboard;
 		ImWinMouseState ImButtonsColEdit;
 		ImWinMouseState ImButtonsSprite;		
 		bool leftMouseButtonDown = false;		
@@ -281,6 +283,7 @@ class TEditor{
 		int activateRemoveFrame();
 		
 		int activateBrushes();
+		int activateClipboard();
 		int activateBrush();
 		int dropBrush();
 		int rx,ry;

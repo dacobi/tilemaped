@@ -900,6 +900,10 @@ int TEditor::render(){
 			mBrushesSprite->closeEdit();
 		}
 
+		if(mSprite->bShowClipboard){
+			mSprite->mClipboard.renderIm();
+		}
+
 	}
 
 
@@ -1009,14 +1013,14 @@ void TEditor::setSpriteBrushes(){
 		mBrushesSprite->setBrushDeltas(mSprite->mTexParam.TexPixelSize, mSprite->mTexParam.TexPixelSize, &mSprite->mTexParam.TexEditScale, mSprite->mTexParam.TexEditScale, &mSprite->mTexParam);
 		mBrushesSprite->bIsShown = &mSprite->bShowBrushesPixel;
 
-		mSprite->mClipBoard.setBrushDeltas(mSprite->mTexParam.TexPixelSize, mSprite->mTexParam.TexPixelSize, &mSprite->mTexParam.TexEditScale, mSprite->mTexParam.TexEditScale, &mSprite->mTexParam);
+		mSprite->mClipboard.setBrushDeltas(mSprite->mTexParam.TexPixelSize, mSprite->mTexParam.TexPixelSize, &mSprite->mTexParam.TexEditScale, mSprite->mTexParam.TexEditScale, &mSprite->mTexParam);
 }
 
 int TEditor::handleCopyPaste(bool cCutSelection){
 
 	if(mCurMode == EMODE_SPRITE){
 
-		mSprite->mCurrentBrushPixel = mSprite->mClipBoard.createClipTile(mSprite->mFrame);
+		mSprite->mCurrentBrushPixel = mSprite->mClipboard.createClipTile(mSprite->mFrame);
 
 		if(cCutSelection && mSprite->mCurrentBrushPixel){
 			if(mSprite->mFrame->mSelection.mSelected.size()){
@@ -1036,13 +1040,13 @@ int TEditor::handleCopyPaste(bool cCutSelection){
 	return 0;
 }
 
-int TEditor::handleClipBoard(bool cCycle){
+int TEditor::handleClipboardPaste(bool cCycle){
 
 	if(mCurMode == EMODE_SPRITE){
 		if(cCycle){
-			mSprite->mCurrentBrushPixel = mSprite->mClipBoard.getNextBrush();
+			mSprite->mCurrentBrushPixel = mSprite->mClipboard.getPrevClip();
 		} else {
-			mSprite->mCurrentBrushPixel = mSprite->mClipBoard.getLastClip();
+			mSprite->mCurrentBrushPixel = mSprite->mClipboard.getLastClip();
 		}
 	}
 	
@@ -1955,6 +1959,11 @@ bool TEditor::checkQuit(){
 			mSprite->bShowBrushesPixel = false;
 			return true;
 		}
+		if(mSprite->bShowClipboard){
+			mSprite->bShowClipboard = false;
+			return true;
+		}
+
 		if(mSprite->mCurrentBrushPixel){
 			mSprite->mCurrentBrushPixel = NULL;
 			return true;
@@ -2132,6 +2141,13 @@ int TEditor::activateOpenTileSetDialog(){
 		mActiveDialog = &mOpenTileSetDialog;
 		mActiveDialog->bDialogIsWatingForText = true;		
 	}
+	return 0;
+}
+int TEditor::activateClipboard(){
+	if(mCurMode == EMODE_SPRITE){
+		mSprite->bShowClipboard = !mSprite->bShowClipboard;
+	}
+
 	return 0;
 }
 
@@ -3206,6 +3222,24 @@ int TEditor::handleTileSetEdit(){
 	return 0;
 }
 
+int TEditor::handleClipboard(){
+
+	if(mCurMode == EMODE_SPRITE){
+		if(ImButtonsClipboard.mLeft.bButtonIsDown){ 
+			if(ImButtonsClipboard.mLeft.mMousePos.y < mSprite->mClipboard.mBrushOffset) {return 0;}
+			int tSel = -1;
+			tSel = searchRectsXY(mSprite->mClipboard.BrushAreas, ImButtonsClipboard.mLeft.mMousePos.x, ImButtonsClipboard.mLeft.mMousePos.y);
+			if(tSel != -1){
+				mSprite->mClipboard.mSelectedBrush = tSel;
+				mSprite->mCurrentBrushPixel = mSprite->mClipboard.mBrushes[tSel];				
+			}		
+		}
+		
+	}
+
+	return 0;
+}
+
 int TEditor::handleBrushes(){
 
 	if(mCurMode == EMODE_MAP){
@@ -3264,6 +3298,7 @@ int TEditor::handleBrushes(){
 			}
 		}				
 	}
+
 	if(mCurMode == EMODE_SPRITE){
 		if(ImButtonsBrushes.mLeft.bButtonIsDown){ 
 			if(ImButtonsBrushes.mLeft.mMousePos.y < mBrushesSprite->mBrushOffset) {return 0;}
@@ -4087,7 +4122,8 @@ int TEditor::handleEvents(){
 				handleEMTile();
 			}
 			if(mCurMode == EMODE_SPRITE){
-				handleBrushes();				
+				handleBrushes();
+				handleClipboard();				
 				findSelSprite();
 				handleSprite();
 				handlePalette();
@@ -4230,9 +4266,9 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 				}
 				if(cEvent->key.keysym.sym == SDLK_v){
 					if(bLCTRLisDown){
-						handleClipBoard(true);
+						handleClipboardPaste(true);
 					} else {
-						handleClipBoard();
+						handleClipboardPaste();
 					}
 				}
 	  			if(cEvent->key.keysym.sym == SDLK_t){
@@ -4310,6 +4346,9 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F11){	  				
 		  			activateSaveAsDialog();
+	  			}
+				if(cEvent->key.keysym.sym == SDLK_F7){	  				
+					activateClipboard();
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F8){	  				
 					activateBrushes();

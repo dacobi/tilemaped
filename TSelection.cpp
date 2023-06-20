@@ -1371,7 +1371,7 @@ SDL_Rect rEmpty;
     
 }
 
-TBrush* TClipBoard::createClipTile(Tile* cNewTile){
+TBrush* TClipboard::createClipTile(Tile* cNewTile){
 
     TBrush *newClip = NULL;
     int cFX, cFY, cLX, cLY;
@@ -1383,7 +1383,7 @@ TBrush* TClipBoard::createClipTile(Tile* cNewTile){
         addBrush(cWidth, cHeight);
 
         newClip = mBrushes[mBrushes.size() - 1];
-        //mSelectedBrush = mBrushes.size() - 1;
+        mSelectedBrush = mBrushes.size() - 1;
 
         std::sort(cNewTile->mSelection.mSelected.begin(), cNewTile->mSelection.mSelected.end(), [](int a, int b){return a < b;});
 
@@ -1400,11 +1400,94 @@ TBrush* TClipBoard::createClipTile(Tile* cNewTile){
     return newClip;
 }
 
-TBrush* TClipBoard::getLastClip(){
+TBrush* TClipboard::getLastClip(){
     
     if(mBrushes.size() == 0){
         return NULL;
     }
 
     return mBrushes[mBrushes.size() - 1];
+}
+
+TBrush* TClipboard::getPrevClip(){
+    TBrush* cBrush = NULL;
+    
+    if(mBrushes.size()){
+        mSelectedBrush--;
+        if(mSelectedBrush < 0){
+            mSelectedBrush = mBrushes.size()-1;            
+        }
+    
+        cBrush = mBrushes[mSelectedBrush];
+    }
+
+    return cBrush;
+}
+
+int TClipboard::renderIm(){
+
+    ImVec2 cNewPos = ImGui::GetMainViewport()->GetCenter();
+
+    cNewPos.x /= mGlobalSettings.mUIScale;
+    cNewPos.y /= mGlobalSettings.mUIScale;
+
+    ImGui::SetNextWindowPos(cNewPos, ImGuiCond_Once, ImVec2(0.5f, 0.5f));
+	ImGui::SetNextWindowSize(ImVec2(600,800), ImGuiCond_Once);
+
+    std::string cTitleType = "Clipboard: " + mTitle;
+
+    ImGui::Begin(cTitleType.c_str(), bIsShown, ImGuiWindowFlags_NoNav);
+
+    if(ImGui::Button("Remove Selection")){
+        removeBrush();
+        *mCurrentBrush = NULL;        
+    }
+
+    if(mBrushes.size()){
+    
+        int tmpWinH=50;
+
+        for(auto cbrushs: BrushAreas){
+            tmpWinH += cbrushs.h + 10;
+        }
+
+        int cSizeCheck = 750;
+
+        if(tmpWinH > cSizeCheck){
+            mWinHeight = tmpWinH - 50;
+            ImGui::SetNextWindowContentSize(ImVec2(600,mWinHeight + 20));
+        } else if ((tmpWinH < (750)) && (mWinHeight > (800))){
+            mWinHeight = 800;
+            ImGui::SetNextWindowContentSize(ImVec2(600,mWinHeight));
+        }
+    }
+
+    ImGui::BeginChild("Brush List", ImVec2(0,0), false, ImGuiWindowFlags_NoNav);
+
+    ImVec2 tSubWinPos = ImGui::GetWindowPos();
+
+    mBrushOffset = tSubWinPos.y;
+
+    int yoffset = 20 - ImGui::GetScrollY();
+
+    for(int i=0;i < mBrushes.size(); i++){
+        if(mSelectedBrush == i){
+            if(bIsEditing){ mBrushes[i]->bIsEditing = true;} 
+            mBrushes[i]->bIsSelected = true;
+        } else {
+            mBrushes[i]->bIsSelected = false;    
+            mBrushes[i]->bIsEditing = false;    
+        }
+
+        BrushAreas[i] = mBrushes[i]->renderIm(20, yoffset);
+        yoffset+=mBrushes[i]->mWinSize.y+=10;
+    }
+
+    ImGui::EndChild();
+
+    mGlobalSettings.CurrentEditor->ImButtonsClipboard.updateButtonStates();
+
+    ImGui::End();
+
+    return 0;
 }

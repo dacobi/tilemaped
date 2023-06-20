@@ -164,10 +164,13 @@ class TSelectionEditor{
         TEActionUndoStack mActionStack;
 };
 
-class TClipBoard : public TBrushList{
+class TClipboard : public TBrushList{
     public:
+        TClipboard(){mLocalTexParam.TexPixelSize-=12;};
         TBrush* createClipTile(Tile* cNewTile);        
         TBrush* getLastClip();
+        TBrush* getPrevClip();
+        int renderIm();
 };
 
 #endif
