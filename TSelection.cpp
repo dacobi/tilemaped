@@ -1149,6 +1149,8 @@ int TBrushList::renderIm(){
         }
     }
 
+    ImGui::Separator();
+
     ImGui::BeginChild("Brush List", ImVec2(0,0), false, ImGuiWindowFlags_NoNav);
 
     ImVec2 tSubWinPos = ImGui::GetWindowPos();
@@ -1462,7 +1464,9 @@ int TClipboard::renderIm(){
         }
     }
 
-    ImGui::BeginChild("Brush List", ImVec2(0,0), false, ImGuiWindowFlags_NoNav);
+    ImGui::Separator();
+
+    ImGui::BeginChild("Selection List", ImVec2(0,0), false, ImGuiWindowFlags_NoNav);
 
     ImVec2 tSubWinPos = ImGui::GetWindowPos();
 
