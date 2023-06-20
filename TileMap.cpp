@@ -1882,7 +1882,7 @@ void Tile::renderEd(int xpos, int ypos, TPalette* tpal){
 		}
 	}
 	
-	if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel && !mGlobalSettings.CurrentEditor->mBrushesPixel.bIsEditing){
+	if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel){ // && !mGlobalSettings.CurrentEditor->mBrushesPixel.bIsEditing){
 		if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel->mSelected.size()){
 			for(int i=0; i < mTexParam->TexSizeY; i++){
 				for(int j=0; j < mTexParam->TexSizeX; j++){	
@@ -1927,6 +1927,7 @@ void TileSet::close(){
 		dTile->freeTexture();
 	}
 	TTiles.clear();
+	mClipboardTiles.close();
 }
 
 void TileSet::shutdown(){

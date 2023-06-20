@@ -130,6 +130,8 @@ int TEditor::createNewProject(){
 		mTileSet.createNew(&mPalette);
 	}
 
+	mTileSet.mClipboardTiles.init("Tiles","Pixel", TBRUSH_PIXEL, &mTileSet.bShowClipboardTiles, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.CurrentEditor->mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
+
 	initDialogs();
 
 	return 0;
@@ -378,6 +380,8 @@ int TEditor::loadFromFolder(std::string path){
 		std::cout << "Error loading tiles: " << path << DIRDEL << "tiles.bin" << std::endl;
 		return 1;
 	}
+
+	mTileSet.mClipboardTiles.init("Tiles","Pixel", TBRUSH_PIXEL, &mTileSet.bShowClipboardTiles, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.CurrentEditor->mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
 
 	//TODO maybe
 
@@ -858,6 +862,10 @@ int TEditor::render(){
 		} else {
 			mBrushesPixel.closeEdit();
 		}
+		
+		if(mTileSet.bShowClipboardTiles){
+			mTileSet.mClipboardTiles.renderIm();
+		}
 
 	}
 
@@ -1037,6 +1045,25 @@ int TEditor::handleCopyPaste(bool cCutSelection){
 		}
 	}
 
+	if(mCurMode == EMODE_TILE){
+
+		mCurrentBrushPixel = mTileSet.mClipboardTiles.createClipTile(mTileSelectedTile);
+
+		if(cCutSelection && mCurrentBrushPixel){
+			if(mTileSelectedTile->mSelection.mSelected.size()){
+				TEActionReplacePixels* newAction = new TEActionReplacePixels();
+				newAction->doAction(mTileSelectedTile, mTileSelectedTile->mSelection.mSelected, -1, 0, &mPalette);
+				if(!(newAction == mTileSelectedTile->mActionStack.mLastAction)){
+					mTileSelectedTile->mActionStack.mLastAction = newAction;
+					mTileSelectedTile->mActionStack.newActionGroup();
+					mTileSelectedTile->mActionStack.addSubActions(newAction->mSubActions);
+					mTileSelectedTile->mActionStack.redoClearStack();
+				}
+			}
+		}
+	}
+
+
 	return 0;
 }
 
@@ -1049,7 +1076,16 @@ int TEditor::handleClipboardPaste(bool cCycle){
 			mSprite->mCurrentBrushPixel = mSprite->mClipboard.getLastClip();
 		}
 	}
-	
+
+
+	if(mCurMode == EMODE_TILE){
+		if(cCycle){
+			mCurrentBrushPixel = mTileSet.mClipboardTiles.getPrevClip();
+		} else {
+			mCurrentBrushPixel = mTileSet.mClipboardTiles.getLastClip();
+		}
+	}
+
 	return 0;
 }
 
@@ -1064,7 +1100,8 @@ int TEditor::setMode(int newMode){
 
 	if(newMode == EMODE_TILE){
 		mBrushesPixel.setBrushDeltas(mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mGlobalTexParam);
-		mBrushesPixel.bIsShown = &bShowBrushesPixel;		
+		mBrushesPixel.bIsShown = &bShowBrushesPixel;
+		mTileSet.mClipboardTiles.setBrushDeltas(mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mGlobalTexParam);
 	}
 
 	if(newMode == EMODE_TILESET){
@@ -1204,6 +1241,7 @@ int TEditor::applyScroll(int mx,int my, int amount, int xamount){
 				}
 			}
 			mBrushesPixel.setBrushDeltas(mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mGlobalTexParam);
+			mTileSet.mClipboardTiles.setBrushDeltas(mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mGlobalTexParam);
 		}
 	}
 
@@ -1948,6 +1986,10 @@ bool TEditor::checkQuit(){
 			bShowBrushesPixel = false;
 			return true;
 		}
+		if(mTileSet.bShowClipboardTiles){
+			mTileSet.bShowClipboardTiles = false;
+			return true;
+		}
 		if(mCurrentBrushPixel){
 			mCurrentBrushPixel = NULL;
 			return true;
@@ -2146,6 +2188,9 @@ int TEditor::activateOpenTileSetDialog(){
 int TEditor::activateClipboard(){
 	if(mCurMode == EMODE_SPRITE){
 		mSprite->bShowClipboard = !mSprite->bShowClipboard;
+	}
+	if(mCurMode == EMODE_TILE){
+		mTileSet.bShowClipboardTiles = !mTileSet.bShowClipboardTiles;
 	}
 
 	return 0;
@@ -3237,6 +3282,19 @@ int TEditor::handleClipboard(){
 		
 	}
 
+	if(mCurMode == EMODE_TILE){
+		if(ImButtonsClipboard.mLeft.bButtonIsDown){ 
+			if(ImButtonsClipboard.mLeft.mMousePos.y < mTileSet.mClipboardTiles.mBrushOffset) {return 0;}
+			int tSel = -1;
+			tSel = searchRectsXY(mTileSet.mClipboardTiles.BrushAreas, ImButtonsClipboard.mLeft.mMousePos.x, ImButtonsClipboard.mLeft.mMousePos.y);
+			if(tSel != -1){
+				mTileSet.mClipboardTiles.mSelectedBrush = tSel;
+				mCurrentBrushPixel = mTileSet.mClipboardTiles.mBrushes[tSel];				
+			}		
+		}
+		
+	}
+
 	return 0;
 }
 
@@ -4119,6 +4177,7 @@ int TEditor::handleEvents(){
 			}
 			if(mCurMode == EMODE_TILE){
 				handleBrushes();
+				handleClipboard();
 				handleEMTile();
 			}
 			if(mCurMode == EMODE_SPRITE){

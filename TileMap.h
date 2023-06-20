@@ -132,6 +132,7 @@ public:
 
 class TileSet{
 public:
+	TileSet(){mClipboardTiles.mLocalTexParam.TexPixelSize+=6;};
 	void shutdown();
 	void close();
 	std::string DataPath;
@@ -179,10 +180,13 @@ public:
 	bool updateWinPos = false;
 	bool bUpdateEditSelection = false;
 	bool bUpdateEditSelectionScale = false;
+    bool bShowClipboardTiles = false;
 	std::map<int, int> mTileSizeIn = { {0, 8}, {1, 16} };
 	std::map<int, int> mTileSizeOut = { {8, 0}, {16, 1} };
 	TSelection mSelection;
 	TEActionUndoStack mActionStack;
+    TClipboard mClipboardTiles;
+
 };
 
 class TileProperties{

@@ -360,6 +360,8 @@ int TBDialog::render(){
 				
 			}
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE){
+				if(ImGui::MenuItem("Clipboard (F7)", NULL , &mGlobalSettings.CurrentEditor->mTileSet.bShowClipboardTiles)){										
+				}
 				if(ImGui::MenuItem("Brushes (F8)", NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixel)){										
 				}
 				if(ImGui::MenuItem("Selected Color (S)", NULL , &mGlobalSettings.bShowPixelType)){										
@@ -678,6 +680,7 @@ int TBDialog::render(){
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Tile Edit").c_str()))){					
 					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mGlobalTexParam.TexPixelSize, Tile::MinScale, Tile::MaxScale,"%d", ImGuiSliderFlags_NoInput)){						
 						mGlobalSettings.CurrentEditor->mBrushesPixel.setBrushDeltas(mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mGlobalTexParam);
+						mGlobalSettings.CurrentEditor->mTileSet.mClipboardTiles.setBrushDeltas(mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mGlobalTexParam);
 					}
 											
 					ImGui::EndMenu();
@@ -700,7 +703,7 @@ int TBDialog::render(){
 					ImGui::EndMenu();
 				}
 
-				if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE){
+				if( (mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE) || (mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE)){
 					if(ImGui::MenuItem("Copy Selection (C)")){						
 						mGlobalSettings.CurrentEditor->handleCopyPaste();		
 					}
