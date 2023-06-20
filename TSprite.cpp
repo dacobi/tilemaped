@@ -9,7 +9,7 @@ void TSFrame::renderEd(int xpos, int ypos, TPalette* tpal){
 		}
 	}
 	
-	if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel && !mGlobalSettings.CurrentEditor->mBrushesSprite->bIsEditing){
+	if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel){ // && !mGlobalSettings.CurrentEditor->mBrushesSprite->bIsEditing){
 		if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->mSelected.size()){
 			for(int i=0; i < mTexParam->TexSizeY; i++){
 				for(int j=0; j < mTexParam->TexSizeX; j++){	
