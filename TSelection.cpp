@@ -1377,6 +1377,32 @@ SDL_Rect rEmpty;
     
 }
 
+TBrush* TClipboard::createClipMap(TileMap* cNewMap){
+    TBrush *newClip = NULL;
+    int cFX, cFY, cLX, cLY;
+
+    if(cNewMap->mSelection.isSelectionRectangular(cFX, cFY, cLX, cLY)){
+        int cWidth = cLX - cFX+1;
+        int cHeight = cLY - cFY+1;
+
+        addBrush(cWidth, cHeight);
+
+        newClip = mBrushes[mBrushes.size() - 1];
+        mSelectedBrush = mBrushes.size() - 1;
+
+        std::sort(cNewMap->mSelection.mSelected.begin(), cNewMap->mSelection.mSelected.end(), [](int a, int b){return a < b;});
+
+        for(int y = 0; y < cHeight; y++){
+            for(int x = 0; x < cWidth; x++){
+                newClip->mBrushElements[(y * cWidth) + x] = cNewMap->getTile(cNewMap->mSelection.mSelected[(y * cWidth) + x]);
+                newClip->mElementProps[(y * cWidth) + x]  = cNewMap->getTileProp(cNewMap->mSelection.mSelected[(y * cWidth) + x]);
+            }
+        }
+    }
+
+    return newClip;
+}
+
 TBrush* TClipboard::createClipTile(Tile* cNewTile){
 
     TBrush *newClip = NULL;

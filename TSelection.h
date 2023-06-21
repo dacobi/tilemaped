@@ -167,7 +167,8 @@ class TSelectionEditor{
 class TClipboard : public TBrushList{
     public:
         TClipboard(){mLocalTexParam.TexPixelSize-=12;};
-        TBrush* createClipTile(Tile* cNewTile);        
+        TBrush* createClipTile(Tile* cNewTile);
+        TBrush* createClipMap(TileMap* cNewMap);
         TBrush* getLastClip();
         TBrush* getPrevClip();
         int renderIm();
