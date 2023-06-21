@@ -132,14 +132,18 @@ int TEActionReplaceTileFlip::getTileMap(){
 	return cTileMap;
 }
 
-void TEActionReplaceTileFlip::doAction(TileMap *cTileMap, int mCurTile, int mOld, int mNew, int cFlipOld, int cFlipNew){
+void TEActionReplaceTileFlip::doAction(TileMap *cTileMap, int mCurTile, int mOld, int mNew, int cFlipOld, int cFlipNew, int cOffset){
 	mTileMap = cTileMap;
 	mCurrentTile = mCurTile;
 	mOldValue = mOld;
 	mNewValue = mNew;
 	mOldFlip = cFlipOld;
 	mNewFlip = cFlipNew;
-	mNewOffset = mGlobalSettings.mGlobalTexParam.PaletteOffset;
+	if(cOffset > -1){
+		mNewOffset = cOffset;
+	} else {
+		mNewOffset = mGlobalSettings.mGlobalTexParam.PaletteOffset;
+	}
 	mOldOffset = mTileMap->getOffset(mCurrentTile);
 	mTileMap->setTile(mCurrentTile, mNew);
 	mTileMap->setFlip(mCurrentTile, mNewFlip);
@@ -318,8 +322,12 @@ void TEActionBrushTiles::doAction(TileMap* cTileMap, TBrush &mBrush){
 	for(auto &mSelElement : mSelection){
 		if(mSelElement > -1){ 				
 			if(mNewValues[eindex] != -1){
-				TEActionReplaceTileFlip* newAction = new TEActionReplaceTileFlip();			
-				newAction->doAction(mTileMap, mSelElement, mTileMap->getTile(mSelElement), mNewValues[eindex], mTileMap->getFlip(mSelElement), mBrush.getElementFlip(eindex));				
+				TEActionReplaceTileFlip* newAction = new TEActionReplaceTileFlip();
+				if(mBrush.mParent->bUseTileOffset){
+					newAction->doAction(mTileMap, mSelElement, mTileMap->getTile(mSelElement), mNewValues[eindex], mTileMap->getFlip(mSelElement), mBrush.getElementFlip(eindex), mBrush.getElementProps(eindex).mPaletteOffset);				
+				} else {
+					newAction->doAction(mTileMap, mSelElement, mTileMap->getTile(mSelElement), mNewValues[eindex], mTileMap->getFlip(mSelElement), mBrush.getElementFlip(eindex));				
+				}
 				mSubActions.push_back(newAction);			
 			}
 		}

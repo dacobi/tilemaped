@@ -655,8 +655,12 @@ SDL_Rect TBrush::renderTile(int xpos, int ypos){
                         edmax.y = tmpInt;
                     }
 
-                    if(mGlobalSettings.mGlobalTexParam.TexBPP < 0x8){                        
-                        tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TPOffset[mGlobalSettings.mGlobalTexParam.PaletteOffset], edmin, edmax);
+                    if(mGlobalSettings.mGlobalTexParam.TexBPP < 0x8){          
+                        if(mParent->bUseTileOffset){
+                            tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TPOffset[mElementProps[j+(i*mBrushWidth)].mPaletteOffset], edmin, edmax);
+                        } else {          
+                            tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TPOffset[mGlobalSettings.mGlobalTexParam.PaletteOffset], edmin, edmax);
+                        }
                     } else {
                         tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TileTex, edmin, edmax);                        
                         
@@ -922,7 +926,9 @@ TileProperties TBrush::getElementProps(int element){
     TileProperties cProps;
     if(element > -1){
         cProps = mElementProps[element];
-        cProps.mPaletteOffset = mGlobalSettings.mGlobalTexParam.PaletteOffset; //FIXME Maybe TODO
+        if(!mParent->bUseTileOffset){            
+            cProps.mPaletteOffset = mGlobalSettings.mGlobalTexParam.PaletteOffset; //FIXME Maybe TODO
+        }
     }
     return cProps;
 }
@@ -1396,6 +1402,7 @@ TBrush* TClipboard::createClipMap(TileMap* cNewMap){
             for(int x = 0; x < cWidth; x++){
                 newClip->mBrushElements[(y * cWidth) + x] = cNewMap->getTile(cNewMap->mSelection.mSelected[(y * cWidth) + x]);
                 newClip->mElementProps[(y * cWidth) + x]  = cNewMap->getTileProp(cNewMap->mSelection.mSelected[(y * cWidth) + x]);
+                //std::cout << "Clip with Offset: " << newClip->mElementProps[(y * cWidth) + x].mPaletteOffset << std::endl;
             }
         }
     }

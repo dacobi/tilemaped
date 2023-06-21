@@ -98,7 +98,7 @@ class TEActionReplaceTileFlip: public TEActionReplaceTile{
 		int mOldFlip;
 		int mNewFlip;
 		virtual void swapTileValues(int tVal1, int tVal2);
-		void doAction(TileMap *cTileMap, int mCurTile, int mOld, int mNew, int cFlipOld, int cFlipNew);	
+		void doAction(TileMap *cTileMap, int mCurTile, int mOld, int mNew, int cFlipOld, int cFlipNew, int cOffset = -1);	
 		virtual void undo();
 		virtual void redo();
 		virtual bool checkTileMap();

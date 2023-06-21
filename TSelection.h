@@ -75,7 +75,7 @@ class TBrush: public TSelection{
         ImVec2 mWinSize;
         ImVec2 mWinPos;
         bool bIsSelected = false;
-        bool bIsEditing = false;
+        bool bIsEditing = false;        
         int setElementNext(int element);
         void clearAllElements();
         void makeCircle(bool bInvert, float ms = 0.0);
@@ -124,6 +124,7 @@ class TBrushList{
         int mBrushOffset = 0;
         bool bCircleInvert = false;
         int mCircleSize = 0;
+        bool bUseTileOffset = false;
         int setBrushDeltas(int nDeltaX, int nDeltaY, int *nDeltaScale, int nRenderScale, TextureParameters *mTexParam);
    		std::vector<SDL_Rect> BrushAreas;
         int init(std::string cTitle, std::string cType, int cBrushType, bool *cIsShown, int nDeltaX, int nDeltaY, int *cDeltaScale, int cRenderScale, TBrush **cCurrentBrush, TextureParameters *mTexParam);
