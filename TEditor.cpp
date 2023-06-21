@@ -818,9 +818,9 @@ int TEditor::render(){
 
 		if(bShowBrushesTile){
 			mBrushesTile.renderIm();
-		} else {
+		} /*else {
 			mBrushesTile.closeEdit();
-		}
+		}*/
 
 		if(bShowCollisionEditor){
 			mColMapEdit.render();
@@ -859,9 +859,9 @@ int TEditor::render(){
 
 		if(bShowBrushesPixel){
 			mBrushesPixel.renderIm();
-		} else {
+		} /* else {
 			mBrushesPixel.closeEdit();
-		}
+		}*/
 		
 		if(mTileSet.bShowClipboardTiles){
 			mTileSet.mClipboardTiles.renderIm();
@@ -904,9 +904,9 @@ int TEditor::render(){
 
 		if(mSprite->bShowBrushesPixel){
 			mBrushesSprite->renderIm();
-		} else {
+		} /*else {
 			mBrushesSprite->closeEdit();
-		}
+		}*/
 
 		if(mSprite->bShowClipboard){
 			mSprite->mClipboard.renderIm();
@@ -946,9 +946,9 @@ int TEditor::render(){
 
 		if(bShowBrushesPixelTileSet){
 			mBrushesPixel.renderIm();
-		} else {
+		} /*else {
 			mBrushesPixel.closeEdit();
-		}
+		}*/
 
 
 
@@ -987,9 +987,9 @@ int TEditor::render(){
 
 		if(bShowBrushesPixelSelEdit){
 			mBrushesPixel.renderIm();
-		} else {
+		} /*else {
 			mBrushesPixel.closeEdit();
-		}
+		}*/
 
 
 
@@ -1973,6 +1973,7 @@ bool TEditor::checkQuit(){
 
 		if(bShowBrushesTile){
 			bShowBrushesTile = false;
+			mBrushesTile.closeEdit();
 			return true;
 		}
 		if(mCurrentBrushTile){
@@ -1984,10 +1985,12 @@ bool TEditor::checkQuit(){
 	if(mCurMode == EMODE_TILE){
 		if(bShowBrushesPixel){
 			bShowBrushesPixel = false;
+			mBrushesPixel.closeEdit(); 
 			return true;
 		}
 		if(mTileSet.bShowClipboardTiles){
 			mTileSet.bShowClipboardTiles = false;
+			mTileSet.mClipboardTiles.closeEdit();
 			return true;
 		}
 		if(mCurrentBrushPixel){
@@ -1999,10 +2002,12 @@ bool TEditor::checkQuit(){
 	if(mCurMode == EMODE_SPRITE){
 		if(mSprite->bShowBrushesPixel){
 			mSprite->bShowBrushesPixel = false;
+			mBrushesSprite->closeEdit();
 			return true;
 		}
 		if(mSprite->bShowClipboard){
 			mSprite->bShowClipboard = false;
+			mSprite->mClipboard.closeEdit();
 			return true;
 		}
 
@@ -2015,6 +2020,7 @@ bool TEditor::checkQuit(){
 	if(mCurMode == EMODE_TILESET){
         if(bShowBrushesPixelTileSet){
             bShowBrushesPixelTileSet = false;
+			mBrushesPixel.closeEdit(); 
             return true;
         }
         if(mCurrentBrushPixelTileSet){
@@ -2026,6 +2032,7 @@ bool TEditor::checkQuit(){
 	if(mCurMode == EMODE_SELEDIT){
         if(bShowBrushesPixelSelEdit){
             bShowBrushesPixelSelEdit = false;
+			mBrushesPixel.closeEdit(); 
             return true;
         }
         if(mCurrentBrushPixelSelEdit){
@@ -2185,33 +2192,86 @@ int TEditor::activateOpenTileSetDialog(){
 	}
 	return 0;
 }
-int TEditor::activateClipboard(){
+int TEditor::activateClipboard(bool bChangeState){
 	if(mCurMode == EMODE_SPRITE){
-		mSprite->bShowClipboard = !mSprite->bShowClipboard;
+		if(bChangeState) mSprite->bShowClipboard = !mSprite->bShowClipboard;
+
+		if(mSprite->bShowClipboard){
+			mSprite->bShowBrushesPixel = false;
+			mBrushesSprite->closeEdit();
+		} else {
+			mSprite->mClipboard.closeEdit();
+		}
+
 	}
 	if(mCurMode == EMODE_TILE){
-		mTileSet.bShowClipboardTiles = !mTileSet.bShowClipboardTiles;
+		if(bChangeState) mTileSet.bShowClipboardTiles = !mTileSet.bShowClipboardTiles;
+
+		if(mTileSet.bShowClipboardTiles){
+			bShowBrushesPixel = false;
+			mBrushesPixel.closeEdit();
+		} else {
+			mTileSet.mClipboardTiles.closeEdit();
+		}
 	}
 
 	return 0;
 }
 
-int TEditor::activateBrushes(){
+int TEditor::activateBrushes(bool bChangeState){
+	
 	if(mCurMode == EMODE_MAP){
-		bShowBrushesTile = !bShowBrushesTile;
+		if(bChangeState) bShowBrushesTile = !bShowBrushesTile;
+
+		if(bShowBrushesTile){
+
+		} else {
+			mBrushesTile.closeEdit();
+		}
 	}
+
 	if(mCurMode == EMODE_TILE){
-		bShowBrushesPixel = !bShowBrushesPixel;
+		if(bChangeState) bShowBrushesPixel = !bShowBrushesPixel;
+
+		if(bShowBrushesPixel){
+			mTileSet.bShowClipboardTiles = false;
+			mTileSet.mClipboardTiles.closeEdit();
+		} else {
+			mBrushesPixel.closeEdit();
+		}		
 	}
+
 	if(mCurMode == EMODE_SPRITE){
-		mSprite->bShowBrushesPixel = !mSprite->bShowBrushesPixel;
+		if(bChangeState) mSprite->bShowBrushesPixel = !mSprite->bShowBrushesPixel;
+
+		if(mSprite->bShowBrushesPixel){
+			mSprite->bShowClipboard = false;
+			mSprite->mClipboard.closeEdit();
+		} else {
+			mBrushesSprite->closeEdit();
+		}
 	}
+
 	if(mCurMode == EMODE_TILESET){
-		bShowBrushesPixelTileSet = !bShowBrushesPixelTileSet;
+		if(bChangeState) bShowBrushesPixelTileSet = !bShowBrushesPixelTileSet;
+
+		if(bShowBrushesPixelTileSet){
+
+		} else {
+			mBrushesPixel.closeEdit();
+		}
 	}
+
 	if(mCurMode == EMODE_SELEDIT){
-		bShowBrushesPixelSelEdit = !bShowBrushesPixelSelEdit;
+		if(bChangeState) bShowBrushesPixelSelEdit = !bShowBrushesPixelSelEdit;
+
+		if(bShowBrushesPixelSelEdit){
+
+		} else {
+			mBrushesPixel.closeEdit();
+		}
 	}
+
 	return 0;
 }
 

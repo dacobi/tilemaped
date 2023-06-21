@@ -1178,6 +1178,10 @@ int TBrushList::renderIm(){
 
     ImGui::End();
 
+    if(!*bIsShown){
+        closeEdit();
+    }
+
     return 0;
 }
 
@@ -1492,6 +1496,10 @@ int TClipboard::renderIm(){
     mGlobalSettings.CurrentEditor->ImButtonsClipboard.updateButtonStates();
 
     ImGui::End();
+
+    if(!*bIsShown){
+        closeEdit();
+    }
 
     return 0;
 }

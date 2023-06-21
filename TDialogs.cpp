@@ -351,6 +351,7 @@ int TBDialog::render(){
 					}
 				}
 				if(ImGui::MenuItem("Brushes (F8)", NULL , &mGlobalSettings.CurrentEditor->bShowBrushesTile)){										
+					mGlobalSettings.CurrentEditor->activateBrushes(false);
 				}
 				if(ImGui::MenuItem("Selected Tile Type (S)", NULL , &mGlobalSettings.bShowTypeSelection)){										
 				}
@@ -360,9 +361,11 @@ int TBDialog::render(){
 				
 			}
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE){
-				if(ImGui::MenuItem("Clipboard (F7)", NULL , &mGlobalSettings.CurrentEditor->mTileSet.bShowClipboardTiles)){										
+				if(ImGui::MenuItem("Clipboard (F7)", NULL , &mGlobalSettings.CurrentEditor->mTileSet.bShowClipboardTiles)){		
+					mGlobalSettings.CurrentEditor->activateClipboard(false);
 				}
 				if(ImGui::MenuItem("Brushes (F8)", NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixel)){										
+					mGlobalSettings.CurrentEditor->activateBrushes(false);
 				}
 				if(ImGui::MenuItem("Selected Color (S)", NULL , &mGlobalSettings.bShowPixelType)){										
 				}
@@ -370,9 +373,11 @@ int TBDialog::render(){
 				}
 			}
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE){
-				if(ImGui::MenuItem("Clipboard (F7)", NULL , &mGlobalSettings.CurrentEditor->mSprite->bShowClipboard)){										
+				if(ImGui::MenuItem("Clipboard (F7)", NULL , &mGlobalSettings.CurrentEditor->mSprite->bShowClipboard)){
+					mGlobalSettings.CurrentEditor->activateClipboard(false);									
 				}
 				if(ImGui::MenuItem("Brushes (F8)", NULL , &mGlobalSettings.CurrentEditor->mSprite->bShowBrushesPixel)){										
+					mGlobalSettings.CurrentEditor->activateBrushes(false);
 				}				
 				if(ImGui::MenuItem("Selected Color (S)", NULL , &mGlobalSettings.bShowPixelTypeSprite)){										
 				}
@@ -382,6 +387,7 @@ int TBDialog::render(){
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET){	
 				if(ImGui::MenuItem("Brushes (F8)", NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixelTileSet)){                                                                         
+					mGlobalSettings.CurrentEditor->activateBrushes(false);
                 }			
 				if(ImGui::MenuItem("Tile Grid (T)", NULL , &mGlobalSettings.bShowTileGrid)){										
 				}
@@ -392,7 +398,8 @@ int TBDialog::render(){
 			}
 
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SELEDIT){	
-				if(ImGui::MenuItem("Brushes (F8)", NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixelSelEdit)){                                                                         
+				if(ImGui::MenuItem("Brushes (F8)", NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixelSelEdit)){     
+					mGlobalSettings.CurrentEditor->activateBrushes(false);
                 }			
 				if(ImGui::MenuItem("Tile Grid (T)", NULL , &mGlobalSettings.bShowTileSelGrid)){										
 				}

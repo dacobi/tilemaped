@@ -282,8 +282,8 @@ class TEditor{
 		int activateDropUnusedTile();
 		int activateRemoveFrame();
 		
-		int activateBrushes();
-		int activateClipboard();
+		int activateBrushes(bool bChangeState = true);
+		int activateClipboard(bool bChangeState = true);
 		int activateBrush();
 		int dropBrush();
 		int rx,ry;
