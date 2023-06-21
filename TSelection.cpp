@@ -611,10 +611,6 @@ SDL_Rect TBrush::renderTile(int xpos, int ypos){
 
     ImVec2 cPos = ImGui::GetWindowPos();
 
-    
-    /*int cDeltaX = mParent->mDeltaBaseX * mParent->mRenderScale;
-    int cDeltaY = mParent->mDeltaBaseY * mParent->mRenderScale;*/
-
     int cDeltaX = mParent->mLocalTexParam.TexRenderSize * mParent->mLocalTexParam.TexEditScale; //mParent->mDeltaBaseX * mParent->mRenderScale;
     int cDeltaY = mParent->mLocalTexParam.TexRenderSize * mParent->mLocalTexParam.TexEditScale; //mParent->mDeltaBaseY * mParent->mRenderScale;
 
