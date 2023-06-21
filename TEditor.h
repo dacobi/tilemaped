@@ -56,6 +56,7 @@ class ImWinMouseState{
 
 class TEditor{
 	public:
+		TEditor(){mClipboardMap.mLocalTexParam.TexEditScale-=2;};
 		void shutdown();
 		void closeProject();
 		TPalette mPalette;
@@ -168,7 +169,9 @@ class TEditor{
 		int selectTiles(std::vector<int> &cNewSelection, int cTileType);
 		int selectTilesMap(TileMap* cTileMap, std::vector<int> &cNewSelection, int cTileType);
 		int toggleSelectedTile();		
-		TEActionUndoStack mActionStack;		
+		TEActionUndoStack mActionStack;
+		TClipboard mClipboardMap;
+		bool bShowClipboardMap = false;
 		void undoLastActionGroup();
 		void redoLastActionGroup();		
 		int updatePalette();

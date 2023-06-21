@@ -251,6 +251,8 @@ void TEditor::initDialogs(){
 	mBrushesTile.init("Tiles","Tile", TBRUSH_TILE, &bShowBrushesTile,mGlobalSettings.mGlobalTexParam.TexSizeX, mGlobalSettings.mGlobalTexParam.TexSizeY, &mGlobalSettings.TileMapScale, mGlobalSettings.TileMapScale, &mCurrentBrushTile, &mGlobalSettings.mGlobalTexParam);
 	mBrushesPixel.init("Pixels","Pixel", TBRUSH_PIXEL, &bShowBrushesPixel, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
 
+	mClipboardMap.init("Maps","Tile", TBRUSH_TILE, &bShowClipboardMap,mGlobalSettings.mGlobalTexParam.TexSizeX, mGlobalSettings.mGlobalTexParam.TexSizeY, &mGlobalSettings.TileMapScale, mGlobalSettings.TileMapScale, &mCurrentBrushTile, &mGlobalSettings.mGlobalTexParam);
+
 	mSprite4.TexBPP = 4;
 
 	mBrushesPixelSprite4.init("Sprite 4BPP","Pixel", TBRUSH_PIXEL, &bShowBrushesPixel, mSprite4.TexPixelSize, mSprite4.TexPixelSize, &mSprite4.TexEditScale, mSprite4.TexEditScale, &mCurrentBrushPixel, &mSprite4);
@@ -822,6 +824,10 @@ int TEditor::render(){
 			mBrushesTile.closeEdit();
 		}*/
 
+		if(bShowClipboardMap){
+			mClipboardMap.renderIm();
+		}
+
 		if(bShowCollisionEditor){
 			mColMapEdit.render();
 		}
@@ -1063,6 +1069,24 @@ int TEditor::handleCopyPaste(bool cCutSelection){
 		}
 	}
 
+	if(mCurMode == EMODE_MAP){
+
+		mCurrentBrushTile = mClipboardMap.createClipMap(mTileMap);
+
+		if(cCutSelection && mCurrentBrushTile){
+			if(mTileMap->mSelection.mSelected.size()){			
+				TEActionReplaceTiles* newAction = new TEActionReplaceTiles();
+				newAction->doAction(mTileMap, mTileMap->mSelection.mSelected, -1, 0);
+				if(!(newAction == mActionStack.mLastAction)){
+					mActionStack.mLastAction = newAction;
+					mActionStack.newActionGroup();
+					mActionStack.addSubActions(newAction->mSubActions);
+					mActionStack.redoClearStack();
+				}				
+			}
+		}
+	}
+
 
 	return 0;
 }
@@ -1083,6 +1107,14 @@ int TEditor::handleClipboardPaste(bool cCycle){
 			mCurrentBrushPixel = mTileSet.mClipboardTiles.getPrevClip();
 		} else {
 			mCurrentBrushPixel = mTileSet.mClipboardTiles.getLastClip();
+		}
+	}
+	
+	if(mCurMode == EMODE_MAP){
+		if(cCycle){
+			mCurrentBrushTile = mClipboardMap.getPrevClip();
+		} else {
+			mCurrentBrushTile = mClipboardMap.getLastClip();
 		}
 	}
 
@@ -1976,6 +2008,13 @@ bool TEditor::checkQuit(){
 			mBrushesTile.closeEdit();
 			return true;
 		}
+
+		if(bShowClipboardMap){
+			bShowClipboardMap = false;
+			mClipboardMap.closeEdit();
+			return true;
+		}
+
 		if(mCurrentBrushTile){
 			mCurrentBrushTile = NULL;
 			return true;
@@ -2204,6 +2243,7 @@ int TEditor::activateClipboard(bool bChangeState){
 		}
 
 	}
+
 	if(mCurMode == EMODE_TILE){
 		if(bChangeState) mTileSet.bShowClipboardTiles = !mTileSet.bShowClipboardTiles;
 
@@ -2212,6 +2252,17 @@ int TEditor::activateClipboard(bool bChangeState){
 			mBrushesPixel.closeEdit();
 		} else {
 			mTileSet.mClipboardTiles.closeEdit();
+		}
+	}
+
+	if(mCurMode == EMODE_MAP){
+		if(bChangeState) bShowClipboardMap = !bShowClipboardMap;
+
+		if(bShowClipboardMap){
+			bShowBrushesTile = false;
+			mBrushesTile.closeEdit();
+		} else {
+			mClipboardMap.closeEdit();
 		}
 	}
 
@@ -2224,7 +2275,8 @@ int TEditor::activateBrushes(bool bChangeState){
 		if(bChangeState) bShowBrushesTile = !bShowBrushesTile;
 
 		if(bShowBrushesTile){
-
+			bShowClipboardMap = false;
+			mClipboardMap.closeEdit();
 		} else {
 			mBrushesTile.closeEdit();
 		}
@@ -3355,6 +3407,19 @@ int TEditor::handleClipboard(){
 		
 	}
 
+	if(mCurMode == EMODE_MAP){
+		if(ImButtonsClipboard.mLeft.bButtonIsDown){ 
+			if(ImButtonsClipboard.mLeft.mMousePos.y < mClipboardMap.mBrushOffset) {return 0;}
+			int tSel = -1;
+			tSel = searchRectsXY(mClipboardMap.BrushAreas, ImButtonsClipboard.mLeft.mMousePos.x, ImButtonsClipboard.mLeft.mMousePos.y);
+			if(tSel != -1){
+				mClipboardMap.mSelectedBrush = tSel;
+				mCurrentBrushTile = mClipboardMap.mBrushes[tSel];				
+			}		
+		}
+		
+	}
+
 	return 0;
 }
 
@@ -4230,6 +4295,7 @@ int TEditor::handleEvents(){
 	} else {		
 			if(mCurMode == EMODE_MAP){
 				handleBrushes();
+				handleClipboard();
 				if(bShowCollisionEditor){
 					handleColEdit();
 				}

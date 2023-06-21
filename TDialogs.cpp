@@ -350,6 +350,9 @@ int TBDialog::render(){
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Palette Offset")).c_str(), NULL, &mGlobalSettings.bShowPaletteOffset) ){ 
 					}
 				}
+				if(ImGui::MenuItem("Clipboard (F7)", NULL , &mGlobalSettings.CurrentEditor->bShowClipboardMap)){		
+					mGlobalSettings.CurrentEditor->activateClipboard(false);
+				}
 				if(ImGui::MenuItem("Brushes (F8)", NULL , &mGlobalSettings.CurrentEditor->bShowBrushesTile)){										
 					mGlobalSettings.CurrentEditor->activateBrushes(false);
 				}
@@ -710,7 +713,7 @@ int TBDialog::render(){
 					ImGui::EndMenu();
 				}
 
-				if( (mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE) || (mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE)){
+				if( (mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE) || (mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE) || (mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP) ){
 					if(ImGui::MenuItem("Copy Selection (C)")){						
 						mGlobalSettings.CurrentEditor->handleCopyPaste();		
 					}
