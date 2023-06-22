@@ -125,6 +125,7 @@ ProjectSettings::ProjectSettings(){
 	SelectionEdit_PixelScale = new sKey("SelectionEdit_PixelScale", type_int, 10);	
 	Sprite_ShowPixelGrid = new sKey("Sprite_ShowPixelGrid", type_bool, true);
 	Sprite_WarnBeforeDelete = new sKey("Sprite_WarnBeforeDelete", type_bool, true);
+	Clipboard_SaveToProject = new sKey("Clipboard_SaveToProject", type_bool, false);
 	
 		
     keys.push_back(Editor_SelectionAppend);
@@ -143,6 +144,7 @@ ProjectSettings::ProjectSettings(){
 	keys.push_back(SelectionEdit_PixelScale);
 	keys.push_back(Sprite_ShowPixelGrid);
 	keys.push_back(Sprite_WarnBeforeDelete);
+	keys.push_back(Clipboard_SaveToProject);
 		
     for(int i = 0; i < keys.size(); i++){
 		keyindex[keys[i]->kname] = i;
@@ -186,10 +188,12 @@ void ProjectSettings::close(){
 	TileSet_MaxGridWidth->ivalue = 4;
 	SelectionEdit_ShowPixelGrid->bvalue = true;
 	SelectionEdit_ShowTileGrid->bvalue = true;
+	SelectionEdit_PixelScale->ivalue = 10;
 	Sprite_ShowPixelGrid->bvalue = true;
 	Sprite_WarnBeforeDelete->bvalue = true;
 	Editor_UseTextureFiltering->ivalue = 0;
 	Editor_PixelScale->ivalue = 16;
+	Clipboard_SaveToProject->bvalue = false;
 	
 	bLoaded = false;
 }

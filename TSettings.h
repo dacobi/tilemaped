@@ -157,6 +157,7 @@ public:
 	sKey *SelectionEdit_PixelScale;	
 	sKey *Sprite_ShowPixelGrid;
 	sKey *Sprite_WarnBeforeDelete;
+	sKey *Clipboard_SaveToProject;
 };
 
 class ProgramSettings : public Settings{
