@@ -500,6 +500,12 @@ int TEditor::loadFromFolder(std::string path){
 				mSprite->mMaxColumns = cSKey->getInteger();
 			}
 
+			if(mGlobalSettings.mProjectSettings.Clipboard_SaveToProject->bvalue){
+				if(fs::exists(fs::status(path + DIRDEL + "clipboards" + sSpriteNum + ".dat"))){
+					mSprite->mClipboard.loadFromFile(path + DIRDEL + "clipboards" + sSpriteNum + ".dat");
+				}
+			}
+
 		} else {
 			std::cout << "Error reading file: " <<  cSprites.string() << std::endl;
 		}
@@ -514,6 +520,17 @@ int TEditor::loadFromFolder(std::string path){
 	/* Sprites End */
 	
 	initDialogs();
+
+	if(mGlobalSettings.mProjectSettings.Clipboard_SaveToProject->bvalue){
+		if(fs::exists(fs::status(path + DIRDEL + "clipboardmaps.dat"))){
+			std::cout << "Load Maps Clipboard" << std::endl;
+			mClipboardMap.loadFromFile(path + DIRDEL + "clipboardmaps.dat");
+		}
+		if(fs::exists(fs::status(path + DIRDEL + "clipboardtiles.dat"))){
+			mTileSet.mClipboardTiles.loadFromFile(path + DIRDEL + "clipboardtiles.dat");
+		}
+
+	}
 
 	switchTileMap(0);
 
@@ -623,6 +640,11 @@ int TEditor::saveToFolder(std::string path){
 	mBrushesTile.saveToFile(path + DIRDEL + "tbrushes.dat");
 	mBrushesPixel.saveToFile(path + DIRDEL + "pbrushes.dat");
 
+	if(mGlobalSettings.mProjectSettings.Clipboard_SaveToProject->bvalue){
+		mClipboardMap.saveToFile(path + DIRDEL + "clipboardmaps.dat");
+		mTileSet.mClipboardTiles.saveToFile(path + DIRDEL + "clipboardtiles.dat");
+	}
+
 	int nSpriteNum = 0;
 	std::string sSprite;
 	std::string sSpriteNum;
@@ -651,6 +673,10 @@ int TEditor::saveToFolder(std::string path){
 			} else {
 				sKey *cNewSKey = mGlobalSettings.mProjectSettings.createSpriteGridKey(nSpriteNum);
 				cNewSKey->ivalue = mSprites[i]->mMaxColumns;
+			}
+
+			if(mGlobalSettings.mProjectSettings.Clipboard_SaveToProject->bvalue){
+				mSprites[i]->mClipboard.saveToFile(path + DIRDEL + "clipboards" + sSpriteNum + ".dat");
 			}
 
 			nSpriteNum++;
