@@ -727,6 +727,10 @@ int TEditor::saveToFolder(std::string path){
 
 		fs::rename(sSprite, sSprite + cBackup + cBackupNum);
 
+		if(fs::exists(fs::status(path + DIRDEL + "clipboards" + sSpriteNum + ".dat"))){
+			fs::remove(path + DIRDEL + "clipboards" + sSpriteNum + ".dat");
+		}
+
 		sKey *cDelSKey = mGlobalSettings.mProjectSettings.getSpriteScaleKey(nSpriteNum);
 
 		if(cDelSKey){
