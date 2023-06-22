@@ -203,6 +203,18 @@ int TBDialog::render(){
 
 			ImGui::Separator();
 
+			if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Project").c_str()))){
+
+				if(ImGui::BeginMenu((std::string(mGlobalSettings.mFile + " Clipboards").c_str()))){
+
+					ImGui::Checkbox("Save To Project", &mGlobalSettings.mProjectSettings.Clipboard_SaveToProject->bvalue);
+
+					ImGui::EndMenu();
+				}
+
+				ImGui::EndMenu();
+			}
+
 			mGlobalSettings.settingsMenu();
 
 			ImGui::Separator();
