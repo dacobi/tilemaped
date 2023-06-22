@@ -643,6 +643,13 @@ int TEditor::saveToFolder(std::string path){
 	if(mGlobalSettings.mProjectSettings.Clipboard_SaveToProject->bvalue){
 		mClipboardMap.saveToFile(path + DIRDEL + "clipboardmaps.dat");
 		mTileSet.mClipboardTiles.saveToFile(path + DIRDEL + "clipboardtiles.dat");
+	} else {
+		if(fs::exists(fs::status(path + DIRDEL + "clipboardmaps.dat"))){
+			fs::remove(path + DIRDEL + "clipboardmaps.dat");
+		}
+		if(fs::exists(fs::status(path + DIRDEL + "clipboardtiles.dat"))){
+			fs::remove(path + DIRDEL + "clipboardtiles.dat");
+		}
 	}
 
 	int nSpriteNum = 0;
@@ -677,6 +684,10 @@ int TEditor::saveToFolder(std::string path){
 
 			if(mGlobalSettings.mProjectSettings.Clipboard_SaveToProject->bvalue){
 				mSprites[i]->mClipboard.saveToFile(path + DIRDEL + "clipboards" + sSpriteNum + ".dat");
+			} else {
+				if(fs::exists(fs::status(path + DIRDEL + "clipboards" + sSpriteNum + ".dat"))){
+					fs::remove(path + DIRDEL + "clipboards" + sSpriteNum + ".dat");
+				}
 			}
 
 			nSpriteNum++;
