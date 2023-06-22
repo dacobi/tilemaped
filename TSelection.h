@@ -95,7 +95,9 @@ class TBrush: public TSelection{
         int readFromFile(std::ifstream &infile);
         TileProperties getElementProps(int element);
         int getElementFlip(int element);
+        int getElementOffset(int element);
         int setElementFlip(int element, int cFlip);
+        int setElementOffset(int element, int cOffset);
         void swapBrushElements(int eVal1, int eVal2);        
 };
 

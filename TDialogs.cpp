@@ -205,6 +205,21 @@ int TBDialog::render(){
 
 			if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Project").c_str()))){
 
+				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Selection Mode").c_str()))){
+					bool bIsAppend = mGlobalSettings.bSelectionMode;
+					bool bIsReplace = !mGlobalSettings.bSelectionMode;
+
+					if(ImGui::MenuItem("Replace", NULL, &bIsReplace)){
+						mGlobalSettings.bSelectionMode = !bIsReplace;						
+					}
+
+					if(ImGui::MenuItem("Append", NULL, &bIsAppend)){
+						mGlobalSettings.bSelectionMode = bIsAppend;						
+					}
+					
+					ImGui::EndMenu();
+				}
+
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mFile + " Clipboards").c_str()))){
 
 					ImGui::Checkbox("Save To Project", &mGlobalSettings.mProjectSettings.Clipboard_SaveToProject->bvalue);
@@ -710,7 +725,7 @@ int TBDialog::render(){
 			}
 
 			if((mGlobalSettings.CurrentEditor->mCurMode != EMODE_PALED) && (mGlobalSettings.CurrentEditor->mCurMode != EMODE_SELEDIT)){
-				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Selection Mode").c_str()))){
+				/*if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Selection Mode").c_str()))){
 					bool bIsAppend = mGlobalSettings.bSelectionMode;
 					bool bIsReplace = !mGlobalSettings.bSelectionMode;
 
@@ -724,6 +739,7 @@ int TBDialog::render(){
 					
 					ImGui::EndMenu();
 				}
+				*/
 
 				if( (mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE) || (mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE) || (mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP) ){
 					if(ImGui::MenuItem("Copy Selection (C)")){						

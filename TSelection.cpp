@@ -736,6 +736,15 @@ int TBrush::writeToFile(std::ofstream &outfile){
         convert >> tmpStr2;
         tmpStr += " ";
         tmpStr += tmpStr2;
+        if(mBrushType == TBRUSH_TILE){
+            convert << getElementOffset(i) << std::endl;
+        }
+        if(mBrushType == TBRUSH_PIXEL){
+            convert << 0 << std::endl;
+        }
+        convert >> tmpStr2;
+        tmpStr += " ";
+        tmpStr += tmpStr2;
     }
     outfile << tmpStr << std::endl;
     return 0;
@@ -744,7 +753,7 @@ int TBrush::writeToFile(std::ofstream &outfile){
 int TBrush::readFromFile(std::ifstream &infile){
     std::string tmpStr, tmpStr2;
     std::stringstream convert;
-    int tmpInt, tmpInt2;
+    int tmpInt, tmpInt2, tmpInt3;
     std::getline(infile, tmpStr);
     convert << tmpStr << std::endl;
     convert >> tmpStr;
@@ -752,9 +761,13 @@ int TBrush::readFromFile(std::ifstream &infile){
         for(int i = 0; i < (mBrushWidth*mBrushHeight); i++){
             convert >> tmpInt;
             convert >> tmpInt2;
+            convert >> tmpInt3;
             setElementNext(tmpInt);
             if(mBrushType == TBRUSH_TILE){
                 setElementFlip(i, tmpInt2);
+            }
+            if(mBrushType == TBRUSH_TILE){
+                setElementOffset(i, tmpInt3);
             }
         }   
     } else {
@@ -943,6 +956,16 @@ int TBrush::getElementFlip(int element){
     return cFlip;
 }
 
+int TBrush::getElementOffset(int element){
+    int cOff = -1;
+    if(element > -1){
+        cOff = mElementProps[element].mPaletteOffset;
+        
+    }
+    return cOff;
+}
+
+
 int TBrush::setElementFlip(int element, int cFlip){    
     if(element > -1){        
         mElementProps[element].bFlipX = (cFlip & 0x1);        
@@ -950,6 +973,14 @@ int TBrush::setElementFlip(int element, int cFlip){
     }
     return 0;
 }
+
+int TBrush::setElementOffset(int element, int cOffset){    
+    if(element > -1){        
+        mElementProps[element].mPaletteOffset = cOffset;                
+    }
+    return 0;
+}
+
 
 TBrush* TBrushList::getBrush(){
     TBrush* cBrush = NULL;
