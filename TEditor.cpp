@@ -3441,6 +3441,18 @@ int TEditor::handleClipboard(){
 
 			}		
 		}
+
+		if(ImButtonsClipboard.mRight.bButtonIsDown){ 
+			if(ImButtonsClipboard.mRight.mMousePos.y < mSprite->mClipboard.mBrushOffset) {return 0;}			
+			
+			if(mSprite->mClipboard.bIsEditing){
+				int tSel = searchRectsXY(mSprite->mClipboard.mBrushes[mSprite->mClipboard.mSelectedBrush]->BrushElementAreas, ImButtonsClipboard.mRight.mMousePos.x, ImButtonsClipboard.mRight.mMousePos.y);
+				if(tSel > -1){
+					mSprite->mClipboard.mBrushes[mSprite->mClipboard.mSelectedBrush]->mCursorPos = tSel;
+					mSprite->mClipboard.addBrushElement(mSprite->mClipboard.mLastElement);
+				}
+			}
+		}
 		
 	}
 
@@ -3461,6 +3473,18 @@ int TEditor::handleClipboard(){
 				}
 			}		
 		}
+
+		if(ImButtonsClipboard.mRight.bButtonIsDown){ 
+			if(ImButtonsClipboard.mRight.mMousePos.y < mTileSet.mClipboardTiles.mBrushOffset) {return 0;}			
+			
+			if(mTileSet.mClipboardTiles.bIsEditing){
+				int tSel = searchRectsXY(mTileSet.mClipboardTiles.mBrushes[mTileSet.mClipboardTiles.mSelectedBrush]->BrushElementAreas, ImButtonsClipboard.mRight.mMousePos.x, ImButtonsClipboard.mRight.mMousePos.y);
+				if(tSel > -1){
+					mTileSet.mClipboardTiles.mBrushes[mTileSet.mClipboardTiles.mSelectedBrush]->mCursorPos = tSel;
+					mTileSet.mClipboardTiles.addBrushElement(mTileSet.mClipboardTiles.mLastElement);
+				}
+			}
+		}
 		
 	}
 
@@ -3479,8 +3503,20 @@ int TEditor::handleClipboard(){
 						mClipboardMap.mBrushes[mClipboardMap.mSelectedBrush]->mCursorPos = tSel;
 					}
 				}				
-				
+
 			}		
+		}
+
+		if(ImButtonsClipboard.mRight.bButtonIsDown){ 
+			if(ImButtonsClipboard.mRight.mMousePos.y < mClipboardMap.mBrushOffset) {return 0;}			
+			
+			if(mClipboardMap.bIsEditing){
+				int tSel = searchRectsXY(mClipboardMap.mBrushes[mClipboardMap.mSelectedBrush]->BrushElementAreas, ImButtonsClipboard.mRight.mMousePos.x, ImButtonsClipboard.mRight.mMousePos.y);
+				if(tSel > -1){
+					mClipboardMap.mBrushes[mClipboardMap.mSelectedBrush]->mCursorPos = tSel;
+					mClipboardMap.addBrushElement(mClipboardMap.mLastElement);
+				}
+			}
 		}
 		
 	}
