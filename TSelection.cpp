@@ -874,7 +874,13 @@ int TBrush::setElementNext(int element){
         }
         return 0;
     }
+    
     mBrushElements[mCursorPos] = element;
+    
+    if(mParent->bUseTileOffset){
+        mElementProps[mCursorPos].mPaletteOffset = mGlobalSettings.mGlobalTexParam.PaletteOffset;
+    }
+
     nextElement();
     return 0;
 }
