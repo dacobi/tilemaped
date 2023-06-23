@@ -339,6 +339,8 @@ class TSettings{
 		std::string mGear = "\uf013";
 		std::string mBall = "\uf111";
 		std::string mTool = "\ue20f";
+		std::string mClip = "\uf0ea";
+		std::string mBrush = "\uf1fc";
 		bool bSelectionMode = true;
 		bool bSoftwareRendering = false;
 		bool bVSync = true;
