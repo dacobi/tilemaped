@@ -1538,6 +1538,44 @@ int TClipboard::renderIm(){
         }
     }
 
+    ImGui::SameLine();
+
+    if(!bIsEditing){
+        if(ImGui::Button("Selections Edit")){
+            if(mBrushes.size()){
+                bIsEditing = true;
+                for(auto *cBrush : mBrushes){
+                    cBrush->mCursorPos = 0;
+                }                
+            }
+        }
+    }
+
+    if(bIsEditing){
+
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(mGlobalSettings.ErrorTextColor.r-80,mGlobalSettings.ErrorTextColor.g,mGlobalSettings.ErrorTextColor.b)));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(mGlobalSettings.ErrorTextColor.r,mGlobalSettings.ErrorTextColor.g,mGlobalSettings.ErrorTextColor.b)));
+        if(ImGui::Button("Selections Edit Done")){
+            bIsEditing = false;
+            bSetAllElements = false;                
+            mBrushes[mSelectedBrush]->bIsEditing = false;
+        }
+        ImGui::PopStyleColor();
+        ImGui::PopStyleColor();
+
+        if(ImGui::Button("Reset Cursor")){
+            mBrushes[mSelectedBrush]->mCursorPos = 0;
+        }        
+
+        ImGui::SameLine();
+
+        if(ImGui::Button("Empty Element")){
+            mBrushes[mSelectedBrush]->setElementNext(-1);
+            mLastElement = -1;
+        }
+
+    }
+
     ImGui::Separator();
 
     ImGui::BeginChild("Selection List", ImVec2(0,0), false, ImGuiWindowFlags_NoNav);
