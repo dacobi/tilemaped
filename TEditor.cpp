@@ -3191,6 +3191,28 @@ int TEditor::handlePalette(){
 		}
 	}
 
+	if((mCurMode == EMODE_SPRITE) && ImButtonsPalette.mRight.bButtonIsDown && mSprite->mClipboard.bIsEditing){
+		int tSel = -1;		
+		tSel = searchRectsXY(mPalette.PixelAreas, cx, cy);
+		
+		if(mTexParam->TexBPP < 0x8){
+			mSprite->mClipboard.addBrushElement(tSel%16);
+		} else {
+			mSprite->mClipboard.addBrushElement(tSel);
+		}
+	}
+
+	if((mCurMode == EMODE_TILE) && ImButtonsPalette.mRight.bButtonIsDown && mTileSet.mClipboardTiles.bIsEditing){
+		int tSel = -1;		
+		tSel = searchRectsXY(mPalette.PixelAreas, cx, cy);
+		
+		if(mTexParam->TexBPP < 0x8){
+			mTileSet.mClipboardTiles.addBrushElement(tSel%16);
+		} else {
+			mTileSet.mClipboardTiles.addBrushElement(tSel);
+		}
+	}
+
 	return 0;
 }
 
@@ -3729,6 +3751,10 @@ int TEditor::handleTileSet(){
 		int tSel = -1;		
 		tSel = searchRectsXY(mTileSet.TileAreas, cx, cy);
 		mBrushesTile.addBrushElement(tSel);
+	} else if(ImButtonsTileSet.mRight.bButtonIsDown && mClipboardMap.bIsEditing){
+		int tSel = -1;		
+		tSel = searchRectsXY(mTileSet.TileAreas, cx, cy);
+		mClipboardMap.addBrushElement(tSel);
 	} else if(ImButtonsTileSet.mRight.bButtonIsDown && (mGlobalSettings.bShowTypeSelection || mTileMap->mSelection.mSelected.size())){
 		replaceSelectedTiles(ImButtonsTileSet.mRight.mMousePos.x ,ImButtonsTileSet.mRight.mMousePos.y);
 	}
