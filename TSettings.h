@@ -341,6 +341,8 @@ class TSettings{
 		std::string mTool = "\ue20f";
 		std::string mClip = "\uf0ea";
 		std::string mBrush = "\uf1fc";
+		std::string mCopy = "\uf0c5";
+		std::string mCut = "\uf0c4";		
 		bool bSelectionMode = true;
 		bool bSoftwareRendering = false;
 		bool bVSync = true;

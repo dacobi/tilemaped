@@ -321,7 +321,10 @@ int TSettings::initSettings(){
 	builder.AddChar(0xf111);
 	builder.AddChar(0xe20f);
 	builder.AddChar(0xf0ea);
-	builder.AddChar(0xf1fc);
+	builder.AddChar(0xf1fc);	
+	builder.AddChar(0xfa61);
+	builder.AddChar(0xf0c5);
+	builder.AddChar(0xf0c4);
 
 	builder.AddRanges(io.Fonts->GetGlyphRangesDefault()); // Add one of the default ranges
 	builder.BuildRanges(&ranges);       
@@ -334,8 +337,6 @@ int TSettings::initSettings(){
 
 	LFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 25.0,  NULL, ranges.Data);
 	mio->Fonts->Build();
-
-	
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();

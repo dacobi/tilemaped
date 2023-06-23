@@ -727,16 +727,16 @@ int TBDialog::render(){
 			if((mGlobalSettings.CurrentEditor->mCurMode != EMODE_PALED) && (mGlobalSettings.CurrentEditor->mCurMode != EMODE_SELEDIT)){
 				
 				if( (mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE) || (mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE) || (mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP) ){
-					if(ImGui::MenuItem("Copy Selection (C)")){						
+					if(ImGui::MenuItem(std::string(mGlobalSettings.mCopy + " Copy Selection (C)").c_str())){						
 						mGlobalSettings.CurrentEditor->handleCopyPaste();		
 					}
-					if(ImGui::MenuItem("Move/Cut Selection (M)")){						
+					if(ImGui::MenuItem(std::string(mGlobalSettings.mCut + " Move/Cut Selection (M)").c_str())){						
 						mGlobalSettings.CurrentEditor->handleCopyPaste(true);		
 					}
-					if(ImGui::MenuItem("Paste Selection (V)")){						
+					if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Paste Selection (V)").c_str())){						
 						mGlobalSettings.CurrentEditor->handleClipboardPaste();
 					}
-					if(ImGui::MenuItem("Cycle Selection (CTRL + V)")){						
+					if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Next Selection (CTRL + V)").c_str())){						
 						mGlobalSettings.CurrentEditor->handleClipboardPaste(true);
 					}
 				}				
