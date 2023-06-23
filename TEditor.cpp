@@ -3430,7 +3430,15 @@ int TEditor::handleClipboard(){
 			tSel = searchRectsXY(mSprite->mClipboard.BrushAreas, ImButtonsClipboard.mLeft.mMousePos.x, ImButtonsClipboard.mLeft.mMousePos.y);
 			if(tSel != -1){
 				mSprite->mClipboard.mSelectedBrush = tSel;
-				mSprite->mCurrentBrushPixel = mSprite->mClipboard.mBrushes[tSel];				
+				mSprite->mCurrentBrushPixel = mSprite->mClipboard.mBrushes[tSel];
+				
+				if(mSprite->mClipboard.bIsEditing){
+					tSel = searchRectsXY(mSprite->mClipboard.mBrushes[mSprite->mClipboard.mSelectedBrush]->BrushElementAreas, ImButtonsClipboard.mLeft.mMousePos.x, ImButtonsClipboard.mLeft.mMousePos.y);
+					if(tSel > -1){
+						mSprite->mClipboard.mBrushes[mSprite->mClipboard.mSelectedBrush]->mCursorPos = tSel;
+					}
+				}		
+
 			}		
 		}
 		
@@ -3443,7 +3451,14 @@ int TEditor::handleClipboard(){
 			tSel = searchRectsXY(mTileSet.mClipboardTiles.BrushAreas, ImButtonsClipboard.mLeft.mMousePos.x, ImButtonsClipboard.mLeft.mMousePos.y);
 			if(tSel != -1){
 				mTileSet.mClipboardTiles.mSelectedBrush = tSel;
-				mCurrentBrushPixel = mTileSet.mClipboardTiles.mBrushes[tSel];				
+				mCurrentBrushPixel = mTileSet.mClipboardTiles.mBrushes[tSel];
+
+				if(mTileSet.mClipboardTiles.bIsEditing){
+					tSel = searchRectsXY(mTileSet.mClipboardTiles.mBrushes[mTileSet.mClipboardTiles.mSelectedBrush]->BrushElementAreas, ImButtonsClipboard.mLeft.mMousePos.x, ImButtonsClipboard.mLeft.mMousePos.y);
+					if(tSel > -1){
+						mTileSet.mClipboardTiles.mBrushes[mTileSet.mClipboardTiles.mSelectedBrush]->mCursorPos = tSel;
+					}
+				}
 			}		
 		}
 		
@@ -3456,7 +3471,15 @@ int TEditor::handleClipboard(){
 			tSel = searchRectsXY(mClipboardMap.BrushAreas, ImButtonsClipboard.mLeft.mMousePos.x, ImButtonsClipboard.mLeft.mMousePos.y);
 			if(tSel != -1){
 				mClipboardMap.mSelectedBrush = tSel;
-				mCurrentBrushTile = mClipboardMap.mBrushes[tSel];				
+				mCurrentBrushTile = mClipboardMap.mBrushes[tSel];
+
+				if(mClipboardMap.bIsEditing){
+					tSel = searchRectsXY(mClipboardMap.mBrushes[mClipboardMap.mSelectedBrush]->BrushElementAreas, ImButtonsClipboard.mLeft.mMousePos.x, ImButtonsClipboard.mLeft.mMousePos.y);
+					if(tSel > -1){
+						mClipboardMap.mBrushes[mClipboardMap.mSelectedBrush]->mCursorPos = tSel;
+					}
+				}				
+				
 			}		
 		}
 		
