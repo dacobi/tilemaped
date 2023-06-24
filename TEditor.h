@@ -56,7 +56,7 @@ class ImWinMouseState{
 
 class TEditor{
 	public:
-		TEditor(){mClipboardMap.mLocalTexParam.TexEditScale-=2;};
+		TEditor(){mClipboardMap.mLocalTexParam.TexEditScale--;};
 		void shutdown();
 		void closeProject();
 		TPalette mPalette;

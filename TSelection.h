@@ -175,6 +175,8 @@ class TClipboard : public TBrushList{
         TBrush* getLastClip();
         TBrush* getPrevClip();
         int renderIm();
+        int MinScale = 2;
+        int MaxScale = 16;
 };
 
 #endif

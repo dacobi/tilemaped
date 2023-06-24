@@ -1231,6 +1231,9 @@ int TBrushList::renderIm(){
 int TBrushList::saveToFile(std::string cBrushPath){
 
     if(mBrushes.size() == 0){
+        if(fs::exists(fs::status(cBrushPath))){
+            fs::remove(cBrushPath);
+        }
         return 0;
     }
 
@@ -1523,6 +1526,10 @@ int TClipboard::renderIm(){
     
         int tmpWinH=50;
 
+        if(mBrushType == TBRUSH_TILE){
+            tmpWinH+=50;
+        }
+
         for(auto cbrushs: BrushAreas){
             tmpWinH += cbrushs.h + 10;
         }
@@ -1574,6 +1581,24 @@ int TClipboard::renderIm(){
             mLastElement = -1;
         }
 
+        if(mBrushType == TBRUSH_TILE){
+
+            if(ImGui::Button("Flip H")){
+                mBrushes[mSelectedBrush]->flipElementH();
+            }
+
+            ImGui::SameLine();
+
+            if(ImGui::Button("Flip V")){
+                mBrushes[mSelectedBrush]->flipElementV();
+            }
+        }
+    }
+
+    if(mBrushType == TBRUSH_TILE){
+        ImGui::SliderInt("Scale", &mLocalTexParam.TexRenderSize, MinScale, MaxScale, "%d", ImGuiSliderFlags_NoInput); 
+    } else {
+        ImGui::SliderInt("Scale", &mLocalTexParam.TexPixelSize, MinScale, MaxScale, "%d", ImGuiSliderFlags_NoInput); 
     }
 
     ImGui::Separator();

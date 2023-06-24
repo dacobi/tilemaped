@@ -253,6 +253,8 @@ void TEditor::initDialogs(){
 
 	mClipboardMap.init("Maps","Tile", TBRUSH_TILE, &bShowClipboardMap,mGlobalSettings.mGlobalTexParam.TexSizeX, mGlobalSettings.mGlobalTexParam.TexSizeY, &mGlobalSettings.TileMapScale, mGlobalSettings.TileMapScale, &mCurrentBrushTile, &mGlobalSettings.mGlobalTexParam);
 	mClipboardMap.bUseTileOffset = true;
+	mClipboardMap.MinScale = 1;
+	mClipboardMap.MaxScale = 32;
 
 	mSprite4.TexBPP = 4;
 
