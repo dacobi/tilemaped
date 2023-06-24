@@ -533,7 +533,9 @@ int TEditor::loadFromFolder(std::string path){
 		if(fs::exists(fs::status(path + DIRDEL + "clipboardtiles.dat"))){
 			mTileSet.mClipboardTiles.loadFromFile(path + DIRDEL + "clipboardtiles.dat");
 		}
-
+		if(fs::exists(fs::status(path + DIRDEL + "clipboardtileset.dat"))){
+			mTileSet.mClipboardTileSet.loadFromFile(path + DIRDEL + "clipboardtileset.dat");
+		}
 	}
 
 	switchTileMap(0);
@@ -647,12 +649,16 @@ int TEditor::saveToFolder(std::string path){
 	if(mGlobalSettings.mProjectSettings.Clipboard_SaveToProject->bvalue){
 		mClipboardMap.saveToFile(path + DIRDEL + "clipboardmaps.dat");
 		mTileSet.mClipboardTiles.saveToFile(path + DIRDEL + "clipboardtiles.dat");
+		mTileSet.mClipboardTileSet.saveToFile(path + DIRDEL + "clipboardtileset.dat");
 	} else {
 		if(fs::exists(fs::status(path + DIRDEL + "clipboardmaps.dat"))){
 			fs::remove(path + DIRDEL + "clipboardmaps.dat");
 		}
 		if(fs::exists(fs::status(path + DIRDEL + "clipboardtiles.dat"))){
 			fs::remove(path + DIRDEL + "clipboardtiles.dat");
+		}
+		if(fs::exists(fs::status(path + DIRDEL + "clipboardtileset.dat"))){
+			fs::remove(path + DIRDEL + "clipboardtileset.dat");
 		}
 	}
 
