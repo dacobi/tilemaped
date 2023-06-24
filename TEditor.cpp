@@ -3167,7 +3167,7 @@ int TEditor::handlePalette(){
 			tSel = searchRectsXY(mPalette.PixelAreas, cx, cy);
 		
 			if(mTexParam->TexBPP < 0x8){
-				mBrushesPixel.addBrushElement(tSel%16);
+				mBrushesPixel.addBrushElement(tSel == -1 ? -1 : tSel%16);
 			} else {
 				mBrushesPixel.addBrushElement(tSel);
 			}
@@ -3177,7 +3177,7 @@ int TEditor::handlePalette(){
 			tSel = searchRectsXY(mPalette.PixelAreas, cx, cy);
 		
 			if(mTexParam->TexBPP < 0x8){
-				mTileSet.mClipboardTiles.addBrushElement(tSel%16);
+				mTileSet.mClipboardTiles.addBrushElement(tSel == -1 ? -1 : tSel%16);
 			} else {
 				mTileSet.mClipboardTiles.addBrushElement(tSel);
 			}
@@ -3190,7 +3190,7 @@ int TEditor::handlePalette(){
 			tSel = searchRectsXY(mPalette.PixelAreas, cx, cy);
 		
 			if(mTexParam->TexBPP < 0x8){
-				mBrushesSprite->addBrushElement(tSel%16);
+				mBrushesSprite->addBrushElement(tSel == -1 ? -1 : tSel%16);
 			} else {
 				mBrushesSprite->addBrushElement(tSel);
 			}
@@ -3200,7 +3200,7 @@ int TEditor::handlePalette(){
 			tSel = searchRectsXY(mPalette.PixelAreas, cx, cy);
 		
 			if(mTexParam->TexBPP < 0x8){
-				mSprite->mClipboard.addBrushElement(tSel%16);
+				mSprite->mClipboard.addBrushElement(tSel == -1 ? -1 : tSel%16);
 			} else {
 				mSprite->mClipboard.addBrushElement(tSel);
 			}
