@@ -181,11 +181,13 @@ public:
 	bool bUpdateEditSelection = false;
 	bool bUpdateEditSelectionScale = false;
     bool bShowClipboardTiles = false;
+	bool bShowClipboardTileSet = false;
 	std::map<int, int> mTileSizeIn = { {0, 8}, {1, 16} };
 	std::map<int, int> mTileSizeOut = { {8, 0}, {16, 1} };
 	TSelection mSelection;
 	TEActionUndoStack mActionStack;
     TClipboard mClipboardTiles;
+	TClipboard mClipboardTileSet;
 
 };
 

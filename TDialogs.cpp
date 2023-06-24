@@ -415,7 +415,10 @@ int TBDialog::render(){
 				}
 			}
 
-			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET){	
+			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET){
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Clipboard (F7)").c_str(), NULL , &mGlobalSettings.CurrentEditor->mTileSet.bShowClipboardTileSet)){		
+					mGlobalSettings.CurrentEditor->activateClipboard(false);
+				}
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixelTileSet)){                                                                         
 					mGlobalSettings.CurrentEditor->activateBrushes(false);
                 }			
@@ -726,7 +729,7 @@ int TBDialog::render(){
 
 			if((mGlobalSettings.CurrentEditor->mCurMode != EMODE_PALED) && (mGlobalSettings.CurrentEditor->mCurMode != EMODE_SELEDIT)){
 				
-				if( (mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE) || (mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE) || (mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP) ){
+				if( (mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE) || (mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE) ||(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET) || (mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP) ){
 					if(ImGui::MenuItem(std::string(mGlobalSettings.mCopy + " Copy Selection (C)").c_str())){						
 						mGlobalSettings.CurrentEditor->handleCopyPaste();		
 					}
