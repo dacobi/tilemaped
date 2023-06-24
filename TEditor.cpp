@@ -2388,8 +2388,7 @@ int TEditor::activateBrushes(bool bChangeState){
 
 	if(mCurMode == EMODE_TILESET){
 		if(bChangeState){
-			bShowBrushesPixelTileSet = !bShowBrushesPixelTileSet;
-			std::cout << "Set TileSet Brush bool: "  << (bShowBrushesPixelTileSet == false ? "false" : "true") << std::endl ;
+			bShowBrushesPixelTileSet = !bShowBrushesPixelTileSet;			
 		}
 		if(bShowBrushesPixelTileSet){
 			mTileSet.bShowClipboardTileSet = false;			
@@ -2409,17 +2408,6 @@ int TEditor::activateBrushes(bool bChangeState){
 			mBrushesSprite->closeEdit();
 		}
 	}
-
-	/*
-	if(mCurMode == EMODE_TILESET){
-		if(bChangeState) bShowBrushesPixelTileSet = !bShowBrushesPixelTileSet;
-
-		if(bShowBrushesPixelTileSet){
-
-		} else {
-			mBrushesPixel.closeEdit();
-		}
-	}*/
 
 	if(mCurMode == EMODE_SELEDIT){
 		if(bChangeState) bShowBrushesPixelSelEdit = !bShowBrushesPixelSelEdit;
