@@ -172,6 +172,7 @@ class TClipboard : public TBrushList{
         TClipboard(){mLocalTexParam.TexPixelSize-=12;};
         TBrush* createClipTile(Tile* cNewTile);
         TBrush* createClipMap(TileMap* cNewMap);
+        TBrush* createClipTileSet(TileSet* cNewSet);
         TBrush* getLastClip();
         TBrush* getPrevClip();
         int renderIm();

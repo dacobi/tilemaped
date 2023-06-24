@@ -2445,7 +2445,7 @@ int TileSet::renderEd(int xpos, int ypos){
 			}
 		}
 
-		if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet && !mGlobalSettings.CurrentEditor->mBrushesPixel.bIsEditing){
+		if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet){// && !mGlobalSettings.CurrentEditor->mBrushesPixel.bIsEditing){
 			if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->mSelected.size()){
 				for(int i = 0; i < mSelEdWidth; i++){
 					for(int j = 0; j <  cRowNum; j++){
@@ -3021,7 +3021,7 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 		}
 	}
 	
-	if(mGlobalSettings.CurrentEditor->mCurrentBrushTile && !mGlobalSettings.CurrentEditor->mBrushesTile.bIsEditing){
+	if(mGlobalSettings.CurrentEditor->mCurrentBrushTile){ // && !mGlobalSettings.CurrentEditor->mBrushesTile.bIsEditing){
 		if(mGlobalSettings.CurrentEditor->mCurrentBrushTile->mSelected.size()){
 			for(int i=0; i < mGlobalSettings.TileMapHeight; i++){
 				for(int j=0; j < mGlobalSettings.TileMapWidth; j++){					

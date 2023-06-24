@@ -1479,6 +1479,42 @@ TBrush* TClipboard::createClipTile(Tile* cNewTile){
     return newClip;
 }
 
+TBrush* TClipboard::createClipTileSet(TileSet* cNewSet){
+    
+    TBrush *newClip = NULL;
+    int cFX, cFY, cLX, cLY;
+
+    if(cNewSet->mSelection.isSelectionRectangular(cFX, cFY, cLX, cLY)){
+        int cWidth = cLX - cFX+1;
+        int cHeight = cLY - cFY+1;
+
+        addBrush(cWidth, cHeight);
+
+        newClip = mBrushes[mBrushes.size() - 1];
+        mSelectedBrush = mBrushes.size() - 1;
+
+        std::sort(cNewSet->mSelection.mSelected.begin(), cNewSet->mSelection.mSelected.end(), [](int a, int b){return a < b;});
+
+        for(int y = 0; y < cHeight; y++){
+            for(int x = 0; x < cWidth; x++){
+
+                int tindex = -1;
+				int tTile = cNewSet->mSelection.getTileIndex(cNewSet->mSelection.mSelected[(y * cWidth) + x], cNewSet->mSelectionAreaX, cNewSet->mSelectionAreaY, tindex, &mGlobalSettings.mGlobalTexParam);
+				Tile *mTile = cNewSet->TTiles[tTile];
+				
+				newClip->mBrushElements[(y * cWidth) + x] = mTile->getPixel(tindex);
+			
+                if(newClip->mBrushElements[(y * cWidth) + x] == 0){
+                    newClip->mBrushElements[(y * cWidth) + x] = -1;
+                }
+            }
+        }
+    }
+
+    return newClip;
+
+}
+
 TBrush* TClipboard::getLastClip(){
     
     if(mBrushes.size() == 0){
