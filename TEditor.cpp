@@ -2341,7 +2341,7 @@ int TEditor::activateClipboard(bool bChangeState){
 		if(bChangeState) mTileSet.bShowClipboardTileSet = !mTileSet.bShowClipboardTileSet;
 
 		if(mTileSet.bShowClipboardTileSet){
-			bShowBrushesPixel = false;
+			bShowBrushesPixelTileSet = false;
 			mBrushesPixel.closeEdit();
 		} else {
 			mTileSet.mClipboardTileSet.closeEdit();
@@ -2387,10 +2387,12 @@ int TEditor::activateBrushes(bool bChangeState){
 	}
 
 	if(mCurMode == EMODE_TILESET){
-		if(bChangeState) bShowBrushesPixel = !bShowBrushesPixel;
-
-		if(bShowBrushesPixel){
-			mTileSet.bShowClipboardTileSet = false;
+		if(bChangeState){
+			bShowBrushesPixelTileSet = !bShowBrushesPixelTileSet;
+			std::cout << "Set TileSet Brush bool: "  << (bShowBrushesPixelTileSet == false ? "false" : "true") << std::endl ;
+		}
+		if(bShowBrushesPixelTileSet){
+			mTileSet.bShowClipboardTileSet = false;			
 			mTileSet.mClipboardTileSet.closeEdit();
 		} else {
 			mBrushesPixel.closeEdit();
@@ -2408,6 +2410,7 @@ int TEditor::activateBrushes(bool bChangeState){
 		}
 	}
 
+	/*
 	if(mCurMode == EMODE_TILESET){
 		if(bChangeState) bShowBrushesPixelTileSet = !bShowBrushesPixelTileSet;
 
@@ -2416,7 +2419,7 @@ int TEditor::activateBrushes(bool bChangeState){
 		} else {
 			mBrushesPixel.closeEdit();
 		}
-	}
+	}*/
 
 	if(mCurMode == EMODE_SELEDIT){
 		if(bChangeState) bShowBrushesPixelSelEdit = !bShowBrushesPixelSelEdit;
