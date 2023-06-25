@@ -525,6 +525,14 @@ int TEditor::loadFromFolder(std::string path){
 	
 	initDialogs();
 
+	for(int mi = 0; mi < mTileMaps.size(); mi++){
+		sKey* cSKey = mGlobalSettings.mProjectSettings.getMapTileZeroKey(mi);
+
+		if(cSKey){				
+			mTileMaps[mi]->bIsTileZeroTransparent = cSKey->getBool();
+		}
+	}
+
 	if(mGlobalSettings.mProjectSettings.Clipboard_SaveToProject->bvalue){
 		if(fs::exists(fs::status(path + DIRDEL + "clipboardmaps.dat"))){
 			std::cout << "Load Maps Clipboard" << std::endl;
@@ -575,6 +583,17 @@ int TEditor::saveToFolder(std::string path){
 		} catch(...){
 			std::cout << "Error Creating Folder!" << std::endl;
 			return 1;
+		}
+	}
+
+	for(int mi = 0; mi < mTileMaps.size(); mi++){
+		sKey* cSKey = mGlobalSettings.mProjectSettings.getMapTileZeroKey(mi);
+
+		if(cSKey){				
+			cSKey->bvalue = mTileMaps[mi]->bIsTileZeroTransparent;
+		} else {
+			cSKey = mGlobalSettings.mProjectSettings.createMapTileZeroKey(mi);
+			cSKey->bvalue = mTileMaps[mi]->bIsTileZeroTransparent;
 		}
 	}
 	
@@ -630,6 +649,12 @@ int TEditor::saveToFolder(std::string path){
 		fs::path cColBin = path + DIRDEL + "col" + cColMapPrefix + ".bin";
 		if(fs::exists(fs::status(cColBin))){
 			fs::remove(cColBin);
+		}
+
+		sKey* cSKey = mGlobalSettings.mProjectSettings.getMapTileZeroKey(mMapNum);
+
+		if(cSKey){				
+			mGlobalSettings.mProjectSettings.removeMapTileZeroKey(mMapNum);
 		}
 					
 		mMapNum++;
