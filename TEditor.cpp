@@ -534,8 +534,7 @@ int TEditor::loadFromFolder(std::string path){
 	}
 
 	if(mGlobalSettings.mProjectSettings.Clipboard_SaveToProject->bvalue){
-		if(fs::exists(fs::status(path + DIRDEL + "clipboardmaps.dat"))){
-			std::cout << "Load Maps Clipboard" << std::endl;
+		if(fs::exists(fs::status(path + DIRDEL + "clipboardmaps.dat"))){			
 			mClipboardMap.loadFromFile(path + DIRDEL + "clipboardmaps.dat");
 		}
 		if(fs::exists(fs::status(path + DIRDEL + "clipboardtiles.dat"))){
