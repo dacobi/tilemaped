@@ -690,6 +690,15 @@ int TBDialog::render(){
 						
 					}
 					ImGui::EndMenu();
+				}
+
+				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " TileMap Clipboard").c_str()))){
+					
+					if(ImGui::MenuItem("Tile Zero Is Transparent", NULL, &mGlobalSettings.CurrentEditor->mTileMap->bIsTileZeroTransparent)){
+						
+					}
+					
+					ImGui::EndMenu();
 				}								
 			}
 

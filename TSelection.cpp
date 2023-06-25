@@ -1442,7 +1442,13 @@ TBrush* TClipboard::createClipMap(TileMap* cNewMap){
             for(int x = 0; x < cWidth; x++){
                 newClip->mBrushElements[(y * cWidth) + x] = cNewMap->getTile(cNewMap->mSelection.mSelected[(y * cWidth) + x]);
                 newClip->mElementProps[(y * cWidth) + x]  = cNewMap->getTileProp(cNewMap->mSelection.mSelected[(y * cWidth) + x]);
-                //std::cout << "Clip with Offset: " << newClip->mElementProps[(y * cWidth) + x].mPaletteOffset << std::endl;
+                
+                if(cNewMap->bIsTileZeroTransparent){
+                    if(newClip->mBrushElements[(y * cWidth) + x] == 0){
+                        newClip->mBrushElements[(y * cWidth) + x] = -1;
+                    }
+                }
+                
             }
         }
     }

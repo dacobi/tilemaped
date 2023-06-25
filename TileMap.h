@@ -239,6 +239,7 @@ public:
 	TSelection mSelection;
 	bool bHasCollisionMap = false;
 	TCollisionMap mColMap;
+	bool bIsTileZeroTransparent = false;
 };
 
 #endif
