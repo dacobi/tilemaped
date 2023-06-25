@@ -140,6 +140,10 @@ public:
 	sKey* getSpriteGridKey(int cSNum);
 	sKey* createSpriteGridKey(int cSNum);
 	int removeSpriteGridKey(int cSNum);
+
+	sKey* getMapTileZeroKey(int cMNum);
+	sKey* createMapTileZeroKey(int cMNum);
+	int removeMapTileZeroKey(int cMNum);
 	
 	sKey *Editor_SelectionAppend;
 	sKey *Editor_UseTextureFiltering;

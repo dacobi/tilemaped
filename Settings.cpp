@@ -198,6 +198,54 @@ void ProjectSettings::close(){
 	bLoaded = false;
 }
 
+sKey* ProjectSettings::getMapTileZeroKey(int cMNum){
+	std::stringstream sconv;
+	std::string sSnum;
+	sconv << cMNum << std::endl;
+	sconv >> sSnum;
+	sKey *cSpriteKey = getKey(std::string("TileMap"+sSnum+"_TileZeroTransparent"));
+
+	if(cSpriteKey == keys[0]){		
+		return NULL;
+	}
+
+	return cSpriteKey;	
+}
+
+sKey* ProjectSettings::createMapTileZeroKey(int cMNum){
+	std::stringstream sconv;
+	std::string sSnum;
+	sconv << cMNum << std::endl;
+	sconv >> sSnum;
+	sKey *cSpriteKey = createNewKey(std::string("TileMap"+sSnum+"_TileZeroTransparent"), type_bool, false);
+	return cSpriteKey;
+}
+
+int ProjectSettings::removeMapTileZeroKey(int cMNum){
+	std::stringstream sconv;
+	std::string sSnum;
+	sconv << cMNum << std::endl;
+	sconv >> sSnum;
+	sKey *cSpriteKey = getKey(std::string("TileMap"+sSnum+"_TileZeroTransparent"));
+
+	if(cSpriteKey == keys[0]){
+		return 1;
+	}
+
+	for(int ki = 0;  ki < keys.size(); ki++){
+		if(cSpriteKey == keys[ki]){
+			keys.erase(keys.begin()+ki);
+			
+			for(int i = 0; i < keys.size(); i++){
+				keyindex[keys[i]->kname] = i;
+			}
+			return 0;
+		}
+	}
+
+	return 1;	
+}
+
 sKey* ProjectSettings::getSpriteScaleKey(int cSNum){
 
 	std::stringstream sconv;
