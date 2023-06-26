@@ -1181,6 +1181,12 @@ int TBrushList::renderIm(){
         }
     }
 
+    if(mBrushType == TBRUSH_TILE){
+        ImGui::SliderInt("Scale", &mLocalTexParam.TexRenderSize, MinScale, MaxScale, "%d", ImGuiSliderFlags_NoInput); 
+    } else {
+        ImGui::SliderInt("Scale", &mLocalTexParam.TexPixelSize, MinScale, MaxScale, "%d", ImGuiSliderFlags_NoInput); 
+    }
+
     ImGui::Separator();
 
     ImGui::BeginChild("Brush List", ImVec2(0,0), false, ImGuiWindowFlags_NoNav);

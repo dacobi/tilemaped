@@ -142,6 +142,8 @@ class TBrushList{
         int loadFromFile(std::string cBrushPath);
         void close();
         void closeEdit();
+        int MinScale = 4;
+        int MaxScale = 16;
 };
 
 class TSelectionEditor{
@@ -169,15 +171,13 @@ class TSelectionEditor{
 
 class TClipboard : public TBrushList{
     public:
-        TClipboard(){mLocalTexParam.TexPixelSize-=12;};
+        TClipboard(){mLocalTexParam.TexPixelSize-=12;MinScale = 2;};
         TBrush* createClipTile(Tile* cNewTile);
         TBrush* createClipMap(TileMap* cNewMap);
         TBrush* createClipTileSet(TileSet* cNewSet);
         TBrush* getLastClip();
         TBrush* getPrevClip();
-        int renderIm();
-        int MinScale = 2;
-        int MaxScale = 16;
+        int renderIm();        
 };
 
 #endif
