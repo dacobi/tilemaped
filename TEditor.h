@@ -155,6 +155,7 @@ class TEditor{
 		TBrush *mCurrentBrushPixelSelEdit = NULL;		
 		TBrushList mBrushesTile;
 		TBrushList mBrushesPixel;
+		TBrushList mBrushesPixelSelEd;
 		TBrushList mBrushesPixelSprite4;
 		TBrushList mBrushesPixelSprite8;
 		TBrushList *mBrushesSprite;

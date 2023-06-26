@@ -251,6 +251,14 @@ void TEditor::initDialogs(){
 
 	mBrushesTile.init("Tiles","Tile", TBRUSH_TILE, &bShowBrushesTile,mGlobalSettings.mGlobalTexParam.TexSizeX, mGlobalSettings.mGlobalTexParam.TexSizeY, &mGlobalSettings.TileMapScale, mGlobalSettings.TileMapScale, &mCurrentBrushTile, &mGlobalSettings.mGlobalTexParam);
 	mBrushesPixel.init("Pixels","Pixel", TBRUSH_PIXEL, &bShowBrushesPixel, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
+	mBrushesPixelSelEd.init("Pixels Selection","Pixel", TBRUSH_PIXEL, &bShowBrushesPixel, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
+    
+    if(mGlobalSettings.mGlobalTexParam.TexSizeX < 16){
+        mBrushesPixelSelEd.mMaxX = 8;        
+    }
+    if(mGlobalSettings.mGlobalTexParam.TexSizeY < 16){
+        mBrushesPixelSelEd.mMaxY = 8;        
+    }
 
 	mClipboardMap.init("Maps","Tile", TBRUSH_TILE, &bShowClipboardMap,mGlobalSettings.mGlobalTexParam.TexSizeX, mGlobalSettings.mGlobalTexParam.TexSizeY, &mGlobalSettings.TileMapScale, mGlobalSettings.TileMapScale, &mCurrentBrushTile, &mGlobalSettings.mGlobalTexParam);
 	mClipboardMap.bUseTileOffset = true;
@@ -1070,7 +1078,7 @@ int TEditor::render(){
 		}
 
 		if(bShowBrushesPixelSelEdit){
-			mBrushesPixel.renderIm();
+			mBrushesPixelSelEd.renderIm();
 		} /*else {
 			mBrushesPixel.closeEdit();
 		}*/
@@ -1277,8 +1285,8 @@ int TEditor::setMode(int newMode){
 				mSelEdit.setSelection(&mTileMap->mSelection, width+1, height+1);				
 			}        		        	
 
-			mBrushesPixel.setBrushDeltas(1, 1, &mSelEdit.mCurEdScale, mGlobalSettings.mGlobalTexParam.TexEditScale * mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam);
-			mBrushesPixel.bIsShown = &bShowBrushesPixelSelEdit;
+			mBrushesPixelSelEd.setBrushDeltas(1, 1, &mSelEdit.mCurEdScale, mGlobalSettings.mGlobalTexParam.TexEditScale * mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam);
+			mBrushesPixelSelEd.bIsShown = &bShowBrushesPixelSelEdit;
 
     	} else {        	
 			showMessage("Selection is invalid\nMust be Rectangle of Min 2x2 and Max 16x16 Tiles");
@@ -2183,7 +2191,7 @@ bool TEditor::checkQuit(){
 	if(mCurMode == EMODE_SELEDIT){
         if(bShowBrushesPixelSelEdit){
             bShowBrushesPixelSelEdit = false;
-			mBrushesPixel.closeEdit(); 
+			mBrushesPixelSelEd.closeEdit(); 
             return true;
         }
         if(mCurrentBrushPixelSelEdit){
@@ -2445,7 +2453,7 @@ int TEditor::activateBrushes(bool bChangeState){
 		if(bShowBrushesPixelSelEdit){
 
 		} else {
-			mBrushesPixel.closeEdit();
+			mBrushesPixelSelEd.closeEdit();
 		}
 	}
 
@@ -3244,7 +3252,19 @@ int TEditor::handlePalette(){
 		}
 	}
 
-	if(mCurMode != EMODE_SPRITE){
+	if(mCurMode == EMODE_SELEDIT){
+		if(ImButtonsPalette.mRight.bButtonIsDown && mBrushesPixelSelEd.bIsEditing){
+			int tSel = -1;		
+			tSel = searchRectsXY(mPalette.PixelAreas, cx, cy);
+		
+			if(mTexParam->TexBPP < 0x8){
+				mBrushesPixelSelEd.addBrushElement(tSel == -1 ? -1 : tSel%16);
+			} else {
+				mBrushesPixelSelEd.addBrushElement(tSel);
+			}
+		
+		}
+	} else if(mCurMode != EMODE_SPRITE){
 		if(ImButtonsPalette.mRight.bButtonIsDown && mBrushesPixel.bIsEditing){
 			int tSel = -1;		
 			tSel = searchRectsXY(mPalette.PixelAreas, cx, cy);
@@ -3790,28 +3810,28 @@ int TEditor::handleBrushes(){
 
 	if(mCurMode == EMODE_SELEDIT){
         if(ImButtonsBrushes.mLeft.bButtonIsDown){ 
-            if(ImButtonsBrushes.mLeft.mMousePos.y < mBrushesPixel.mBrushOffset) {return 0;}
+            if(ImButtonsBrushes.mLeft.mMousePos.y < mBrushesPixelSelEd.mBrushOffset) {return 0;}
             int tSel = -1;
-            tSel = searchRectsXY(mBrushesPixel.BrushAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
+            tSel = searchRectsXY(mBrushesPixelSelEd.BrushAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
             if(tSel != -1){
-                mBrushesPixel.mSelectedBrush = tSel;
-                mCurrentBrushPixelSelEdit = mBrushesPixel.mBrushes[tSel];
-				if(mBrushesPixel.bIsEditing){
-					tSel = searchRectsXY(mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
+                mBrushesPixelSelEd.mSelectedBrush = tSel;
+                mCurrentBrushPixelSelEdit = mBrushesPixelSelEd.mBrushes[tSel];
+				if(mBrushesPixelSelEd.bIsEditing){
+					tSel = searchRectsXY(mBrushesPixelSelEd.mBrushes[mBrushesPixelSelEd.mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mLeft.mMousePos.x, ImButtonsBrushes.mLeft.mMousePos.y);
 					if(tSel > -1){
-						mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->mCursorPos = tSel;
+						mBrushesPixelSelEd.mBrushes[mBrushesPixelSelEd.mSelectedBrush]->mCursorPos = tSel;
 					}
 				}
             }               
         }
 		if(ImButtonsBrushes.mRight.bButtonIsDown){ 
-			if(ImButtonsBrushes.mRight.mMousePos.y < mBrushesPixel.mBrushOffset) {return 0;}			
+			if(ImButtonsBrushes.mRight.mMousePos.y < mBrushesPixelSelEd.mBrushOffset) {return 0;}			
 			
-			if(mBrushesPixel.bIsEditing){
-				int tSel = searchRectsXY(mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mRight.mMousePos.x, ImButtonsBrushes.mRight.mMousePos.y);
+			if(mBrushesPixelSelEd.bIsEditing){
+				int tSel = searchRectsXY(mBrushesPixelSelEd.mBrushes[mBrushesPixelSelEd.mSelectedBrush]->BrushElementAreas, ImButtonsBrushes.mRight.mMousePos.x, ImButtonsBrushes.mRight.mMousePos.y);
 				if(tSel > -1){
-					mBrushesPixel.mBrushes[mBrushesPixel.mSelectedBrush]->mCursorPos = tSel;
-					mBrushesPixel.addBrushElement(mBrushesPixel.mLastElement);
+					mBrushesPixelSelEd.mBrushes[mBrushesPixelSelEd.mSelectedBrush]->mCursorPos = tSel;
+					mBrushesPixelSelEd.addBrushElement(mBrushesPixelSelEd.mLastElement);
 				}
 			}
 		}

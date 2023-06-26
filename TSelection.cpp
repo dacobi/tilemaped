@@ -807,17 +807,6 @@ int TBrushList::init(std::string cTitle, std::string cType, int cBrushType, bool
 
     mLocalTexParam.TexEditScale--;
 
-    //FIXME TODO
-
-    if(mBrushType == TBRUSH_PIXEL){
-        if(mGlobalSettings.mGlobalTexParam.TexSizeX < 16){
-            mMaxX = 8;        
-        }
-        if(mGlobalSettings.mGlobalTexParam.TexSizeY < 16){
-            mMaxY = 8;        
-        }
-    }
-    
     return 0;
 }
 
@@ -1358,7 +1347,7 @@ int TSelectionEditor::renderEd(int xpos, int ypos){
 
             //Brush render
 
-			if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit && !mGlobalSettings.CurrentEditor->mBrushesPixel.bIsEditing){
+			if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit){// && !mGlobalSettings.CurrentEditor->mBrushesPixel.bIsEditing){
 				if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit->mSelected.size()){						
 					for(int ii=0; ii < mGlobalSettings.mGlobalTexParam.TexSizeY; ii++){
 						for(int jj=0; jj < mGlobalSettings.mGlobalTexParam.TexSizeX; jj++){					
