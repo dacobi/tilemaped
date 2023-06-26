@@ -579,6 +579,10 @@ int TEditor::loadFromFolder(std::string path){
 		mBrushesPixel.loadFromFile(path+DIRDEL+"pbrushes.dat");
 	}
 
+	if(fs::exists(fs::status(path+DIRDEL+"pbrushesseled.dat"))){
+		mBrushesPixelSelEd.loadFromFile(path+DIRDEL+"pbrushesseled.dat");
+	}
+
 	return 0;
 }
 
@@ -679,6 +683,7 @@ int TEditor::saveToFolder(std::string path){
 
 	mBrushesTile.saveToFile(path + DIRDEL + "tbrushes.dat");
 	mBrushesPixel.saveToFile(path + DIRDEL + "pbrushes.dat");
+	mBrushesPixelSelEd.saveToFile(path + DIRDEL + "pbrushesseled.dat");
 
 	if(mGlobalSettings.mProjectSettings.Clipboard_SaveToProject->bvalue){
 		mClipboardMap.saveToFile(path + DIRDEL + "clipboardmaps.dat");
