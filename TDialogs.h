@@ -95,6 +95,7 @@ class DTDialog : public Dialog{
 		static DTDialog* createSpriteRotationRangeDialog();
 		static DTDialog* createSpriteRotationsDialog();
 		static DTDialog* createTileMapImportDialog();
+		static DTDialog* createSpriteConvertBPPDialog();
 };
 
 class IDDialog : public DTDialog{

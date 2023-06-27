@@ -231,6 +231,8 @@ class TEditor{
 		int createNewSpriteUpscaledCopy(TSprite *newSprite);
 		int createNewSpriteDownscaledCopy(TSprite *newSprite);
 		int createNewSpriteCopy(TSprite *newSprite);
+		int createNewSpriteConvertBPP8(TSprite *copySprite);
+		int createNewSpriteConvertBPP4(TSprite *copySprite);
 		int createSpriteRotationRange(int cRange, int cIntervals);
 		int createSpriteRotations(int cNum, float cInterval);
 		int rotateTile();

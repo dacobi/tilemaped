@@ -585,6 +585,9 @@ int TBDialog::render(){
 									bAllowRange = true;
 								}
 
+								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Convert BPP")).c_str())){										
+									mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECONVERTBPP, mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexBPP);
+								}
 
 								if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotation Range")).c_str(), NULL, false, bAllowRange)){									
 									mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATEROTATIONRANGE);
@@ -3371,6 +3374,30 @@ DTDialog* DTDialog::createSpriteFramesImportDialog(){
 	newDialog->addSeperator();
 
 	newDialog->addButton("Import", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
+DTDialog* DTDialog::createSpriteConvertBPPDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Sprite Convert BPP");
+
+	newDialog->setTarget(ESTATE_SPRITECONVERTBPP);
+
+	newDialog->setRequiredCondition(4);
+	newDialog->addText(mGlobalSettings.mFile + " Create Sprite Copy with BPP 8?");
+	newDialog->clearRequiredCondition();
+
+	newDialog->setRequiredCondition(8);
+	newDialog->addText(mGlobalSettings.mFile + " Create Sprite Copy with BPP 4?");
+	newDialog->clearRequiredCondition();
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Convert", SDLK_y);
 	
 	newDialog->addButton("Cancel", SDLK_n, true);
 

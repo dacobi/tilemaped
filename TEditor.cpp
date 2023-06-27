@@ -173,6 +173,7 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_SPRITEFRAMEIMPORT] =  DTDialog::createSpriteFrameImportDialog();
 	mDTDialogs[EDIALOG_SPRITEFRAMESIMPORT] =  DTDialog::createSpriteFramesImportDialog();
 	mDTDialogs[EDIALOG_TILEMAPIMPORT] = DTDialog::createTileMapImportDialog();
+	mDTDialogs[EDIALOG_SPRITECONVERTBPP] =  DTDialog::createSpriteConvertBPPDialog();
 
 	mProjectInfo = IDDialog::createProjectInfoDialog();
 }
@@ -1871,6 +1872,45 @@ int TEditor::createNewSpriteCopy(TSprite *newSprite){
 	switchSprite(mSprites.size()-1, 0);
 
 	return 0;
+}
+
+int TEditor::createNewSpriteConvertBPP8(TSprite *copySprite){
+	mSprite = new TSprite(copySprite->mTexParam.TexSizeX, copySprite->mTexParam.TexSizeY, 8);
+
+	for(auto *cFrame : copySprite->mFrames){
+		TSFrame *newFrame = mSprite->createFrame(&mPalette);
+
+		for(int pi = 0; pi < mSprite->mTexParam.TexSizeX * mSprite->mTexParam.TexSizeY; pi++){
+			newFrame->FileData[pi] = cFrame->getPixel(pi);
+		}
+		newFrame->updateTexture(&mPalette);
+	}
+
+	mSprites.push_back(mSprite);
+	
+	switchSprite(mSprites.size()-1, 0);
+
+	return 0;
+}
+
+int TEditor::createNewSpriteConvertBPP4(TSprite *copySprite){
+	mSprite = new TSprite(copySprite->mTexParam.TexSizeX, copySprite->mTexParam.TexSizeY, 4);
+
+	for(auto *cFrame : copySprite->mFrames){
+		TSFrame *newFrame = mSprite->createFrame(&mPalette);
+
+		for(int pi = 0; pi < mSprite->mTexParam.TexSizeX * mSprite->mTexParam.TexSizeY; pi++){
+			newFrame->setPixel(pi,cFrame->FileData[pi] % 16);
+		}
+		newFrame->updateTexture(&mPalette);
+	}
+
+	mSprites.push_back(mSprite);
+	
+	switchSprite(mSprites.size()-1, 0);
+
+	return 0;
+
 }
 
 
@@ -4252,6 +4292,22 @@ int TEditor::handleEvents(){
 				createNewSpriteCopy(mSprite);
 
 				showMessage("Sprite Copied Successfully");
+
+				cancelActiveDialog();					
+				return 0;
+			}
+
+			if(mGlobalSettings.mEditorState == ESTATE_SPRITECONVERTBPP){				
+				
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
+
+				if(mSprite->mTexParam.TexBPP == 8){
+					createNewSpriteConvertBPP4(mSprite);
+				} else {
+					createNewSpriteConvertBPP8(mSprite);
+				}
+				
+				showMessage("Sprite Converted Successfully");
 
 				cancelActiveDialog();					
 				return 0;
