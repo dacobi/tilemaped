@@ -15,6 +15,7 @@ void TEditor::closeProject(){
 	mTileSet.close();
 
 	mBrushesPixel.close();
+	mBrushesPixelSelEd.close();
 	mBrushesTile.close();
 	
 	for(auto *cMap : mTileMaps){
@@ -249,7 +250,7 @@ void TEditor::initDialogs(){
 		mGlobalSettings.bShowPaletteOffset = true;
 	}
 
-	mBrushesTile.MaxScale = 32;
+	//mBrushesTile.MaxScale = 32;
 	mBrushesTile.init("Tiles","Tile", TBRUSH_TILE, &bShowBrushesTile,mGlobalSettings.mGlobalTexParam.TexSizeX, mGlobalSettings.mGlobalTexParam.TexSizeY, &mGlobalSettings.TileMapScale, mGlobalSettings.TileMapScale, &mCurrentBrushTile, &mGlobalSettings.mGlobalTexParam);
 	
 	mBrushesPixel.init("Pixels","Pixel", TBRUSH_PIXEL, &bShowBrushesPixel, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
@@ -265,7 +266,7 @@ void TEditor::initDialogs(){
 	mClipboardMap.init("Maps","Tile", TBRUSH_TILE, &bShowClipboardMap,mGlobalSettings.mGlobalTexParam.TexSizeX, mGlobalSettings.mGlobalTexParam.TexSizeY, &mGlobalSettings.TileMapScale, mGlobalSettings.TileMapScale, &mCurrentBrushTile, &mGlobalSettings.mGlobalTexParam);
 	mClipboardMap.bUseTileOffset = true;
 	mClipboardMap.MinScale = 4;
-	mClipboardMap.MaxScale = 32;
+	//mClipboardMap.MaxScale = 32;
 
 	mSprite4.TexBPP = 4;
 

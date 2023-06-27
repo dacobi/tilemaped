@@ -1928,6 +1928,7 @@ void TileSet::close(){
 	}
 	TTiles.clear();
 	mClipboardTiles.close();
+	mClipboardTileSet.close();
 }
 
 void TileSet::shutdown(){
