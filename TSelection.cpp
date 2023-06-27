@@ -293,6 +293,43 @@ bool TSelection::isSelectionRectangular(int &cFirstX, int &cFirstY, int &cLastX,
     return retval;
 }
 
+bool TSelection::getSelectionBounds(int &nLeft, int &nTop, int &nRight, int &nButtom){
+
+    if(mSelected.size() == 0){
+        return false;
+    }
+
+    int cLeft = mAreaX - 1;
+    int cTop = mAreaY - 1;
+    int cRight = 0;
+    int cButtom = 0;
+
+    for(int si = 0; si < mSelected.size(); si++){
+        int cX = 0, cY = 0;
+        getXYFromIndex(mSelected[si], mAreaX, mAreaY, cX, cY);
+
+        if(cX < cLeft){
+            cLeft = cX;
+        }
+        if(cX > cRight){
+            cRight = cX;
+        }
+        if(cY < cTop){
+            cTop = cY;
+        }
+        if(cY > cButtom){
+            cButtom = cY;
+        }
+    }
+
+    nLeft = cLeft;
+    nRight = cRight;
+    nTop = cTop;
+    nButtom = cButtom;
+
+    return true;
+}
+
 int TSelection::renderSelection(int xpos, int ypos){	
 	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer,mGlobalSettings.DefaultHighlightColor.r,mGlobalSettings.DefaultHighlightColor.g,mGlobalSettings.DefaultHighlightColor.b, 0xff);
 	for(int i=0; i < mAreaY; i++){
@@ -1421,6 +1458,7 @@ SDL_Rect rEmpty;
 TBrush* TClipboard::createClipMap(TileMap* cNewMap){
     TBrush *newClip = NULL;
     int cFX, cFY, cLX, cLY;
+    int cLeft, cTop, cRight, cButtom;
 
     if(cNewMap->mSelection.isSelectionRectangular(cFX, cFY, cLX, cLY)){
         int cWidth = cLX - cFX+1;
@@ -1446,6 +1484,32 @@ TBrush* TClipboard::createClipMap(TileMap* cNewMap){
                 
             }
         }
+    } else if(cNewMap->mSelection.getSelectionBounds(cLeft, cTop, cRight, cButtom)){
+        int cWidth = cRight - cLeft + 1;
+        int cHeight = cButtom - cTop + 1;
+
+        addBrush(cWidth, cHeight);
+
+        newClip = mBrushes[mBrushes.size() - 1];
+        mSelectedBrush = mBrushes.size() - 1;
+
+        for(auto &cElem : newClip->mBrushElements){
+            cElem = -1;
+        }
+
+        for(int si = 0; si < cNewMap->mSelection.mSelected.size(); si++){
+            int cX = 0, cY = 0;
+            cNewMap->mSelection.getXYFromIndex(cNewMap->mSelection.mSelected[si], cNewMap->mSelection.mAreaX, cNewMap->mSelection.mAreaY, cX, cY);
+            
+            newClip->mBrushElements[((cY - cTop) * cWidth) + (cX - cLeft)] = cNewMap->getTile(cNewMap->mSelection.mSelected[si]);
+            newClip->mElementProps[((cY - cTop) * cWidth) + (cX - cLeft)] = cNewMap->getTileProp(cNewMap->mSelection.mSelected[si]);
+            
+            if(cNewMap->bIsTileZeroTransparent){
+                if(newClip->mBrushElements[((cY - cTop) * cWidth) + (cX - cLeft)] == 0){
+                    newClip->mBrushElements[((cY - cTop) * cWidth) + (cX - cLeft)] = -1;
+                }
+            }
+        }        
     }
 
     return newClip;
@@ -1455,6 +1519,7 @@ TBrush* TClipboard::createClipTile(Tile* cNewTile){
 
     TBrush *newClip = NULL;
     int cFX, cFY, cLX, cLY;
+    int cLeft, cTop, cRight, cButtom;
 
     if(cNewTile->mSelection.isSelectionRectangular(cFX, cFY, cLX, cLY)){
         int cWidth = cLX - cFX+1;
@@ -1475,6 +1540,27 @@ TBrush* TClipboard::createClipTile(Tile* cNewTile){
                 }
             }
         }
+    } else if(cNewTile->mSelection.getSelectionBounds(cLeft, cTop, cRight, cButtom)){
+        int cWidth = cRight - cLeft + 1;
+        int cHeight = cButtom - cTop + 1;
+
+        addBrush(cWidth, cHeight);
+
+        newClip = mBrushes[mBrushes.size() - 1];
+        mSelectedBrush = mBrushes.size() - 1;
+
+        for(auto &cElem : newClip->mBrushElements){
+            cElem = -1;
+        }
+
+        for(int si = 0; si < cNewTile->mSelection.mSelected.size(); si++){
+            int cX = 0, cY = 0;
+            cNewTile->mSelection.getXYFromIndex(cNewTile->mSelection.mSelected[si], cNewTile->mSelection.mAreaX, cNewTile->mSelection.mAreaY, cX, cY);
+            newClip->mBrushElements[((cY - cTop) * cWidth) + (cX - cLeft)] = cNewTile->getPixel(cNewTile->mSelection.mSelected[si]);
+            if(newClip->mBrushElements[((cY - cTop) * cWidth) + (cX - cLeft)] == 0){
+                newClip->mBrushElements[((cY - cTop) * cWidth) + (cX - cLeft)] = -1;
+            }
+        }        
     }
 
     return newClip;
@@ -1484,6 +1570,7 @@ TBrush* TClipboard::createClipTileSet(TileSet* cNewSet){
     
     TBrush *newClip = NULL;
     int cFX, cFY, cLX, cLY;
+    int cLeft, cTop, cRight, cButtom;
 
     if(cNewSet->mSelection.isSelectionRectangular(cFX, cFY, cLX, cLY)){
         int cWidth = cLX - cFX+1;
@@ -1510,6 +1597,32 @@ TBrush* TClipboard::createClipTileSet(TileSet* cNewSet){
                 }
             }
         }
+    }else if(cNewSet->mSelection.getSelectionBounds(cLeft, cTop, cRight, cButtom)){
+        int cWidth = cRight - cLeft + 1;
+        int cHeight = cButtom - cTop + 1;
+
+        addBrush(cWidth, cHeight);
+
+        newClip = mBrushes[mBrushes.size() - 1];
+        mSelectedBrush = mBrushes.size() - 1;
+
+        for(auto &cElem : newClip->mBrushElements){
+            cElem = -1;
+        }
+
+        for(int si = 0; si < cNewSet->mSelection.mSelected.size(); si++){
+            int cX = 0, cY = 0;
+            cNewSet->mSelection.getXYFromIndex(cNewSet->mSelection.mSelected[si], cNewSet->mSelection.mAreaX, cNewSet->mSelection.mAreaY, cX, cY);
+            
+            int tindex = -1;
+			int tTile = cNewSet->mSelection.getTileIndex(cNewSet->mSelection.mSelected[si], cNewSet->mSelectionAreaX, cNewSet->mSelectionAreaY, tindex, &mGlobalSettings.mGlobalTexParam);
+			Tile *mTile = cNewSet->TTiles[tTile];
+            
+            newClip->mBrushElements[((cY - cTop) * cWidth) + (cX - cLeft)] = mTile->getPixel(tindex);
+            if(newClip->mBrushElements[((cY - cTop) * cWidth) + (cX - cLeft)] == 0){
+                newClip->mBrushElements[((cY - cTop) * cWidth) + (cX - cLeft)] = -1;
+            }
+        }        
     }
 
     return newClip;
