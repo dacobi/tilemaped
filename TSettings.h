@@ -290,7 +290,8 @@ class TSettings{
 		bool bShowSelectedTile = true;
 		bool bShowProjectInfo = false;		
 		bool bShowHelpDialog = false;		
-		int mSelectedTile = 0;		
+		int mSelectedTile = 0;
+		int mBrushPosition = 0;
 		ImFont* DFont;
 		ImFont* SFont;
 		ImFont* LFont;

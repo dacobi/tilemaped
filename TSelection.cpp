@@ -518,8 +518,33 @@ int TBrush::getBrushSelection(int bx, int by, std::vector<SDL_Rect> &sRects){
     int cStepX = 0;
     int cStepY = 0;
 
-    bx -= ((mBrushWidth * cDeltaX)/2) - (cDeltaX/2);
-    by -= ((mBrushHeight * cDeltaY)/2) - (cDeltaY/2);
+    switch (mGlobalSettings.mBrushPosition)
+    {
+    case 0:
+        bx -= ((mBrushWidth * cDeltaX)/2) - (cDeltaX/2);
+        by -= ((mBrushHeight * cDeltaY)/2) - (cDeltaY/2);    
+        break;
+    case 1:
+        bx += (cDeltaX/2);
+        by += (cDeltaY/2);
+        break;
+    case 2:
+        bx = bx + (cDeltaX/2) - (mBrushWidth * cDeltaX);
+        by = by + (cDeltaY/2);
+        break;
+    case 3:
+        bx = bx + (cDeltaX/2) - (mBrushWidth * cDeltaX);
+        by = by + (cDeltaY/2) - (mBrushHeight * cDeltaY);
+        break;
+    case 4:
+        bx += (cDeltaX/2);
+        by = by + (cDeltaY/2) - (mBrushHeight * cDeltaY);
+        break;
+    default:
+        break;
+    }
+
+    
 
     mLastClickX = bx;
     mLastClickY = by;

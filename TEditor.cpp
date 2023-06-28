@@ -2451,6 +2451,15 @@ int TEditor::activateClipboard(bool bChangeState){
 	return 0;
 }
 
+void TEditor::nextBrushPos(){
+	if(mCurMode != EMODE_PALED){
+		mGlobalSettings.mBrushPosition++;
+		if(mGlobalSettings.mBrushPosition > 4){
+			mGlobalSettings.mBrushPosition = 0;
+		}
+	}
+}
+
 int TEditor::activateBrushes(bool bChangeState){
 	
 	if(mCurMode == EMODE_MAP){
@@ -4904,6 +4913,9 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 				if(cEvent->key.keysym.sym == SDLK_F8){	  				
 					activateBrushes();
 	  			}
+				if(cEvent->key.keysym.sym == SDLK_b){	  				
+					nextBrushPos();
+				}
 				if(cEvent->key.keysym.sym == SDLK_F10){	  				
 					dropBrush();
 				}

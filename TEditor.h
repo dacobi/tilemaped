@@ -159,6 +159,7 @@ class TEditor{
 		TBrushList mBrushesPixelSprite4;
 		TBrushList mBrushesPixelSprite8;
 		TBrushList *mBrushesSprite;
+		void nextBrushPos();
 		TextureParameters mSprite4;
 		TextureParameters mSprite8;
 		bool bShowCollisionEditor = false;	
