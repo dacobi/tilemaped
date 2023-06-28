@@ -2736,11 +2736,16 @@ int TEditor::replaceSelectedColor(int mx, int my){
 
 		if(mGlobalSettings.bShowPixelType || mTileSelectedTile->mSelection.mSelected.size()){
 			int mOldColor = mColorSelected;
+
+			if(mGlobalSettings.mGlobalTexParam.TexBPP < 8){
+				mOldColor = mColorSelected % 16;
+			}
+
 			int tSel = searchRectsXY(mPalette.PixelAreas, mx, my);
 			if(tSel > -1){					
 				if(mTileSelectedTile->mSelection.mSelected.size()){
 					TEActionReplacePixels* newAction = new TEActionReplacePixels();
-						newAction->doAction(mTileSelectedTile, mTileSelectedTile->mSelection.mSelected, -1, tSel, &mPalette);
+						newAction->doAction(mTileSelectedTile, mTileSelectedTile->mSelection.mSelected, -1, mGlobalSettings.mGlobalTexParam.TexBPP == 8 ? tSel : tSel % 16, &mPalette);
 						if(!(newAction == mTileSelectedTile->mActionStack.mLastAction)){
 							mTileSelectedTile->mActionStack.mLastAction = newAction;
 							mTileSelectedTile->mActionStack.newActionGroup();
@@ -2761,7 +2766,7 @@ int TEditor::replaceSelectedColor(int mx, int my){
 					}
 					if(newSelection.size()){
 						TEActionReplacePixels* newAction = new TEActionReplacePixels();
-						newAction->doAction(mTileSelectedTile, newSelection, mOldColor, tSel, &mPalette);
+						newAction->doAction(mTileSelectedTile, newSelection, mOldColor, mGlobalSettings.mGlobalTexParam.TexBPP == 8 ? tSel : tSel % 16, &mPalette);
 						if(!(newAction == mTileSelectedTile->mActionStack.mLastAction)){
 							mTileSelectedTile->mActionStack.mLastAction = newAction;
 							mTileSelectedTile->mActionStack.newActionGroup();
@@ -2780,10 +2785,15 @@ int TEditor::replaceSelectedColor(int mx, int my){
 		if(mGlobalSettings.bShowPixelTypeSprite || mSprite->mFrame->mSelection.mSelected.size()){
 			int mOldColor = mColorSelected;
 			int tSel = searchRectsXY(mPalette.PixelAreas, mx, my);
-			if(tSel > -1){					
+			
+			if(mSprite->mTexParam.TexBPP < 8){
+				mOldColor = mColorSelected % 16;
+			}
+			
+			if(tSel > -1){									
 				if(mSprite->mFrame->mSelection.mSelected.size()){
 					TEActionReplacePixels* newAction = new TEActionReplacePixels();
-						newAction->doAction(mSprite->mFrame, mSprite->mFrame->mSelection.mSelected, -1, tSel, &mPalette);
+						newAction->doAction(mSprite->mFrame, mSprite->mFrame->mSelection.mSelected, -1, mSprite->mTexParam.TexBPP == 8 ? tSel : tSel % 16, &mPalette);						
 						if(!(newAction == mSprite->mActionStack.mLastAction)){
 							mSprite->mActionStack.mLastAction = newAction;
 							mSprite->mActionStack.newActionGroup();
@@ -2797,14 +2807,16 @@ int TEditor::replaceSelectedColor(int mx, int my){
 					//for(auto &cPixel : mTileSelectedTile->FileData){
 					for(int i = 0; i < (mSprite->mTexParam.TexSizeX *mSprite->mTexParam.TexSizeY); i++){
 						auto cPixel = mSprite->mFrame->getPixel(i);
+						
 						if(cPixel == mOldColor){
 							newSelection.push_back(cPixIndex);
 						}
+						
 						cPixIndex++;
 					}
 					if(newSelection.size()){
 						TEActionReplacePixels* newAction = new TEActionReplacePixels();
-						newAction->doAction(mSprite->mFrame, newSelection, mOldColor, tSel, &mPalette);
+						newAction->doAction(mSprite->mFrame, newSelection, mOldColor, mSprite->mTexParam.TexBPP == 8 ? tSel : tSel % 16, &mPalette);						
 						if(!(newAction == mSprite->mActionStack.mLastAction)){
 							mSprite->mActionStack.mLastAction = newAction;
 							mSprite->mActionStack.newActionGroup();
@@ -2822,11 +2834,16 @@ int TEditor::replaceSelectedColor(int mx, int my){
 	if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET){
 		if(mGlobalSettings.bShowPixelType || mTileSet.mSelection.mSelected.size()){
 			int mOldColor = mColorSelected;
+
+			if(mGlobalSettings.mGlobalTexParam.TexBPP < 8){
+				mOldColor = mColorSelected % 16;
+			}
+
 			int tSel = searchRectsXY(mPalette.PixelAreas, mx, my);
 			if(tSel > -1){					
 				if(mTileSet.mSelection.mSelected.size()){
 					TEActionReplacePixelsSel* newAction = new TEActionReplacePixelsSel();
-					newAction->doAction(&mTileSet, mTileSet.mSelection, mTileSet.mSelectionAreaX, mTileSet.mSelectionAreaY, tSel, &mPalette);
+					newAction->doAction(&mTileSet, mTileSet.mSelection, mTileSet.mSelectionAreaX, mTileSet.mSelectionAreaY, mGlobalSettings.mGlobalTexParam.TexBPP == 8 ? tSel : tSel % 16, &mPalette);
 					if(!(newAction == mTileSet.mActionStack.mLastAction)){
 						mTileSet.mActionStack.mLastAction = newAction;
 						mTileSet.mActionStack.newActionGroup();
@@ -2852,7 +2869,7 @@ int TEditor::replaceSelectedColor(int mx, int my){
 						}
 						if(newSelection.size()){
 							newAction = new TEActionReplacePixels();
-							newAction->doAction(mTile, newSelection, mOldColor, tSel, &mPalette);
+							newAction->doAction(mTile, newSelection, mOldColor, mGlobalSettings.mGlobalTexParam.TexBPP == 8 ? tSel : tSel % 16, &mPalette);
 							//if(!(newAction == mTileSet.mActionStack.mLastAction)){							
 							mTileSet.mActionStack.addSubActions(newAction->mSubActions);
 							bDidAction = true;
@@ -2871,9 +2888,14 @@ int TEditor::replaceSelectedColor(int mx, int my){
 		}
 	}
 
-	if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SELEDIT){
+	if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SELEDIT){		
 		if(mGlobalSettings.bShowPixelType){
 			int mOldColor = mColorSelected;
+
+			if(mGlobalSettings.mGlobalTexParam.TexBPP < 8){
+				mOldColor = mColorSelected % 16;
+			}
+
 			int tSel = searchRectsXY(mPalette.PixelAreas, mx, my);
 			if(tSel > -1){									
 				mActionStack.newActionGroup();
@@ -2900,7 +2922,7 @@ int TEditor::replaceSelectedColor(int mx, int my){
 						}
 						if(newSelection.size()){
 							newAction = new TEActionReplacePixels();
-							newAction->doAction(mTile, newSelection, mOldColor, tSel, &mPalette);
+							newAction->doAction(mTile, newSelection, mOldColor, mGlobalSettings.mGlobalTexParam.TexBPP == 8 ? tSel : tSel % 16, &mPalette);
 							//if(!(newAction == mTileSet.mActionStack.mLastAction)){							
 							mActionStack.addSubActions(newAction->mSubActions);
 							bDidAction = true;
@@ -3314,6 +3336,8 @@ int TEditor::handlePalette(){
 				mBrushesPixelSelEd.addBrushElement(tSel);
 			}
 		
+		}else if(ImButtonsPalette.mRight.bButtonIsDown){			
+			replaceSelectedColor(ImButtonsPalette.mRight.mMousePos.x, ImButtonsPalette.mRight.mMousePos.y);		
 		}
 	} else if(mCurMode != EMODE_SPRITE){
 		if(ImButtonsPalette.mRight.bButtonIsDown && mBrushesPixel.bIsEditing){
@@ -3367,7 +3391,7 @@ int TEditor::handlePalette(){
 			} else {
 				mSprite->mClipboard.addBrushElement(tSel);
 			}
-		} else if(ImButtonsPalette.mRight.bButtonIsDown){
+		} else if(ImButtonsPalette.mRight.bButtonIsDown){			
 			replaceSelectedColor(ImButtonsPalette.mRight.mMousePos.x, ImButtonsPalette.mRight.mMousePos.y);		
 		}
 	}
