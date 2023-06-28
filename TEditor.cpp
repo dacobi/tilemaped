@@ -163,6 +163,8 @@ void TEditor::showProjectInfo(){
 
 void TEditor::createDialogs(){
 	
+	mHelpDialog.init();
+
 	mDTDialogs[EDIALOG_ERROR] = NULL;
 	mDTDialogs[EDIALOG_SPRITECREATECOPY] = DTDialog::createSpriteCopyDialog();
 	mDTDialogs[EDIALOG_SPRITECREATESCALEDCOPY] = DTDialog::createSpriteScaledCopyDialog();
@@ -174,6 +176,7 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_SPRITEFRAMESIMPORT] =  DTDialog::createSpriteFramesImportDialog();
 	mDTDialogs[EDIALOG_TILEMAPIMPORT] = DTDialog::createTileMapImportDialog();
 	mDTDialogs[EDIALOG_SPRITECONVERTBPP] =  DTDialog::createSpriteConvertBPPDialog();
+	mDTDialogs[EDIALOG_HELPMENU] = &mHelpDialog;
 
 	mProjectInfo = IDDialog::createProjectInfoDialog();
 }
@@ -206,7 +209,7 @@ void TEditor::initDialogs(){
 	mSaveAsDialog.init();
 	mSaveAsDialog.mSubDialog = &mSaveDialog;
 	
-	mHelpDialog.init();
+	//mHelpDialog.init();
 
 	mTopBar.mEditor = this;
 	mTopBar.init();
@@ -4806,7 +4809,9 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					handleSelection(SELMODE_NONE);
 				}
 	  			if(cEvent->key.keysym.sym == SDLK_F1){	  				
-		  			activateHelpDialog();
+		  			//activateHelpDialog();
+					mGlobalSettings.bShowHelpDialog = true;
+					activateDTDialog(EDIALOG_HELPMENU);
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F2){	  				
 		  			activateProjectInfo();
@@ -4941,7 +4946,7 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	mTileSet.reCalculateScale();
 
 	mPaletteOffset.bUpdateWinPos = true;
-	mHelpDialog.bUpdateWinPos = true;
+	//mHelpDialog.bUpdateWinPos = true;
 	
 	mProjectInfo->bUpdateWinPos = true;
 	

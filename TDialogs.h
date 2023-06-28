@@ -545,7 +545,7 @@ class OCDialog: public Dialog{
 		virtual int render();
 };
 
-class HDialog: public SDialog{
+class HDialog: public DTDialog{
 	public:
 		std::string	mHelpTitle;
 		std::vector<std::string> mHelpTextMap;
