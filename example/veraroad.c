@@ -75,12 +75,12 @@ void main(void) {
    	VERA.address = VRAM_layer1_map;
   	VERA.address_hi = 0x10 | (VRAM_layer1_map >> 16);
 
-	loadVera("map1.bin", VRAM_layer1_map, 2);
+	loadVera("map0.bin", VRAM_layer1_map, 2);
 
   	VERA.address = VRAM_layer0_map;
    	VERA.address_hi = 0x10 | (VRAM_layer0_map >> 16);
 
-        loadVera("map0.bin", VRAM_layer0_map, 2);
+        loadVera("map1.bin", VRAM_layer0_map, 2);
 
    	VERA.display.video = 0x31;
 

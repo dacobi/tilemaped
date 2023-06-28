@@ -68,7 +68,7 @@ void main(void) {
    	VERA.address = VRAM_layer1_map;
    	VERA.address_hi = 0x10 | (VRAM_layer1_map >> 16);
 
-   	cbm_k_setnam("map.bin");
+   	cbm_k_setnam("map0.bin");
    	cbm_k_setlfs(1,8,0);
    	cbm_k_load(0, loadptr);
 
