@@ -505,8 +505,10 @@ int TBrushList::setBrushDeltas(int nDeltaX, int nDeltaY, int *nDeltaScale, int n
 }
 int TBrush::getBrushSelection(int bx, int by, std::vector<SDL_Rect> &sRects){
 
+    /*
     mLastClickX = bx;
     mLastClickY = by;
+    */
 
     clearSelection();
 
@@ -515,6 +517,12 @@ int TBrush::getBrushSelection(int bx, int by, std::vector<SDL_Rect> &sRects){
 
     int cStepX = 0;
     int cStepY = 0;
+
+    bx -= ((mBrushWidth * cDeltaX)/2) - (cDeltaX/2);
+    by -= ((mBrushHeight * cDeltaY)/2) - (cDeltaY/2);
+
+    mLastClickX = bx;
+    mLastClickY = by;
 
     int item;
 
