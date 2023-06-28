@@ -177,6 +177,7 @@ public:
 	sKey *Win_Maximize;	
 	sKey *Win_HighDPI;
 	sKey *Win_UIScale;
+	sKey *Win_Theme;
 };
 
 struct TextureParameters{

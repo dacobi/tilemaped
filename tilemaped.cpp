@@ -340,8 +340,26 @@ int TSettings::initSettings(){
 	mio->Fonts->Build();
 
     // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
+
+	switch (mINIFile.Win_Theme->ivalue)
+	{
+	case 0:
+		ImGui::StyleColorsDark();	
+		break;
+	case 1:
+		ImGui::StyleColorsLight();	
+		break;
+	case 2:
+		ImGui::StyleColorsClassic();
+		break;
+	
+	default:
+		break;
+	}
+
+    
     //ImGui::StyleColorsLight();	
+	//ImGui::StyleColorsClassic();
 
     // Setup Platform/Renderer backends
     ImGui_ImplSDL2_InitForSDLRenderer(mGlobalSettings.TWindow, mGlobalSettings.TRenderer);
@@ -465,6 +483,14 @@ void TSettings::settingsMenu(){
 		if(!mINIFile.Win_Restore->bvalue){
 			ImGui::Checkbox("Maximize", &mINIFile.Win_Maximize->bvalue);				
 		}
+
+		ImGui::Separator();
+
+		ImGui::Text("Theme");
+		
+		ImGui::RadioButton("Dark", &mINIFile.Win_Theme->ivalue, 0);
+		ImGui::RadioButton("Light", &mINIFile.Win_Theme->ivalue, 1);
+		ImGui::RadioButton("Classic", &mINIFile.Win_Theme->ivalue, 2);
 		
 		ImGui::EndMenu();
 	}

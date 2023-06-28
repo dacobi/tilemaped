@@ -161,6 +161,7 @@ ProgramSettings::ProgramSettings(){
 	Win_Maximize = new sKey("Win_Maximize", type_bool, false);
 	Win_HighDPI = new sKey("Win_HighDPI", type_bool, false);
 	Win_UIScale = new sKey("Win_UIScale", type_int, 100);
+	Win_Theme = new sKey("Win_Theme", type_int, 0);
 
 	keys.push_back(Sys_Renderer);
 	keys.push_back(Sys_VSYNC);
@@ -170,6 +171,7 @@ ProgramSettings::ProgramSettings(){
 	keys.push_back(Win_Maximize);	
 	keys.push_back(Win_HighDPI);
 	keys.push_back(Win_UIScale);
+	keys.push_back(Win_Theme);
 
 	for(int i = 0; i < keys.size(); i++){
 		keyindex[keys[i]->kname] = i;
