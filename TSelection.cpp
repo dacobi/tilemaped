@@ -530,7 +530,7 @@ int TBrush::getBrushSelection(int bx, int by, std::vector<SDL_Rect> &sRects){
         break;
     case 2:
         bx = bx + (cDeltaX/2) - (mBrushWidth * cDeltaX);
-        by = by + (cDeltaY/2);
+        by += (cDeltaY/2);
         break;
     case 3:
         bx = bx + (cDeltaX/2) - (mBrushWidth * cDeltaX);

@@ -2582,9 +2582,9 @@ int TEditor::activateBrush(){
 
 	if(mCurMode == EMODE_SELEDIT){          
         if(!mCurrentBrushPixelSelEdit){
-            mCurrentBrushPixelSelEdit = mBrushesPixel.getBrush();
+            mCurrentBrushPixelSelEdit = mBrushesPixelSelEd.getBrush();
         } else {                
-            mCurrentBrushPixelSelEdit = mBrushesPixel.getNextBrush();
+            mCurrentBrushPixelSelEdit = mBrushesPixelSelEd.getNextBrush();
         }
     }
 

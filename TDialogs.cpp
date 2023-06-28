@@ -385,7 +385,7 @@ int TBDialog::render(){
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mGlobalSettings.CurrentEditor->bShowBrushesTile)){										
 					mGlobalSettings.CurrentEditor->activateBrushes(false);
 				}
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush Position (B)").c_str())){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos (B)").c_str())){     
 					mGlobalSettings.CurrentEditor->nextBrushPos();
                 }
 				if(ImGui::MenuItem("Selected Tile Type (S)", NULL , &mGlobalSettings.bShowTypeSelection)){										
@@ -402,7 +402,7 @@ int TBDialog::render(){
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixel)){										
 					mGlobalSettings.CurrentEditor->activateBrushes(false);
 				}
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush Position (B)").c_str())){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos (B)").c_str())){     
 					mGlobalSettings.CurrentEditor->nextBrushPos();
                 }
 				if(ImGui::MenuItem("Selected Color (S)", NULL , &mGlobalSettings.bShowPixelType)){										
@@ -417,7 +417,7 @@ int TBDialog::render(){
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mGlobalSettings.CurrentEditor->mSprite->bShowBrushesPixel)){										
 					mGlobalSettings.CurrentEditor->activateBrushes(false);
 				}
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush Position (B)").c_str())){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos (B)").c_str())){     
 					mGlobalSettings.CurrentEditor->nextBrushPos();
                 }				
 				if(ImGui::MenuItem("Selected Color (S)", NULL , &mGlobalSettings.bShowPixelTypeSprite)){										
@@ -433,7 +433,7 @@ int TBDialog::render(){
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixelTileSet)){                                                                         
 					mGlobalSettings.CurrentEditor->activateBrushes(false);
                 }
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush Position (B)").c_str())){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos (B)").c_str())){     
 					mGlobalSettings.CurrentEditor->nextBrushPos();
                 }			
 				if(ImGui::MenuItem("Tile Grid (T)", NULL , &mGlobalSettings.bShowTileGrid)){										
@@ -448,7 +448,7 @@ int TBDialog::render(){
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixelSelEdit)){     
 					mGlobalSettings.CurrentEditor->activateBrushes(false);
                 }			
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush Position (B)").c_str())){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos (B)").c_str())){     
 					mGlobalSettings.CurrentEditor->nextBrushPos();
                 }
 				if(ImGui::MenuItem("Tile Grid (T)", NULL , &mGlobalSettings.bShowTileSelGrid)){										

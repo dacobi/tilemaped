@@ -348,6 +348,7 @@ class TSettings{
 		std::string mBrush = "\uf1fc";
 		std::string mCopy = "\uf0c5";
 		std::string mCut = "\uf0c4";		
+		std::string mPoint = "\uf245";
 		bool bSelectionMode = true;
 		bool bSoftwareRendering = false;
 		bool bVSync = true;

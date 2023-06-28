@@ -325,6 +325,7 @@ int TSettings::initSettings(){
 	builder.AddChar(0xfa61);
 	builder.AddChar(0xf0c5);
 	builder.AddChar(0xf0c4);
+	builder.AddChar(0xf245);
 
 	builder.AddRanges(io.Fonts->GetGlyphRangesDefault()); // Add one of the default ranges
 	builder.BuildRanges(&ranges);       
