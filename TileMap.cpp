@@ -405,6 +405,9 @@ int TPalette::importPaletteEdit(std::string palPath){
 			tmpcol.b = tpalette[i][2];
 						
 			if((i  == 0) ) {				
+				tmpcol.r = 0;
+				tmpcol.g = 0;
+				tmpcol.b = 0;
 				tmpcol.a = 0;
 			} else {
 				tmpcol.a = 255;
@@ -512,6 +515,9 @@ int TPalette::importGimpPalette(std::string palPath){
 			tmpcol.b = tpalette[i][2];
 						
 			if((i  == 0) ) {				
+				tmpcol.r = 0;
+				tmpcol.g = 0;
+				tmpcol.b = 0;
 				tmpcol.a = 0;
 			} else {
 				tmpcol.a = 255;
@@ -624,6 +630,9 @@ int TPalette::loadFromFile(std::string filename){
 			tmpcol.g = mMapColorIn[tbuffer[i] >> 4];
 			tmpcol.b = mMapColorIn[tbuffer[i] & 0xf];
 			if((i  == 0) ) {				
+				tmpcol.r = 0;
+				tmpcol.g = 0;
+				tmpcol.b = 0;
 				tmpcol.a = 0;
 			} else {
 				tmpcol.a = 255;
@@ -1297,16 +1306,23 @@ int getEuclideanDistance(const SDL_Color& color1, const SDL_Color& color2) {
     return dR * dR + dG * dG + dB * dB + dA * dA;
 }
 
-unsigned char findClosestPaletteColor(const SDL_Color& color, int cMaxPal) {
+unsigned char findClosestPaletteColor(const SDL_Color& color, int cMaxPal, int cOffset = 0) {
     unsigned char closestColor = 0;
     int minDistance = std::numeric_limits<int>::max();
 
     for (int i = 0; i < cMaxPal; i++) {
+
+		int pOffset = 0;
+
+		if((i > 0) && (cOffset > 0)){
+			pOffset = 16 * cOffset;
+		}
+
         SDL_Color paletteColor;
-        paletteColor.r = mGlobalSettings.CurrentEditor->mPalette.TPalette[i].r;
-        paletteColor.g = mGlobalSettings.CurrentEditor->mPalette.TPalette[i].g;
-        paletteColor.b = mGlobalSettings.CurrentEditor->mPalette.TPalette[i].b;
-		paletteColor.a = mGlobalSettings.CurrentEditor->mPalette.TPalette[i].a;
+        paletteColor.r = mGlobalSettings.CurrentEditor->mPalette.TPalette[i + pOffset].r;
+        paletteColor.g = mGlobalSettings.CurrentEditor->mPalette.TPalette[i + pOffset].g;
+        paletteColor.b = mGlobalSettings.CurrentEditor->mPalette.TPalette[i + pOffset].b;
+		paletteColor.a = mGlobalSettings.CurrentEditor->mPalette.TPalette[i + pOffset].a;
 
         int distance = getEuclideanDistance(color, paletteColor);
 
@@ -1351,7 +1367,7 @@ int Tile::rotate(double cAngle){
 		}
 
 		if(mTexParam->TexBPP == 4){
-			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TPOffset[0], NULL, NULL, 0, NULL, SDL_FLIP_NONE );
+			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TPOffset[mTexParam->PaletteOffset], NULL, NULL, 0, NULL, SDL_FLIP_NONE );
 		} else {
 			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TileTex, NULL, NULL, 0, NULL, SDL_FLIP_NONE );
 		}
@@ -1388,7 +1404,7 @@ int Tile::rotate(double cAngle){
 				cTestCol.a = (pixels[(y * mTexParam->TexSizeX) + x] & 0x000000FF);
 				
 				if(mTexParam->TexBPP == 4){
-					TTexture::setPixel(y * mTexParam->TexSizeX + x, findClosestPaletteColor(cTestCol, 16), bitmap, mTexParam);					
+					TTexture::setPixel(y * mTexParam->TexSizeX + x, findClosestPaletteColor(cTestCol, 16, mTexParam->PaletteOffset), bitmap, mTexParam);					
 				} else {
         	    	bitmap[y * mTexParam->TexSizeX + x] = findClosestPaletteColor(cTestCol, 256);
 				}
@@ -1439,7 +1455,7 @@ int Tile::applyFilter(){
 		}
 		
 		if(mTexParam->TexBPP == 4){
-			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TPOffset[0], NULL, NULL, 0, NULL, SDL_FLIP_NONE );
+			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TPOffset[mTexParam->PaletteOffset], NULL, NULL, 0, NULL, SDL_FLIP_NONE );
 		} else {
 			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TileTex, NULL, NULL, 0, NULL, SDL_FLIP_NONE );
 		}
@@ -1476,7 +1492,7 @@ int Tile::applyFilter(){
 				cTestCol.a = (pixels[(y * mTexParam->TexSizeX) + x] & 0x000000FF);				
 				
 				if(mTexParam->TexBPP == 4){
-					TTexture::setPixel(y * mTexParam->TexSizeX + x, findClosestPaletteColor(cTestCol, 16), bitmap, mTexParam);					
+					TTexture::setPixel(y * mTexParam->TexSizeX + x, findClosestPaletteColor(cTestCol, 16, mTexParam->PaletteOffset), bitmap, mTexParam);					
 				} else {
         	    	bitmap[y * mTexParam->TexSizeX + x] = findClosestPaletteColor(cTestCol, 256);
 				}
@@ -1525,7 +1541,7 @@ int Tile::upscale(Tile *cCopyTile){
 		}
 		
 		if(mTexParam->TexBPP == 4){
-			SDL_RenderCopyEx(mGlobalSettings.TRenderer, cCopyTile->TPOffset[0], NULL, NULL, 0, NULL, SDL_FLIP_NONE );
+			SDL_RenderCopyEx(mGlobalSettings.TRenderer, cCopyTile->TPOffset[mTexParam->PaletteOffset], NULL, NULL, 0, NULL, SDL_FLIP_NONE );
 			std::cout <<  "Render Target Sprite BPP 4" << std::endl;
 		} else {
 			SDL_RenderCopyEx(mGlobalSettings.TRenderer, cCopyTile->TileTex, NULL, NULL, 0, NULL, SDL_FLIP_NONE );
@@ -1548,7 +1564,7 @@ int Tile::upscale(Tile *cCopyTile){
 				cTestCol.a = (pixels[(y * mTexParam->TexSizeX) + x] & 0x000000FF);				
 				
 				if(mTexParam->TexBPP == 4){
-					TTexture::setPixel(y * mTexParam->TexSizeX + x, findClosestPaletteColor(cTestCol, 16), bitmap, mTexParam);					
+					TTexture::setPixel(y * mTexParam->TexSizeX + x, findClosestPaletteColor(cTestCol, 16, mTexParam->PaletteOffset), bitmap, mTexParam);					
 				} else {
         	    	bitmap[y * mTexParam->TexSizeX + x] = findClosestPaletteColor(cTestCol, 256);
 				}
@@ -1616,7 +1632,7 @@ int Tile::scale(double cScale){
 		}
 		
 		if(mTexParam->TexBPP == 4){
-			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TPOffset[0], &tSrc, &tDest, 0, NULL, SDL_FLIP_NONE );
+			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TPOffset[mTexParam->PaletteOffset], &tSrc, &tDest, 0, NULL, SDL_FLIP_NONE );
 		} else {
 			SDL_RenderCopyEx(mGlobalSettings.TRenderer, TileTex, &tSrc, &tDest, 0, NULL, SDL_FLIP_NONE );
 		}
@@ -1637,7 +1653,7 @@ int Tile::scale(double cScale){
 				cTestCol.a = (pixels[(y * mTexParam->TexSizeX) + x] & 0x000000FF);				
 				
 				if(mTexParam->TexBPP == 4){
-					TTexture::setPixel(y * mTexParam->TexSizeX + x, findClosestPaletteColor(cTestCol, 16), bitmap, mTexParam);					
+					TTexture::setPixel(y * mTexParam->TexSizeX + x, findClosestPaletteColor(cTestCol, 16, mTexParam->PaletteOffset), bitmap, mTexParam);					
 				} else {
         	    	bitmap[y * mTexParam->TexSizeX + x] = findClosestPaletteColor(cTestCol, 256);
 				}
