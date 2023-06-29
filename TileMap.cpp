@@ -960,9 +960,10 @@ int TPalette::renderEditor(int xpos,int ypos){
 
 	mGlobalSettings.CurrentEditor->ImButtonsPalette.updateButtonStates();
 
-
-	TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelectedEdit] = getSDLColor4Bit(mR, mG, mB);
-	mEditColor = getIm4Color(TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelectedEdit]);
+	if(mGlobalSettings.CurrentEditor->mColorSelectedEdit > 0){
+		TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelectedEdit] = getSDLColor4Bit(mR, mG, mB);
+		mEditColor = getIm4Color(TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelectedEdit]);
+	}
 
 	//TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelectedEdit] = getSDLColor(mEditColor);
 
