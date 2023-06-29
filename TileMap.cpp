@@ -451,7 +451,10 @@ int TPalette::importPaletteEdit(std::string palPath){
 			tmpcol.r = mMapColorIn[tbuffer[i+1]];
 			tmpcol.g = mMapColorIn[tbuffer[i] >> 4];
 			tmpcol.b = mMapColorIn[tbuffer[i] & 0xf];
-			if((i  == 0) ) {				
+			if((i  == 0) ) {
+				tmpcol.r = 0;
+				tmpcol.g = 0;
+				tmpcol.b = 0;			
 				tmpcol.a = 0;
 			} else {
 				tmpcol.a = 255;
@@ -677,7 +680,10 @@ int TPalette::initPalette(){
 		tmpcol.r = palette[i][0];
 		tmpcol.g = palette[i][1];
 		tmpcol.b = palette[i][2];
-		if(i == 0) {			
+		if(i == 0) {
+			tmpcol.r = 0;
+			tmpcol.g = 0;
+			tmpcol.b = 0;		
 			tmpcol.a = 0;
 		} else {
 			tmpcol.a = 255;
