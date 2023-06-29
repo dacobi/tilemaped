@@ -385,6 +385,12 @@ int TBDialog::render(){
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mGlobalSettings.CurrentEditor->bShowBrushesTile)){										
 					mGlobalSettings.CurrentEditor->activateBrushes(false);
 				}
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush (F9)").c_str())){     
+					mGlobalSettings.CurrentEditor->activateBrush();
+                }
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Drop Brush (F10) (ESC)").c_str())){     
+					mGlobalSettings.CurrentEditor->dropBrush();
+                }
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos (B)").c_str())){     
 					mGlobalSettings.CurrentEditor->nextBrushPos();
                 }
@@ -402,6 +408,12 @@ int TBDialog::render(){
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixel)){										
 					mGlobalSettings.CurrentEditor->activateBrushes(false);
 				}
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush (F9)").c_str())){     
+					mGlobalSettings.CurrentEditor->activateBrush();
+                }
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Drop Brush (F10) (ESC)").c_str())){     
+					mGlobalSettings.CurrentEditor->dropBrush();
+                }
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos (B)").c_str())){     
 					mGlobalSettings.CurrentEditor->nextBrushPos();
                 }
@@ -417,6 +429,12 @@ int TBDialog::render(){
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mGlobalSettings.CurrentEditor->mSprite->bShowBrushesPixel)){										
 					mGlobalSettings.CurrentEditor->activateBrushes(false);
 				}
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush (F9)").c_str())){     
+					mGlobalSettings.CurrentEditor->activateBrush();
+                }
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Drop Brush (F10) (ESC)").c_str())){     
+					mGlobalSettings.CurrentEditor->dropBrush();
+                }
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos (B)").c_str())){     
 					mGlobalSettings.CurrentEditor->nextBrushPos();
                 }				
@@ -433,6 +451,12 @@ int TBDialog::render(){
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixelTileSet)){                                                                         
 					mGlobalSettings.CurrentEditor->activateBrushes(false);
                 }
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush (F9)").c_str())){     
+					mGlobalSettings.CurrentEditor->activateBrush();
+                }
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Drop Brush (F10) (ESC)").c_str())){     
+					mGlobalSettings.CurrentEditor->dropBrush();
+                }
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos (B)").c_str())){     
 					mGlobalSettings.CurrentEditor->nextBrushPos();
                 }			
@@ -447,7 +471,13 @@ int TBDialog::render(){
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SELEDIT){	
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixelSelEdit)){     
 					mGlobalSettings.CurrentEditor->activateBrushes(false);
-                }			
+                }
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush (F9)").c_str())){     
+					mGlobalSettings.CurrentEditor->activateBrush();
+                }
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Drop Brush (F10) (ESC)").c_str())){     
+					mGlobalSettings.CurrentEditor->dropBrush();
+                }
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos (B)").c_str())){     
 					mGlobalSettings.CurrentEditor->nextBrushPos();
                 }
@@ -770,6 +800,9 @@ int TBDialog::render(){
 					}
 					if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Next Selection (CTRL + V)").c_str())){						
 						mGlobalSettings.CurrentEditor->handleClipboardPaste(true);
+					}
+					if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Drop Selection (F10) (ESC)").c_str())){						
+						mGlobalSettings.CurrentEditor->dropBrush();
 					}
 				}				
 
