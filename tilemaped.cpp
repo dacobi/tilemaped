@@ -488,9 +488,17 @@ void TSettings::settingsMenu(){
 
 		ImGui::Text("Theme");
 		
-		ImGui::RadioButton("Dark", &mINIFile.Win_Theme->ivalue, 0);
-		ImGui::RadioButton("Light", &mINIFile.Win_Theme->ivalue, 1);
-		ImGui::RadioButton("Classic", &mINIFile.Win_Theme->ivalue, 2);
+		if(ImGui::RadioButton("Dark", &mINIFile.Win_Theme->ivalue, 0)){
+			ImGui::StyleColorsDark();
+		}
+
+		if(ImGui::RadioButton("Light", &mINIFile.Win_Theme->ivalue, 1)){
+			ImGui::StyleColorsLight();
+		}
+
+		if(ImGui::RadioButton("Classic", &mINIFile.Win_Theme->ivalue, 2)){
+			ImGui::StyleColorsClassic();
+		}
 		
 		ImGui::EndMenu();
 	}
