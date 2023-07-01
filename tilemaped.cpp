@@ -471,13 +471,15 @@ void TSettings::shutdown(){
 void TSettings::setColors(bool cLightMode){
 
 	if(cLightMode){
-		ImAltHighLightColor = 0xFFFF0000;
+		ImAltHighLightColor = 0xFF00FFFF;
 		ImFrameHighLightColor = 0xFF0000FF;
 		ImHighLightColor = 0xFF000000;
+		PixelGridColor = {0x20,0x20,0x20,0xff};
 	} else {
 		ImAltHighLightColor = 0xFFFFFF00;
 		ImFrameHighLightColor = 0xFF0000FF;
 		ImHighLightColor = 0xFFFFFFFF;
+		PixelGridColor = {0xa0,0xa0,0xa0,0xff};
 	}
 
 }
