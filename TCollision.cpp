@@ -225,8 +225,9 @@ int TCollisionMapEditor::render(){
     ImGui::SetNextWindowSizeConstraints(ImVec2(cWinSize.x-20,cWinSize.y - 160),ImVec2(cWinSize.x-20,cWinSize.y - 160));
 
     int cRowRen = cRowNum + (isOdd > 0);
-    int cAreaY = cRowRen * ((mGlobalSettings.mGlobalTexParam.TexSizeY * mCurTileScale ) + (mColSpace * 2));
+    int cAreaY = (cRowRen * 5) + (cRowRen * ((mGlobalSettings.mGlobalTexParam.TexSizeY * mCurTileScale ) + (mColSpace * 2)));
     
+
     ImGui::SetNextWindowContentSize(ImVec2(cWinSize.x-20,cAreaY+10));
 
     ImGui::BeginChild("Collision Tiles", ImVec2(0,0), false, ImGuiWindowFlags_NoNav);
@@ -237,6 +238,14 @@ int TCollisionMapEditor::render(){
 
 	if(mCurColumns > 0){
 		for(int i = 0; i < cRowNum; i++){
+                        
+            ImVec2 cpos = ImGui::GetCursorPos();
+
+			cpos.x += 5;
+			cpos.y += 5;
+
+			ImGui::SetCursorPos(cpos);            
+
 			for(int j = 0; j < mCurColumns; j++){
 				TileAreas[(i * mCurColumns) + j] = mGlobalSettings.CurrentEditor->mTileSet.TTiles[(i*mCurColumns) + j]->renderImCol((cWinPos.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),cWinPos.y + mScroll + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*i), (i*mCurColumns) + j,  mCurTileScale, (((i*mCurColumns) + j) == mSelectedTile));												
 				if((mCurColumns > 1) && (j < (mCurColumns-1))){					
@@ -246,10 +255,18 @@ int TCollisionMapEditor::render(){
 		}	
 		
 		if(isOdd){			
+            
+            ImVec2 cpos = ImGui::GetCursorPos();
+
+			cpos.x += 5;
+			cpos.y += 5;
+
+			ImGui::SetCursorPos(cpos);
+            
 			int i = mCurColumns;
 			for(int j = 0; j < isOdd; j++){
-				TileAreas[(i * cRowNum) + j] = mGlobalSettings.CurrentEditor->mTileSet.TTiles[(i*cRowNum)+j]->renderImCol((cWinPos.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),cWinPos.y + mScroll + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*cRowNum), (i*cRowNum)+j,  mCurTileScale, (((i*mCurColumns) + j) == mSelectedTile));												
-				if((j < (isOdd-1))){
+				TileAreas[(i * cRowNum) + j] = mGlobalSettings.CurrentEditor->mTileSet.TTiles[(i*cRowNum)+j]->renderImCol((cWinPos.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),cWinPos.y + mScroll + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*cRowNum), (i*cRowNum)+j,  mCurTileScale, (((i * cRowNum) + j) == mSelectedTile));															
+                if((j < (isOdd-1))){
 					ImGui::SameLine();
 				}
 			}

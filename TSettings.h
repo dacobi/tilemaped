@@ -333,7 +333,8 @@ class TSettings{
 		int updateTicks();
 		int getTicks();
 		int runOCD(int mode=0);
-		void settingsMenu();	
+		void settingsMenu();
+		void setColors(bool cLightMode = false);
 		std::string mWindow = "\uf2d0";
 		std::string mFloppy = "\ue240"; //Floppy disk		
 		std::string mPrompt = "\uf120"; //Prompt

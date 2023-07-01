@@ -348,6 +348,7 @@ int TSettings::initSettings(){
 		break;
 	case 1:
 		ImGui::StyleColorsLight();	
+		setColors(true);
 		break;
 	case 2:
 		ImGui::StyleColorsClassic();
@@ -467,6 +468,20 @@ void TSettings::shutdown(){
 	std::cout << "SDL_DestroyRenderer(TSettings::TRenderer)" << std::endl;
 }
 
+void TSettings::setColors(bool cLightMode){
+
+	if(cLightMode){
+		ImAltHighLightColor = 0xFFFF0000;
+		ImFrameHighLightColor = 0xFF0000FF;
+		ImHighLightColor = 0xFF000000;
+	} else {
+		ImAltHighLightColor = 0xFFFFFF00;
+		ImFrameHighLightColor = 0xFF0000FF;
+		ImHighLightColor = 0xFFFFFFFF;
+	}
+
+}
+
 void TSettings::settingsMenu(){
 	if (ImGui::BeginMenu(std::string(mGear + " Settings").c_str())){
 		ImGui::Text("Renderer");
@@ -490,14 +505,17 @@ void TSettings::settingsMenu(){
 		
 		if(ImGui::RadioButton("Dark", &mINIFile.Win_Theme->ivalue, 0)){
 			ImGui::StyleColorsDark();
+			setColors();
 		}
 
 		if(ImGui::RadioButton("Light", &mINIFile.Win_Theme->ivalue, 1)){
 			ImGui::StyleColorsLight();
+			setColors(true);
 		}
 
 		if(ImGui::RadioButton("Classic", &mINIFile.Win_Theme->ivalue, 2)){
 			ImGui::StyleColorsClassic();
+			setColors();
 		}
 		
 		ImGui::EndMenu();

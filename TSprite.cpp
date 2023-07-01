@@ -413,6 +413,14 @@ void TSprite::renderIm(int ypos, int mScroll){
 	
 	if(mCurColumns > 0){
 		for(int i = 0; i < cRowNum; i++){
+
+			ImVec2 cpos = ImGui::GetCursorPos();
+
+			cpos.x += 5;
+			cpos.y += 5;
+
+			ImGui::SetCursorPos(cpos);
+
 			for(int j = 0; j < mCurColumns; j++){
 				FrameAreas[(i * mCurColumns) + j] = mFrames[(i*mCurColumns) + j]->renderIm((mFramesBackGround.x+ (mColSpace*2) +  ((mCurFrameScale*mTexParam.TexSizeX)+mColSpace)*j),mFramesBackGround.y + mScroll + (mColSpace*2) + (((mTexParam.TexSizeY*mCurFrameScale)+mColSpace)*i), (i*mCurColumns) + j, mDragged, mCurFrameScale,true,true);								
 				if((mDragged > -1) && !bIsDragged){
@@ -426,7 +434,15 @@ void TSprite::renderIm(int ypos, int mScroll){
 			}										
 		}	
 		
-		if(isOdd){			
+		if(isOdd){		
+
+			ImVec2 cpos = ImGui::GetCursorPos();
+
+			cpos.x += 5;
+			cpos.y += 5;
+
+			ImGui::SetCursorPos(cpos);
+
 			int i = mCurColumns;
 			for(int j = 0; j < isOdd; j++){
 				FrameAreas[(i * cRowNum) + j] = mFrames[(i*cRowNum)+j]->renderIm((mFramesBackGround.x+ (mColSpace*2) +  ((mCurFrameScale*mTexParam.TexSizeX)+mColSpace)*j),mFramesBackGround.y + mScroll + (mColSpace*2) + (((mTexParam.TexSizeY*mCurFrameScale)+mColSpace)*cRowNum), (i*cRowNum)+j, mDragged,  mCurFrameScale,true,true);				
@@ -450,6 +466,8 @@ void TSprite::renderIm(int ypos, int mScroll){
 	}
 
 	mGlobalSettings.CurrentEditor->ImButtonsSprite.updateButtonStates();
+
+	ImGui::Text(" "); //Child Size, pad hack :)
 
     ImGui::EndChild();
 	

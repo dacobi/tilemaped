@@ -3942,7 +3942,7 @@ int TEditor::handleColEdit(){
 	if(ImButtonsColEdit.mLeft.bButtonIsDown){
 		if(ImButtonsColEdit.mLeft.mMousePos.y < mColMapEdit.mColMapOffset) {return 0;}
 		int tSel = -1;		
-		tSel = searchRectsXY(mColMapEdit.TileAreas, ImButtonsColEdit.mLeft.mMousePos.x, ImButtonsColEdit.mLeft.mMousePos.y);
+		tSel = searchRectsXY(mColMapEdit.TileAreas, ImButtonsColEdit.mLeft.mMousePos.x, ImButtonsColEdit.mLeft.mMousePos.y);		
 		if((tSel > -1)){
 			mColMapEdit.mSelectedTile = tSel;
 			mColMapEdit.mCollisionValue = mTileMap->mColMap.MapData[tSel];

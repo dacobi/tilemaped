@@ -55,32 +55,6 @@ int TTexture::updateTexture(TPalette* tpal){
 	return 0;
 }
 
-/*
-SDL_Rect TTexture::render(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
-	SDL_Rect renderQuad = { xpos, ypos, mGlobalSettings.mTexParam->TileSizeX*tscale, mGlobalSettings.mTexParam->TileSizeY*tscale};
-    SDL_RenderCopy(mGlobalSettings.TRenderer, TileTex, NULL, &renderQuad);	
-    if(drawGrid){
-		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.PixelGridColor.r ,mGlobalSettings.PixelGridColor.b ,mGlobalSettings.PixelGridColor.b ,0xff);
-		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &renderQuad);
-    }
-    if(bPixelSelected){
-		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.AltHighlightColor.r, mGlobalSettings.AltHighlightColor.r, mGlobalSettings.AltHighlightColor.r, 0xff);
-		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &renderQuad);
-		SDL_Rect sndRect = renderQuad;
-		sndRect.x = sndRect.x-1;
-		sndRect.y = sndRect.y-1;
-		sndRect.w = sndRect.w+2;
-		sndRect.h = sndRect.h+2;
-
-		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &sndRect);
-    }
-    if(updateRect){
-        	CurrentArea = renderQuad;
-    }
-    return renderQuad;
-}
-*/
-
 int TPixel::setPixelColor(unsigned char tcolor, TPalette* tpal){
 	PixelIndex = tcolor;
 	PixelColor = tpal->TPalette[tcolor];
@@ -169,12 +143,12 @@ SDL_Rect TPixel::renderEditor(int xpos, int ypos, int tscale, bool updateRect ,b
 
 		tList->AddRectFilled(elmin, elmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(mGlobalSettings.CurrentEditor->mPalette.TPaletteEdit[PixelIndex]));
 
-		if(bPixelSelectedEdit){
+		if(bPixelSelectedEdit){			
 			ImVec2 exmin,exmax;
 			exmin.x = elmin.x -1;
 			exmin.y = elmin.y -1;
-			exmax.x = elmax.x +2;
-			exmax.y = elmax.y +2;			
+			exmax.x = elmax.x +1;
+			exmax.y = elmax.y +1;			
 			tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor);
 			tList->AddRect(exmin, exmax, mGlobalSettings.ImAltHighLightColor);
 		} else {
@@ -183,38 +157,8 @@ SDL_Rect TPixel::renderEditor(int xpos, int ypos, int tscale, bool updateRect ,b
 			}	
 		}
 
-    	
-
 		return CurrentArea;
 }
-
-/*
-SDL_Rect TPixel::render(int xpos, int ypos, int tscale, bool updateRect ,bool drawGrid){
-	CurrentArea = { xpos, ypos, mGlobalSettings.mTexParam->TileRenderSize*tscale, mGlobalSettings.mTexParam->TileRenderSize*tscale};
-
-	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, PixelColor.r,PixelColor.g,PixelColor.b,PixelColor.a);
-	
-	SDL_RenderFillRect(mGlobalSettings.TRenderer, &CurrentArea);
-    
-	if(drawGrid){
-		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.PixelGridColor.r ,mGlobalSettings.PixelGridColor.g ,mGlobalSettings.PixelGridColor.b ,0xff);
-		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &CurrentArea);
-	}
-
-    if(bPixelSelected){
-		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.AltHighlightColor.r, mGlobalSettings.AltHighlightColor.g, mGlobalSettings.AltHighlightColor.b, 0xff); 
-		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &CurrentArea);
-		SDL_Rect sndRect = CurrentArea;
-		sndRect.x = sndRect.x-1;
-		sndRect.y = sndRect.y-1;
-		sndRect.w = sndRect.w+2;
-		sndRect.h = sndRect.h+2;
-
-		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &sndRect);
-    }
-    return CurrentArea;
-}
-*/
 
 SDL_Rect TPixel::renderEdSel(int xpos, int ypos, int tscale, bool drawGrid){
 	CurrentArea = { xpos, ypos, tscale, tscale};
@@ -323,6 +267,30 @@ ImVec4 TPalette::getIm4Color(SDL_Color cColor){
 	tColor.x = cColor.r / 255.0f;
 	tColor.y = cColor.g / 255.0f;
 	tColor.z = cColor.b / 255.0f;
+
+	return tColor;
+}
+
+ImU32 TPalette::getImColorInv(SDL_Color cColor){
+	ImU32 tColor;
+
+	unsigned char nR, nG, nB;
+	
+	nR = cColor.r;
+	nG = cColor.g;	
+	nB = cColor.b;
+	
+	nR = ~nR;
+	nG = ~nG;
+	nB = ~nB;
+
+	tColor = cColor.a;
+	tColor = tColor << 8;
+	tColor += nB;
+	tColor = tColor << 8;
+	tColor += nG;
+	tColor = tColor << 8;
+	tColor += nR;
 
 	return tColor;
 }
@@ -1772,6 +1740,16 @@ SDL_Rect Tile::renderImCol(int xpos, int ypos, int mIndex, int tscale, bool bCol
 
 	if(bColEditSelected){		
 		tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor);
+		elmin.x--;
+		elmin.y--;
+		elmax.x++;;
+		elmax.y++;
+		tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor); //ImAltHighLightColor
+		elmin.x--;
+		elmin.y--;
+		elmax.x++;;
+		elmax.y++;
+		tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor); //ImAltHighLightColor
 	} else {
 		tList->AddRect(elmin, elmax, mGlobalSettings.ImHighLightColor);
 	}
@@ -1822,6 +1800,11 @@ SDL_Rect Tile::renderIm(int xpos, int ypos, int mIndex, int &mDragAndDropped, in
 	ImDrawList *tList = ImGui::GetWindowDrawList();
 
 	if(bIsSelected){		
+		tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor); //ImAltHighLightColor
+		elmin.x--;
+		elmin.y--;
+		elmax.x++;;
+		elmax.y++;
 		tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor); //ImAltHighLightColor
 		elmin.x--;
 		elmin.y--;
@@ -2655,8 +2638,18 @@ int TileSet::renderIm(int ypos, int mScroll){
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(mGlobalSettings.DefaultBGColor.r,mGlobalSettings.DefaultBGColor.g,mGlobalSettings.DefaultBGColor.b)));
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(mGlobalSettings.DefaultBGColor.r,mGlobalSettings.DefaultBGColor.g,mGlobalSettings.DefaultBGColor.b)));
 	
+	
+
 	if(mCurColumns > 0){
 		for(int i = 0; i < cRowNum; i++){
+
+			ImVec2 cpos = ImGui::GetCursorPos();
+
+			cpos.x += 5;
+			cpos.y += 5;
+
+			ImGui::SetCursorPos(cpos);
+
 			for(int j = 0; j < mCurColumns; j++){
 				TileAreas[(i * mCurColumns) + j] = TTiles[(i*mCurColumns) + j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*i), (i*mCurColumns) + j, mDragged, mCurTileScale,true,true);								
 				if((mDragged > -1) && !bIsDragged){
@@ -2671,6 +2664,14 @@ int TileSet::renderIm(int ypos, int mScroll){
 		}	
 		
 		if(isOdd){			
+
+			ImVec2 cpos = ImGui::GetCursorPos();
+
+			cpos.x += 5;
+			cpos.y += 5;
+
+			ImGui::SetCursorPos(cpos);
+
 			int i = mCurColumns;
 			for(int j = 0; j < isOdd; j++){
 				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*cRowNum), (i*cRowNum)+j, mDragged,  mCurTileScale,true,true);				
@@ -2694,6 +2695,8 @@ int TileSet::renderIm(int ypos, int mScroll){
 	}
 
 	mGlobalSettings.CurrentEditor->ImButtonsTileSet.updateButtonStates();
+
+	ImGui::Text(" "); //Child Size, pad hack :)
 
 	ImGui::EndChild();
 	
