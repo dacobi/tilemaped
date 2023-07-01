@@ -345,6 +345,7 @@ int TSettings::initSettings(){
 	{
 	case 0:
 		ImGui::StyleColorsDark();	
+		setColors();
 		break;
 	case 1:
 		ImGui::StyleColorsLight();	
@@ -352,6 +353,7 @@ int TSettings::initSettings(){
 		break;
 	case 2:
 		ImGui::StyleColorsClassic();
+		setColors();
 		break;
 	
 	default:
@@ -471,15 +473,13 @@ void TSettings::shutdown(){
 void TSettings::setColors(bool cLightMode){
 
 	if(cLightMode){
-		ImAltHighLightColor = 0xFF00FFFF;
-		ImFrameHighLightColor = 0xFF0000FF;
-		ImHighLightColor = 0xFF000000;
-		PixelGridColor = {0x20,0x20,0x20,0xff};
-	} else {
-		ImAltHighLightColor = 0xFFFFFF00;
-		ImFrameHighLightColor = 0xFF0000FF;
-		ImHighLightColor = 0xFFFFFFFF;
-		PixelGridColor = {0xa0,0xa0,0xa0,0xff};
+		ImAltHighLightColor = mINIFile.Theme_SelectionLight->ivalue;	
+		ImHighLightColor = mINIFile.Theme_HighlightLight->ivalue;
+		ImPixelGridColor = mINIFile.Theme_PixelGridLight->ivalue;
+	} else {			
+		ImAltHighLightColor = mINIFile.Theme_SelectionDark->ivalue;	
+		ImHighLightColor = mINIFile.Theme_HighlightDark->ivalue;
+		ImPixelGridColor = mINIFile.Theme_PixelGridDark->ivalue;
 	}
 
 }

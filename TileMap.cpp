@@ -87,9 +87,14 @@ SDL_Rect TPixel::renderIm(int xpos, int ypos, int tscale, bool updateRect ,bool 
 			exmax.y = elmax.y +1;			
 			tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor);
 			tList->AddRect(exmin, exmax, mGlobalSettings.ImAltHighLightColor);
+			exmin.x--;
+			exmin.y--;
+			exmax.x++;
+			exmax.y++;
+			tList->AddRect(exmin, exmax, mGlobalSettings.ImAltHighLightColor);
 		} else {
 			if(drawGrid){
-				tList->AddRect(elmin, elmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(mGlobalSettings.PixelGridColor));
+				tList->AddRect(elmin, elmax, mGlobalSettings.ImPixelGridColor); //mGlobalSettings.CurrentEditor->mPalette.getImColor(mGlobalSettings.PixelGridColor));
 			}	
 		}
 
@@ -151,9 +156,14 @@ SDL_Rect TPixel::renderEditor(int xpos, int ypos, int tscale, bool updateRect ,b
 			exmax.y = elmax.y +1;			
 			tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor);
 			tList->AddRect(exmin, exmax, mGlobalSettings.ImAltHighLightColor);
+			exmin.x--;
+			exmin.y--;
+			exmax.x++;
+			exmax.y++;
+			tList->AddRect(exmin, exmax, mGlobalSettings.ImAltHighLightColor);
 		} else {
 			if(drawGrid){
-				tList->AddRect(elmin, elmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(mGlobalSettings.PixelGridColor));
+				tList->AddRect(elmin, elmax, mGlobalSettings.ImPixelGridColor); //mGlobalSettings.CurrentEditor->mPalette.getImColor(mGlobalSettings.PixelGridColor));
 			}	
 		}
 

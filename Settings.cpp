@@ -162,6 +162,12 @@ ProgramSettings::ProgramSettings(){
 	Win_HighDPI = new sKey("Win_HighDPI", type_bool, false);
 	Win_UIScale = new sKey("Win_UIScale", type_int, 100);
 	Win_Theme = new sKey("Win_Theme", type_int, 0);
+	Theme_SelectionDark = new sKey("Theme_SelectionDark", type_int, (int)0xFFFFFF00);
+	Theme_SelectionLight = new sKey("Theme_SelectionLight", type_int, (int)0xFF00FFFF);
+	Theme_HighlightDark = new sKey("Theme_HighlightDark", type_int, (int)0xFFFFFFFF);
+	Theme_HighlightLight = new sKey("Theme_HighlightLight", type_int, (int)0xFF000000);
+	Theme_PixelGridDark = new sKey("Theme_PixelGridDark", type_int, (int)0xFFA0A0A0);
+	Theme_PixelGridLight = new sKey("Theme_PixelGridLight", type_int, (int)0xFF202020);
 
 	keys.push_back(Sys_Renderer);
 	keys.push_back(Sys_VSYNC);
@@ -172,6 +178,12 @@ ProgramSettings::ProgramSettings(){
 	keys.push_back(Win_HighDPI);
 	keys.push_back(Win_UIScale);
 	keys.push_back(Win_Theme);
+	keys.push_back(Theme_SelectionDark);
+	keys.push_back(Theme_SelectionLight);
+	keys.push_back(Theme_HighlightDark);
+	keys.push_back(Theme_HighlightLight);
+	keys.push_back(Theme_PixelGridDark);
+	keys.push_back(Theme_PixelGridLight);
 
 	for(int i = 0; i < keys.size(); i++){
 		keyindex[keys[i]->kname] = i;

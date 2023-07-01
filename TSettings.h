@@ -178,6 +178,12 @@ public:
 	sKey *Win_HighDPI;
 	sKey *Win_UIScale;
 	sKey *Win_Theme;
+	sKey *Theme_SelectionDark;
+	sKey *Theme_SelectionLight;
+	sKey *Theme_HighlightDark;
+	sKey *Theme_HighlightLight;
+	sKey *Theme_PixelGridDark;
+	sKey *Theme_PixelGridLight;
 };
 
 struct TextureParameters{
@@ -309,9 +315,10 @@ class TSettings{
 		SDL_Color ErrorTextColor = {0xff,0x00,0x00,0xff};
 		SDL_Color ErrorBorderColor = {0xc0,0x00,0x00,0xff};
 		SDL_Color PixelGridColor = {0xa0,0xa0,0xa0,0xff};
-		ImU32 ImAltHighLightColor = 0xFFFFFF00;
-		ImU32 ImFrameHighLightColor = 0xFF0000FF;
+		ImU32 ImAltHighLightColor = 0xFFFFFF00;		
 		ImU32 ImHighLightColor = 0xFFFFFFFF;
+		ImU32 ImPixelGridColor = 0xFFa0a0a0;
+		ImU32 ImFrameHighLightColor = 0xFF0000FF;
 		std::vector<std::string> mHelpText;
 		std::vector<std::string> mHelpTextMap;
 		std::vector<std::string> mHelpTextTile;
