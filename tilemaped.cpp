@@ -523,41 +523,128 @@ void TSettings::settingsMenu(){
 		if(!bRunningOCD) {
 			if(ImGui::BeginMenu("Colors")){
 
-				if(ImGui::MenuItem("Selection Dark")){
+
+				//Selection Dark
+
+				bool bShowSelDark = false;
+
+				bShowSelDark = ImGui::ColorButton("Selection Dark##3b", CurrentEditor->mPalette.getIm4ColorIm(mINIFile.Theme_SelectionDark->ivalue), ImGuiColorEditFlags_NoAlpha);
+					
+				ImGui::SameLine();
+
+				bool bShowSelDarkMenu = false;
+
+				bShowSelDarkMenu = ImGui::MenuItem("Selection Dark");
+
+				if(bShowSelDark || bShowSelDarkMenu){
 					mThemeColorIndex = 1;
 					mThemeColorNew = mINIFile.Theme_SelectionDark->ivalue;
 					CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
 				}
 
-				if(ImGui::MenuItem("Selection Light")){
+				//Selection Dark End
+
+				//Selection Light
+
+				bool bShowSelLight = false;
+
+				bShowSelLight = ImGui::ColorButton("Selection Light##3b", CurrentEditor->mPalette.getIm4ColorIm(mINIFile.Theme_SelectionLight->ivalue), ImGuiColorEditFlags_NoAlpha);
+					
+				ImGui::SameLine();
+
+				bool bShowSelLightMenu = false;
+
+				bShowSelLightMenu = ImGui::MenuItem("Selection Light");
+
+				if(bShowSelLight || bShowSelLightMenu){
 					mThemeColorIndex = 2;
 					mThemeColorNew = mINIFile.Theme_SelectionLight->ivalue;
 					CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
 				}
 
-				if(ImGui::MenuItem("HighLight Dark")){
+				//Selection Light End
+
+				//Highlight Dark
+
+				bool bShowHighDark = false;
+
+				bShowHighDark = ImGui::ColorButton("Highlight Dark##3b", CurrentEditor->mPalette.getIm4ColorIm(mINIFile.Theme_HighlightDark->ivalue), ImGuiColorEditFlags_NoAlpha);
+					
+				ImGui::SameLine();
+
+				bool bShowHighDarkMenu = false;
+
+				bShowHighDarkMenu = ImGui::MenuItem("Highlight Dark");
+
+				if(bShowHighDark || bShowHighDarkMenu){
 					mThemeColorIndex = 3;
 					mThemeColorNew = mINIFile.Theme_HighlightDark->ivalue;
 					CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
 				}
 
-				if(ImGui::MenuItem("HighLight Light")){
+				//HighLight Dark End
+
+				//Highlight Light
+
+				bool bShowHighLight = false;
+
+				bShowHighLight = ImGui::ColorButton("Highlight Light##3b", CurrentEditor->mPalette.getIm4ColorIm(mINIFile.Theme_HighlightLight->ivalue), ImGuiColorEditFlags_NoAlpha);
+					
+				ImGui::SameLine();
+
+				bool bShowHighLightMenu = false;
+
+				bShowHighLightMenu = ImGui::MenuItem("Highlight Light");
+
+				if(bShowHighLight || bShowHighLightMenu){
 					mThemeColorIndex = 4;
 					mThemeColorNew = mINIFile.Theme_HighlightLight->ivalue;
 					CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
 				}
 
-				if(ImGui::MenuItem("PixelGrid Dark")){
+				//HighLight Light End
+
+
+				//PixelGrid Dark
+
+				bool bShowPixDark = false;
+
+				bShowPixDark = ImGui::ColorButton("PixelGrid Dark##3b", CurrentEditor->mPalette.getIm4ColorIm(mINIFile.Theme_PixelGridDark->ivalue), ImGuiColorEditFlags_NoAlpha);
+					
+				ImGui::SameLine();
+
+				bool bShowPixDarkMenu = false;
+
+				bShowPixDarkMenu = ImGui::MenuItem("PixelGrid Dark");
+
+				if(bShowPixDark || bShowPixDarkMenu){
 					mThemeColorIndex = 5;
 					mThemeColorNew = mINIFile.Theme_PixelGridDark->ivalue;
 					CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
 				}
 
-				if(ImGui::MenuItem("PixelGrid Light")){
+				//PixelGrid Dark End
+
+
+				//PixelGrid Light
+
+				bool bShowPixLight = false;
+
+				bShowPixLight = ImGui::ColorButton("PixelGrid Light##3b", CurrentEditor->mPalette.getIm4ColorIm(mINIFile.Theme_PixelGridLight->ivalue), ImGuiColorEditFlags_NoAlpha);
+					
+				ImGui::SameLine();
+
+				bool bShowPixLightMenu = false;
+
+				bShowPixLightMenu = ImGui::MenuItem("PixelGrid Light");
+
+				if(bShowPixLight || bShowPixLightMenu){
 					mThemeColorIndex = 6;
 					mThemeColorNew = mINIFile.Theme_PixelGridLight->ivalue;
 					CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
 				}
+
+				//PixelGrid Light End
 
 				ImGui::EndMenu();
 			}
