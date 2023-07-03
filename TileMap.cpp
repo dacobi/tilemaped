@@ -305,6 +305,29 @@ ImU32 TPalette::getImColorInv(SDL_Color cColor){
 	return tColor;
 }
 
+ImVec4 TPalette::getIm4ColorIm(ImU32 cColor){
+	ImVec4 tColor;
+
+	tColor.w = 1.0f;
+	tColor.x = (cColor & 0x000000FF) / 255.0f;
+	tColor.y = ((cColor & 0x0000FF00) >> 8)/ 255.0f;
+	tColor.z = ((cColor & 0x00FF0000) >> 16) / 255.0f;
+
+	return tColor;
+}
+
+ImU32 TPalette::getImColorVec4(ImVec4 cColor){
+	ImU32 tColor;
+	tColor = (int)(cColor.w * 255.0);
+	tColor = tColor << 8;
+	tColor += (int)(cColor.z * 255.0);
+	tColor = tColor << 8;
+	tColor += (int)(cColor.y * 255.0);
+	tColor = tColor << 8;
+	tColor += (int)(cColor.x * 255.0);
+
+	return tColor;
+}
 
 ImU32 TPalette::getImColor(SDL_Color cColor){
 	ImU32 tColor;
@@ -2706,7 +2729,9 @@ int TileSet::renderIm(int ypos, int mScroll){
 
 	mGlobalSettings.CurrentEditor->ImButtonsTileSet.updateButtonStates();
 
-	ImGui::Text(" "); //Child Size, pad hack :)
+	//ImGui::Text(" "); //Child Size, pad hack :)
+
+	ImGui::Spacing();
 
 	ImGui::EndChild();
 	

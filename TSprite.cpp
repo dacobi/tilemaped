@@ -467,7 +467,9 @@ void TSprite::renderIm(int ypos, int mScroll){
 
 	mGlobalSettings.CurrentEditor->ImButtonsSprite.updateButtonStates();
 
-	ImGui::Text(" "); //Child Size, pad hack :)
+	//ImGui::Text(" "); //Child Size, pad hack :)
+
+	ImGui::Spacing();
 
     ImGui::EndChild();
 	

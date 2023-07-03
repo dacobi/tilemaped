@@ -67,6 +67,7 @@ class DTDialog : public Dialog{
 		virtual int* getValue(int cIndex){if(mOptionValues.size()){if( (cIndex >= 0) && (cIndex < mOptionValues.size()) ){return &mOptionValues[cIndex].mValue;}} return &mDefaultValue;};
 		virtual void init();	
 		virtual int render();
+		virtual void update();
 		virtual void recieveInput(int mKey);
 		virtual void dropLastInputChar();				
 		virtual void cancel();
@@ -84,6 +85,7 @@ class DTDialog : public Dialog{
 		void addRadioGroup(int cDefault, int* cTarget);
 		void addRadioButton(std::string cLabel, int cDefault, bool cSameline = false);
 		void addIntTarget(int cDefault, int *cTarget);
+		void addColor(std::string cLabel, ImU32 *cDefaultColor, ImU32 *cTarget, bool bSameline = false);
 		void addFile(std::string cLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist = true, bool cMustBeFile = true, bool cMustBeFolder = false, bool cMustNotBeFile = false, bool cMustNotExist = false, bool cMustBeProject = false, bool cSameline = false);
 
 		static DTDialog* createSpriteFrameImportDialog();
@@ -149,6 +151,7 @@ class DialogValueBase : public DialogElement{
 		virtual void render(){}
 		virtual void apply(){}
 		virtual void cancel(){}
+		virtual void update(){}
 };
 
 template <typename T> class DialogValueType : public DialogValueBase{
@@ -182,6 +185,18 @@ class DialogValueInt : public DialogValueType<int>{
 		DialogValueInt(DTDialog *cParent, int cCond, std::string cLabel, int cDefault, int* cTarget, int cMin, int cMax, bool cSameline){mParent = cParent; mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mMin = cMin; mMax = cMax; bSameLine = cSameline; mCondition = cCond;}
 		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::SliderInt(mLabel.c_str(), &mValue, mMin, mMax);}		
 };
+
+class DialogValueColor : public DialogValueType<ImU32>{	
+	public:
+		ImVec4 mColor = {0,0,0,1};
+		ImU32 *mDefaultColor;
+		DialogValueColor(DTDialog *cParent, int cCond, std::string cLabel, ImU32 *cDefaultColor,ImU32 *cTarget, bool cSameline){mParent = cParent; mLabel = cLabel; mDefaultColor = cDefaultColor; mTarget = cTarget; bSameLine = cSameline; mCondition = cCond;}
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} ImGui::ColorPicker3(mLabel.c_str(), (float*)&mColor, ImGuiColorEditFlags_NoSidePreview | ImGuiColorEditFlags_NoSmallPreview | ImGuiColorEditFlags_NoInputs);}		
+		virtual void apply(){*mTarget = 0xFF; *mTarget = *mTarget << 8; *mTarget += (int)(mColor.z * 255.0); *mTarget = *mTarget << 8;*mTarget += (int)(mColor.y * 255.0); *mTarget = *mTarget << 8;*mTarget += (int)(mColor.x * 255.0);}
+		virtual void cancel(){mColor = {0,0,0,1};}
+		virtual void update(){mColor.x = ((*mDefaultColor & 0x000000ff) / 255.0); mColor.y = (((*mDefaultColor & 0x0000ff00) >> 8)/ 255.0); mColor.z = (((*mDefaultColor & 0x00ff0000) >> 16)/ 255.0);}
+};
+
 
 class DialogValueIntMinMax : public DialogValueType<int>{	
 	public:

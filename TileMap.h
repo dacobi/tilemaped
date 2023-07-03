@@ -80,8 +80,10 @@ public:
 	int updateTPixels();
 	Uint32 mapPaletteColor(int tcolor);
 	ImU32 getImColor(SDL_Color cColor);
+	ImU32 getImColorVec4(ImVec4 cColor);
 	ImU32 getImColorInv(SDL_Color cColor);
 	ImVec4 getIm4Color(SDL_Color cColor);
+	ImVec4 getIm4ColorIm(ImU32 cColor);
 	SDL_Color getSDLColor(ImVec4 cCol);
 	SDL_Color getSDLColor4Bit(int cR, int cG, int cB);
 	int updatePalette();

@@ -185,10 +185,11 @@ int TEditor::activateDTDialog(int cOpenDialog, int cCond, int cVal0, int cVal1){
 	
 	DTDialog* cDialog = mDTDialogs[cOpenDialog];
 
-	if(cDialog){
+	if(cDialog){		
 		cDialog->setCondition(cCond);
 		cDialog->setValue(0, cVal0);
 		cDialog->setValue(1, cVal1);
+		cDialog->update();
 		mActiveDialog = cDialog;
 		return 0;
 	}

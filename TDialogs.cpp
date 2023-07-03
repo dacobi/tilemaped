@@ -2901,6 +2901,13 @@ int DTDialog::render(){
 	return 0;
 }
 
+void DTDialog::update(){
+
+	for(auto *cVals: mValues){
+		cVals->update();
+	}
+}
+
 void DTDialog::recieveInput(int mKey){
 	if(mKey == SDLK_y){
 
@@ -3001,6 +3008,13 @@ void DTDialog::addInt(std::string cLabel, int cDefault, int *cTarget, int cMin, 
 	mElements.push_back(nInt);
 	mValues.push_back(nInt);
 
+}
+
+void DTDialog::addColor(std::string cLabel, ImU32 *cDefaultColor, ImU32 *cTarget, bool bSameline){
+	DialogValueColor *nCol = new DialogValueColor(this, mRequiredCondition, cLabel, cDefaultColor, cTarget, bSameline);
+
+	mElements.push_back(nCol);
+	mValues.push_back(nCol);
 }
 
 void DTDialog::addIntMinMax(std::string cLabel, int cDefault, int *cTarget, int *cMin, int *cMax, bool bSameline){
