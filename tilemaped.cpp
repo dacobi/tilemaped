@@ -519,6 +519,50 @@ void TSettings::settingsMenu(){
 			ImGui::StyleColorsClassic();
 			setColors();
 		}
+
+		if(!bRunningOCD) {
+			if(ImGui::BeginMenu("Colors")){
+
+				if(ImGui::MenuItem("Selection Dark")){
+					mThemeColorIndex = 1;
+					mThemeColorNew = mINIFile.Theme_SelectionDark->ivalue;
+					CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
+				}
+
+				if(ImGui::MenuItem("Selection Light")){
+					mThemeColorIndex = 2;
+					mThemeColorNew = mINIFile.Theme_SelectionLight->ivalue;
+					CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
+				}
+
+				if(ImGui::MenuItem("HighLight Dark")){
+					mThemeColorIndex = 3;
+					mThemeColorNew = mINIFile.Theme_HighlightDark->ivalue;
+					CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
+				}
+
+				if(ImGui::MenuItem("HighLight Light")){
+					mThemeColorIndex = 4;
+					mThemeColorNew = mINIFile.Theme_HighlightLight->ivalue;
+					CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
+				}
+
+				if(ImGui::MenuItem("PixelGrid Dark")){
+					mThemeColorIndex = 5;
+					mThemeColorNew = mINIFile.Theme_PixelGridDark->ivalue;
+					CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
+				}
+
+				if(ImGui::MenuItem("PixelGrid Light")){
+					mThemeColorIndex = 6;
+					mThemeColorNew = mINIFile.Theme_PixelGridLight->ivalue;
+					CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
+				}
+
+				ImGui::EndMenu();
+			}
+		}
+
 		
 		ImGui::EndMenu();
 	}

@@ -4273,6 +4273,44 @@ int TEditor::handleEvents(){
 				
 			}
 
+			if(mGlobalSettings.mEditorState == ESTATE_THEMECOLOR){				
+				
+				mGlobalSettings.mEditorState = ESTATE_NONE;	
+
+				switch(mGlobalSettings.mThemeColorIndex){
+					case 1 :
+						mGlobalSettings.mINIFile.Theme_SelectionDark->ivalue = mGlobalSettings.mThemeColorNew;
+						break;
+					case 2 :
+						mGlobalSettings.mINIFile.Theme_SelectionLight->ivalue = mGlobalSettings.mThemeColorNew;
+						break;
+					case 3 :
+						mGlobalSettings.mINIFile.Theme_HighlightDark->ivalue = mGlobalSettings.mThemeColorNew;
+						break;
+					case 4 :
+						mGlobalSettings.mINIFile.Theme_HighlightLight->ivalue = mGlobalSettings.mThemeColorNew;
+						break;
+					case 5 :
+						mGlobalSettings.mINIFile.Theme_PixelGridDark->ivalue = mGlobalSettings.mThemeColorNew;
+						break;
+					case 6 :
+						mGlobalSettings.mINIFile.Theme_PixelGridLight->ivalue = mGlobalSettings.mThemeColorNew;
+						break;
+					default:
+						break;
+				}
+
+				cancelActiveDialog();
+
+				if(mGlobalSettings.mINIFile.Win_Theme->ivalue == 1){
+					mGlobalSettings.setColors(true);
+				} else {
+					mGlobalSettings.setColors();
+				}
+
+				return 0;
+			}
+
 
 			if(mGlobalSettings.mEditorState == ESTATE_SPRITEROTATIONRANGE){				
 				
