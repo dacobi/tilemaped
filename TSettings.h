@@ -278,7 +278,9 @@ class TSettings{
 		int mNewSpriteRotations = 1;
 		int mNewSpriteDownscale = 2;
 		int mDeleteTileMapState = 0;			
-		int mTileMapFileCount = 0;			
+		int mTileMapFileCount = 0;
+		ImU32 mThemeColorNew = 0xFFFFFFFF;
+		int mThemeColorIndex = 0;	
 		bool bShowTypeSelection = false;
 		bool bShowPixelGrid = true;
 		bool bShowPixelGridSprite = true;
@@ -390,7 +392,8 @@ enum {
 	EDIALOG_SPRITEFRAMESIMPORT,
 	EDIALOG_TILEMAPIMPORT,
 	EDIALOG_SPRITECONVERTBPP,
-	EDIALOG_HELPMENU
+	EDIALOG_HELPMENU,
+	EDIALOG_THEMECOLOR
 } edialogs;
 
 enum {
@@ -424,7 +427,8 @@ enum {
 	ESTATE_FRAMESIMPORT,
 	ESTATE_FRAMEROTATE,
 	ESTATE_FRAMESCALE,
-	ESTATE_SPRITECONVERTBPP
+	ESTATE_SPRITECONVERTBPP,
+	ESTATE_THEMECOLOR
 } estates;
 
 

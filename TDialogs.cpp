@@ -3444,6 +3444,46 @@ DTDialog* DTDialog::createSpriteFramesImportDialog(){
 	return newDialog;
 }
 
+DTDialog* DTDialog::createThemeColorDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Change Theme Color");
+
+	newDialog->setTarget(ESTATE_THEMECOLOR);
+
+	newDialog->setRequiredCondition(1);
+	newDialog->addText(mGlobalSettings.mInfo + " Choose \"Selection Dark\" Color");
+
+	newDialog->setRequiredCondition(2);
+	newDialog->addText(mGlobalSettings.mInfo + " Choose \"Selection Light\" Color");
+	
+	newDialog->setRequiredCondition(3);
+	newDialog->addText(mGlobalSettings.mInfo + " Choose \"Highlight Dark\" Color");
+
+	newDialog->setRequiredCondition(4);
+	newDialog->addText(mGlobalSettings.mInfo + " Choose \"Highlight Light\" Color");
+
+	newDialog->setRequiredCondition(5);
+	newDialog->addText(mGlobalSettings.mInfo + " Choose \"PixelGrid Dark\" Color");
+
+	newDialog->setRequiredCondition(6);
+	newDialog->addText(mGlobalSettings.mInfo + " Choose \"PixelGrid Light\" Color");
+
+	newDialog->clearRequiredCondition();
+
+	newDialog->addSeperator();
+
+	newDialog->addColor("##themepick", &mGlobalSettings.mThemeColorNew, &mGlobalSettings.mThemeColorNew);
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Choose", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
 DTDialog* DTDialog::createSpriteConvertBPPDialog(){
 	DTDialog* newDialog = new DTDialog();
 
