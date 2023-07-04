@@ -685,17 +685,13 @@ int TEditor::runOCD(int mode){
 	if(mode == ESTATE_PROJECTOPEN){
 		mOpenCreate.bSubDialogActive = true;
 		mOpenCreate.bSubDialogIsOpen = true;
-		mOpenCreate.bDialogIsWatingForText = true;
-		//SDL_StartTextInput();
-		std::cout << "ESTATE OPEN" << std::endl;		
+		mOpenCreate.bDialogIsWatingForText = true;		
 	}
 
 	if(mode == ESTATE_PROJECTCREATE){
 		mOpenCreate.bSubDialogActive = true;
 		mOpenCreate.bSubDialogIsCreate = true;
-		mOpenCreate.bDialogIsWatingForText = true;
-		//SDL_StartTextInput();
-		std::cout << "ESTATE CREATE" << std::endl;		
+		mOpenCreate.bDialogIsWatingForText = true;		
 	}
 
 	while( mGlobalSettings.bRunningOCD ){

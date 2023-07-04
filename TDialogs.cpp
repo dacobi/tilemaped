@@ -1504,9 +1504,7 @@ void OCDialog::recieveInput(int mKey){
 		if(bSubDialogActive && bSubDialogIsOpen){
 			if(mOpenProject.mTextInput.bInputIsAccepted){
 				mGlobalSettings.ProjectPath = mOpenProject.mTextInput.mDialogTextMain;				
-				mGlobalSettings.mEditorState = ESTATE_PROJECTOPEN;
-
-				//SDL_StopTextInput();
+				mGlobalSettings.mEditorState = ESTATE_PROJECTOPEN;				
 				bInputIsAccept=true;
 				bDialogIsWatingForText = false;
 			}
@@ -1548,8 +1546,7 @@ void OCDialog::recieveInput(int mKey){
 				}
 				
 				mGlobalSettings.mEditorState = ESTATE_PROJECTCREATE;
-
-				//SDL_StopTextInput();
+				
 				bInputIsAccept=true;
 				bDialogIsWatingForText = false;				
 			}
@@ -1560,14 +1557,14 @@ void OCDialog::recieveInput(int mKey){
 			bSubDialogActive = false;
 			bSubDialogIsOpen = false;
 			bDialogIsWatingForText = false;
-			//SDL_StopTextInput();
+			
 			return;
 		}
 	if(bSubDialogActive && bSubDialogIsCreate){
 			bSubDialogActive = false;
 			bSubDialogIsCreate = false;
 			bDialogIsWatingForText = false;
-			//SDL_StopTextInput();
+
 	 		return;
 		}
 
