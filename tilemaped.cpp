@@ -520,136 +520,146 @@ void TSettings::settingsMenu(){
 			setColors();
 		}
 
-		if(!bRunningOCD) {
-			if(ImGui::BeginMenu("Colors")){
+		if(ImGui::BeginMenu(std::string(mGlobalSettings.mGear + " Colors").c_str())){
 
+			//Selection Dark
+			bool bDialogActive = false;
 
-				//Selection Dark
+			bool bShowSelDark = false;
 
-				bool bShowSelDark = false;
-
-				bShowSelDark = ImGui::ColorButton("Selection Dark##3b", CurrentEditor->mPalette.getIm4ColorIm(mINIFile.Theme_SelectionDark->ivalue), ImGuiColorEditFlags_NoAlpha);
+			bShowSelDark = ImGui::ColorButton("Selection Dark##3b", CurrentEditor->mPalette.getIm4ColorIm(mINIFile.Theme_SelectionDark->ivalue), ImGuiColorEditFlags_NoAlpha);
 					
-				ImGui::SameLine();
+			ImGui::SameLine();
 
-				bool bShowSelDarkMenu = false;
+			bool bShowSelDarkMenu = false;
 
-				bShowSelDarkMenu = ImGui::MenuItem("Selection Dark");
+			bShowSelDarkMenu = ImGui::MenuItem("Selection Dark");
 
-				if(bShowSelDark || bShowSelDarkMenu){
-					mThemeColorIndex = 1;
-					mThemeColorNew = mINIFile.Theme_SelectionDark->ivalue;
-					CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
-				}
+			if(bShowSelDark || bShowSelDarkMenu){
+				mThemeColorIndex = 1;
+				mThemeColorNew = mINIFile.Theme_SelectionDark->ivalue;
+				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
+				bDialogActive = true;
+			}
 
-				//Selection Dark End
+			//Selection Dark End
 
-				//Selection Light
+			//Selection Light
 
-				bool bShowSelLight = false;
+			bool bShowSelLight = false;
 
-				bShowSelLight = ImGui::ColorButton("Selection Light##3b", CurrentEditor->mPalette.getIm4ColorIm(mINIFile.Theme_SelectionLight->ivalue), ImGuiColorEditFlags_NoAlpha);
+			bShowSelLight = ImGui::ColorButton("Selection Light##3b", CurrentEditor->mPalette.getIm4ColorIm(mINIFile.Theme_SelectionLight->ivalue), ImGuiColorEditFlags_NoAlpha);
 					
-				ImGui::SameLine();
+			ImGui::SameLine();
 
-				bool bShowSelLightMenu = false;
+			bool bShowSelLightMenu = false;
 
-				bShowSelLightMenu = ImGui::MenuItem("Selection Light");
+			bShowSelLightMenu = ImGui::MenuItem("Selection Light");
 
-				if(bShowSelLight || bShowSelLightMenu){
-					mThemeColorIndex = 2;
-					mThemeColorNew = mINIFile.Theme_SelectionLight->ivalue;
-					CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
-				}
+			if(bShowSelLight || bShowSelLightMenu){
+				mThemeColorIndex = 2;
+				mThemeColorNew = mINIFile.Theme_SelectionLight->ivalue;
+				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
+				bDialogActive = true;
+			}
 
-				//Selection Light End
+			//Selection Light End
 
-				//Highlight Dark
+			//Highlight Dark
 
-				bool bShowHighDark = false;
+			bool bShowHighDark = false;
 
-				bShowHighDark = ImGui::ColorButton("Highlight Dark##3b", CurrentEditor->mPalette.getIm4ColorIm(mINIFile.Theme_HighlightDark->ivalue), ImGuiColorEditFlags_NoAlpha);
+			bShowHighDark = ImGui::ColorButton("Highlight Dark##3b", CurrentEditor->mPalette.getIm4ColorIm(mINIFile.Theme_HighlightDark->ivalue), ImGuiColorEditFlags_NoAlpha);
 					
-				ImGui::SameLine();
+			ImGui::SameLine();
 
-				bool bShowHighDarkMenu = false;
+			bool bShowHighDarkMenu = false;
 
-				bShowHighDarkMenu = ImGui::MenuItem("Highlight Dark");
+			bShowHighDarkMenu = ImGui::MenuItem("Highlight Dark");
 
-				if(bShowHighDark || bShowHighDarkMenu){
-					mThemeColorIndex = 3;
-					mThemeColorNew = mINIFile.Theme_HighlightDark->ivalue;
-					CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
-				}
+			if(bShowHighDark || bShowHighDarkMenu){
+				mThemeColorIndex = 3;
+				mThemeColorNew = mINIFile.Theme_HighlightDark->ivalue;
+				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
+				bDialogActive = true;
+			}
 
-				//HighLight Dark End
+			//HighLight Dark End
 
-				//Highlight Light
+			//Highlight Light
 
-				bool bShowHighLight = false;
+			bool bShowHighLight = false;
 
-				bShowHighLight = ImGui::ColorButton("Highlight Light##3b", CurrentEditor->mPalette.getIm4ColorIm(mINIFile.Theme_HighlightLight->ivalue), ImGuiColorEditFlags_NoAlpha);
+			bShowHighLight = ImGui::ColorButton("Highlight Light##3b", CurrentEditor->mPalette.getIm4ColorIm(mINIFile.Theme_HighlightLight->ivalue), ImGuiColorEditFlags_NoAlpha);
 					
-				ImGui::SameLine();
+			ImGui::SameLine();
 
-				bool bShowHighLightMenu = false;
+			bool bShowHighLightMenu = false;
 
-				bShowHighLightMenu = ImGui::MenuItem("Highlight Light");
+			bShowHighLightMenu = ImGui::MenuItem("Highlight Light");
 
-				if(bShowHighLight || bShowHighLightMenu){
-					mThemeColorIndex = 4;
-					mThemeColorNew = mINIFile.Theme_HighlightLight->ivalue;
-					CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
-				}
+			if(bShowHighLight || bShowHighLightMenu){
+				mThemeColorIndex = 4;
+				mThemeColorNew = mINIFile.Theme_HighlightLight->ivalue;
+				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
+				bDialogActive = true;
+			}
 
-				//HighLight Light End
+			//HighLight Light End
 
 
-				//PixelGrid Dark
+			//PixelGrid Dark
 
-				bool bShowPixDark = false;
+			bool bShowPixDark = false;
 
-				bShowPixDark = ImGui::ColorButton("PixelGrid Dark##3b", CurrentEditor->mPalette.getIm4ColorIm(mINIFile.Theme_PixelGridDark->ivalue), ImGuiColorEditFlags_NoAlpha);
+			bShowPixDark = ImGui::ColorButton("PixelGrid Dark##3b", CurrentEditor->mPalette.getIm4ColorIm(mINIFile.Theme_PixelGridDark->ivalue), ImGuiColorEditFlags_NoAlpha);
 					
-				ImGui::SameLine();
+			ImGui::SameLine();
 
-				bool bShowPixDarkMenu = false;
+			bool bShowPixDarkMenu = false;
 
-				bShowPixDarkMenu = ImGui::MenuItem("PixelGrid Dark");
+			bShowPixDarkMenu = ImGui::MenuItem("PixelGrid Dark");
 
-				if(bShowPixDark || bShowPixDarkMenu){
-					mThemeColorIndex = 5;
-					mThemeColorNew = mINIFile.Theme_PixelGridDark->ivalue;
-					CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
-				}
+			if(bShowPixDark || bShowPixDarkMenu){
+				mThemeColorIndex = 5;
+				mThemeColorNew = mINIFile.Theme_PixelGridDark->ivalue;
+				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
+				bDialogActive = true;
+			}
 
-				//PixelGrid Dark End
+			//PixelGrid Dark End
 
 
-				//PixelGrid Light
+			//PixelGrid Light
 
-				bool bShowPixLight = false;
+			bool bShowPixLight = false;
 
-				bShowPixLight = ImGui::ColorButton("PixelGrid Light##3b", CurrentEditor->mPalette.getIm4ColorIm(mINIFile.Theme_PixelGridLight->ivalue), ImGuiColorEditFlags_NoAlpha);
+			bShowPixLight = ImGui::ColorButton("PixelGrid Light##3b", CurrentEditor->mPalette.getIm4ColorIm(mINIFile.Theme_PixelGridLight->ivalue), ImGuiColorEditFlags_NoAlpha);
 					
-				ImGui::SameLine();
+			ImGui::SameLine();
 
-				bool bShowPixLightMenu = false;
+			bool bShowPixLightMenu = false;
 
-				bShowPixLightMenu = ImGui::MenuItem("PixelGrid Light");
+			bShowPixLightMenu = ImGui::MenuItem("PixelGrid Light");
 
-				if(bShowPixLight || bShowPixLightMenu){
-					mThemeColorIndex = 6;
-					mThemeColorNew = mINIFile.Theme_PixelGridLight->ivalue;
-					CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
-				}
+			if(bShowPixLight || bShowPixLightMenu){
+				mThemeColorIndex = 6;
+				mThemeColorNew = mINIFile.Theme_PixelGridLight->ivalue;
+				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
+				bDialogActive = true;
+			}
+
+			if(bDialogActive && bRunningOCD){
+				CurrentEditor->mOpenCreate.bSubDialogActive = false;
+				CurrentEditor->mOpenCreate.bSubDialogIsCreate = false;
+				CurrentEditor->mOpenCreate.bSubDialogIsOpen = false;								
+				CurrentEditor->mOpenCreate.bDialogIsWatingForText = false;								
+			}
 
 				//PixelGrid Light End
 
-				ImGui::EndMenu();
-			}
+			ImGui::EndMenu();
 		}
-
 		
 		ImGui::EndMenu();
 	}
@@ -668,73 +678,139 @@ void TSettings::windowResizeHighDPI(int cWidth, int cHeight){
 }
 		
 
-int TSettings::runOCD(int mode){
-
-	OCDialog mOpenCreate;
+int TEditor::runOCD(int mode){
+	
 	mOpenCreate.init();
 
 	if(mode == ESTATE_PROJECTOPEN){
 		mOpenCreate.bSubDialogActive = true;
 		mOpenCreate.bSubDialogIsOpen = true;
-		mOpenCreate.bDialogIsWatingForText = true;				
+		mOpenCreate.bDialogIsWatingForText = true;
+		//SDL_StartTextInput();
+		std::cout << "ESTATE OPEN" << std::endl;		
 	}
 
 	if(mode == ESTATE_PROJECTCREATE){
 		mOpenCreate.bSubDialogActive = true;
 		mOpenCreate.bSubDialogIsCreate = true;
-		mOpenCreate.bDialogIsWatingForText = true;				
+		mOpenCreate.bDialogIsWatingForText = true;
+		//SDL_StartTextInput();
+		std::cout << "ESTATE CREATE" << std::endl;		
 	}
 
-	while( bRunningOCD ){
+	while( mGlobalSettings.bRunningOCD ){
 
-		if((mEditorState == ESTATE_PROJECTOPEN) || ( mEditorState == ESTATE_PROJECTCREATE)){
-			bRunningOCD = false;
+		if((mGlobalSettings.mEditorState == ESTATE_PROJECTOPEN) || ( mGlobalSettings.mEditorState == ESTATE_PROJECTCREATE)){
+			mGlobalSettings.bRunningOCD = false;
 		}
 
 		if(mOpenCreate.bInputIsCancel){
-			bRunningOCD = false;			
-			mEditorState = ESTATE_NONE;
+			mGlobalSettings.bRunningOCD = false;			
+			mGlobalSettings.mEditorState = ESTATE_NONE;
 		}
 
-		SDL_SetRenderDrawColor( TRenderer, DefaultBGColor.r,  DefaultBGColor.g,  DefaultBGColor.b, 0xff); 
-		SDL_RenderClear( TRenderer );
+		SDL_SetRenderDrawColor( mGlobalSettings.TRenderer, mGlobalSettings.DefaultBGColor.r,  mGlobalSettings.DefaultBGColor.g,  mGlobalSettings.DefaultBGColor.b, 0xff); 
+		SDL_RenderClear( mGlobalSettings.TRenderer );
 
        	ImGui_ImplSDLRenderer_NewFrame();
        	ImGui_ImplSDL2_NewFrame();
        	ImGui::NewFrame();
 
 		mOpenCreate.render();
+
+		if(mActiveDialog){
+			mActiveDialog->render();
+		}
+
 		ImGui::Render();                						
 
        	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
  
-		renderShow();
+		mGlobalSettings.renderShow();
 
 		SDL_Event e;
+
+		if(mActiveDialog){
+			if(mActiveDialog->bInputIsAccept){
+				if(mGlobalSettings.mEditorState == ESTATE_THEMECOLOR){				
+				
+					mGlobalSettings.mEditorState = ESTATE_NONE;	
+
+					switch(mGlobalSettings.mThemeColorIndex){
+						case 1 :
+							mGlobalSettings.mINIFile.Theme_SelectionDark->ivalue = mGlobalSettings.mThemeColorNew;
+							break;
+						case 2 :
+							mGlobalSettings.mINIFile.Theme_SelectionLight->ivalue = mGlobalSettings.mThemeColorNew;
+							break;
+						case 3 :
+							mGlobalSettings.mINIFile.Theme_HighlightDark->ivalue = mGlobalSettings.mThemeColorNew;
+							break;
+						case 4 :
+							mGlobalSettings.mINIFile.Theme_HighlightLight->ivalue = mGlobalSettings.mThemeColorNew;
+							break;
+						case 5 :
+							mGlobalSettings.mINIFile.Theme_PixelGridDark->ivalue = mGlobalSettings.mThemeColorNew;
+							break;
+						case 6 :
+							mGlobalSettings.mINIFile.Theme_PixelGridLight->ivalue = mGlobalSettings.mThemeColorNew;
+							break;
+						default:
+							break;
+					}
+
+					cancelActiveDialog();
+
+					if(mGlobalSettings.mINIFile.Win_Theme->ivalue == 1){
+						mGlobalSettings.setColors(true);
+					} else {
+						mGlobalSettings.setColors();
+					}				
+				}
+			}			
+		}
+
+		if(mActiveDialog){
+			if(mActiveDialog->bInputIsCancel){
+				cancelActiveDialog();
+			}
+		}
 
 		while( SDL_PollEvent( &e ) != 0 ){
 			ImGui_ImplSDL2_ProcessEvent(&e);
 			switch (e.type){
 				case SDL_QUIT:
-						bRunningOCD = false;
+						mGlobalSettings.bRunningOCD = false;
 					break;
 				case SDL_TEXTINPUT:
 					
 				break;
 				case SDL_KEYDOWN:							
 					if(e.key.keysym.sym == SDLK_BACKSPACE){
- 						if(mOpenCreate.bDialogIsWatingForText){				
-							mOpenCreate.dropLastInputChar();
-  						}
+						if(!mActiveDialog){
+ 							if(mOpenCreate.bDialogIsWatingForText){				
+								mOpenCreate.dropLastInputChar();
+  							}
+						}
 					}
 					if(e.key.keysym.sym == SDLK_RETURN){
-						mOpenCreate.recieveInput(SDLK_y);
+						if(mActiveDialog){
+							mActiveDialog->recieveInput(SDLK_y);
+						} else {
+							mOpenCreate.recieveInput(SDLK_y);
+						}
 					}
 					if(e.key.keysym.sym == SDLK_ESCAPE){
-						mOpenCreate.recieveInput(SDLK_n);
+						if(mActiveDialog){
+							mActiveDialog->recieveInput(SDLK_n);
+						} else {
+							mOpenCreate.recieveInput(SDLK_n);
+						}
 					}
 					if(e.key.keysym.sym == SDLK_TAB){
-						mOpenCreate.recieveInput(SDLK_TAB);
+						if(!mActiveDialog){
+							mOpenCreate.recieveInput(SDLK_TAB);
+						}
 					}
 				break;
 				case SDL_MOUSEBUTTONDOWN:
@@ -743,18 +819,18 @@ int TSettings::runOCD(int mode){
 				case SDL_WINDOWEVENT:
 				if (e.window.event == SDL_WINDOWEVENT_RESIZED){
 					int newWidth,newHeight;
- 					SDL_GetWindowSize(TWindow, &newWidth, &newHeight);
-					if(mINIFile.Win_HighDPI->bvalue){
-						windowResizeHighDPI(newWidth, newHeight);
+ 					SDL_GetWindowSize(mGlobalSettings.TWindow, &newWidth, &newHeight);
+					if(mGlobalSettings.mINIFile.Win_HighDPI->bvalue){
+						mGlobalSettings.windowResizeHighDPI(newWidth, newHeight);
 					} else {
- 						WindowWidth = newWidth;
- 						WindowHeight = newHeight; 	
+ 						mGlobalSettings.WindowWidth = newWidth;
+ 						mGlobalSettings.WindowHeight = newHeight; 	
 					}
 				}
 			break;
 			}
 		}
-		updateTicks();			
+		mGlobalSettings.updateTicks();			
 	}
 	return 0;
 }
@@ -1310,7 +1386,7 @@ int main( int argc, char* args[] )
 		while( mEditor.bEditorRunning || mGlobalSettings.bRunningOCD){
 
 			if(mGlobalSettings.bRunningOCD){			
-				mGlobalSettings.runOCD(mGlobalSettings.mOpenCreateProjectState); //);
+				mEditor.runOCD(mGlobalSettings.mOpenCreateProjectState); //);
 			
 				mGlobalSettings.mOpenCreateProjectState = ESTATE_NONE;
 

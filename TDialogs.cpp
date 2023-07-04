@@ -1401,6 +1401,9 @@ void OPDialog::init(){
 
 	bSubDialogActive = false;
 	mTextInput.bInputIsAccepted = false;
+
+	bInputIsAccept = false;
+	bInputIsCancel = false;
 }
 
 
@@ -1411,6 +1414,9 @@ void OCDialog::init(){
 	
 	mCreateProject.init();
 	
+	bSubDialogActive = false;
+	bSubDialogIsOpen = false;	
+	bSubDialogIsCreate = false;	
 }
 
 int OCDialog::render(){
@@ -1419,13 +1425,17 @@ int OCDialog::render(){
 		if (ImGui::BeginMenu("File"))
 		{
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Open")).c_str())){
+				mGlobalSettings.CurrentEditor->cancelActiveDialog();
 				bSubDialogActive = true;
 				bSubDialogIsOpen = true;
+				bSubDialogIsCreate = false;
 				bDialogIsWatingForText = true;				
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Create")).c_str())){
+				mGlobalSettings.CurrentEditor->cancelActiveDialog();
 				bSubDialogActive = true;
 				bSubDialogIsCreate = true;
+				bSubDialogIsOpen = false;
 				bDialogIsWatingForText = true;				
 			}
 
@@ -1496,7 +1506,7 @@ void OCDialog::recieveInput(int mKey){
 				mGlobalSettings.ProjectPath = mOpenProject.mTextInput.mDialogTextMain;				
 				mGlobalSettings.mEditorState = ESTATE_PROJECTOPEN;
 
-				SDL_StopTextInput();
+				//SDL_StopTextInput();
 				bInputIsAccept=true;
 				bDialogIsWatingForText = false;
 			}
@@ -1539,7 +1549,7 @@ void OCDialog::recieveInput(int mKey){
 				
 				mGlobalSettings.mEditorState = ESTATE_PROJECTCREATE;
 
-				SDL_StopTextInput();
+				//SDL_StopTextInput();
 				bInputIsAccept=true;
 				bDialogIsWatingForText = false;				
 			}
@@ -1550,14 +1560,14 @@ void OCDialog::recieveInput(int mKey){
 			bSubDialogActive = false;
 			bSubDialogIsOpen = false;
 			bDialogIsWatingForText = false;
-			SDL_StopTextInput();
+			//SDL_StopTextInput();
 			return;
 		}
 	if(bSubDialogActive && bSubDialogIsCreate){
 			bSubDialogActive = false;
 			bSubDialogIsCreate = false;
 			bDialogIsWatingForText = false;
-			SDL_StopTextInput();
+			//SDL_StopTextInput();
 	 		return;
 		}
 
@@ -1628,6 +1638,9 @@ void CPDialog::init(){
 
 	mActiveInput = &mReadPath;
 	mActiveInput->bIsInputActive = true;
+
+	bInputIsAccept = false;
+	bInputIsCancel = false;
 
 }
 

@@ -59,6 +59,8 @@ class TEditor{
 		TEditor(){mClipboardMap.mLocalTexParam.TexEditScale--;};
 		void shutdown();
 		void closeProject();
+		int runOCD(int mode=0);
+		OCDialog mOpenCreate;
 		TPalette mPalette;
 		TileSet mTileSet;
 		TileMap *mTileMap;

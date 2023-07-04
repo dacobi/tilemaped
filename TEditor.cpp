@@ -164,7 +164,7 @@ void TEditor::showProjectInfo(){
 void TEditor::createDialogs(){
 	
 	mHelpDialog.init();
-
+	
 	mDTDialogs[EDIALOG_ERROR] = NULL;
 	mDTDialogs[EDIALOG_SPRITECREATECOPY] = DTDialog::createSpriteCopyDialog();
 	mDTDialogs[EDIALOG_SPRITECREATESCALEDCOPY] = DTDialog::createSpriteScaledCopyDialog();
