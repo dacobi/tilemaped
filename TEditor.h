@@ -238,6 +238,7 @@ class TEditor{
 		int createNewSpriteConvertBPP4(TSprite *copySprite);
 		int createSpriteRotationRange(int cRange, int cIntervals);
 		int createSpriteRotations(int cNum, float cInterval);
+		int setThemeColors();
 		int rotateTile();
 		int rotateTileLeft();
 		int moveTileUp();
