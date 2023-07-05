@@ -96,11 +96,13 @@ int TEditor::createNewProject(){
 	if(mGlobalSettings.bProjectHasPalette){
 		if(mGlobalSettings.testPaletteFile(mGlobalSettings.ProjectPalettePath) == 2){
 			if(mPalette.importGimpPalette(mGlobalSettings.ProjectPalettePath)){				
-				return 1;	
+				std::cout << "Error in Palette File! Using default" << std::endl;
+				mPalette.initPalette();
 			}
 		} else {
 			if(mPalette.loadFromFile(mGlobalSettings.ProjectPalettePath)){
-				return 1;
+				std::cout << "Error in Palette File! Using default" << std::endl;
+				mPalette.initPalette();
 			}
 		}
 	} else {
@@ -112,24 +114,32 @@ int TEditor::createNewProject(){
 	mTileMap->createNew();
 	mTileMaps.push_back(mTileMap);		
 
+
+	//mTileSet.mSelEdWidth = 4;
+
 	if(fs::exists(fs::status(mGlobalSettings.mNewTilePath))){
 		std::vector<Tile*> cNewTiles;
 		if(mTileSet.importTileSet(mGlobalSettings.mNewTilePath, cNewTiles)){
-			return 1;
+			std::cout << "Error in TileSet File! Using empty" << std::endl;
+			mTileSet.createNew(&mPalette);
 		}
 	} else if(mGlobalSettings.mNewTileSize){
 		if((mGlobalSettings.mNewTileSize == 4) || (mGlobalSettings.mNewTileSize == 8) || (mGlobalSettings.mNewTileSize == 16)){
-			mTileSet.mSelEdWidth = mGlobalSettings.mNewTileSize;
-			mGlobalSettings.mTileSetEditWidth = mGlobalSettings.mNewTileSize;
+			//mTileSet.mSelEdWidth = mGlobalSettings.mNewTileSize;
+			//mGlobalSettings.mTileSetEditWidth = mGlobalSettings.mNewTileSize;
 			for(int i = 0; i < (mGlobalSettings.mNewTileSize*mGlobalSettings.mNewTileSize); i++){
 				mTileSet.createNew(&mPalette);		
 			}			
 		} else {
-			return 1;
+			std::cout << "Unknown TileSet Error! Using empty" << std::endl;
+			mTileSet.createNew(&mPalette);
 		}
 	} else {
 		mTileSet.createNew(&mPalette);
 	}
+
+	mTileSet.mMaxColumns = 4;
+	mTileSet.resizeEdit();		
 
 	mTileSet.mClipboardTiles.init("Tiles","Pixel", TBRUSH_PIXEL, &mTileSet.bShowClipboardTiles, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.CurrentEditor->mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
 	mTileSet.mClipboardTileSet.init("TileSet","Pixel", TBRUSH_PIXEL, &mTileSet.bShowClipboardTileSet, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.CurrentEditor->mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
@@ -179,6 +189,7 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_HELPMENU] = &mHelpDialog;
 	mDTDialogs[EDIALOG_THEMECOLOR] = DTDialog::createThemeColorDialog();
 	mDTDialogs[EDIALOG_PROJECTOPEN] = DTDialog::createProjectOpenDialog();
+	mDTDialogs[EDIALOG_PROJECTCREATE] = DTDialog::createProjectCreateDialog();
 
 	mProjectInfo = IDDialog::createProjectInfoDialog();
 }

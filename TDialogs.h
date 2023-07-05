@@ -87,7 +87,7 @@ class DTDialog : public Dialog{
 		void addRadioGroupCondition(int cDefault, int* cTarget);
 		void addIntTarget(int cDefault, int *cTarget);
 		void addColor(std::string cLabel, ImU32 *cDefaultColor, ImU32 *cTarget, bool bSameline = false);
-		void addFile(std::string cLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist = true, bool cMustBeFile = true, bool cMustBeFolder = false, bool cMustNotBeFile = false, bool cMustNotExist = false, bool cMustBeProject = false, bool cSameline = false);
+		void addFile(std::string cLabel, std::string cInputLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist = true, bool cMustBeFile = true, bool cMustBeFolder = false, bool cMustNotBeFile = false, bool cMustNotExist = false, bool cMustBeProject = false, bool cSameline = false);
 
 		static DTDialog* createSpriteFrameImportDialog();
 		static DTDialog* createSpriteFramesImportDialog();
@@ -179,7 +179,7 @@ class DialogValueBoolCondition : public DialogValueType<bool>{
 		int mTargetCondition = -1;
 		DialogValueBoolCondition(DTDialog *cParent, int cCond, std::string cLabel, bool cDefault, bool* cTarget, int cTargetCond, bool cSameline){mParent = cParent; mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; bSameLine = cSameline; mCondition = cCond; mTargetCondition = cTargetCond;}
 		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::Checkbox(mLabel.c_str(), &mValue); if(mValue){ mParent->mCondition = mTargetCondition; } else { mParent->mCondition = mParent->mConditionBackup; } }		
-		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} *mTarget = mValue; if(mValue){ mParent->mCondition = mTargetCondition; } else { mParent->mCondition = mParent->mConditionBackup; } }
+		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(mTarget){*mTarget = mValue;} if(mValue){ mParent->mCondition = mTargetCondition; } else { mParent->mCondition = mParent->mConditionBackup; } }
 };
 
 class DialogValueInt : public DialogValueType<int>{	
@@ -256,7 +256,7 @@ class DialogValueRadioGroupCondition : public DialogValueRadioGroup{
 	public:		
 		DialogValueRadioGroupCondition(DTDialog *cParent, int cCond, int cDefault, int* cTarget){mParent = cParent; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mCondition = cCond;};
 		virtual void render();
-		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} *mTarget = mValue; mParent->mCondition = mValue;}
+		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(mTarget){*mTarget = mValue;} mParent->mCondition = mValue;}
 };
 
 class DialogValueIntTarget : public DialogValueType<int>{	
@@ -384,7 +384,7 @@ class DialogValueFile : public DialogValueType<std::string>{
 
 		bool bIsValid = false;
 		
-		DialogValueFile(DTDialog *cParent, int cCond, std::string cLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist, bool cMustBeFile, bool cMustBeFolder, bool cMustNotBeFile, bool cMustNotExist, bool cMustBeProject){mParent = cParent; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mCondition = cCond; mTextInput.bMustExist = cMustExist; mTextInput.bMustBeFile = cMustBeFile; mTextInput.bMustBeFolder = cMustBeFolder; mTextInput.bMustNotBeFile = cMustNotBeFile; mTextInput.bMustNotExist = cMustNotExist; mTextInput.bMustBeProject = cMustBeProject; mLabel = cLabel; mFileKey = "ChooseFileDlgKey" + cFileKey; mFileExt = cFileExt; mTextInput.bIsInputActive = true; mTextInput.bAutoComplete = true;}		
+		DialogValueFile(DTDialog *cParent, int cCond, std::string cLabel, std::string cInputLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist, bool cMustBeFile, bool cMustBeFolder, bool cMustNotBeFile, bool cMustNotExist, bool cMustBeProject){mParent = cParent; mDefault = cDefault; mValue = mDefault; mTextInput.mInputLabel = cInputLabel; mTextInput.mDialogTextMain = mDefault; mTarget = cTarget; mCondition = cCond; mTextInput.bMustExist = cMustExist; mTextInput.bMustBeFile = cMustBeFile; mTextInput.bMustBeFolder = cMustBeFolder; mTextInput.bMustNotBeFile = cMustNotBeFile; mTextInput.bMustNotExist = cMustNotExist; mTextInput.bMustBeProject = cMustBeProject; mLabel = cLabel; mFileKey = "ChooseFileDlgKey" + cFileKey; mFileExt = cFileExt; mTextInput.bIsInputActive = true; mTextInput.bAutoComplete = true;}	
 		virtual void render();
 		virtual void cancel(){mValue = mDefault; mTextInput.mDialogTextMain = mDefault; bIsValid = false;}
 };
@@ -562,13 +562,13 @@ class CSDialog: public Dialog{
 class OCDialog: public Dialog{
 	public:
 		virtual void init();		
-		bool bSubDialogActive = false;
+		//bool bSubDialogActive = false;
 		//bool bSubDialogIsOpen = false;	
-		bool bSubDialogIsCreate = false;			
+		//bool bSubDialogIsCreate = false;			
 		//OPDialog mOpenProject;
-		CPDialog mCreateProject;
-		virtual void dropLastInputChar();		
-		virtual void recieveInput(int mKey);				
+		//CPDialog mCreateProject;
+		//virtual void dropLastInputChar();		
+		//virtual void recieveInput(int mKey);				
 		virtual int render();
 };
 

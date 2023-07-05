@@ -1412,11 +1412,11 @@ void OCDialog::init(){
 	//mOpenProject.mTextInput.bMustBeFolder = true;
 	//mOpenProject.mTextInput.bMustBeProject = true;
 	
-	mCreateProject.init();
+	//mCreateProject.init();
 	
-	bSubDialogActive = false;
+	//bSubDialogActive = false;
 	//bSubDialogIsOpen = false;	
-	bSubDialogIsCreate = false;	
+	//bSubDialogIsCreate = false;	
 }
 
 int OCDialog::render(){
@@ -1427,16 +1427,17 @@ int OCDialog::render(){
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Open")).c_str())){
 				mGlobalSettings.CurrentEditor->cancelActiveDialog();
 				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTOPEN);
-				bSubDialogActive = false;				
-				bSubDialogIsCreate = false;
-				bDialogIsWatingForText = false;				
+				//bSubDialogActive = false;				
+				//bSubDialogIsCreate = false;
+				//bDialogIsWatingForText = false;				
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Create")).c_str())){
 				mGlobalSettings.CurrentEditor->cancelActiveDialog();
-				bSubDialogActive = true;
-				bSubDialogIsCreate = true;
+				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTCREATE, 0);
+				//bSubDialogActive = true;
+				//bSubDialogIsCreate = true;
 				//bSubDialogIsOpen = false;
-				bDialogIsWatingForText = true;				
+				//bDialogIsWatingForText = true;				
 			}
 
 			ImGui::Separator();
@@ -1475,6 +1476,7 @@ int OCDialog::render(){
 	}
 	*/
 
+	/*
 	if(bSubDialogActive && bSubDialogIsCreate){
 		mCreateProject.render();
 		if(mCreateProject.bInputIsCancel){
@@ -1486,25 +1488,28 @@ int OCDialog::render(){
 			recieveInput(SDLK_y);
 		}
 	}
-
+*/
 	return 0;
 }
 
+/*
 void OCDialog::dropLastInputChar(){
-	/*
+	
 	if(bSubDialogActive && bSubDialogIsOpen){
 		mOpenProject.mTextInput.dropLastInputChar();
-	}*/
+	}
 	if(bSubDialogActive && bSubDialogIsCreate){
 		mCreateProject.dropLastInputChar();
 	}
 }
+*/
 
 
+/*
 void OCDialog::recieveInput(int mKey){
 	
 	if(mKey == SDLK_y){
-		/*
+		
 		if(bSubDialogActive && bSubDialogIsOpen){
 			if(mOpenProject.mTextInput.bInputIsAccepted){
 				mGlobalSettings.ProjectPath = mOpenProject.mTextInput.mDialogTextMain;				
@@ -1512,7 +1517,7 @@ void OCDialog::recieveInput(int mKey){
 				bInputIsAccept=true;
 				bDialogIsWatingForText = false;
 			}
-		}*/
+		}
 		if(bSubDialogActive && bSubDialogIsCreate){
 			mCreateProject.recieveInput(mKey);
 			if(mCreateProject.bInputIsAccepted){				
@@ -1557,14 +1562,14 @@ void OCDialog::recieveInput(int mKey){
 		}
 	}
 	if(mKey == SDLK_n){
-		/*
+		
 		if(bSubDialogActive && bSubDialogIsOpen){
 			bSubDialogActive = false;
 			bSubDialogIsOpen = false;
 			bDialogIsWatingForText = false;
 			
 			return;
-		}*/
+		}
 	if(bSubDialogActive && bSubDialogIsCreate){
 			bSubDialogActive = false;
 			bSubDialogIsCreate = false;
@@ -1578,13 +1583,13 @@ void OCDialog::recieveInput(int mKey){
 	if(mKey == SDLK_TAB){
 		if(bSubDialogActive && bSubDialogIsCreate){
 			mCreateProject.recieveInput(SDLK_TAB);
-		}/*
+		}
 		if(bSubDialogActive && bSubDialogIsOpen){
 			mOpenProject.mTextInput.autoComplete();
-		}*/
+		}
 	}
 }
-
+*/
 
 void CTMDialog::init(){
 	mDialogTextMain = mGlobalSettings.mFile + " Create New TileMap";	
@@ -2432,6 +2437,11 @@ void TIDialog::autoComplete(){
 
 int TIDialog::checkCurrentText(){
 
+	if(mDialogTextMain.size() == 0){					
+		bInputIsAccepted=false;
+		return 1;
+	}
+
 	if(bIsNumeric){
 		if(mMaxRange){		
 			std::stringstream convert;
@@ -2850,6 +2860,9 @@ void DialogValueRadioGroup::render(){
 void DialogValueRadioGroupCondition::render(){
 	if(mCondition > -1){if(mParent->mCondition != mCondition){return;}}
 
+
+	mParent->mCondition = mValue;
+	
 	for(auto *cBut : mButtons){		 
 		cBut->DialogElement::render(); 
 		if(ImGui::RadioButton(cBut->mLabel.c_str(), cBut->mTarget, cBut->mDefault)){
@@ -2869,6 +2882,11 @@ void DialogValueFile::render(){
 	}
 
 	mTextInput.render();
+
+	if(mTextInput.bIsActive){
+		mParent->mActiveInput = &mTextInput;
+	}
+
 
 	if(mTextInput.bInputIsAccepted){
 		bIsValid = true;
@@ -3117,9 +3135,9 @@ void DTDialog::addIntTarget(int cDefault, int *cTarget){
 	mValues.push_back(nInt);
 }
 
-void DTDialog::addFile(std::string cLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist, bool cMustBeFile, bool cMustBeFolder, bool cMustNotBeFile, bool cMustNotExist, bool cMustBeProject, bool cSameline){
+void DTDialog::addFile(std::string cLabel,std::string cInputLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist, bool cMustBeFile, bool cMustBeFolder, bool cMustNotBeFile, bool cMustNotExist, bool cMustBeProject, bool cSameline){
 
-	DialogValueFile *nFile = new DialogValueFile(this, mRequiredCondition, cLabel, cFileExt, cFileKey, cDefault, cTarget, cMustExist, cMustBeFile, cMustBeFolder, cMustNotBeFile, cMustNotExist, cMustBeProject);
+	DialogValueFile *nFile = new DialogValueFile(this, mRequiredCondition, cLabel, cInputLabel, cFileExt, cFileKey, cDefault, cTarget, cMustExist, cMustBeFile, cMustBeFolder, cMustNotBeFile, cMustNotExist, cMustBeProject);
 
 	nFile->bSameLine = cSameline;
 
@@ -3458,7 +3476,7 @@ DTDialog* DTDialog::createSpriteFrameImportDialog(){
 
 	newDialog->addText(mGlobalSettings.mImage + " Import Sprite Frame from File?");
 
-	newDialog->addFile("Choose Frame File", ".png,.bin,.data,.raw", "SFrame", "", &mGlobalSettings.mNewFramePath);
+	newDialog->addFile("Choose Frame File", "Filename", ".png,.bin,.data,.raw", "SFrame", "", &mGlobalSettings.mNewFramePath);
 
 	newDialog->addSeperator();
 
@@ -3478,7 +3496,7 @@ DTDialog* DTDialog::createSpriteFramesImportDialog(){
 
 	newDialog->addText(mGlobalSettings.mImage + " Import Sprite Frame(s) from File?");
 
-	newDialog->addFile("Choose Frame(s) File", ".png,.bin,.data,.raw", "SFrames", "", &mGlobalSettings.mNewFramesPath);
+	newDialog->addFile("Choose Frame(s) File", "Filename", ".png,.bin,.data,.raw", "SFrames", "", &mGlobalSettings.mNewFramesPath);
 
 	newDialog->addSeperator();
 
@@ -3564,7 +3582,7 @@ DTDialog* DTDialog::createProjectOpenDialog(){
 
 	newDialog->addSeperator();
 
-	newDialog->addFile("Choose Project Folder", "", "Prfold", "", &mGlobalSettings.ProjectPath, true, false, true, false, false, true);
+	newDialog->addFile("Choose Project Folder", "Folder", "", "Prfold", "", &mGlobalSettings.ProjectPath, true, false, true, false, false, true);
 
 	newDialog->addSeperator();
 
@@ -3578,6 +3596,124 @@ DTDialog* DTDialog::createProjectOpenDialog(){
 DTDialog* DTDialog::createProjectCreateDialog(){
 
 	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Create Project");
+
+	newDialog->setTarget(ESTATE_PROJECTCREATE);
+
+	newDialog->setRequiredCondition(0);
+
+	newDialog->addText(mGlobalSettings.mFile + " Create New Project?");
+
+	newDialog->addSeperator();
+
+	newDialog->addText("TileMap Width & Height");
+
+	newDialog->addRadioGroup(32, &mGlobalSettings.TileMapWidth);
+	newDialog->addRadioButton("W: 32", 32);
+	newDialog->addRadioButton("W: 64", 64, true);
+	newDialog->addRadioButton("W: 128", 128, true);
+	newDialog->addRadioButton("W: 256", 256, true);
+
+	newDialog->addRadioGroup(32, &mGlobalSettings.TileMapHeight);
+	newDialog->addRadioButton("H: 32", 32);
+	newDialog->addRadioButton("H: 64", 64, true);
+	newDialog->addRadioButton("H: 128", 128, true);
+	newDialog->addRadioButton("H: 256", 256, true);
+
+	newDialog->addSeperator();
+
+	newDialog->addText("Tile Size X/Y");
+
+	newDialog->addRadioGroup(16, &mGlobalSettings.mGlobalTexParam.TexSizeX);
+	newDialog->addRadioButton("X: 8", 8);
+	newDialog->addRadioButton("X: 16", 16, true);
+
+	newDialog->addRadioGroup(16, &mGlobalSettings.mGlobalTexParam.TexSizeY);
+	newDialog->addRadioButton("Y: 8", 8);
+	newDialog->addRadioButton("Y: 16", 16, true);
+
+	newDialog->addSeperator();
+
+	newDialog->addBoolCondition("Create/Import TileSet?", false, NULL, 1);
+	
+	newDialog->setRequiredCondition(1);
+
+	newDialog->addRadioGroupCondition(2, NULL);
+	newDialog->addRadioButton("Project File", 2);
+	newDialog->addRadioButton("Import PNG", 3);
+	newDialog->addRadioButton("Empty TileSet", 4);
+	
+	newDialog->setRequiredCondition(2);
+	newDialog->addSeperator();
+	newDialog->addText(mGlobalSettings.mFile + " TileSet File must match Project BPP and TileSize X/Y");
+	newDialog->addFile("Choose TileSet Project File", "TileSet File", ".bin", "NewFts", "", &mGlobalSettings.mNewTilePath);
+	
+	newDialog->addSeperator();
+	newDialog->addText("TileSet BPP");
+	newDialog->addRadioGroup(8, &mGlobalSettings.mGlobalTexParam.TexBPP);
+	newDialog->addRadioButton("BPP: 8", 8);
+	newDialog->addRadioButton("BPP: 4", 4, true);
+	newDialog->addRadioButton("BPP: 2", 2, true);
+	
+
+	newDialog->setRequiredCondition(3);
+	newDialog->addSeperator();
+	newDialog->addText(mGlobalSettings.mFile + " Choose TileSet PNG File");
+	newDialog->addFile("Choose TileSet PNG", "PNG File", ".png", "NewFtspng", "", &mGlobalSettings.mNewTilePath);
+	
+	newDialog->addSeperator();
+	newDialog->addText("Imported Tile BPP");
+	newDialog->addRadioGroup(8, &mGlobalSettings.mGlobalTexParam.TexBPP);
+	newDialog->addRadioButton("BPP: 8", 8);
+	newDialog->addRadioButton("BPP: 4", 4, true);
+
+	newDialog->setRequiredCondition(4);
+	newDialog->addSeperator();
+	newDialog->addText("TileSet Initial Size");
+	newDialog->addRadioGroup(4, &mGlobalSettings.mNewTileSize);
+	newDialog->addRadioButton("4x4", 4);
+	newDialog->addRadioButton("8x8", 8, true);
+	newDialog->addRadioButton("16x16", 16, true);
+	newDialog->addSeperator();
+	newDialog->addText("Tile BPP");
+	newDialog->addRadioGroup(8, &mGlobalSettings.mGlobalTexParam.TexBPP);
+	newDialog->addRadioButton("BPP: 8", 8);
+	newDialog->addRadioButton("BPP: 4", 4, true);
+	newDialog->addRadioButton("BPP: 2", 2, true);
+
+	newDialog->setRequiredCondition(0);
+	newDialog->addSeperator();
+	newDialog->addText("Tile BPP");
+	newDialog->addRadioGroup(8, &mGlobalSettings.mGlobalTexParam.TexBPP);
+	newDialog->addRadioButton("BPP: 8", 8);
+	newDialog->addRadioButton("BPP: 4", 4, true);
+	newDialog->addRadioButton("BPP: 2", 2, true);
+
+	
+	newDialog->addConditionRestore();
+
+	newDialog->addSeperator();
+
+	newDialog->addBoolCondition("Use Palette?", false, &mGlobalSettings.bProjectHasPalette, 5);
+	
+	newDialog->setRequiredCondition(5);
+	newDialog->addText(mGlobalSettings.mFile + " Choose Palette Project File or Gimp Palette");
+	newDialog->addFile("Choose Palette File", "Palette File", ".gpl,.bin", "NewPrPal", "", &mGlobalSettings.ProjectPalettePath);
+
+	newDialog->clearRequiredCondition();
+	newDialog->addConditionRestore();
+
+	newDialog->addSeperator();
+
+	newDialog->addText("Choose New Project Folder");
+	newDialog->addFile("New Project Folder", "Folder", "", "NewPrf", "newfolder", &mGlobalSettings.ProjectPath, false, false, false, false, true, false);
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Create", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
 
 	return newDialog;
 
@@ -3613,7 +3749,7 @@ DTDialog* DTDialog::createTileMapImportDialog(){
 	newDialog->addSeperator();
 	newDialog->clearRequiredCondition();
 
-	newDialog->addFile("Choose TileMap File", ".bin", "ITileMap", "", &mGlobalSettings.mNewTileMapPath);
+	newDialog->addFile("Choose TileMap File", "Filename", ".bin", "ITileMap", "", &mGlobalSettings.mNewTileMapPath);
 
 	newDialog->addSeperator();
 

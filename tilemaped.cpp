@@ -523,7 +523,7 @@ void TSettings::settingsMenu(){
 		if(ImGui::BeginMenu(std::string(mGlobalSettings.mGear + " Colors").c_str())){
 
 			//Selection Dark
-			bool bDialogActive = false;
+			//bool bDialogActive = false;
 
 			bool bShowSelDark = false;
 
@@ -539,7 +539,7 @@ void TSettings::settingsMenu(){
 				mThemeColorIndex = 1;
 				mThemeColorNew = mINIFile.Theme_SelectionDark->ivalue;
 				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
-				bDialogActive = true;
+				//bDialogActive = true;
 			}
 
 			//Selection Dark End
@@ -560,7 +560,7 @@ void TSettings::settingsMenu(){
 				mThemeColorIndex = 2;
 				mThemeColorNew = mINIFile.Theme_SelectionLight->ivalue;
 				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
-				bDialogActive = true;
+				//bDialogActive = true;
 			}
 
 			//Selection Light End
@@ -581,7 +581,7 @@ void TSettings::settingsMenu(){
 				mThemeColorIndex = 3;
 				mThemeColorNew = mINIFile.Theme_HighlightDark->ivalue;
 				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
-				bDialogActive = true;
+				//bDialogActive = true;
 			}
 
 			//HighLight Dark End
@@ -602,7 +602,7 @@ void TSettings::settingsMenu(){
 				mThemeColorIndex = 4;
 				mThemeColorNew = mINIFile.Theme_HighlightLight->ivalue;
 				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
-				bDialogActive = true;
+				//bDialogActive = true;
 			}
 
 			//HighLight Light End
@@ -624,7 +624,7 @@ void TSettings::settingsMenu(){
 				mThemeColorIndex = 5;
 				mThemeColorNew = mINIFile.Theme_PixelGridDark->ivalue;
 				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
-				bDialogActive = true;
+				//bDialogActive = true;
 			}
 
 			//PixelGrid Dark End
@@ -646,15 +646,17 @@ void TSettings::settingsMenu(){
 				mThemeColorIndex = 6;
 				mThemeColorNew = mINIFile.Theme_PixelGridLight->ivalue;
 				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
-				bDialogActive = true;
+				//bDialogActive = true;
 			}
 
+			/*
 			if(bDialogActive && bRunningOCD){
 				CurrentEditor->mOpenCreate.bSubDialogActive = false;
 				CurrentEditor->mOpenCreate.bSubDialogIsCreate = false;
-				//CurrentEditor->mOpenCreate.bSubDialogIsOpen = false;								
+				CurrentEditor->mOpenCreate.bSubDialogIsOpen = false;								
 				CurrentEditor->mOpenCreate.bDialogIsWatingForText = false;								
 			}
+			*/
 
 				//PixelGrid Light End
 
@@ -683,17 +685,19 @@ int TEditor::runOCD(int mode){
 	mOpenCreate.init();
 
 	if(mode == ESTATE_PROJECTOPEN){
-		mOpenCreate.bSubDialogActive = false;
-		mOpenCreate.bSubDialogIsCreate = false;
-		mOpenCreate.bDialogIsWatingForText = false;		
+		//mOpenCreate.bSubDialogActive = false;
+		//mOpenCreate.bSubDialogIsCreate = false;
+		//mOpenCreate.bDialogIsWatingForText = false;		
 		mGlobalSettings.CurrentEditor->cancelActiveDialog();
 		mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTOPEN);		
 	}
 
 	if(mode == ESTATE_PROJECTCREATE){
-		mOpenCreate.bSubDialogActive = true;
-		mOpenCreate.bSubDialogIsCreate = true;
-		mOpenCreate.bDialogIsWatingForText = true;		
+		//mOpenCreate.bSubDialogActive = true;
+		//mOpenCreate.bSubDialogIsCreate = true;
+		//mOpenCreate.bDialogIsWatingForText = true;
+		mGlobalSettings.CurrentEditor->cancelActiveDialog();
+		mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTCREATE, 0);		
 	}
 
 	while( mGlobalSettings.bRunningOCD ){
@@ -737,6 +741,9 @@ int TEditor::runOCD(int mode){
 				if(mGlobalSettings.mEditorState == ESTATE_PROJECTOPEN){
 					mGlobalSettings.bRunningOCD = false;
 				}
+				if(mGlobalSettings.mEditorState == ESTATE_PROJECTCREATE){
+					mGlobalSettings.bRunningOCD = false;
+				}
 			}			
 		}
 
@@ -761,32 +768,23 @@ int TEditor::runOCD(int mode){
 							if(mActiveDialog->bDialogIsWatingForText){
 								mActiveDialog->dropLastInputChar();
 							}
-						} else {
- 							if(mOpenCreate.bDialogIsWatingForText){				
-								mOpenCreate.dropLastInputChar();
-  							}
-						}
-					}
+						} 					}
 					if(e.key.keysym.sym == SDLK_RETURN){
 						if(mActiveDialog){
 							mActiveDialog->recieveInput(SDLK_y);
-						} else {
-							mOpenCreate.recieveInput(SDLK_y);
-						}
+						} 
 					}
 					if(e.key.keysym.sym == SDLK_ESCAPE){
 						if(mActiveDialog){
 							mActiveDialog->recieveInput(SDLK_n);
 						} else {
-							mOpenCreate.recieveInput(SDLK_n);
+							mGlobalSettings.bRunningOCD = false;
 						}
 					}
 					if(e.key.keysym.sym == SDLK_TAB){
 						if(mActiveDialog){
 							mActiveDialog->recieveInput(SDLK_TAB);
-						} else {
-							mOpenCreate.recieveInput(SDLK_TAB);
-						}
+						} 
 					}
 				break;
 				case SDL_MOUSEBUTTONDOWN:
