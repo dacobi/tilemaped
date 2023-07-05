@@ -84,6 +84,7 @@ class DTDialog : public Dialog{
 		void addButton(std::string cLabel, int cAction, bool cSameline = false);
 		void addRadioGroup(int cDefault, int* cTarget);
 		void addRadioButton(std::string cLabel, int cDefault, bool cSameline = false);
+		void addRadioGroupCondition(int cDefault, int* cTarget);
 		void addIntTarget(int cDefault, int *cTarget);
 		void addColor(std::string cLabel, ImU32 *cDefaultColor, ImU32 *cTarget, bool bSameline = false);
 		void addFile(std::string cLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist = true, bool cMustBeFile = true, bool cMustBeFolder = false, bool cMustNotBeFile = false, bool cMustNotExist = false, bool cMustBeProject = false, bool cSameline = false);
@@ -238,14 +239,22 @@ class DialogButton : public DialogElement{
 class DialogValueRadioButton : public DialogValueType<int>{
 	public:
 		DialogValueRadioButton(std::string cLabel, int cDefault, int* cTarget, bool cSameline){mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; bSameLine = cSameline;};
-		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::RadioButton(mLabel.c_str(), mTarget, mDefault);}
+		virtual void render(){DialogElement::render(); ImGui::RadioButton(mLabel.c_str(), mTarget, mDefault);}
 };
 
 class DialogValueRadioGroup : public DialogValueType<int>{
 	public:
+		DialogValueRadioGroup(){};
 		DialogValueRadioGroup(DTDialog *cParent, int cCond, int cDefault, int* cTarget){mParent = cParent; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mCondition = cCond;};
 		std::vector<DialogValueRadioButton*> mButtons;
 		virtual void render();
+};
+
+class DialogValueRadioGroupCondition : public DialogValueRadioGroup{
+	public:		
+		DialogValueRadioGroupCondition(DTDialog *cParent, int cCond, int cDefault, int* cTarget){mParent = cParent; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mCondition = cCond;};
+		virtual void render();
+		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} *mTarget = mValue; mParent->mCondition = mValue;}
 };
 
 class DialogValueIntTarget : public DialogValueType<int>{	

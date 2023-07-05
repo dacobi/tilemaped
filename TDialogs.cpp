@@ -2842,6 +2842,19 @@ void DialogValueRadioGroup::render(){
 	}
 }
 
+void DialogValueRadioGroupCondition::render(){
+	if(mCondition > -1){if(mParent->mCondition != mCondition){return;}}
+
+	for(auto *cBut : mButtons){		 
+		cBut->DialogElement::render(); 
+		if(ImGui::RadioButton(cBut->mLabel.c_str(), cBut->mTarget, cBut->mDefault)){
+			mParent->mCondition = *cBut->mTarget;
+		}
+	}
+}
+
+
+
 void DialogValueFile::render(){
 	if(mCondition > -1){
 		if(mParent->mCondition != mCondition){
@@ -3067,12 +3080,25 @@ void DTDialog::addRadioGroup(int cDefault, int* cTarget){
 	mValues.push_back(nGroup);
 }
 
+void DTDialog::addRadioGroupCondition(int cDefault, int* cTarget){
+	DialogValueRadioGroupCondition* nGroup = new DialogValueRadioGroupCondition(this, mRequiredCondition, cDefault, cTarget);
+
+	mElements.push_back(nGroup);
+	mValues.push_back(nGroup);
+}
+
 void DTDialog::addRadioButton(std::string cLabel, int cDefault, bool cSameline){
 	DialogValueRadioGroup* cGroup = dynamic_cast<DialogValueRadioGroup*>(mValues[mValues.size()-1]);
 
 	if(cGroup){
 		DialogValueRadioButton* nGBut = new DialogValueRadioButton(cLabel, cDefault, &cGroup->mValue, cSameline);
 		cGroup->mButtons.push_back(nGBut);
+	} else {
+		DialogValueRadioGroupCondition* cGroupCond = dynamic_cast<DialogValueRadioGroupCondition*>(mValues[mValues.size()-1]);
+		if(cGroupCond){
+			DialogValueRadioButton* nGBut = new DialogValueRadioButton(cLabel, cDefault, &cGroupCond->mValue, cSameline);
+			cGroupCond->mButtons.push_back(nGBut);
+		}
 	}
 }
 
