@@ -61,12 +61,15 @@ class TSprite{
         int mCurFrameScale=10;
 		int mCurColumns=1;
         int mMaxColumns = 4;
+        int mMinFrameScale=5;
         const static int MaxCol = 5;
         const static int MinCol = 2;
 		int mColSpace = 10;
         int SpriteWidth=200;		
         const static int MaxScale = 32;
         const static int MinScale = 4;
+        const static int MaxFrame = 10;
+        const static int MinFrame = 5;
         int mSpriteScrollX = 0;
         int mSpriteScrollY = 0;
         SDL_Rect mFramesBackGround;

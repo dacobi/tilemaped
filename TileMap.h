@@ -146,7 +146,7 @@ public:
 	void updateEditAreas(std::vector<SDL_Rect>& cTile, int xpos, int ypos);
 	int getXY(int xpos, int ypos, int cxpos, int cypos);
 	std::vector<int> getPadding();
-	int mCurTileScale = 10;
+	int mCurTileScale = 20;
 	int mCurColumns = 1;
 	int mColSpace = 10;
 	int mMaxScrollY = 0;
@@ -154,12 +154,15 @@ public:
 	int mCurEdScale = 10;
 	int mPixelScale = 1;
 	int mMaxColumns = 4;
+	int mMinTileScale = 5;
 	const static int MaxScale = 24;
 	const static int MinScale = 4;
 	const static int MaxGrid = 16;
 	const static int MinGrid = 2;
 	const static int MaxCol = 5;
     const static int MinCol = 2;
+	const static int MaxTile = 10;
+	const static int MinTile = 4;
 	int mSelectionAreaX;
 	int mSelectionAreaY;
 	int reCalculateScale();

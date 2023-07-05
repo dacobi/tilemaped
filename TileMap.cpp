@@ -2613,13 +2613,17 @@ int TileSet::renderIm(int ypos, int mScroll){
 	mTileSetBackGround.h = mGlobalSettings.WindowHeight- mGlobalSettings.TopBarHeight;
 	
 	if(mCurColumns < mMaxColumns){
-		if( (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX ) +mColSpace ) * TTiles.size() )  / mCurColumns ) ) > mTileSetBackGround.h ){	
+		while( (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeY ) +mColSpace ) * TTiles.size() )  / mCurColumns ) ) > mTileSetBackGround.h ){	
 			mCurTileScale--;
 		
-			if(mCurTileScale < 5){
-				mCurColumns++;
-				updateWinPos = true;
-			}			
+			if(mCurTileScale < (mMinTileScale + 1)){
+				if(mCurColumns < mMaxColumns){
+					mCurColumns++;
+					updateWinPos = true;
+				} else {
+					break;
+				}				
+			}
 		}
 	}
 

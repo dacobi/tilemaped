@@ -350,15 +350,19 @@ void TSprite::renderIm(int ypos, int mScroll){
     mFramesBackGround.h = mGlobalSettings.WindowHeight- mGlobalSettings.TopBarHeight;
 	
 	if(mCurColumns < mMaxColumns){
-		if( (int)( (float)( ( ( (mCurFrameScale*mTexParam.TexSizeX ) +mColSpace ) * mFrames.size() )  / mCurColumns ) ) > mFramesBackGround.h ){	
+		while( (int)( (float)( ( ( (mCurFrameScale*mTexParam.TexSizeY ) +mColSpace ) * mFrames.size() )  / mCurColumns ) ) > mFramesBackGround.h ){	
 			mCurFrameScale--;
             if(mCurFrameScale == 0){
                 mCurFrameScale = 1;
             }
 		
-			if(mCurFrameScale < 5){
-				mCurColumns++;
-				updateWinPos = true;
+			if(mCurFrameScale < (mMinFrameScale)){
+				if(mCurColumns < mMaxColumns){
+					mCurColumns++;
+					updateWinPos = true;
+				} else {
+					break;
+				}
 			}			
 		}
 	}
