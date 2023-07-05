@@ -341,7 +341,7 @@ class TSettings{
 		int initTicks();
 		int updateTicks();
 		int getTicks();
-		int runOCD(int mode=0);
+		//int runOCD(int mode=0);
 		void settingsMenu();
 		void setColors(bool cLightMode = false);
 		std::string mWindow = "\uf2d0";
@@ -393,7 +393,8 @@ enum {
 	EDIALOG_TILEMAPIMPORT,
 	EDIALOG_SPRITECONVERTBPP,
 	EDIALOG_HELPMENU,
-	EDIALOG_THEMECOLOR
+	EDIALOG_THEMECOLOR,
+	EDIALOG_PROJECTOPEN
 } edialogs;
 
 enum {

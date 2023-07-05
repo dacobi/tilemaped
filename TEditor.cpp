@@ -178,6 +178,7 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_SPRITECONVERTBPP] =  DTDialog::createSpriteConvertBPPDialog();
 	mDTDialogs[EDIALOG_HELPMENU] = &mHelpDialog;
 	mDTDialogs[EDIALOG_THEMECOLOR] = DTDialog::createThemeColorDialog();
+	mDTDialogs[EDIALOG_PROJECTOPEN] = DTDialog::createProjectOpenDialog();
 
 	mProjectInfo = IDDialog::createProjectInfoDialog();
 }

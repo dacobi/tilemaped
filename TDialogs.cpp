@@ -1408,14 +1408,14 @@ void OPDialog::init(){
 
 
 void OCDialog::init(){	
-	mOpenProject.init();
-	mOpenProject.mTextInput.bMustBeFolder = true;
-	mOpenProject.mTextInput.bMustBeProject = true;
+	//mOpenProject.init();
+	//mOpenProject.mTextInput.bMustBeFolder = true;
+	//mOpenProject.mTextInput.bMustBeProject = true;
 	
 	mCreateProject.init();
 	
 	bSubDialogActive = false;
-	bSubDialogIsOpen = false;	
+	//bSubDialogIsOpen = false;	
 	bSubDialogIsCreate = false;	
 }
 
@@ -1426,16 +1426,16 @@ int OCDialog::render(){
 		{
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Open")).c_str())){
 				mGlobalSettings.CurrentEditor->cancelActiveDialog();
-				bSubDialogActive = true;
-				bSubDialogIsOpen = true;
+				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTOPEN);
+				bSubDialogActive = false;				
 				bSubDialogIsCreate = false;
-				bDialogIsWatingForText = true;				
+				bDialogIsWatingForText = false;				
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Create")).c_str())){
 				mGlobalSettings.CurrentEditor->cancelActiveDialog();
 				bSubDialogActive = true;
 				bSubDialogIsCreate = true;
-				bSubDialogIsOpen = false;
+				//bSubDialogIsOpen = false;
 				bDialogIsWatingForText = true;				
 			}
 
@@ -1461,6 +1461,7 @@ int OCDialog::render(){
 
 		ImGui::EndMainMenuBar();
 	
+	/*
 	if(bSubDialogActive && bSubDialogIsOpen){
 		mOpenProject.render();
 		if(mOpenProject.bInputIsCancel){
@@ -1472,6 +1473,7 @@ int OCDialog::render(){
 			recieveInput(SDLK_y);
 		}
 	}
+	*/
 
 	if(bSubDialogActive && bSubDialogIsCreate){
 		mCreateProject.render();
@@ -1489,9 +1491,10 @@ int OCDialog::render(){
 }
 
 void OCDialog::dropLastInputChar(){
+	/*
 	if(bSubDialogActive && bSubDialogIsOpen){
 		mOpenProject.mTextInput.dropLastInputChar();
-	}
+	}*/
 	if(bSubDialogActive && bSubDialogIsCreate){
 		mCreateProject.dropLastInputChar();
 	}
@@ -1501,6 +1504,7 @@ void OCDialog::dropLastInputChar(){
 void OCDialog::recieveInput(int mKey){
 	
 	if(mKey == SDLK_y){
+		/*
 		if(bSubDialogActive && bSubDialogIsOpen){
 			if(mOpenProject.mTextInput.bInputIsAccepted){
 				mGlobalSettings.ProjectPath = mOpenProject.mTextInput.mDialogTextMain;				
@@ -1508,7 +1512,7 @@ void OCDialog::recieveInput(int mKey){
 				bInputIsAccept=true;
 				bDialogIsWatingForText = false;
 			}
-		}
+		}*/
 		if(bSubDialogActive && bSubDialogIsCreate){
 			mCreateProject.recieveInput(mKey);
 			if(mCreateProject.bInputIsAccepted){				
@@ -1553,13 +1557,14 @@ void OCDialog::recieveInput(int mKey){
 		}
 	}
 	if(mKey == SDLK_n){
+		/*
 		if(bSubDialogActive && bSubDialogIsOpen){
 			bSubDialogActive = false;
 			bSubDialogIsOpen = false;
 			bDialogIsWatingForText = false;
 			
 			return;
-		}
+		}*/
 	if(bSubDialogActive && bSubDialogIsCreate){
 			bSubDialogActive = false;
 			bSubDialogIsCreate = false;
@@ -1573,10 +1578,10 @@ void OCDialog::recieveInput(int mKey){
 	if(mKey == SDLK_TAB){
 		if(bSubDialogActive && bSubDialogIsCreate){
 			mCreateProject.recieveInput(SDLK_TAB);
-		}
+		}/*
 		if(bSubDialogActive && bSubDialogIsOpen){
 			mOpenProject.mTextInput.autoComplete();
-		}
+		}*/
 	}
 }
 
@@ -2881,7 +2886,11 @@ void DialogValueFile::render(){
 
 		ImGui::SetNextWindowPos(cNewPos, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 		ImGui::SetNextWindowSize(ImVec2(800, 600));
-    	ImGuiFileDialog::Instance()->OpenDialog(mFileKey.c_str(), mLabel.c_str(), mFileExt.c_str(), ".");
+		if(mFileExt.size() == 0){
+			ImGuiFileDialog::Instance()->OpenDialog(mFileKey.c_str(), mLabel.c_str(), NULL, ".");
+		} else {
+    		ImGuiFileDialog::Instance()->OpenDialog(mFileKey.c_str(), mLabel.c_str(), mFileExt.c_str(), ".");
+		}
 	}
 
 	if (ImGuiFileDialog::Instance()->Display(mFileKey.c_str())){
@@ -3542,6 +3551,36 @@ DTDialog* DTDialog::createSpriteConvertBPPDialog(){
 	newDialog->addButton("Cancel", SDLK_n, true);
 
 	return newDialog;
+}
+
+DTDialog* DTDialog::createProjectOpenDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Open Project");
+
+	newDialog->setTarget(ESTATE_PROJECTOPEN);
+
+	newDialog->addText(mGlobalSettings.mFile + " Open Project from Folder?");
+
+	newDialog->addSeperator();
+
+	newDialog->addFile("Choose Project Folder", "", "Prfold", "", &mGlobalSettings.ProjectPath, true, false, true, false, false, true);
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Open", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
+DTDialog* DTDialog::createProjectCreateDialog(){
+
+	DTDialog* newDialog = new DTDialog();
+
+	return newDialog;
+
 }
 
 DTDialog* DTDialog::createTileMapImportDialog(){

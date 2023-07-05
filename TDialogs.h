@@ -100,6 +100,8 @@ class DTDialog : public Dialog{
 		static DTDialog* createTileMapImportDialog();
 		static DTDialog* createSpriteConvertBPPDialog();
 		static DTDialog* createThemeColorDialog();
+		static DTDialog* createProjectOpenDialog();
+		static DTDialog* createProjectCreateDialog();
 };
 
 class IDDialog : public DTDialog{
@@ -561,9 +563,9 @@ class OCDialog: public Dialog{
 	public:
 		virtual void init();		
 		bool bSubDialogActive = false;
-		bool bSubDialogIsOpen = false;	
+		//bool bSubDialogIsOpen = false;	
 		bool bSubDialogIsCreate = false;			
-		OPDialog mOpenProject;
+		//OPDialog mOpenProject;
 		CPDialog mCreateProject;
 		virtual void dropLastInputChar();		
 		virtual void recieveInput(int mKey);				

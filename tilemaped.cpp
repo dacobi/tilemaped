@@ -652,7 +652,7 @@ void TSettings::settingsMenu(){
 			if(bDialogActive && bRunningOCD){
 				CurrentEditor->mOpenCreate.bSubDialogActive = false;
 				CurrentEditor->mOpenCreate.bSubDialogIsCreate = false;
-				CurrentEditor->mOpenCreate.bSubDialogIsOpen = false;								
+				//CurrentEditor->mOpenCreate.bSubDialogIsOpen = false;								
 				CurrentEditor->mOpenCreate.bDialogIsWatingForText = false;								
 			}
 
@@ -683,9 +683,11 @@ int TEditor::runOCD(int mode){
 	mOpenCreate.init();
 
 	if(mode == ESTATE_PROJECTOPEN){
-		mOpenCreate.bSubDialogActive = true;
-		mOpenCreate.bSubDialogIsOpen = true;
-		mOpenCreate.bDialogIsWatingForText = true;		
+		mOpenCreate.bSubDialogActive = false;
+		mOpenCreate.bSubDialogIsCreate = false;
+		mOpenCreate.bDialogIsWatingForText = false;		
+		mGlobalSettings.CurrentEditor->cancelActiveDialog();
+		mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTOPEN);		
 	}
 
 	if(mode == ESTATE_PROJECTCREATE){
@@ -696,7 +698,7 @@ int TEditor::runOCD(int mode){
 
 	while( mGlobalSettings.bRunningOCD ){
 
-		if((mGlobalSettings.mEditorState == ESTATE_PROJECTOPEN) || ( mGlobalSettings.mEditorState == ESTATE_PROJECTCREATE)){
+		if(mGlobalSettings.mEditorState == ESTATE_PROJECTCREATE){
 			mGlobalSettings.bRunningOCD = false;
 		}
 
@@ -732,6 +734,9 @@ int TEditor::runOCD(int mode){
 					mGlobalSettings.mEditorState = ESTATE_NONE;	
 					setThemeColors();			
 				}
+				if(mGlobalSettings.mEditorState == ESTATE_PROJECTOPEN){
+					mGlobalSettings.bRunningOCD = false;
+				}
 			}			
 		}
 
@@ -752,7 +757,11 @@ int TEditor::runOCD(int mode){
 				break;
 				case SDL_KEYDOWN:							
 					if(e.key.keysym.sym == SDLK_BACKSPACE){
-						if(!mActiveDialog){
+						if(mActiveDialog){
+							if(mActiveDialog->bDialogIsWatingForText){
+								mActiveDialog->dropLastInputChar();
+							}
+						} else {
  							if(mOpenCreate.bDialogIsWatingForText){				
 								mOpenCreate.dropLastInputChar();
   							}
@@ -773,7 +782,9 @@ int TEditor::runOCD(int mode){
 						}
 					}
 					if(e.key.keysym.sym == SDLK_TAB){
-						if(!mActiveDialog){
+						if(mActiveDialog){
+							mActiveDialog->recieveInput(SDLK_TAB);
+						} else {
 							mOpenCreate.recieveInput(SDLK_TAB);
 						}
 					}
