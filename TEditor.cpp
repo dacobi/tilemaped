@@ -175,6 +175,7 @@ void TEditor::handleState(){
 	if((mGlobalSettings.mEditorState >= 0) && (mGlobalSettings.mEditorState < mStates.size())){
 		mStates[mGlobalSettings.mEditorState](this);
 	}
+	mGlobalSettings.mEditorState = ESTATE_NONE;
 }
 
 void TEditor::initStates(){
@@ -213,36 +214,436 @@ void TEditor::initStates(){
 }
 
 void TEditor::stateNone(){std::cout << "ESTATE_NONE"  << std::endl;}
-void TEditor::stateProjectSave(){}
+
+void TEditor::stateProjectSave(){
+	if(saveToFolder(mGlobalSettings.ProjectPath)){		
+		showMessage("Error Creating Project Folder!", true);
+	}
+}
+
 void TEditor::stateProjectCreate(){}
+
 void TEditor::stateProjectOpen(){}
+
 void TEditor::stateProjectClose(){}
-void TEditor::stateTileImport(){}
+
+void TEditor::stateTileImport(){
+	Tile* newTile = createNewTileFromFile(mGlobalSettings.mNewTilePath);
+	if(newTile){
+		TEActionAddTile* newActionTile = new TEActionAddTile();
+		newActionTile->doAction(newTile, this, &mTileSet);
+		mActionStack.newActionGroup();	
+		mActionStack.addAction(newActionTile);
+		mActionStack.mLastAction = newActionTile;
+		mActionStack.redoClearStack();
+			
+		//mGlobalSettings.mEditorState = ESTATE_NONE;	
+		//cancelActiveDialog();
+		showMessage("Tile Loaded Successfully");
+		//return 0;
+	} else {					
+		//mGlobalSettings.mEditorState = ESTATE_NONE;	
+		//cancelActiveDialog();
+		showMessage("Error Loading Tile!", true);					
+		//return 0;
+	}
+}
+
 void TEditor::stateTileCreate(){}
-void TEditor::stateTileDelete(){}
-void TEditor::stateTileDeleteAll(){}
-void TEditor::stateTileSetImport(){}
-void TEditor::stateTileMapImport(){}
-void TEditor::stateTileMapCreate(){}
-void TEditor::stateTileMapDelete(){}
-void TEditor::statePaletteUpdate(){}
-void TEditor::stateColmapRemove(){}
-void TEditor::stateSpriteCreate(){}
-void TEditor::stateFrameDelete(){}
-void TEditor::stateSpriteDelete(){}
-void TEditor::stateFrameImport(){}
-void TEditor::stateSpriteImport(){}
-void TEditor::stateSpriteCopy(){}
-void TEditor::stateSpriteScaledCopy(){}
-void TEditor::stateSpriteUpscaledCopy(){}
-void TEditor::stateSpriteDownscaledCopy(){}
-void TEditor::stateSpriteRotationRange(){}
-void TEditor::stateSpriteRotations(){}
-void TEditor::stateFramesImport(){}
-void TEditor::stateFrameRotate(){}
-void TEditor::stateFrameScale(){}
-void TEditor::stateSpriteConvertBPP(){}
-void TEditor::stateThemeColor(){std::cout << "ESTATE_THEMECOLOR"  << std::endl;}
+
+void TEditor::stateTileDelete(){
+	removeSelectedTile();
+}
+
+void TEditor::stateTileDeleteAll(){
+	dropUnusedTiles();
+}
+
+void TEditor::stateTileSetImport(){
+	std::vector<Tile*> cNewTiles;
+	if(mTileSet.importTileSet(mGlobalSettings.mNewTilePath, cNewTiles)){
+		//cancelActiveDialog();
+		showMessage("Error Importing TileSet", true);
+		//return 0;
+	}
+
+	mActionStack.newActionGroup();
+				
+	for(auto cTile : cNewTiles){
+		TEActionAddTiles* newActionTile = new TEActionAddTiles();
+		newActionTile->doAction(cTile, this, &mTileSet);	       			
+	    mActionStack.addAction(newActionTile);
+	    mActionStack.mLastAction = newActionTile;	       			
+	}
+				
+
+	mActionStack.redoClearStack();
+				
+	//cancelActiveDialog();
+	showMessage("TileSet Imported Successfully");
+}
+
+void TEditor::stateTileMapImport(){
+	int cretval = 0;
+				
+	if(mGlobalSettings.bNewTileMapOffset){
+		std::cout << "Importing TileMap with offset: " << mGlobalSettings.mNewTileMapOffset << std::endl;
+				
+		if(mGlobalSettings.mGlobalTexParam.TexBPP < 0x8){
+			cretval = importTileMap(mGlobalSettings.mNewTileMapPath, mGlobalSettings.mNewTileMapOffset, mGlobalSettings.mNewTileMapPaletteOffset);
+		} else {
+			cretval = importTileMap(mGlobalSettings.mNewTileMapPath, mGlobalSettings.mNewTileMapOffset, 0);
+		}
+	} else {
+		if(mGlobalSettings.mGlobalTexParam.TexBPP < 0x8){
+			cretval = importTileMap(mGlobalSettings.mNewTileMapPath, 0, mGlobalSettings.mNewTileMapPaletteOffset);
+		} else {
+			cretval = importTileMap(mGlobalSettings.mNewTileMapPath, 0, 0);
+		}
+	}
+				
+	if(cretval){
+		//cancelActiveDialog();
+		if(cretval == 2){
+			showMessage("Error Importing TileMap, Tiles are out of bound", true);
+		} else {
+			showMessage("Error Importing TileMap", true);
+		}			
+					//return 0;
+	} else {										
+		mActionStack.redoClearStack();
+		mActionStack.undoClearStack();
+
+		//cancelActiveDialog();
+		showMessage("TileMap Imported Successfully");
+		switchTileMap(mTileMaps.size()-1);
+	}
+}
+
+void TEditor::stateTileMapCreate(){
+	if(mGlobalSettings.mGlobalTexParam.TexBPP < 0x8){
+		createTileMap(mGlobalSettings.mNewTileMapX, mGlobalSettings.mNewTileMapY, mGlobalSettings.mNewTileMapOffset, mGlobalSettings.mNewTileMapPaletteOffset);				
+	} else {
+		createTileMap(mGlobalSettings.mNewTileMapX, mGlobalSettings.mNewTileMapY, mGlobalSettings.mNewTileMapOffset);				
+	}
+										
+	mActionStack.redoClearStack();
+	mActionStack.undoClearStack();
+
+	//cancelActiveDialog();
+	showMessage("TileMap Created Successfully");
+
+	switchTileMap(mTileMaps.size()-1);
+}
+
+void TEditor::stateTileMapDelete(){
+	int cDelTileMap = -1;
+	int i = 0;
+	
+	for(auto * cTileMap : mTileMaps){
+		if(mTileMap == cTileMap){
+			cDelTileMap = i;
+		}
+		i++;
+	}
+
+	if(cDelTileMap != -1){
+			
+		mActionStack.redoClearStack();
+		mActionStack.undoClearStack();
+
+		mTileMaps.erase(mTileMaps.begin() + cDelTileMap);
+					
+		//cancelActiveDialog();
+		showMessage("TileMap Removed Successfully");
+
+		switchTileMap(0);	
+	}
+}
+
+void TEditor::statePaletteUpdate(){
+	updatePalette();
+}
+
+void TEditor::stateColmapRemove(){
+	mTileMap->removeCollisionMap();
+}
+
+void TEditor::stateSpriteCreate(){
+	bool bFirstSprite = mSprite ? false : true;
+
+	mSprite = new TSprite(mGlobalSettings.mNewSpriteX, mGlobalSettings.mNewSpriteY, mGlobalSettings.mNewSpriteBPP);
+
+	mSprite->createFrame(&mPalette);
+
+	mSprites.push_back(mSprite);
+
+	if(bFirstSprite){
+		setMode(EMODE_SPRITE);					
+	} else {
+		switchSprite(mSprites.size()-1);
+	}
+}
+
+void TEditor::stateFrameDelete(){
+	removeSelectedFrame();
+}
+
+void TEditor::stateSpriteDelete(){
+	int cDelSprite = -1;
+	int i = 0;
+	
+	for(auto * cSprite : mSprites){
+		if(mSprite == cSprite){
+			cDelSprite = i;
+		}
+		i++;
+	}
+
+	if(cDelSprite != -1){								
+		mSprites.erase(mSprites.begin() + cDelSprite);
+	}
+
+	if(mSprites.size() == 0){
+		mSprite = NULL;					
+		setMode(EMODE_MAP);
+		mLastMode = EMODE_TILE;
+	} else {
+		if(cDelSprite > 0){
+			cDelSprite--;
+		}
+		switchSprite(cDelSprite);
+	}
+}
+
+void TEditor::stateFrameImport(){
+	TSFrame* newFrame = createNewFrameFromFile(mGlobalSettings.mNewFramePath);
+	if(newFrame){
+		TEActionAddFrame* newActionTile = new TEActionAddFrame();
+		newActionTile->doAction(newFrame, this, mSprite);
+	    mSprite->mActionStack.newActionGroup();	
+	    mSprite->mActionStack.addAction(newActionTile);
+	    mSprite->mActionStack.mLastAction = newActionTile;
+	    mSprite->mActionStack.redoClearStack();
+			
+		//mGlobalSettings.mEditorState = ESTATE_NONE;	
+		//cancelActiveDialog();
+		showMessage("Frame Loaded Successfully");
+		//return 0;
+	} else {					
+		//mGlobalSettings.mEditorState = ESTATE_NONE;	
+		//cancelActiveDialog();
+		showMessage("Error Loading Frame!", true);					
+		//return 0;
+	}
+}
+
+void TEditor::stateSpriteImport(){
+	std::vector<unsigned char> sbuffer;
+	std::vector<TSFrame*> cNewFrames;
+	fs::path cSpritePath;
+	SDL_Surface *newSurf;
+	
+	bool bSpriteImportSuccess = false;
+
+	switch (mGlobalSettings.mNewSpriteType){
+		
+		case 0:												
+			if(mGlobalSettings.getSpriteFileHeader(mGlobalSettings.mNewSpritePath, mGlobalSettings.mNewSpriteX,  mGlobalSettings.mNewSpriteY,  mGlobalSettings.mNewSpriteBPP, sbuffer)){
+				mSprite = new TSprite(mGlobalSettings.mNewSpriteX,  mGlobalSettings.mNewSpriteY,  mGlobalSettings.mNewSpriteBPP);
+				mSprite->loadFromBuffer(sbuffer, &mPalette);
+				mSprites.push_back(mSprite);
+				bSpriteImportSuccess = true;						
+			} else {
+				std::cout << "Error Importing Sprite: " <<  mGlobalSettings.mNewSpritePath << std::endl;
+				showMessage("Error Importing Sprite", true);
+			}	
+			break;
+			
+		case 1:				
+			newSurf = IMG_Load(mGlobalSettings.mNewSpritePath.c_str());
+			if(newSurf){
+				TSprite *cSprite = new TSprite(mGlobalSettings.mNewSpriteX,  mGlobalSettings.mNewSpriteY,  mGlobalSettings.mNewSpriteBPP);
+				if(cSprite->importPNG(newSurf,  &mGlobalSettings.CurrentEditor->mPalette, cNewFrames)){
+					std::cout << "Error Importing Sprite: " << mGlobalSettings.mNewSpritePath << std::endl;								
+					showMessage("Error Importing Sprite", true);
+				} else {
+					mSprite = cSprite;								
+					mSprites.push_back(mSprite);
+					bSpriteImportSuccess = true;
+				}	
+			}else {
+				std::cout << "Error Importing Sprite: " <<  mGlobalSettings.mNewSpritePath << std::endl;	
+				showMessage("Error Importing Sprite", true);
+			}			
+			break;					
+
+		case 2:
+			cSpritePath = mGlobalSettings.mNewSpritePath;
+
+			if((fs::exists(fs::status(cSpritePath)))  && !(fs::is_directory(fs::status(cSpritePath)))){		
+				std::ifstream infile(cSpritePath, std::ios::binary );
+    			std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
+
+				if(tbuffer.size() % ((mGlobalSettings.mNewSpriteX * mGlobalSettings.mNewSpriteY) /mGlobalSettings.mTileBPPSize[mGlobalSettings.mNewSpriteBPP])){
+					std::cout << "Error Importing Sprite: " <<  mGlobalSettings.mNewSpritePath << std::endl;
+					showMessage("Error Importing Sprite", true);
+				} else {
+					mSprite = new TSprite(mGlobalSettings.mNewSpriteX,  mGlobalSettings.mNewSpriteY,  mGlobalSettings.mNewSpriteBPP);
+					mSprite->loadFromBuffer(tbuffer, &mPalette);
+					mSprites.push_back(mSprite);
+					bSpriteImportSuccess = true;
+				}
+			} else {
+				std::cout << "Error Importing Sprite: " <<  mGlobalSettings.mNewSpritePath << std::endl;
+				showMessage("Error Importing Sprite", true);
+			}
+			break;
+				
+		default:
+			break;
+	};
+
+	if(bSpriteImportSuccess){
+		if(mCurMode == EMODE_SPRITE){
+			switchSprite(mSprites.size()-1);
+		} else {
+			setMode(EMODE_SPRITE);
+		}
+	}
+}
+
+void TEditor::stateSpriteCopy(){
+	createNewSpriteCopy(mSprite);
+	showMessage("Sprite Copied Successfully");
+}
+
+void TEditor::stateSpriteScaledCopy(){
+	createNewSpriteScaledCopy(mSprite);
+	showMessage("Sprite Copied Successfully");
+}
+
+void TEditor::stateSpriteUpscaledCopy(){
+	createNewSpriteUpscaledCopy(mSprite);
+	showMessage("Sprite Copied Successfully");
+}
+
+void TEditor::stateSpriteDownscaledCopy(){
+	createNewSpriteDownscaledCopy(mSprite);
+	showMessage("Sprite Copied Successfully");
+}
+
+void TEditor::stateSpriteRotationRange(){
+	createSpriteRotationRange(mGlobalSettings.mNewSpriteRange, mGlobalSettings.mNewSpriteRangeIntervals);
+	showMessage("Sprite Rotation Range Complete");
+}
+
+void TEditor::stateSpriteRotations(){
+	createSpriteRotations(mGlobalSettings.mNewSpriteRotations, mGlobalSettings.mNewSpriteRotationsAngle);
+	showMessage("Sprite Frame Rotations Complete");
+}
+
+void TEditor::stateFramesImport(){
+	std::vector<unsigned char> fbuffer;
+	std::vector<TSFrame*> cNewFrames;
+	fs::path cFramesPath;
+	SDL_Surface *newSurf;
+	
+	bool bFramesImportSuccess = false;
+
+	newSurf = IMG_Load(mGlobalSettings.mNewFramesPath.c_str());
+	if(newSurf){
+		if(!mSprite->importPNG(newSurf, &mGlobalSettings.CurrentEditor->mPalette, cNewFrames)){
+			bFramesImportSuccess = true;							
+		} 	
+	}else if (mGlobalSettings.getSpriteFileHeader(mGlobalSettings.mNewFramesPath, mGlobalSettings.mNewSpriteX,  mGlobalSettings.mNewSpriteY,  mGlobalSettings.mNewSpriteBPP, fbuffer)){
+		if( (mGlobalSettings.mNewSpriteX == mSprite->mTexParam.TexSizeX) && (mGlobalSettings.mNewSpriteY == mSprite->mTexParam.TexSizeY) && (mGlobalSettings.mNewSpriteBPP == mSprite->mTexParam.TexBPP) ){
+			if(!mSprite->importFromBuffer(fbuffer, &mPalette, cNewFrames)){
+				bFramesImportSuccess = true;
+			} 
+		} 
+	} else {
+		cFramesPath = mGlobalSettings.mNewFramesPath;
+
+		if((fs::exists(fs::status(cFramesPath)))  && !(fs::is_directory(fs::status(cFramesPath)))){		
+			std::ifstream infile(cFramesPath, std::ios::binary );
+    		std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
+
+			if((tbuffer.size() % ((mSprite->mTexParam.TexSizeX * mSprite->mTexParam.TexSizeY) / mGlobalSettings.mTileBPPSize[mSprite->mTexParam.TexBPP])) == 0){							
+				if(!mSprite->importFromBuffer(tbuffer, &mPalette, cNewFrames)){
+					bFramesImportSuccess = true;
+				} 
+			}
+		}
+	}
+
+	//cancelActiveDialog();
+
+	if(bFramesImportSuccess){
+					
+		mSprite->mActionStack.newActionGroup();
+				
+		for(auto cFrame : cNewFrames){
+			TEActionAddFrames* newActionTile = new TEActionAddFrames();
+			newActionTile->doAction(cFrame, this, mSprite);	       			
+			mSprite->mActionStack.addAction(newActionTile);
+	       	mSprite->mActionStack.mLastAction = newActionTile;	       			
+		}
+					
+		mSprite->mActionStack.redoClearStack();
+
+		showMessage("Frame(s) Imported Successfully");
+		std::cout << "Frames Imported Successfully" << std::endl;
+		//return 0;
+	} else {										
+		showMessage("Error Importing Frame(s)", true);
+		std::cout << "Error Importing Frames: " <<  mGlobalSettings.mNewFramesPath << std::endl;
+	}
+}
+
+void TEditor::stateFrameRotate(){
+	if(mCurMode == EMODE_SPRITE){		
+		TSFrame* newFrame = new TSFrame(&mSprite->mTexParam); 
+		newFrame->loadFromBuffer(mSprite->mFrame->FileData, &mPalette);
+		newFrame->rotate(mGlobalSettings.mRotateFrameAngle);					
+		TEActionReplaceFrame* newAction = new TEActionReplaceFrame();				
+		newAction->doAction(mSprite->mFrame, newFrame->FileData, this, mSprite);
+      	mSprite->mActionStack.newActionGroup();	
+      	mSprite->mActionStack.addAction(newAction);
+
+		mSprite->mActionStack.mLastAction = newAction;
+       	mSprite->mActionStack.redoClearStack();		
+	}
+}
+
+void TEditor::stateFrameScale(){
+	if(mCurMode == EMODE_SPRITE){		
+		TSFrame* newFrame = new TSFrame(&mSprite->mTexParam); 
+		newFrame->loadFromBuffer(mSprite->mFrame->FileData, &mPalette);
+		newFrame->scale(mGlobalSettings.mScaleFrameFactor);					
+		TEActionReplaceFrame* newAction = new TEActionReplaceFrame();				
+		newAction->doAction(mSprite->mFrame, newFrame->FileData, this, mSprite);
+      	mSprite->mActionStack.newActionGroup();	
+      	mSprite->mActionStack.addAction(newAction);
+
+		mSprite->mActionStack.mLastAction = newAction;
+       	mSprite->mActionStack.redoClearStack();		
+	}
+}
+
+void TEditor::stateSpriteConvertBPP(){
+	if(mSprite->mTexParam.TexBPP == 8){
+		createNewSpriteConvertBPP4(mSprite);
+	} else {
+		createNewSpriteConvertBPP8(mSprite);
+	}
+				
+	showMessage("Sprite Converted Successfully");
+}
+
+void TEditor::stateThemeColor(){
+	setThemeColors();
+}
 
 void TEditor::createDialogs(){
 	
@@ -4220,34 +4621,40 @@ int TEditor::handleEvents(){
 	if(mActiveDialog){
 		if(mActiveDialog->bInputIsAccept){
 
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_COLMAPREMOVE){
 				cancelActiveDialog();
 				mGlobalSettings.mEditorState = ESTATE_NONE;
-				mTileMap->removeCollisionMap();				
-			}
+				
+			}*/
 
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_TILEDELETEALL){				
 				dropUnusedTiles();				
 				mGlobalSettings.mEditorState = ESTATE_NONE;				
-			}			
+			}*/			
 
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_TILEDELETE){				
 				removeSelectedTile();							
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
-			}
+			}*/
 
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_PROJECTSAVE){				
 				if(saveToFolder(mGlobalSettings.ProjectPath)){					
 					showMessage("Error Creating Project Folder!", true);
 				} 				
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
-			}			
+			}*/
 
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_PALETTEUPDATE){				
 				updatePalette();			
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
-			}			
+			}	*/
 
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_TILEIMPORT){				
 				Tile* newTile = createNewTileFromFile(mGlobalSettings.mNewTilePath);
 				if(newTile){
@@ -4268,8 +4675,9 @@ int TEditor::handleEvents(){
 					showMessage("Error Loading Tile!", true);					
 					return 0;
 				}				
-			}			
+			}*/			
 
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_FRAMEROTATE){				
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
 
@@ -4288,8 +4696,9 @@ int TEditor::handleEvents(){
 
 				cancelActiveDialog();
 				return 0;
-			}
+			}*/
 
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_FRAMESCALE){				
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
 
@@ -4309,8 +4718,9 @@ int TEditor::handleEvents(){
 				cancelActiveDialog();
 				return 0;
 			}
+		*/
 
-
+		/*
 			if(mGlobalSettings.mEditorState == ESTATE_FRAMEIMPORT){				
 				TSFrame* newFrame = createNewFrameFromFile(mGlobalSettings.mNewFramePath);
 				if(newFrame){
@@ -4332,7 +4742,9 @@ int TEditor::handleEvents(){
 					return 0;
 				}				
 			}
+			*/
 
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_FRAMESIMPORT){				
 
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
@@ -4394,7 +4806,9 @@ int TEditor::handleEvents(){
 				return 0;
 				
 			}
+			*/
 
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_THEMECOLOR){				
 				
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
@@ -4402,9 +4816,9 @@ int TEditor::handleEvents(){
 				setThemeColors();
 
 				return 0;
-			}
+			}*/
 
-
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_SPRITEROTATIONRANGE){				
 				
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
@@ -4415,8 +4829,10 @@ int TEditor::handleEvents(){
 
 				cancelActiveDialog();					
 				return 0;
-			}
+			}*/
 
+
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_SPRITEROTATIONS){				
 				
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
@@ -4427,9 +4843,9 @@ int TEditor::handleEvents(){
 
 				cancelActiveDialog();					
 				return 0;
-			}
+			} */
 
-
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_SPRITEUPSCALEDCOPY){				
 				
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
@@ -4440,8 +4856,9 @@ int TEditor::handleEvents(){
 
 				cancelActiveDialog();					
 				return 0;
-			}
+			} */
 
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_SPRITEDOWNSCALEDCOPY){				
 				
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
@@ -4452,8 +4869,9 @@ int TEditor::handleEvents(){
 
 				cancelActiveDialog();					
 				return 0;
-			}
+			}*/
 
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_SPRITESCALEDCOPY){				
 				
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
@@ -4464,8 +4882,9 @@ int TEditor::handleEvents(){
 
 				cancelActiveDialog();					
 				return 0;
-			}
+			}*/
 
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_SPRITECOPY){				
 				
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
@@ -4476,8 +4895,9 @@ int TEditor::handleEvents(){
 
 				cancelActiveDialog();					
 				return 0;
-			}
+			} */
 
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_SPRITECONVERTBPP){				
 				
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
@@ -4492,11 +4912,13 @@ int TEditor::handleEvents(){
 
 				cancelActiveDialog();					
 				return 0;
-			}
+			} */
 			
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_SPRITEIMPORT){				
 
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
+
 				std::vector<unsigned char> sbuffer;
 				std::vector<TSFrame*> cNewFrames;
 				fs::path cSpritePath;
@@ -4573,8 +4995,9 @@ int TEditor::handleEvents(){
 				return 0;
 								
 			}			
+			*/
 
-
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_TILESETIMPORT){				
 							
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
@@ -4600,7 +5023,7 @@ int TEditor::handleEvents(){
 				cancelActiveDialog();
 				showMessage("TileSet Imported Successfully");
 				return 0;
-			}
+			}*/
 			
 			/*
 			if(mGlobalSettings.mEditorState == ESTATE_TILEMAPIMPORTOFFSET){				
@@ -4639,6 +5062,7 @@ int TEditor::handleEvents(){
 			}
 			*/
 			
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_TILEMAPIMPORT){				
 								
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
@@ -4682,7 +5106,9 @@ int TEditor::handleEvents(){
 
 				return 0;
 			}
-			
+			*/
+
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_FRAMEDELETE){
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
 
@@ -4691,8 +5117,9 @@ int TEditor::handleEvents(){
 				cancelActiveDialog();
 				return 0;
 
-			}
+			}*/
 
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_SPRITEDELETE){
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
 
@@ -4724,8 +5151,9 @@ int TEditor::handleEvents(){
 				return 0;
 
 			}
+			*/
 
-
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_SPRITECREATE){				
 							
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
@@ -4746,8 +5174,9 @@ int TEditor::handleEvents(){
 
 				cancelActiveDialog();
 				return 0;
-			}
+			} */
 
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_TILEMAPCREATE){				
 							
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
@@ -4768,7 +5197,9 @@ int TEditor::handleEvents(){
 
 				return 0;
 			}
-			
+			*/
+
+			/*
 			if(mGlobalSettings.mEditorState == ESTATE_TILEMAPDELETE){				
 				
 				mGlobalSettings.mEditorState = ESTATE_NONE;	
@@ -4796,8 +5227,9 @@ int TEditor::handleEvents(){
 
 					return 0;
 				}
-			}
+			}*/
 
+			handleState();
 			cancelActiveDialog();
 			return 0;
 		}
