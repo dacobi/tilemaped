@@ -702,9 +702,10 @@ int TEditor::runOCD(int mode){
 
 	while( mGlobalSettings.bRunningOCD ){
 
+		/*
 		if(mGlobalSettings.mEditorState == ESTATE_PROJECTCREATE){
 			mGlobalSettings.bRunningOCD = false;
-		}
+		}*/
 
 		if(mOpenCreate.bInputIsCancel){
 			mGlobalSettings.bRunningOCD = false;			
@@ -734,6 +735,7 @@ int TEditor::runOCD(int mode){
 
 		if(mActiveDialog){
 			if(mActiveDialog->bInputIsAccept){
+				/*
 				if(mGlobalSettings.mEditorState == ESTATE_THEMECOLOR){							
 					mGlobalSettings.mEditorState = ESTATE_NONE;	
 					setThemeColors();			
@@ -743,8 +745,10 @@ int TEditor::runOCD(int mode){
 				}
 				if(mGlobalSettings.mEditorState == ESTATE_PROJECTCREATE){
 					mGlobalSettings.bRunningOCD = false;
-				}
-			}			
+				}*/
+				handleState();
+				cancelActiveDialog();		
+			}	
 		}
 
 		if(mActiveDialog){

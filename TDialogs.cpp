@@ -2779,6 +2779,7 @@ void QDialog::recieveInput(int mKey){
 		std::cout << "Shutting Down..." << std::endl;
 		bInputIsAccept=true;
 		mGlobalSettings.CurrentEditor->bEditorRunning = false;
+		mGlobalSettings.mOpenCreateProjectState = ESTATE_NONE;
 	}
 	if(mKey == SDLK_n){
 		bInputIsCancel=true;
@@ -2813,11 +2814,12 @@ void CCPDialog::recieveInput(int mKey){
 	if(mKey == SDLK_y){
 		std::cout << "Closing Project" << std::endl;
 		bInputIsAccept=true;		
-		mGlobalSettings.CurrentEditor->bEditorRunning = false;
-		mGlobalSettings.bRunningOCD = true;
+		mGlobalSettings.mEditorState = ESTATE_PROJECTCLOSE;
+		//mGlobalSettings.CurrentEditor->bEditorRunning = false;
+		//mGlobalSettings.bRunningOCD = true;
 	}
 	if(mKey == SDLK_n){
-		mGlobalSettings.mOpenCreateProjectState = ESTATE_NONE;		
+		//mGlobalSettings.mOpenCreateProjectState = ESTATE_NONE;		
 		bInputIsCancel=true;
 	}
 }

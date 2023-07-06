@@ -174,8 +174,7 @@ void TEditor::showProjectInfo(){
 void TEditor::handleState(){
 	if((mGlobalSettings.mEditorState >= 0) && (mGlobalSettings.mEditorState < mStates.size())){
 		mStates[mGlobalSettings.mEditorState](this);
-	}
-	mGlobalSettings.mEditorState = ESTATE_NONE;
+	}	
 }
 
 void TEditor::initStates(){
@@ -221,11 +220,18 @@ void TEditor::stateProjectSave(){
 	}
 }
 
-void TEditor::stateProjectCreate(){}
+void TEditor::stateProjectCreate(){
+	mGlobalSettings.bRunningOCD = false;
+}
 
-void TEditor::stateProjectOpen(){}
+void TEditor::stateProjectOpen(){
+	mGlobalSettings.bRunningOCD = false;
+}
 
-void TEditor::stateProjectClose(){}
+void TEditor::stateProjectClose(){
+	mGlobalSettings.CurrentEditor->bEditorRunning = false;
+	mGlobalSettings.bRunningOCD = true;
+}
 
 void TEditor::stateTileImport(){
 	Tile* newTile = createNewTileFromFile(mGlobalSettings.mNewTilePath);
@@ -4564,7 +4570,7 @@ int TEditor::setThemeColors(){
 			break;
 	}
 
-	cancelActiveDialog();
+	//cancelActiveDialog();
 
 	if(mGlobalSettings.mINIFile.Win_Theme->ivalue == 1){
 		mGlobalSettings.setColors(true);
@@ -5231,6 +5237,7 @@ int TEditor::handleEvents(){
 
 			handleState();
 			cancelActiveDialog();
+			mGlobalSettings.mEditorState = ESTATE_NONE;
 			return 0;
 		}
 	
