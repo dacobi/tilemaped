@@ -171,8 +171,83 @@ void TEditor::showProjectInfo(){
 	mProjectInfo->render(0,mGlobalSettings.TopBarHeight);
 }
 
+void TEditor::handleState(){
+	if((mGlobalSettings.mEditorState >= 0) && (mGlobalSettings.mEditorState < mStates.size())){
+		mStates[mGlobalSettings.mEditorState](this);
+	}
+}
+
+void TEditor::initStates(){
+	
+	mStates[ESTATE_NONE] = &TEditor::stateNone;
+	mStates[ESTATE_PROJECTSAVE] = &TEditor::stateProjectSave;
+	mStates[ESTATE_PROJECTCREATE] = &TEditor::stateProjectCreate;
+	mStates[ESTATE_PROJECTOPEN] = &TEditor::stateProjectOpen;
+	mStates[ESTATE_PROJECTCLOSE] = &TEditor::stateProjectClose;
+	mStates[ESTATE_TILEIMPORT] = &TEditor::stateTileImport;
+	mStates[ESTATE_TILECREATE] = &TEditor::stateTileCreate;
+	mStates[ESTATE_TILEDELETE] = &TEditor::stateTileDelete;
+	mStates[ESTATE_TILEDELETEALL] = &TEditor::stateTileDeleteAll;
+	mStates[ESTATE_TILESETIMPORT] = &TEditor::stateTileSetImport;
+	mStates[ESTATE_TILEMAPIMPORT] = &TEditor::stateTileMapImport;
+	mStates[ESTATE_TILEMAPCREATE] = &TEditor::stateTileMapCreate;
+	mStates[ESTATE_TILEMAPDELETE] = &TEditor::stateTileMapDelete;
+	mStates[ESTATE_PALETTEUPDATE] = &TEditor::statePaletteUpdate;
+	mStates[ESTATE_COLMAPREMOVE] = &TEditor::stateColmapRemove;
+	mStates[ESTATE_SPRITECREATE] = &TEditor::stateSpriteCreate;
+	mStates[ESTATE_FRAMEDELETE] = &TEditor::stateFrameDelete;
+	mStates[ESTATE_SPRITEDELETE] = &TEditor::stateSpriteDelete;
+	mStates[ESTATE_FRAMEIMPORT] = &TEditor::stateFrameImport;
+	mStates[ESTATE_SPRITEIMPORT] = &TEditor::stateSpriteImport;
+	mStates[ESTATE_SPRITECOPY] = &TEditor::stateSpriteCopy;
+	mStates[ESTATE_SPRITESCALEDCOPY] = &TEditor::stateSpriteScaledCopy;
+	mStates[ESTATE_SPRITEUPSCALEDCOPY] = &TEditor::stateSpriteUpscaledCopy;
+	mStates[ESTATE_SPRITEDOWNSCALEDCOPY] = &TEditor::stateSpriteDownscaledCopy;
+	mStates[ESTATE_SPRITEROTATIONRANGE] = &TEditor::stateSpriteRotationRange;
+	mStates[ESTATE_SPRITEROTATIONS] = &TEditor::stateSpriteRotations;
+	mStates[ESTATE_FRAMESIMPORT] = &TEditor::stateFramesImport;
+	mStates[ESTATE_FRAMEROTATE] = &TEditor::stateFrameRotate;
+	mStates[ESTATE_FRAMESCALE] = &TEditor::stateFrameScale;
+	mStates[ESTATE_SPRITECONVERTBPP] = &TEditor::stateSpriteConvertBPP;
+	mStates[ESTATE_THEMECOLOR] = &TEditor::stateThemeColor;	
+}
+
+void TEditor::stateNone(){std::cout << "ESTATE_NONE"  << std::endl;}
+void TEditor::stateProjectSave(){}
+void TEditor::stateProjectCreate(){}
+void TEditor::stateProjectOpen(){}
+void TEditor::stateProjectClose(){}
+void TEditor::stateTileImport(){}
+void TEditor::stateTileCreate(){}
+void TEditor::stateTileDelete(){}
+void TEditor::stateTileDeleteAll(){}
+void TEditor::stateTileSetImport(){}
+void TEditor::stateTileMapImport(){}
+void TEditor::stateTileMapCreate(){}
+void TEditor::stateTileMapDelete(){}
+void TEditor::statePaletteUpdate(){}
+void TEditor::stateColmapRemove(){}
+void TEditor::stateSpriteCreate(){}
+void TEditor::stateFrameDelete(){}
+void TEditor::stateSpriteDelete(){}
+void TEditor::stateFrameImport(){}
+void TEditor::stateSpriteImport(){}
+void TEditor::stateSpriteCopy(){}
+void TEditor::stateSpriteScaledCopy(){}
+void TEditor::stateSpriteUpscaledCopy(){}
+void TEditor::stateSpriteDownscaledCopy(){}
+void TEditor::stateSpriteRotationRange(){}
+void TEditor::stateSpriteRotations(){}
+void TEditor::stateFramesImport(){}
+void TEditor::stateFrameRotate(){}
+void TEditor::stateFrameScale(){}
+void TEditor::stateSpriteConvertBPP(){}
+void TEditor::stateThemeColor(){std::cout << "ESTATE_THEMECOLOR"  << std::endl;}
+
 void TEditor::createDialogs(){
 	
+	initStates();
+
 	mHelpDialog.init();
 	
 	mDTDialogs[EDIALOG_ERROR] = NULL;

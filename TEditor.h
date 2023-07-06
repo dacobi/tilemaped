@@ -299,6 +299,44 @@ class TEditor{
 		int rx,ry;
 		int cx,cy;
 		int mButtonState;
+
+		std::map<int, std::function<void(TEditor*)>> mStates;
+
+		void initStates();	
+		void handleState();	
+
+		void stateNone();
+		void stateProjectSave();
+		void stateProjectCreate();
+		void stateProjectOpen();
+		void stateProjectClose();
+		void stateTileImport();
+		void stateTileCreate();
+		void stateTileDelete();
+		void stateTileDeleteAll();
+		void stateTileSetImport();
+		void stateTileMapImport();
+		void stateTileMapCreate();
+		void stateTileMapDelete();
+		void statePaletteUpdate();
+		void stateColmapRemove();
+		void stateSpriteCreate();
+		void stateFrameDelete();
+		void stateSpriteDelete();
+		void stateFrameImport();
+		void stateSpriteImport();
+		void stateSpriteCopy();
+		void stateSpriteScaledCopy();
+		void stateSpriteUpscaledCopy();
+		void stateSpriteDownscaledCopy();
+		void stateSpriteRotationRange();
+		void stateSpriteRotations();
+		void stateFramesImport();
+		void stateFrameRotate();
+		void stateFrameScale();
+		void stateSpriteConvertBPP();
+		void stateThemeColor();
+
 	
 };
 
