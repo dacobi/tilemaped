@@ -109,6 +109,13 @@ class DTDialog : public Dialog{
 		static DTDialog* createProgramQuitDialog();
 		static DTDialog* createProjectSaveDialog();
 		static DTDialog* createTileSetImportDialog();
+		static DTDialog* createTileMapRemoveDialog();
+		static DTDialog* createColMapRemoveDialog();
+		static DTDialog* createTilesUnusedRemoveDialog();
+		static DTDialog* createFrameRemoveDialog();
+		static DTDialog* createSpriteRemoveDialog();
+		static DTDialog* createTileRemoveDialog();
+
 };
 
 class DTDCDialog : public DTDialog{

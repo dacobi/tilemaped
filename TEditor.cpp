@@ -661,6 +661,12 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_PROJECTSAVE] = DTDialog::createProjectSaveDialog();
 	mDTDialogs[EDIALOG_PROJECTSAVEAS] = DTDCDialog::createProjectSaveAsDialog();
 	mDTDialogs[EDIALOG_TILESETIMPORT] = DTDialog::createTileSetImportDialog();
+	mDTDialogs[EDIALOG_TILEMAPDELETE] = DTDialog::createTileMapRemoveDialog();
+	mDTDialogs[EDIALOG_COLMAPREMOVE] = DTDialog::createColMapRemoveDialog();
+	mDTDialogs[EDIALOG_TILEDELETEALL] = DTDialog::createTilesUnusedRemoveDialog();
+	mDTDialogs[EDIALOG_FRAMEDELETE] = DTDialog::createFrameRemoveDialog();
+	mDTDialogs[EDIALOG_SPRITEDELETE] = DTDialog::createSpriteRemoveDialog();
+	mDTDialogs[EDIALOG_TILEDELETE] = DTDialog::createTileRemoveDialog();
 
 	mProjectInfo = IDDialog::createProjectInfoDialog();
 	mProgramInfo = IDDialog::createMessageDialog();

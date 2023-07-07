@@ -2962,6 +2962,114 @@ DTDialog* DTDialog::createSpriteCopyDialog(){
 	return newDialog;
 }
 
+DTDialog* DTDialog::createTileMapRemoveDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Remove TileMap");
+
+	newDialog->setTarget(ESTATE_TILEMAPDELETE);
+
+	newDialog->addText(mGlobalSettings.mFile + " Remove TileMap? Undo Stack will be cleared");
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Remove", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
+DTDialog* DTDialog::createColMapRemoveDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Remove CollisionMap");
+
+	newDialog->setTarget(ESTATE_COLMAPREMOVE);
+
+	newDialog->addText(mGlobalSettings.mFile + " Remove CollisionMap for current TileMap?");
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Remove", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
+DTDialog* DTDialog::createTilesUnusedRemoveDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Remove Unused Tiles");
+
+	newDialog->setTarget(ESTATE_TILEDELETEALL);
+
+	newDialog->addText(mGlobalSettings.mInfo + " Remove Unused Tiles? Undo Stack will be cleared");
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Remove", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
+DTDialog* DTDialog::createFrameRemoveDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Remove Selected Frame");
+
+	newDialog->setTarget(ESTATE_FRAMEDELETE);
+
+	newDialog->addText(mGlobalSettings.mInfo + " Remove Selected Frame? Sprite Undo Stack will be cleared");
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Remove", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
+DTDialog* DTDialog::createSpriteRemoveDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Remove Selected Sprite");
+
+	newDialog->setTarget(ESTATE_SPRITEDELETE);
+
+	newDialog->addText(mGlobalSettings.mFile + " Remove Selected Sprite? Can not be undone");
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Remove", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
+DTDialog* DTDialog::createTileRemoveDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Remove Selected Tile");
+
+	newDialog->setTarget(ESTATE_TILEDELETE);
+
+	newDialog->addText(mGlobalSettings.mFile + " Remove Selected Tile? Undo Stack will be cleared");
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Remove", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
 DTDialog* DTDialog::createTileSetImportDialog(){
 	DTDialog* newDialog = new DTDialog();
 
