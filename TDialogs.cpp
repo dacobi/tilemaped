@@ -1763,6 +1763,7 @@ void ISDialog::recieveInput(int mKey){
 /* End*/
 
 
+/*
 void ITSDialog::recieveInput(int mKey){
 	if(mKey == SDLK_y){
 		if(mTextInput.bInputIsAccepted){
@@ -1831,7 +1832,7 @@ int ITSDialog::render(){
 	
 	return 0;
 }
-
+*/
 void TIDialog::init(){
 	
 	mCursorTime += mGlobalSettings.getTicks();

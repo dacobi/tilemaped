@@ -713,7 +713,8 @@ void TEditor::initDialogs(){
 	mRotateFrame.init();
 	mScaleFrame.init();
 	mOpenSpriteDialog.init();
-	mOpenTileSetDialog.init();
+
+	//mOpenTileSetDialog.init();
 	
 	//mOpenTileMapDialog.init();
 
@@ -2861,6 +2862,7 @@ int TEditor::activateColMapDialog(bool bCreateColMap){
 	return 0;
 }
 
+/*
 int TEditor::activateOpenTileSetDialog(){
 	if(mCurMode == EMODE_MAP){
 		mActiveDialog = &mOpenTileSetDialog;
@@ -2868,6 +2870,8 @@ int TEditor::activateOpenTileSetDialog(){
 	}
 	return 0;
 }
+*/
+
 int TEditor::activateClipboard(bool bChangeState){
 	if(mCurMode == EMODE_SPRITE){
 		if(bChangeState) mSprite->bShowClipboard = !mSprite->bShowClipboard;
@@ -4921,7 +4925,8 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	mSaveDialog.bUpdateWinPos = true;
 	mSaveAsDialog.bUpdateWinPos = true;
 	mOpenTileDialog.bUpdateWinPos = true;
-	mOpenTileSetDialog.bUpdateWinPos = true;
+	
+	//mOpenTileSetDialog.bUpdateWinPos = true;
 	
 	mNewTileMapDialog.bUpdateWinPos = true;
 

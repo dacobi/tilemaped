@@ -567,11 +567,13 @@ class ISDialog: public SADialog{
 };
 
 
+/*
 class ITSDialog: public ITDialog{
 	public:				
 		virtual int render();
 		virtual void recieveInput(int mKey);		
 };
+*/
 
 class CTMDialog: public Dialog{
 	public:				
