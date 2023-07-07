@@ -395,6 +395,8 @@ int TSettings::getTicks(){
 
 void TSettings::close(){	
 
+	mProgramMessage = "";
+
 	TileSetDefaultScale=10;
 	TileMapScale=3;
 	TileMapHeight=128;
@@ -523,8 +525,7 @@ void TSettings::settingsMenu(){
 		if(ImGui::BeginMenu(std::string(mGlobalSettings.mGear + " Colors").c_str())){
 
 			//Selection Dark
-			//bool bDialogActive = false;
-
+			
 			bool bShowSelDark = false;
 
 			bShowSelDark = ImGui::ColorButton("Selection Dark##3b", CurrentEditor->mPalette.getIm4ColorIm(mINIFile.Theme_SelectionDark->ivalue), ImGuiColorEditFlags_NoAlpha);
@@ -538,8 +539,7 @@ void TSettings::settingsMenu(){
 			if(bShowSelDark || bShowSelDarkMenu){
 				mThemeColorIndex = 1;
 				mThemeColorNew = mINIFile.Theme_SelectionDark->ivalue;
-				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
-				//bDialogActive = true;
+				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);				
 			}
 
 			//Selection Dark End
@@ -559,8 +559,7 @@ void TSettings::settingsMenu(){
 			if(bShowSelLight || bShowSelLightMenu){
 				mThemeColorIndex = 2;
 				mThemeColorNew = mINIFile.Theme_SelectionLight->ivalue;
-				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
-				//bDialogActive = true;
+				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);				
 			}
 
 			//Selection Light End
@@ -580,8 +579,7 @@ void TSettings::settingsMenu(){
 			if(bShowHighDark || bShowHighDarkMenu){
 				mThemeColorIndex = 3;
 				mThemeColorNew = mINIFile.Theme_HighlightDark->ivalue;
-				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
-				//bDialogActive = true;
+				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);				
 			}
 
 			//HighLight Dark End
@@ -601,8 +599,7 @@ void TSettings::settingsMenu(){
 			if(bShowHighLight || bShowHighLightMenu){
 				mThemeColorIndex = 4;
 				mThemeColorNew = mINIFile.Theme_HighlightLight->ivalue;
-				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
-				//bDialogActive = true;
+				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);				
 			}
 
 			//HighLight Light End
@@ -623,8 +620,7 @@ void TSettings::settingsMenu(){
 			if(bShowPixDark || bShowPixDarkMenu){
 				mThemeColorIndex = 5;
 				mThemeColorNew = mINIFile.Theme_PixelGridDark->ivalue;
-				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
-				//bDialogActive = true;
+				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);				
 			}
 
 			//PixelGrid Dark End
@@ -645,20 +641,10 @@ void TSettings::settingsMenu(){
 			if(bShowPixLight || bShowPixLightMenu){
 				mThemeColorIndex = 6;
 				mThemeColorNew = mINIFile.Theme_PixelGridLight->ivalue;
-				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);
-				//bDialogActive = true;
+				CurrentEditor->activateDTDialog(EDIALOG_THEMECOLOR, mThemeColorIndex);				
 			}
-
-			/*
-			if(bDialogActive && bRunningOCD){
-				CurrentEditor->mOpenCreate.bSubDialogActive = false;
-				CurrentEditor->mOpenCreate.bSubDialogIsCreate = false;
-				CurrentEditor->mOpenCreate.bSubDialogIsOpen = false;								
-				CurrentEditor->mOpenCreate.bDialogIsWatingForText = false;								
-			}
-			*/
-
-				//PixelGrid Light End
+			
+			//PixelGrid Light End
 
 			ImGui::EndMenu();
 		}
@@ -682,30 +668,17 @@ void TSettings::windowResizeHighDPI(int cWidth, int cHeight){
 
 int TEditor::runOCD(int mode){
 	
-	mOpenCreate.init();
-
-	if(mode == ESTATE_PROJECTOPEN){
-		//mOpenCreate.bSubDialogActive = false;
-		//mOpenCreate.bSubDialogIsCreate = false;
-		//mOpenCreate.bDialogIsWatingForText = false;		
+	if(mode == ESTATE_PROJECTOPEN){		
 		mGlobalSettings.CurrentEditor->cancelActiveDialog();
 		mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTOPEN);		
 	}
 
 	if(mode == ESTATE_PROJECTCREATE){
-		//mOpenCreate.bSubDialogActive = true;
-		//mOpenCreate.bSubDialogIsCreate = true;
-		//mOpenCreate.bDialogIsWatingForText = true;
 		mGlobalSettings.CurrentEditor->cancelActiveDialog();
 		mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTCREATE, 0);		
 	}
 
 	while( mGlobalSettings.bRunningOCD ){
-
-		/*
-		if(mGlobalSettings.mEditorState == ESTATE_PROJECTCREATE){
-			mGlobalSettings.bRunningOCD = false;
-		}*/
 
 		if(mOpenCreate.bInputIsCancel){
 			mGlobalSettings.bRunningOCD = false;			
@@ -715,9 +688,9 @@ int TEditor::runOCD(int mode){
 		SDL_SetRenderDrawColor( mGlobalSettings.TRenderer, mGlobalSettings.DefaultBGColor.r,  mGlobalSettings.DefaultBGColor.g,  mGlobalSettings.DefaultBGColor.b, 0xff); 
 		SDL_RenderClear( mGlobalSettings.TRenderer );
 
-       	ImGui_ImplSDLRenderer_NewFrame();
-       	ImGui_ImplSDL2_NewFrame();
-       	ImGui::NewFrame();
+    	ImGui_ImplSDLRenderer_NewFrame();
+    	ImGui_ImplSDL2_NewFrame();
+    	ImGui::NewFrame();
 
 		mOpenCreate.render();
 
@@ -734,18 +707,7 @@ int TEditor::runOCD(int mode){
 		SDL_Event e;
 
 		if(mActiveDialog){
-			if(mActiveDialog->bInputIsAccept){
-				/*
-				if(mGlobalSettings.mEditorState == ESTATE_THEMECOLOR){							
-					mGlobalSettings.mEditorState = ESTATE_NONE;	
-					setThemeColors();			
-				}
-				if(mGlobalSettings.mEditorState == ESTATE_PROJECTOPEN){
-					mGlobalSettings.bRunningOCD = false;
-				}
-				if(mGlobalSettings.mEditorState == ESTATE_PROJECTCREATE){
-					mGlobalSettings.bRunningOCD = false;
-				}*/
+			if(mActiveDialog->bInputIsAccept){				
 				handleState();
 				cancelActiveDialog();		
 			}	

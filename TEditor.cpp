@@ -2639,18 +2639,12 @@ Tile* TEditor::createNewTileFromFile(std::string newTilePath){
 }
 
 int TEditor::showMessage(std::string cMessage, bool isError){
-	if(isError){
-		//mErrorMessage.mDialogTextMain = cMessage;
-		//mErrorMessage.update();
-		//mActiveMessage = &mErrorMessage;
+	if(isError){		
 		mGlobalSettings.mProgramMessage = cMessage;
 		mProgramInfo->setCondition(1);
 		mProgramInfo->update();
 		mActiveMessage = mProgramInfo;
-	} else {
-		//mInfoMessage.mDialogTextMain = cMessage;
-		//mInfoMessage.update();
-		//mActiveMessage = &mInfoMessage;
+	} else {		
 		mGlobalSettings.mProgramMessage = cMessage;
 		mProgramInfo->setCondition(-1);
 		mProgramInfo->update();
@@ -4947,14 +4941,12 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	mTileSet.reCalculateScale();
 
 	mPaletteOffset.bUpdateWinPos = true;
-	//mHelpDialog.bUpdateWinPos = true;
-	
+		
 	mProjectInfo->bUpdateWinPos = true;
 	
 	mProgramInfo->bUpdateWinPos = true;
 	mRemoveUnused.bUpdateWinPos = true;
-	//mErrorMessage.bUpdateWinPos = true;
-	//mQuitDialog.bUpdateWinPos = true;
+	
 	mPaletteUpdate.bUpdateWinPos = true;
 	mSaveDialog.bUpdateWinPos = true;
 	mSaveAsDialog.bUpdateWinPos = true;
@@ -4962,10 +4954,6 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	mOpenTileSetDialog.bUpdateWinPos = true;
 	
 	mNewTileMapDialog.bUpdateWinPos = true;
-
-	//mOpenFrameDialog.bUpdateWinPos = true;
-	//mOpenFramesDialog.bUpdateWinPos = true;
-	//mOpenTileMapDialog.bUpdateWinPos = true;
 
 	mRotateFrame.bUpdateWinPos = true;
 	mScaleFrame.bUpdateWinPos = true;
@@ -4976,8 +4964,7 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	mRemoveFrame.bUpdateWinPos = true;
 	mRemoveSprite.bUpdateWinPos = true;
 	mRemoveSelUnused.bUpdateWinPos = true;
-
-	//mCloseProjectDialog.bUpdateWinPos = true;
+	
 	mPaletteUpdate.bUpdateWinPos = true;
 		
 	mColMapEdit.bUpdateWinPos = true;

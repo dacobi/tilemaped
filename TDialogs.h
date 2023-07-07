@@ -2,7 +2,6 @@
 #define __TDIALOGS__
 
 #include "TSettings.h"
-//#include "TTFTexture.h"
 
 extern TSettings mGlobalSettings;
 
@@ -120,8 +119,6 @@ class IDDialog : public DTDialog{
 		void setCloseBool(bool *cClose);
 		void setFontsSmall(bool cSmall);
 
-		
-
 		void addDisplayInt(std::string cLabel, int* cTarget, bool cSameline = false);
 		void addDisplayIntDual(std::string cLabel,std::string cCenter,std::string cEnd, int* cTarget1, int* cTarget2, bool cSameline = false);
 		
@@ -133,6 +130,7 @@ class IDDialog : public DTDialog{
 		void addDisplaySpriteSize(std::string cLabel,  TSprite **cTarget, bool cSameline = false);
 
 		void addDisplayString(std::string cLabel, std::string* cTarget, bool cSameline = false);
+
 		void addDisplayColor(SDL_Color *cTarget);
 		void addDisplayColorRestore();
 
@@ -541,40 +539,6 @@ class ITSDialog: public ITDialog{
 		virtual void recieveInput(int mKey);		
 };
 
-/*
-class OPDialog: public ITDialog{
-	public:
-		virtual void init();
-		virtual int render();
-		virtual void recieveInput(int mKey);		
-
-};
-*/
-
-/*
-class CPDialog: public Dialog{
-	public:		
-		TIDialog mReadPath;
-		TIDialog mReadPal;		
-		TIDialog mReadTileSet;		
-		TIDialog *mActiveInput;
-		bool bInputIsAccepted = false;
-		virtual void init();		
-		virtual void dropLastInputChar();		
-		virtual void recieveInput(int mKey);				
-		virtual int render();
-		int tmapx=32;
-		int tmapy=32;
-		int tilex=16;
-		int tiley=16;
-		int tbpp=8;
-		int tilesettype = 0;
-		int tilesetsize = 0;
-		bool bHasPalette = false;
-		bool bHasTileSet = false;
-};
-*/
-
 class CTMDialog: public Dialog{
 	public:				
 		virtual void init();				
@@ -599,15 +563,7 @@ class CSDialog: public Dialog{
 };
 
 class OCDialog: public Dialog{
-	public:
-		virtual void init();		
-		//bool bSubDialogActive = false;
-		//bool bSubDialogIsOpen = false;	
-		//bool bSubDialogIsCreate = false;			
-		//OPDialog mOpenProject;
-		//CPDialog mCreateProject;
-		//virtual void dropLastInputChar();		
-		//virtual void recieveInput(int mKey);				
+	public:		
 		virtual int render();
 };
 
@@ -644,30 +600,5 @@ class TBDialog: public Dialog{
 		virtual int render();
 		bool bIsMenuOpen = false;
 };
-
-/*
-class MEDialog: public HDialog{
-	public:
-		virtual void init();
-		virtual void setColorScheme(int nScheme);
-		virtual void update();		
-		virtual int render();
-};
-
-*/
-
-/*
-class QDialog: public Dialog{
-	public:
-		virtual int render();
-		virtual void recieveInput(int mKey);
-};
-
-class CCPDialog: public QDialog{
-	public:
-		virtual int render();
-		virtual void recieveInput(int mKey);
-};
-*/
 
 #endif

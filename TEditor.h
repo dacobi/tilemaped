@@ -179,17 +179,13 @@ class TEditor{
 		void undoLastActionGroup();
 		void redoLastActionGroup();		
 		int updatePalette();
+
 		Dialog *mActiveDialog = NULL;
 		Dialog *mActiveMessage = NULL;
 
 		SDialog mSaveDialog;
 		SADialog mSaveAsDialog;
 		ITDialog mOpenTileDialog;
-
-		//ISFDialog mOpenFrameDialog;
-		//ISFSDialog mOpenFramesDialog;
-		//ITMDialog mOpenTileMapDialog;
-
 
 		RTSFDialog mRotateFrame;
 		SSFDialog mScaleFrame;
@@ -204,8 +200,7 @@ class TEditor{
 		void showProjectInfo();
 
 		IDDialog *mProgramInfo;
-
-		//MEDialog mInfoMessage;
+		
 		RTMDialog mRemoveTileMap;
 		RCMDialog mRemoveColMap;
 		RTDialog mRemoveUnused;
@@ -215,10 +210,7 @@ class TEditor{
 		
 		std::map<int, DTDialog*> mDTDialogs;
 		int activateDTDialog(int cOpenDialog, int cCond = -1, int cVal0 = 0, int cVal1 = 0);
-
-		//MEDialog mErrorMessage;				
-		//QDialog mQuitDialog;
-		//CCPDialog mCloseProjectDialog;
+		
 		PUDialog mPaletteUpdate;
 		PODialog mPaletteOffset;
 
@@ -265,17 +257,12 @@ class TEditor{
 		int activateSaveDialog();
 		int activateOpenTileDialog();
 
-		//int activateOpenFrameDialog();
-		//int activateOpenFramesDialog();
-
 		int activateRotateFrameDialog();
 		int activateScaleFrameDialog();
 		
 		int activateOpenSpriteDialog();
 		int activateOpenTileSetDialog();
 		
-		//int activateOpenTileMapDialog();
-
 		int activateNewTileMapDialog();
 		int activateNewSpriteDialog();
 		int activateRemoveSpriteDialog();
@@ -283,8 +270,7 @@ class TEditor{
 		int activateColMapDialog(bool bCreateColMap=false);
 		int removeColMapDialog();
 		int activateHelpDialog();
-		//int activateQuitDialog();
-		//int activateOpenCreateDialog(int mode);
+		
 		int cancelActiveDialog();
 		int activateSaveAsDialog();
 		int activateProjectInfo();
