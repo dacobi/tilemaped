@@ -56,7 +56,8 @@ class DTDialog : public Dialog{
 		int mCondition = -1;
 		int mConditionBackup = -1;
 		int mRequiredCondition = -1;
-		int mTargetState = 0;		
+		int mTargetState = 0;
+		bool bHasColor = false;
 		virtual void setLabel(std::string cLabel){mDialogTextTitle = cLabel;};
 		virtual void setTarget(int cTarget){mTargetState = cTarget;};
 		virtual void setCondition(int cCond){mCondition = cCond; mConditionBackup = mCondition; if(mFiles.size()){bDialogIsWatingForText = true;}};
@@ -112,12 +113,14 @@ class IDDialog : public DTDialog{
 		bool *bCloseBool = NULL;
 
 		bool bSmallFonts = false;
-
+		
 		virtual int render(int xpos, int ypos);
 		virtual void update();
 
 		void setCloseBool(bool *cClose);
 		void setFontsSmall(bool cSmall);
+
+		
 
 		void addDisplayInt(std::string cLabel, int* cTarget, bool cSameline = false);
 		void addDisplayIntDual(std::string cLabel,std::string cCenter,std::string cEnd, int* cTarget1, int* cTarget2, bool cSameline = false);
@@ -129,7 +132,12 @@ class IDDialog : public DTDialog{
 		void addDisplayTileMapSize(std::string cLabel, TileMap **cTarget, bool cSameline = false);
 		void addDisplaySpriteSize(std::string cLabel,  TSprite **cTarget, bool cSameline = false);
 
+		void addDisplayString(std::string cLabel, std::string* cTarget, bool cSameline = false);
+		void addDisplayColor(SDL_Color *cTarget);
+		void addDisplayColorRestore();
+
 		static IDDialog* createProjectInfoDialog();
+		static IDDialog* createMessageDialog();
 };
 
 class DialogElement{
@@ -315,6 +323,32 @@ template <class T> class DialogDisplayVectorSize : public DialogDisplayBase{
 class DialogDisplayInt : public DialogDisplayType<int>{
 	public:
 		DialogDisplayInt(DTDialog *cParent, int cCond, std::string cLabel, int* cTarget, bool cSameline){mParent = cParent; mLabel = cLabel; mTarget = cTarget; mCondition = cCond; bSameLine = cSameline;};
+};
+
+class DialogDisplayString : public DialogDisplayType<std::string>{
+	public:
+		DialogDisplayString(DTDialog *cParent, int cCond, std::string cLabel, std::string *cTarget, bool cSameline){mParent = cParent; mLabel = cLabel; mTarget = cTarget; mCondition = cCond; bSameLine = cSameline;};		
+		virtual void update(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} mOutput = mLabel + " "; mOutput += *mTarget;}
+};
+
+class DialogDisplayColor : public DialogDisplayBase{
+	public:
+		SDL_Color *mTarget;
+		virtual void update(){}
+		DialogDisplayColor(DTDialog *cParent, int cCond, std::string cLabel, SDL_Color *cTarget, bool cSameline){mParent = cParent; mLabel = cLabel; mTarget = cTarget; mCondition = cCond; bSameLine = cSameline;};
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} SDL_Color lCol; lCol = *mTarget; ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(lCol.r, lCol.g, lCol.b, 255)); mParent->bHasColor = true;}		
+		virtual void apply(){}
+		virtual void cancel(){}		
+};
+
+class DialogDisplayColorRestore : public DialogDisplayBase{
+	public:
+		DialogDisplayColorRestore(DTDialog *cParent, int cCond, std::string cLabel, bool cSameline){mParent = cParent; mLabel = cLabel; mCondition = cCond; bSameLine = cSameline;};
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(mParent->bHasColor){ImGui::PopStyleColor(); mParent->bHasColor = false;}}
+		virtual void update(){}
+		virtual void apply(){}
+		virtual void cancel(){}		
+
 };
 
 class DialogDisplayIntDual : public DialogDisplayTypeDual<int>{
@@ -507,6 +541,7 @@ class ITSDialog: public ITDialog{
 		virtual void recieveInput(int mKey);		
 };
 
+/*
 class OPDialog: public ITDialog{
 	public:
 		virtual void init();
@@ -514,7 +549,9 @@ class OPDialog: public ITDialog{
 		virtual void recieveInput(int mKey);		
 
 };
+*/
 
+/*
 class CPDialog: public Dialog{
 	public:		
 		TIDialog mReadPath;
@@ -536,7 +573,7 @@ class CPDialog: public Dialog{
 		bool bHasPalette = false;
 		bool bHasTileSet = false;
 };
-
+*/
 
 class CTMDialog: public Dialog{
 	public:				
@@ -617,6 +654,7 @@ class MEDialog: public HDialog{
 		virtual int render();
 };
 
+/*
 class QDialog: public Dialog{
 	public:
 		virtual int render();
@@ -628,6 +666,6 @@ class CCPDialog: public QDialog{
 		virtual int render();
 		virtual void recieveInput(int mKey);
 };
-
+*/
 
 #endif

@@ -1330,6 +1330,7 @@ void SADialog::dropLastInputChar(){
 	mTextInput.dropLastInputChar();	
 }
 
+/*
 int OPDialog::render(){
 
 
@@ -1381,7 +1382,8 @@ int OPDialog::render(){
 	
 	return 0;
 }
-
+*/
+/*
 void OPDialog::recieveInput(int mKey){
 	if(mKey == SDLK_y){
 		if(mTextInput.bInputIsAccepted){
@@ -1398,7 +1400,8 @@ void OPDialog::recieveInput(int mKey){
 		mTextInput.autoComplete();		
 	}
 }
-
+*/
+/*
 void OPDialog::init(){
 	mDialogTextMain = mGlobalSettings.mFile + " Open Project From Folder";
 	
@@ -1414,7 +1417,7 @@ void OPDialog::init(){
 	bInputIsAccept = false;
 	bInputIsCancel = false;
 }
-
+*/
 
 void OCDialog::init(){	
 	//mOpenProject.init();
@@ -1623,7 +1626,7 @@ void CSDialog::cancel(){
 		spritebpp=8;				
 }
 
-
+/*
 void CPDialog::init(){
 	mDialogTextMain = mGlobalSettings.mFile + " Create New Project";	
 		
@@ -1659,6 +1662,7 @@ void CPDialog::init(){
 	bInputIsCancel = false;
 
 }
+*/
 
 int CTMDialog::render(){
 	
@@ -1792,7 +1796,7 @@ void CSDialog::recieveInput(int mKey){
 	}			
 }
 
-
+/*
 int CPDialog::render(){
 	
 	Dialog::render();
@@ -2022,8 +2026,9 @@ int CPDialog::render(){
 
 	return 0;
 }
+*/
 
-
+/*
 void CPDialog::dropLastInputChar(){
 	mActiveInput->dropLastInputChar();
 
@@ -2046,6 +2051,7 @@ void CPDialog::recieveInput(int mKey){
 		mActiveInput->autoComplete();
 	}
 }	
+*/
 
 int ITDialog::render(){	
 	
@@ -2774,6 +2780,7 @@ int PODialog::render(int xpos, int ypos, TextureParameters *mTexParam){
 	return 0;
 }
 
+/*
 void QDialog::recieveInput(int mKey){
 	
 	if(mKey == SDLK_y){
@@ -2847,6 +2854,7 @@ int CCPDialog::render(){
 	
 	return 0;
 }
+*/
 
 /* Dialog Template */
 
@@ -3206,6 +3214,28 @@ void IDDialog::addDisplayInt(std::string cLabel, int* cTarget, bool cSameline){
 	mElements.push_back(nInt);
 }
 
+void IDDialog::addDisplayString(std::string cLabel, std::string* cTarget, bool cSameline){
+	DialogDisplayString *nStr = new DialogDisplayString(this, mRequiredCondition, cLabel, cTarget, cSameline);
+
+	mDisplays.push_back(nStr);
+	mElements.push_back(nStr);
+}
+
+void IDDialog::addDisplayColor(SDL_Color *cTarget){
+	DialogDisplayColor *nCol = new DialogDisplayColor(this, mRequiredCondition, "color", cTarget, false);
+
+	//mDisplays.push_back(nCol);
+	mElements.push_back(nCol);
+
+}
+
+void IDDialog::addDisplayColorRestore(){
+	DialogDisplayColorRestore *nCol = new DialogDisplayColorRestore(this, mRequiredCondition, "color", false);
+
+	//mDisplays.push_back(nCol);
+	mElements.push_back(nCol);
+}
+
 void IDDialog::addDisplayIntDual(std::string cLabel,std::string cCenter,std::string cEnd, int* cTarget1, int* cTarget2, bool cSameline){
 	DialogDisplayIntDual *nInt = new DialogDisplayIntDual(this, mRequiredCondition, cLabel, cCenter, cEnd, cTarget1, cTarget2, cSameline);
 
@@ -3253,6 +3283,29 @@ void IDDialog::addDisplaySpriteSize(std::string cLabel,  TSprite **cTarget, bool
 }
 
 /* IDDialog create */
+
+IDDialog* IDDialog::createMessageDialog(){
+	IDDialog *newDialog = new IDDialog();
+
+	newDialog->setLabel("Message");
+
+	newDialog->setRequiredCondition(1);
+	newDialog->addDisplayColor(&mGlobalSettings.ErrorTextColor);
+
+	newDialog->clearRequiredCondition();
+	newDialog->addDisplayString(mGlobalSettings.mInfo, &mGlobalSettings.mProgramMessage);
+
+	newDialog->setRequiredCondition(1);
+	newDialog->addDisplayColorRestore();
+
+	newDialog->clearRequiredCondition();
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Close", SDLK_n);
+
+	return newDialog;
+}
 
 IDDialog* IDDialog::createProjectInfoDialog(){
 	IDDialog *newDialog = new IDDialog();

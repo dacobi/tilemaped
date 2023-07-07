@@ -658,6 +658,7 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_PROGRAMQUIT] = DTDialog::createProgramQuitDialog();
 
 	mProjectInfo = IDDialog::createProjectInfoDialog();
+	mProgramInfo = IDDialog::createMessageDialog();
 }
 
 int TEditor::activateDTDialog(int cOpenDialog, int cCond, int cVal0, int cVal1){
@@ -2639,13 +2640,21 @@ Tile* TEditor::createNewTileFromFile(std::string newTilePath){
 
 int TEditor::showMessage(std::string cMessage, bool isError){
 	if(isError){
-		mErrorMessage.mDialogTextMain = cMessage;
-		mErrorMessage.update();
-		mActiveMessage = &mErrorMessage;
+		//mErrorMessage.mDialogTextMain = cMessage;
+		//mErrorMessage.update();
+		//mActiveMessage = &mErrorMessage;
+		mGlobalSettings.mProgramMessage = cMessage;
+		mProgramInfo->setCondition(1);
+		mProgramInfo->update();
+		mActiveMessage = mProgramInfo;
 	} else {
-		mInfoMessage.mDialogTextMain = cMessage;
-		mInfoMessage.update();
-		mActiveMessage = &mInfoMessage;
+		//mInfoMessage.mDialogTextMain = cMessage;
+		//mInfoMessage.update();
+		//mActiveMessage = &mInfoMessage;
+		mGlobalSettings.mProgramMessage = cMessage;
+		mProgramInfo->setCondition(-1);
+		mProgramInfo->update();
+		mActiveMessage = mProgramInfo;
 	}
 	return 0;
 }
@@ -2751,6 +2760,7 @@ bool TEditor::checkQuit(){
 	return false;
 }
 
+/*
 int TEditor::activateOpenCreateDialog(int mode){
 	mGlobalSettings.mOpenCreateProjectState = mode;	
 	mActiveDialog = &mCloseProjectDialog;
@@ -2761,7 +2771,7 @@ int TEditor::activateQuitDialog(){
 	mActiveDialog = &mQuitDialog;
 	return 0;
 }
-
+*/
 
 int TEditor::activateHelpDialog(){
 	mGlobalSettings.bShowHelpDialog = true;
@@ -4694,7 +4704,8 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 			}
 			break;
 		case SDL_QUIT:
-			activateQuitDialog();			  		
+			//activateQuitDialog();
+			activateDTDialog(EDIALOG_PROGRAMQUIT);			  		
   			break;
 			
 	  	case SDL_KEYDOWN:
@@ -4943,7 +4954,7 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	mInfoMessage.bUpdateWinPos = true;
 	mRemoveUnused.bUpdateWinPos = true;
 	mErrorMessage.bUpdateWinPos = true;
-	mQuitDialog.bUpdateWinPos = true;
+	//mQuitDialog.bUpdateWinPos = true;
 	mPaletteUpdate.bUpdateWinPos = true;
 	mSaveDialog.bUpdateWinPos = true;
 	mSaveAsDialog.bUpdateWinPos = true;
@@ -4966,7 +4977,7 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	mRemoveSprite.bUpdateWinPos = true;
 	mRemoveSelUnused.bUpdateWinPos = true;
 
-	mCloseProjectDialog.bUpdateWinPos = true;
+	//mCloseProjectDialog.bUpdateWinPos = true;
 	mPaletteUpdate.bUpdateWinPos = true;
 		
 	mColMapEdit.bUpdateWinPos = true;

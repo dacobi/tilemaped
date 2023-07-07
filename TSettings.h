@@ -208,7 +208,9 @@ class TSettings{
 		SDL_Texture *TTarget = NULL;
 		ProjectSettings mProjectSettings;		
 		TextureParameters mGlobalTexParam;
-		
+
+		std::string mProgramMessage;
+
 		void windowResizeHighDPI(int cWidth, int cHeight);
 		void renderShow();
 

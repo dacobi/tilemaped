@@ -203,6 +203,8 @@ class TEditor{
 		IDDialog *mProjectInfo;
 		void showProjectInfo();
 
+		IDDialog *mProgramInfo;
+
 		MEDialog mInfoMessage;
 		RTMDialog mRemoveTileMap;
 		RCMDialog mRemoveColMap;
@@ -215,8 +217,8 @@ class TEditor{
 		int activateDTDialog(int cOpenDialog, int cCond = -1, int cVal0 = 0, int cVal1 = 0);
 
 		MEDialog mErrorMessage;				
-		QDialog mQuitDialog;
-		CCPDialog mCloseProjectDialog;
+		//QDialog mQuitDialog;
+		//CCPDialog mCloseProjectDialog;
 		PUDialog mPaletteUpdate;
 		PODialog mPaletteOffset;
 
@@ -281,8 +283,8 @@ class TEditor{
 		int activateColMapDialog(bool bCreateColMap=false);
 		int removeColMapDialog();
 		int activateHelpDialog();
-		int activateQuitDialog();
-		int activateOpenCreateDialog(int mode);
+		//int activateQuitDialog();
+		//int activateOpenCreateDialog(int mode);
 		int cancelActiveDialog();
 		int activateSaveAsDialog();
 		int activateProjectInfo();
