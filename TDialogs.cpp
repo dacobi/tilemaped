@@ -2605,6 +2605,21 @@ void DTDialog::addFile(std::string cLabel,std::string cInputLabel, std::string c
 	bDialogIsWatingForText = true;
 }
 
+void DTDialog::addFileDefault(std::string cLabel,std::string cInputLabel, std::string cFileExt, std::string cFileKey, std::string *cDefaultPath, std::string* cTarget, bool cMustExist, bool cMustBeFile, bool cMustBeFolder, bool cMustNotBeFile, bool cMustNotExist, bool cMustBeProject, bool cSameline){
+
+	DialogValueFileDefault *nFile = new DialogValueFileDefault(this, mRequiredCondition, cLabel, cInputLabel, cFileExt, cFileKey, cDefaultPath, cTarget, cMustExist, cMustBeFile, cMustBeFolder, cMustNotBeFile, cMustNotExist, cMustBeProject);
+
+	nFile->bSameLine = cSameline;
+
+	mElements.push_back(nFile);
+	mValues.push_back(nFile);
+	mFiles.push_back(nFile);
+
+	mActiveInput = &nFile->mTextInput;
+
+	bDialogIsWatingForText = true;
+}
+
 /* DTDCDialog */
 
 int DTDCDialog::render(){
@@ -3463,7 +3478,7 @@ DTDCDialog* DTDCDialog::createProjectSaveAsDialog(){
 
 	newDialog->addText(mGlobalSettings.mFloppy + " Save Current Project as Folder?");
 	
-	newDialog->addFile("Project Folder", "Folder", "", "PrjAsFold", "", &mGlobalSettings.ProjectPath, false, false);
+	newDialog->addFileDefault("Project Folder", "Folder", "", "PrjAsFold", &mGlobalSettings.ProjectPath, &mGlobalSettings.ProjectPath, false, false);
 
 	newDialog->addSeperator();
 
