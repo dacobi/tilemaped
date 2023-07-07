@@ -180,6 +180,7 @@ void TEditor::handleState(){
 void TEditor::initStates(){
 	
 	mStates[ESTATE_NONE] = &TEditor::stateNone;
+	mStates[ESTATE_PROGRAMQUIT] = &TEditor::stateProgramQuit;
 	mStates[ESTATE_PROJECTSAVE] = &TEditor::stateProjectSave;
 	mStates[ESTATE_PROJECTCREATE] = &TEditor::stateProjectCreate;
 	mStates[ESTATE_PROJECTOPEN] = &TEditor::stateProjectOpen;
@@ -214,6 +215,10 @@ void TEditor::initStates(){
 
 void TEditor::stateNone(){std::cout << "ESTATE_NONE"  << std::endl;}
 
+void TEditor::stateProgramQuit(){
+	bEditorRunning = false;
+}
+
 void TEditor::stateProjectSave(){
 	if(saveToFolder(mGlobalSettings.ProjectPath)){		
 		showMessage("Error Creating Project Folder!", true);
@@ -229,7 +234,7 @@ void TEditor::stateProjectOpen(){
 }
 
 void TEditor::stateProjectClose(){
-	mGlobalSettings.CurrentEditor->bEditorRunning = false;
+	bEditorRunning = false;
 	mGlobalSettings.bRunningOCD = true;
 }
 
@@ -649,6 +654,8 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_THEMECOLOR] = DTDialog::createThemeColorDialog();
 	mDTDialogs[EDIALOG_PROJECTOPEN] = DTDialog::createProjectOpenDialog();
 	mDTDialogs[EDIALOG_PROJECTCREATE] = DTDialog::createProjectCreateDialog();
+	mDTDialogs[EDIALOG_PROJECTCLOSE] = DTDialog::createProjectCloseDialog();
+	mDTDialogs[EDIALOG_PROGRAMQUIT] = DTDialog::createProgramQuitDialog();
 
 	mProjectInfo = IDDialog::createProjectInfoDialog();
 }
@@ -4569,14 +4576,6 @@ int TEditor::handleEvents(){
 	cx /= mGlobalSettings.mUIScale;
 	cy /= mGlobalSettings.mUIScale;
 
-	/*
-	rx = (int)((float)rx / mGlobalSettings.mUIScale);
-	ry = (int)((float)ry / mGlobalSettings.mUIScale);
-
-	cx = (int)((float)cx / mGlobalSettings.mUIScale);
-	cy = (int)((float)cy / mGlobalSettings.mUIScale);
-	*/
-
 	int mapWidthX = mGlobalSettings.TileMapWidth*mGlobalSettings.mGlobalTexParam.TexSizeX*mGlobalSettings.TileMapScale;					
 	int mapWidthY = mGlobalSettings.TileMapHeight*mGlobalSettings.mGlobalTexParam.TexSizeY*mGlobalSettings.TileMapScale;
 	
@@ -4725,7 +4724,8 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 						return 0;
 					}
 					
-					activateQuitDialog();					
+					//activateQuitDialog();
+					activateDTDialog(EDIALOG_PROGRAMQUIT);
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_SPACE){
 	  				switchMode();

@@ -306,6 +306,7 @@ class TEditor{
 		void handleState();	
 
 		void stateNone();
+		void stateProgramQuit();
 		void stateProjectSave();
 		void stateProjectCreate();
 		void stateProjectOpen();

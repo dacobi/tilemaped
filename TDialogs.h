@@ -102,6 +102,8 @@ class DTDialog : public Dialog{
 		static DTDialog* createThemeColorDialog();
 		static DTDialog* createProjectOpenDialog();
 		static DTDialog* createProjectCreateDialog();
+		static DTDialog* createProjectCloseDialog();
+		static DTDialog* createProgramQuitDialog();
 };
 
 class IDDialog : public DTDialog{

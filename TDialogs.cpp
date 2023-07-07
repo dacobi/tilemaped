@@ -151,10 +151,11 @@ int TBDialog::render(){
 				mGlobalSettings.CurrentEditor->activateSaveAsDialog();
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Open")).c_str())){
-				mGlobalSettings.CurrentEditor->activateOpenCreateDialog(ESTATE_PROJECTOPEN);
+				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTCLOSE, ESTATE_PROJECTOPEN);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Create")).c_str())){
-				mGlobalSettings.CurrentEditor->activateOpenCreateDialog(ESTATE_PROJECTCREATE);
+				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTCLOSE, ESTATE_PROJECTCREATE);
+				//mGlobalSettings.CurrentEditor->activateOpenCreateDialog(ESTATE_PROJECTCREATE);
 			}
 
 
@@ -235,7 +236,7 @@ int TBDialog::render(){
 			ImGui::Separator();
 
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mExit + " Quit")).c_str())){
-				mGlobalSettings.CurrentEditor->activateQuitDialog();					
+				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROGRAMQUIT);
 			}
 
 			ImGui::EndMenu();
@@ -3771,5 +3772,53 @@ DTDialog* DTDialog::createTileMapImportDialog(){
 
 
 }
+
+DTDialog* DTDialog::createProjectCloseDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Close Project");
+
+	newDialog->setTarget(ESTATE_PROJECTCLOSE);
+
+	newDialog->addText(mGlobalSettings.mInfo + " Close Current Project?");
+	newDialog->addText(mGlobalSettings.mFile + " Unsaved progress will be lost");
+
+	newDialog->setRequiredCondition(ESTATE_PROJECTOPEN);
+	newDialog->addIntTarget(ESTATE_PROJECTOPEN, &mGlobalSettings.mOpenCreateProjectState);
+
+	newDialog->setRequiredCondition(ESTATE_PROJECTCREATE);
+	newDialog->addIntTarget(ESTATE_PROJECTCREATE, &mGlobalSettings.mOpenCreateProjectState);
+
+	newDialog->clearRequiredCondition();
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Close", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
+DTDialog* DTDialog::createProgramQuitDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Quit Program");
+
+	newDialog->setTarget(ESTATE_PROGRAMQUIT);
+
+	newDialog->addText(mGlobalSettings.mInfo + " Quit Program?");
+	newDialog->addText(mGlobalSettings.mFile + " Unsaved progress will be lost");
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Quit", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
+
 
 /* Dialog Template End */
