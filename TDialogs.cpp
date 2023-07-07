@@ -2736,7 +2736,7 @@ void DTDCDialog::setConfirmConditionExists(std::string *cPath, bool cState){
 
 std::string* DTDCDialog::getFilePath(std::string cFileVal){
 	for(auto *cInput : mFiles){
-		if(cInput->mLabel == cFileVal){
+		if(cInput->mFileKey == "ChooseFileDlgKey"+cFileVal){
 			return &cInput->mTextInput.mDialogTextMain;
 		}
 	}
@@ -3493,7 +3493,7 @@ DTDCDialog* DTDCDialog::createProjectSaveAsDialog(){
 
 	newDialog->setConfirmButtons("Confirm","Cancel");
 
-	newDialog->setConfirmConditionExists(newDialog->getFilePath("Choose Project Folder"), true);
+	newDialog->setConfirmConditionExists(newDialog->getFilePath("PrjAsFold"), true);
 
 	return newDialog;
 
