@@ -453,7 +453,7 @@ class DialogValueFileDefault : public DialogValueFile{
 	public:
 		std::string *mDefaultPath = NULL;
 		DialogValueFileDefault(DTDialog *cParent, int cCond, std::string cLabel, std::string cInputLabel, std::string cFileExt, std::string cFileKey, std::string *cDefaultPath, std::string* cTarget, bool cMustExist, bool cMustBeFile, bool cMustBeFolder, bool cMustNotBeFile, bool cMustNotExist, bool cMustBeProject){mParent = cParent; mDefaultPath = cDefaultPath; mValue = *mDefaultPath; mTextInput.mInputLabel = cInputLabel; mTextInput.mDialogTextMain = *mDefaultPath; mTarget = cTarget; mCondition = cCond; mTextInput.bMustExist = cMustExist; mTextInput.bMustBeFile = cMustBeFile; mTextInput.bMustBeFolder = cMustBeFolder; mTextInput.bMustNotBeFile = cMustNotBeFile; mTextInput.bMustNotExist = cMustNotExist; mTextInput.bMustBeProject = cMustBeProject; mLabel = cLabel; mFileKey = "ChooseFileDlgKey" + cFileKey; mFileExt = cFileExt; mTextInput.bIsInputActive = true; mTextInput.bAutoComplete = true;}	
-		virtual void update(){mTextInput.mDialogTextMain = *mDefaultPath;};
+		virtual void update(){mValue = *mDefaultPath; mTextInput.mDialogTextMain = *mDefaultPath;};
 		virtual void cancel(){mValue = *mDefaultPath; mTextInput.mDialogTextMain = *mDefaultPath; bIsValid = false;}
 };
 

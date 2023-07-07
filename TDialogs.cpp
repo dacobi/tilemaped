@@ -3478,7 +3478,7 @@ DTDCDialog* DTDCDialog::createProjectSaveAsDialog(){
 
 	newDialog->addText(mGlobalSettings.mFloppy + " Save Current Project as Folder?");
 	
-	newDialog->addFileDefault("Project Folder", "Folder", "", "PrjAsFold", &mGlobalSettings.ProjectPath, &mGlobalSettings.ProjectPath, false, false);
+	newDialog->addFileDefault("Choose Project Folder", "Folder", "", "PrjAsFold", &mGlobalSettings.ProjectPath, &mGlobalSettings.ProjectPath, false, false);
 
 	newDialog->addSeperator();
 
@@ -3493,7 +3493,7 @@ DTDCDialog* DTDCDialog::createProjectSaveAsDialog(){
 
 	newDialog->setConfirmButtons("Confirm","Cancel");
 
-	newDialog->setConfirmConditionExists(newDialog->getFilePath("Project Folder"), true);
+	newDialog->setConfirmConditionExists(newDialog->getFilePath("Choose Project Folder"), true);
 
 	return newDialog;
 
