@@ -145,18 +145,16 @@ int TBDialog::render(){
 			bIsMenuOpen = true;
 
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Save (F12)")).c_str())){
-				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTSAVE);
+				mGlobalSettings.CurrentEditor->activateSaveDialog();
 			}
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Save As (F11)")).c_str())){
-				//mGlobalSettings.CurrentEditor->activateSaveAsDialog();
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Save As (F11)")).c_str())){				
 				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTSAVEAS);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Open")).c_str())){
 				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTCLOSE, ESTATE_PROJECTOPEN);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Create")).c_str())){
-				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTCLOSE, ESTATE_PROJECTCREATE);
-				//mGlobalSettings.CurrentEditor->activateOpenCreateDialog(ESTATE_PROJECTCREATE);
+				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTCLOSE, ESTATE_PROJECTCREATE);				
 			}
 
 

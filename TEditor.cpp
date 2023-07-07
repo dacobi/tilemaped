@@ -2765,10 +2765,12 @@ int TEditor::activateHelpDialog(){
 	return 0;
 }
 
-int TEditor::activateSaveAsDialog(){
-	mActiveDialog = &mSaveAsDialog;
-	mActiveDialog->bDialogIsWatingForText = true;	
-	return 0;
+void TEditor::activateSaveDialog(){
+	if(fs::exists(fs::status(mGlobalSettings.ProjectPath))){
+		activateDTDialog(EDIALOG_PROJECTSAVE);
+	} else {
+		stateProjectSave();
+	}
 }
 
 int TEditor::activateOpenSpriteDialog(){
@@ -4826,8 +4828,8 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 						}
 					}					
 	  			}
-	  			if(cEvent->key.keysym.sym == SDLK_F12){	  				
-		  			activateDTDialog(EDIALOG_PROJECTSAVE);
+	  			if(cEvent->key.keysym.sym == SDLK_F12){	  						  			
+					activateSaveDialog();
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F11){	  				
 		  			//activateSaveAsDialog();

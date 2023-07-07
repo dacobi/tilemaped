@@ -272,7 +272,8 @@ class TEditor{
 		int activateHelpDialog();
 		
 		int cancelActiveDialog();
-		int activateSaveAsDialog();
+		void activateSaveDialog();
+
 		int activateProjectInfo();
 		int activatePaletteEdit();
 		int activatePaletteUpdate();
