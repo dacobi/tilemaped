@@ -659,6 +659,7 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_PROJECTCLOSE] = DTDialog::createProjectCloseDialog();
 	mDTDialogs[EDIALOG_PROGRAMQUIT] = DTDialog::createProgramQuitDialog();
 	mDTDialogs[EDIALOG_PROJECTSAVE] = DTDialog::createProjectSaveDialog();
+	mDTDialogs[EDIALOG_PROJECTSAVEAS] = DTDCDialog::createProjectSaveAsDialog();
 
 	mProjectInfo = IDDialog::createProjectInfoDialog();
 	mProgramInfo = IDDialog::createMessageDialog();
@@ -2757,32 +2758,12 @@ bool TEditor::checkQuit(){
 	return false;
 }
 
-/*
-int TEditor::activateOpenCreateDialog(int mode){
-	mGlobalSettings.mOpenCreateProjectState = mode;	
-	mActiveDialog = &mCloseProjectDialog;
-	return 0;
-}
-
-int TEditor::activateQuitDialog(){
-	mActiveDialog = &mQuitDialog;
-	return 0;
-}
-*/
-
 int TEditor::activateHelpDialog(){
 	mGlobalSettings.bShowHelpDialog = true;
 	mActiveDialog = &mHelpDialog;
 	
 	return 0;
 }
-
-/*
-int TEditor::activateSaveDialog(){
-	mActiveDialog = &mSaveDialog;
-	return 0;
-}
-*/
 
 int TEditor::activateSaveAsDialog(){
 	mActiveDialog = &mSaveAsDialog;
@@ -2795,16 +2776,6 @@ int TEditor::activateOpenSpriteDialog(){
 		mActiveDialog->bDialogIsWatingForText = true;		
 		return 0;
 }
-
-/*
-int TEditor::activateOpenFramesDialog(){
-	if(mCurMode == EMODE_SPRITE){
-		mActiveDialog = &mOpenFramesDialog;
-		mActiveDialog->bDialogIsWatingForText = true;		
-	}
-	return 0;
-}
-*/
 
 int TEditor::activateScaleFrameDialog(){
 	if(mCurMode == EMODE_SPRITE){
@@ -2819,16 +2790,6 @@ int TEditor::activateRotateFrameDialog(){
 	}
 	return 0;
 }
-
-/*
-int TEditor::activateOpenFrameDialog(){
-	if(mCurMode == EMODE_SPRITE){
-		mActiveDialog = &mOpenFrameDialog;
-		mActiveDialog->bDialogIsWatingForText = true;		
-	}
-	return 0;
-}
-*/
 
 int TEditor::activateOpenTileDialog(){
 	if(mCurMode == EMODE_MAP){
@@ -4869,7 +4830,8 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 		  			activateDTDialog(EDIALOG_PROJECTSAVE);
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F11){	  				
-		  			activateSaveAsDialog();
+		  			//activateSaveAsDialog();
+					activateDTDialog(EDIALOG_PROJECTSAVEAS);
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F7){	  				
 					activateClipboard();

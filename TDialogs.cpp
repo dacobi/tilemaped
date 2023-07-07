@@ -148,7 +148,8 @@ int TBDialog::render(){
 				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTSAVE);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Save As (F11)")).c_str())){
-				mGlobalSettings.CurrentEditor->activateSaveAsDialog();
+				//mGlobalSettings.CurrentEditor->activateSaveAsDialog();
+				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTSAVEAS);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Open")).c_str())){
 				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTCLOSE, ESTATE_PROJECTOPEN);
@@ -2428,7 +2429,9 @@ void DTDialog::recieveInput(int mKey){
 			cVal->apply();			
 		}
 
-		mGlobalSettings.mEditorState = mTargetState;
+		if(mTargetState != -1){
+			mGlobalSettings.mEditorState = mTargetState;
+		}
 	}		
 	
 	if(mKey == SDLK_n){
@@ -2603,6 +2606,132 @@ void DTDialog::addFile(std::string cLabel,std::string cInputLabel, std::string c
 
 	bDialogIsWatingForText = true;
 }
+
+/* DTDCDialog */
+
+int DTDCDialog::render(){
+
+	Dialog::render();
+
+	ImGui::Begin(mDialogTextTitle.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);
+
+	for(auto *cElem: mElements){
+		cElem->render();
+	}
+
+	ImGui::End();
+
+	if(bConfirmIsActive){		
+		mConfirmDialog.render();
+		if(mConfirmDialog.bInputIsAccept){
+			recieveInput(SDLK_y);
+		}
+		if(mConfirmDialog.bInputIsCancel){
+			recieveInput(SDLK_n);
+		}
+	}
+
+	return 0;
+}
+
+void DTDCDialog::recieveInput(int mKey){
+	if(mKey == SDLK_y){
+
+		for(auto *cInput : mFiles){
+			if(!cInput->bIsValid){
+				return;
+			}
+		}
+		
+		if(mConditionPath){			
+			if(fs::exists(fs::status(*mConditionPath)) == bConditionState){				
+				bConfirmIsActive = true;			
+			}
+		}
+
+		bool bConfirmIsGo = false;
+
+		if(bConfirmIsActive){
+			if(mConfirmDialog.bInputIsAccept){
+				bConfirmIsGo = true;
+			}
+		} else {
+			bConfirmIsGo = true;
+		}
+
+		if(bConfirmIsGo){
+			bInputIsAccept=true;	
+			bDialogIsWatingForText = false;
+
+			for(auto cVal : mValues){
+				cVal->apply();			
+			}
+
+			if(mTargetState != -1){
+				mGlobalSettings.mEditorState = mTargetState;
+			}
+		}
+	}		
+	
+	if(mKey == SDLK_n){
+		if(bConfirmIsActive){
+			bConfirmIsActive = false;
+			mConfirmDialog.cancel();
+		} else {
+			bInputIsCancel=true;
+			bDialogIsWatingForText = false;
+			for(auto cVal : mValues){
+				cVal->cancel();
+			}
+			mConfirmDialog.cancel();
+		}
+	}	
+
+	if(mKey == SDLK_TAB){
+		if(mActiveInput){
+			mActiveInput->autoComplete();
+		}		 
+	}
+}
+
+void DTDCDialog::cancel(){
+	Dialog::cancel();
+
+	for(auto cVal : mValues){
+			cVal->cancel();
+	}
+
+	bConfirmIsActive = false;
+	
+	mConfirmDialog.cancel();
+}
+
+void DTDCDialog::addConfirmText(std::string cText, bool bSameline){
+	mConfirmDialog.addText(cText, bSameline);
+}
+
+void DTDCDialog::setConfirmButtons(std::string cConfirm, std::string cCancel){
+	mConfirmDialog.addSeperator();
+	mConfirmDialog.addButton(cConfirm, SDLK_y);
+	mConfirmDialog.addButton(cCancel, SDLK_n, true);
+}
+
+void DTDCDialog::setConfirmConditionExists(std::string *cPath, bool cState){
+	mConditionPath = cPath;
+	bConditionState = cState;
+}
+
+std::string* DTDCDialog::getFilePath(std::string cFileVal){
+	for(auto *cInput : mFiles){
+		if(cInput->mLabel == cFileVal){
+			return &cInput->mTextInput.mDialogTextMain;
+		}
+	}
+	return NULL;
+}
+
+
+/* DTDCDialog End*/
 
 /* IDDialog */
 
@@ -3324,6 +3453,37 @@ DTDialog* DTDialog::createProjectSaveDialog(){
 	newDialog->addButton("Cancel", SDLK_n, true);
 
 	return newDialog;
+}
+
+DTDCDialog* DTDCDialog::createProjectSaveAsDialog(){
+
+	DTDCDialog* newDialog = new DTDCDialog();
+
+	newDialog->setLabel("Save Project As");
+
+	newDialog->setTarget(ESTATE_PROJECTSAVE);
+
+	newDialog->addText(mGlobalSettings.mFloppy + " Save Current Project as Folder?");
+	
+	newDialog->addFile("Project Folder", "Folder", "", "PrjAsFold", "", &mGlobalSettings.ProjectPath, false, false);
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Save As", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	newDialog->setConfirmLabel("Confirm Overwrite");
+
+	newDialog->addConfirmText(mGlobalSettings.mFloppy + " Overwrite Folder on Disk?");
+	newDialog->addConfirmText(mGlobalSettings.mInfo + " Existing Data will be Overwritten");
+
+	newDialog->setConfirmButtons("Confirm","Cancel");
+
+	newDialog->setConfirmConditionExists(newDialog->getFilePath("Project Folder"), true);
+
+	return newDialog;
+
 }
 
 /* Dialog Template End */

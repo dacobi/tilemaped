@@ -12,6 +12,8 @@ class DialogValueFile;
 class TIDialog;
 
 class DTDialog;
+class DTDCialog;
+
 
 class IDDialog;
 class DialogDisplayBase;
@@ -105,6 +107,27 @@ class DTDialog : public Dialog{
 		static DTDialog* createProjectCloseDialog();
 		static DTDialog* createProgramQuitDialog();
 		static DTDialog* createProjectSaveDialog();
+};
+
+class DTDCDialog : public DTDialog{
+	public:
+		DTDialog mConfirmDialog;
+		bool bConfirmIsActive = false;
+		std::string *mConditionPath = NULL;
+		bool bConditionState = false;
+		
+		virtual int render();		
+		virtual void recieveInput(int mKey);
+		virtual void cancel();
+
+		void setConfirmLabel(std::string cLabel){mConfirmDialog.mDialogTextTitle = cLabel; mConfirmDialog.mTargetState = -1;};
+		void addConfirmText(std::string cText, bool bSameline = false);
+		void setConfirmButtons(std::string cConfirm, std::string cCancel);
+		void setConfirmConditionExists(std::string *cPath, bool cState);
+
+		std::string* getFilePath(std::string cFileVal);	
+
+		static DTDCDialog* createProjectSaveAsDialog();
 };
 
 class IDDialog : public DTDialog{

@@ -184,6 +184,7 @@ class TEditor{
 		Dialog *mActiveMessage = NULL;
 
 		SDialog mSaveDialog;
+		
 		SADialog mSaveAsDialog;
 		ITDialog mOpenTileDialog;
 
@@ -253,8 +254,7 @@ class TEditor{
 		int showMessage(std::string cMessage, bool isError=false);
 		bool checkQuit();
 		void setSpriteBrushes();
-
-		//int activateSaveDialog();
+		
 		int activateOpenTileDialog();
 
 		int activateRotateFrameDialog();
