@@ -182,17 +182,12 @@ class TEditor{
 
 		Dialog *mActiveDialog = NULL;
 		Dialog *mActiveMessage = NULL;
-
-		SDialog mSaveDialog;
 		
-		SADialog mSaveAsDialog;
 		ITDialog mOpenTileDialog;
 
 		RTSFDialog mRotateFrame;
 		SSFDialog mScaleFrame;
 		ISDialog mOpenSpriteDialog;
-		
-		//ITSDialog mOpenTileSetDialog;
 		
 		CTMDialog mNewTileMapDialog;
 		CSDialog mNewSpriteDialog;

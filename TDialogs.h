@@ -566,15 +566,6 @@ class ISDialog: public SADialog{
 		bool bCreateNewSprite = false;
 };
 
-
-/*
-class ITSDialog: public ITDialog{
-	public:				
-		virtual int render();
-		virtual void recieveInput(int mKey);		
-};
-*/
-
 class CTMDialog: public Dialog{
 	public:				
 		virtual void init();				

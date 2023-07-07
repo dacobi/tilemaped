@@ -691,39 +691,18 @@ void TEditor::initDialogs(){
 	mColorSelectedTile->bPixelSelected = true;
 	mColorSelected = 0;
 
-	mSaveDialog.init();
-	mSaveAsDialog.mTextInput.mDialogTextMain = mGlobalSettings.ProjectPath;
-	mSaveAsDialog.init();
-	mSaveAsDialog.mSubDialog = &mSaveDialog;
-	
-	//mHelpDialog.init();
-
 	mTopBar.mEditor = this;
 	mTopBar.init();
 	
-	//mProjectInfo.mEditor = this;
-	//mProjectInfo.init();
-
 	mOpenTileDialog.init();
-
-	
-	//mOpenFrameDialog.init();
-	//mOpenFramesDialog.init();
 
 	mRotateFrame.init();
 	mScaleFrame.init();
 	mOpenSpriteDialog.init();
 
-	//mOpenTileSetDialog.init();
-	
-	//mOpenTileMapDialog.init();
-
 	mNewTileMapDialog.init();
 	mNewSpriteDialog.init();
-	//mInfoMessage.init();
-	//mErrorMessage.setColorScheme(1);
-	//mErrorMessage.init();
-
+	
 	mRemoveColMap.init();
 
 	mRemoveTileMap.init();
@@ -733,8 +712,6 @@ void TEditor::initDialogs(){
 	mRemoveSelUnused.init();
 
 	mPaletteUpdate.init();
-
-	//mInputNumber.init();
 
 	mPaletteOffset.init();
 
@@ -2834,16 +2811,6 @@ int TEditor::activateNewSpriteDialog(){
 	return 0;
 }
 
-/*
-int TEditor::activateOpenTileMapDialog(){
-	if(mCurMode == EMODE_MAP){
-		mActiveDialog = &mOpenTileMapDialog;
-		mActiveDialog->bDialogIsWatingForText = true;		
-	}
-	return 0;
-}
-*/
-
 int TEditor::removeColMapDialog(){
 	if(mCurMode == EMODE_MAP){
 		mActiveDialog = &mRemoveColMap;
@@ -2861,16 +2828,6 @@ int TEditor::activateColMapDialog(bool bCreateColMap){
 
 	return 0;
 }
-
-/*
-int TEditor::activateOpenTileSetDialog(){
-	if(mCurMode == EMODE_MAP){
-		mActiveDialog = &mOpenTileSetDialog;
-		mActiveDialog->bDialogIsWatingForText = true;		
-	}
-	return 0;
-}
-*/
 
 int TEditor::activateClipboard(bool bChangeState){
 	if(mCurMode == EMODE_SPRITE){
@@ -4919,14 +4876,12 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	mProjectInfo->bUpdateWinPos = true;
 	
 	mProgramInfo->bUpdateWinPos = true;
+	
 	mRemoveUnused.bUpdateWinPos = true;
 	
 	mPaletteUpdate.bUpdateWinPos = true;
-	mSaveDialog.bUpdateWinPos = true;
-	mSaveAsDialog.bUpdateWinPos = true;
-	mOpenTileDialog.bUpdateWinPos = true;
 	
-	//mOpenTileSetDialog.bUpdateWinPos = true;
+	mOpenTileDialog.bUpdateWinPos = true;
 	
 	mNewTileMapDialog.bUpdateWinPos = true;
 
@@ -4934,6 +4889,7 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	mScaleFrame.bUpdateWinPos = true;
 	mOpenSpriteDialog.bUpdateWinPos = true;
 	mNewSpriteDialog.bUpdateWinPos = true;
+	
 	mRemoveTileMap.bUpdateWinPos = true;
 	mRemoveColMap.bUpdateWinPos = true;
 	mRemoveFrame.bUpdateWinPos = true;
