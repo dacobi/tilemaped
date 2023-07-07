@@ -645,7 +645,7 @@ class TBDialog: public Dialog{
 		bool bIsMenuOpen = false;
 };
 
-
+/*
 class MEDialog: public HDialog{
 	public:
 		virtual void init();
@@ -653,6 +653,8 @@ class MEDialog: public HDialog{
 		virtual void update();		
 		virtual int render();
 };
+
+*/
 
 /*
 class QDialog: public Dialog{

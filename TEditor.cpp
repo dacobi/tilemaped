@@ -714,9 +714,9 @@ void TEditor::initDialogs(){
 
 	mNewTileMapDialog.init();
 	mNewSpriteDialog.init();
-	mInfoMessage.init();
-	mErrorMessage.setColorScheme(1);
-	mErrorMessage.init();
+	//mInfoMessage.init();
+	//mErrorMessage.setColorScheme(1);
+	//mErrorMessage.init();
 
 	mRemoveColMap.init();
 
@@ -4951,9 +4951,9 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	
 	mProjectInfo->bUpdateWinPos = true;
 	
-	mInfoMessage.bUpdateWinPos = true;
+	mProgramInfo->bUpdateWinPos = true;
 	mRemoveUnused.bUpdateWinPos = true;
-	mErrorMessage.bUpdateWinPos = true;
+	//mErrorMessage.bUpdateWinPos = true;
 	//mQuitDialog.bUpdateWinPos = true;
 	mPaletteUpdate.bUpdateWinPos = true;
 	mSaveDialog.bUpdateWinPos = true;

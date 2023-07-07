@@ -205,7 +205,7 @@ class TEditor{
 
 		IDDialog *mProgramInfo;
 
-		MEDialog mInfoMessage;
+		//MEDialog mInfoMessage;
 		RTMDialog mRemoveTileMap;
 		RCMDialog mRemoveColMap;
 		RTDialog mRemoveUnused;
@@ -216,7 +216,7 @@ class TEditor{
 		std::map<int, DTDialog*> mDTDialogs;
 		int activateDTDialog(int cOpenDialog, int cCond = -1, int cVal0 = 0, int cVal1 = 0);
 
-		MEDialog mErrorMessage;				
+		//MEDialog mErrorMessage;				
 		//QDialog mQuitDialog;
 		//CCPDialog mCloseProjectDialog;
 		PUDialog mPaletteUpdate;

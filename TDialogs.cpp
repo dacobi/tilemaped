@@ -2693,6 +2693,7 @@ int HDialog::render(){
 	return 0;
 }
 
+/*
 void MEDialog::init(){
 	mDialogTextMain = mGlobalSettings.mInfo + " ";
 }
@@ -2727,7 +2728,7 @@ int MEDialog::render(){
 
 	return 0;
 }
-
+*/
 
 void PODialog::init(){
 	mDialogTextMain = mGlobalSettings.mImage + " Palette Offset";
