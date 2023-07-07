@@ -222,6 +222,8 @@ void TEditor::stateProgramQuit(){
 void TEditor::stateProjectSave(){
 	if(saveToFolder(mGlobalSettings.ProjectPath)){		
 		showMessage("Error Creating Project Folder!", true);
+	} else {
+		showMessage("Project Saved Successfully");
 	}
 }
 
@@ -656,6 +658,7 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_PROJECTCREATE] = DTDialog::createProjectCreateDialog();
 	mDTDialogs[EDIALOG_PROJECTCLOSE] = DTDialog::createProjectCloseDialog();
 	mDTDialogs[EDIALOG_PROGRAMQUIT] = DTDialog::createProgramQuitDialog();
+	mDTDialogs[EDIALOG_PROJECTSAVE] = DTDialog::createProjectSaveDialog();
 
 	mProjectInfo = IDDialog::createProjectInfoDialog();
 	mProgramInfo = IDDialog::createMessageDialog();
@@ -2774,10 +2777,12 @@ int TEditor::activateHelpDialog(){
 	return 0;
 }
 
+/*
 int TEditor::activateSaveDialog(){
 	mActiveDialog = &mSaveDialog;
 	return 0;
 }
+*/
 
 int TEditor::activateSaveAsDialog(){
 	mActiveDialog = &mSaveAsDialog;
@@ -4861,7 +4866,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					}					
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F12){	  				
-		  			activateSaveDialog();
+		  			activateDTDialog(EDIALOG_PROJECTSAVE);
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F11){	  				
 		  			activateSaveAsDialog();

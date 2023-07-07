@@ -145,7 +145,7 @@ int TBDialog::render(){
 			bIsMenuOpen = true;
 
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Save (F12)")).c_str())){
-				mGlobalSettings.CurrentEditor->activateSaveDialog();
+				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTSAVE);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Save As (F11)")).c_str())){
 				mGlobalSettings.CurrentEditor->activateSaveAsDialog();
@@ -3307,6 +3307,23 @@ DTDialog* DTDialog::createProgramQuitDialog(){
 	return newDialog;
 }
 
+DTDialog* DTDialog::createProjectSaveDialog(){
+	DTDialog* newDialog = new DTDialog();
 
+	newDialog->setLabel("Save Project");
+
+	newDialog->setTarget(ESTATE_PROJECTSAVE);
+
+	newDialog->addText(mGlobalSettings.mFloppy + " Save Current Project?");
+	newDialog->addText(mGlobalSettings.mInfo + " Existing Data on Disk will be Overwritten");
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Save", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
 
 /* Dialog Template End */
