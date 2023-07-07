@@ -660,6 +660,7 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_PROGRAMQUIT] = DTDialog::createProgramQuitDialog();
 	mDTDialogs[EDIALOG_PROJECTSAVE] = DTDialog::createProjectSaveDialog();
 	mDTDialogs[EDIALOG_PROJECTSAVEAS] = DTDCDialog::createProjectSaveAsDialog();
+	mDTDialogs[EDIALOG_TILESETIMPORT] = DTDialog::createTileSetImportDialog();
 
 	mProjectInfo = IDDialog::createProjectInfoDialog();
 	mProgramInfo = IDDialog::createMessageDialog();

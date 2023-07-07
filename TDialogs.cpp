@@ -163,8 +163,8 @@ int TBDialog::render(){
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Tile")).c_str())){
 						mGlobalSettings.CurrentEditor->activateOpenTileDialog();		  			
 					}
-					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import TileSet")).c_str())){
-						mGlobalSettings.CurrentEditor->activateOpenTileSetDialog();		  			
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import TileSet")).c_str())){
+						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_TILESETIMPORT);		  			
 					}
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import TileMap")).c_str())){
 						//mGlobalSettings.CurrentEditor->activateOpenTileMapDialog();	  			
@@ -2214,82 +2214,6 @@ int PODialog::render(int xpos, int ypos, TextureParameters *mTexParam){
 	return 0;
 }
 
-/*
-void QDialog::recieveInput(int mKey){
-	
-	if(mKey == SDLK_y){
-		std::cout << "Shutting Down..." << std::endl;
-		bInputIsAccept=true;
-		mGlobalSettings.CurrentEditor->bEditorRunning = false;
-		mGlobalSettings.mOpenCreateProjectState = ESTATE_NONE;
-	}
-	if(mKey == SDLK_n){
-		bInputIsCancel=true;
-	}
-}
-
-int QDialog::render(){
-    
-	Dialog::render();
-
-	ImGui::Begin("Quit Program?", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
-    		
-			ImGui::Text("Any unsaved progress will be lost   "); 
-
-            if (ImGui::Button("Quit")){
-				recieveInput(SDLK_y);
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::Button("Cancel")){
-				recieveInput(SDLK_n);
-			}
-            
-        ImGui::End();
-	
-	return 0;
-}
-
-void CCPDialog::recieveInput(int mKey){
-	
-	if(mKey == SDLK_y){
-		std::cout << "Closing Project" << std::endl;
-		bInputIsAccept=true;		
-		mGlobalSettings.mEditorState = ESTATE_PROJECTCLOSE;
-		//mGlobalSettings.CurrentEditor->bEditorRunning = false;
-		//mGlobalSettings.bRunningOCD = true;
-	}
-	if(mKey == SDLK_n){
-		//mGlobalSettings.mOpenCreateProjectState = ESTATE_NONE;		
-		bInputIsCancel=true;
-	}
-}
-
-int CCPDialog::render(){
-    
-	Dialog::render();
-
-	ImGui::Begin("Close Project?", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);                         
-    		
-			ImGui::Text("Close Current Project? Any unsaved progress will be lost"); 
-
-            if (ImGui::Button("Close")){
-				recieveInput(SDLK_y);
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::Button("Cancel")){
-				recieveInput(SDLK_n);
-			}
-            
-        ImGui::End();
-	
-	return 0;
-}
-*/
-
 /* Dialog Template */
 
 void DialogButton::render(){
@@ -3102,6 +3026,26 @@ DTDialog* DTDialog::createSpriteCopyDialog(){
 	newDialog->addSeperator();
 
 	newDialog->addButton("Create", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
+DTDialog* DTDialog::createTileSetImportDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Import TileSet");
+
+	newDialog->setTarget(ESTATE_TILESETIMPORT);
+
+	newDialog->addText(mGlobalSettings.mFile + " Import TileSet from Project file or PNG?");
+
+	newDialog->addFile("Choose TileSet File", "Filename", ".png,.bin", "ImpTileSet", "", &mGlobalSettings.mNewTilePath);
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Import", SDLK_y);
 	
 	newDialog->addButton("Cancel", SDLK_n, true);
 

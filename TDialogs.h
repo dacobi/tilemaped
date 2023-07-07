@@ -108,6 +108,7 @@ class DTDialog : public Dialog{
 		static DTDialog* createProjectCloseDialog();
 		static DTDialog* createProgramQuitDialog();
 		static DTDialog* createProjectSaveDialog();
+		static DTDialog* createTileSetImportDialog();
 };
 
 class DTDCDialog : public DTDialog{
