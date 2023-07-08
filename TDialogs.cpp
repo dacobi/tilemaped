@@ -933,7 +933,7 @@ int RTSDialog::render(){
 }
 */
 /* Rotate Frame */
-
+/*
 void RTSFDialog::init(){
 	mDialogTextMain = mGlobalSettings.mImage +" Rotate Selected Frame by angle in degrees"; 
 	mDialogTextTitle = "Rotate Selected Frame";	
@@ -983,13 +983,13 @@ void RTSFDialog::cancel(){
 	frotateangle = 0;	
 }
 
-
+*/
 
 /* End */
 
 /* Frame Scale */
 
-
+/*
 
 void SSFDialog::init(){
 	mDialogTextMain = mGlobalSettings.mImage +" Scale Selected Frame by float factor"; 
@@ -1039,7 +1039,7 @@ void SSFDialog::cancel(){
 	Dialog::cancel();
 	fscalefactor = 1;	
 }
-
+*/
 
 /* End */
 

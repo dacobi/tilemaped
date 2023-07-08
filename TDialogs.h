@@ -548,6 +548,7 @@ class ITDialog: public SADialog{
 };
 */
 
+/*
 class RTSFDialog: public Dialog{
 	public:
 		virtual void init();
@@ -565,7 +566,7 @@ class SSFDialog: public RTSFDialog{
 		virtual void recieveInput(int mKey);
 		float fscalefactor = 0;	
 };
-
+*/
 
 class ISDialog: public SADialog{
 	public:				
