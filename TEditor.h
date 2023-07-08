@@ -198,12 +198,14 @@ class TEditor{
 
 		IDDialog *mProgramInfo;
 		
+		/*
 		RTMDialog mRemoveTileMap;
 		RCMDialog mRemoveColMap;
 		RTDialog mRemoveUnused;
 		RSFDialog mRemoveFrame;
 		RSDialog mRemoveSprite;
 		RTSDialog mRemoveSelUnused;
+		*/
 		
 		std::map<int, DTDialog*> mDTDialogs;
 		int activateDTDialog(int cOpenDialog, int cCond = -1, int cVal0 = 0, int cVal1 = 0);

@@ -474,6 +474,7 @@ class SDialog: public Dialog{
 		virtual int render();
 };
 
+/*
 class RTDialog: public SDialog{
 	public:
 		virtual void init();
@@ -514,6 +515,7 @@ class RCMDialog: public RTDialog{
 		virtual void init();
 		virtual void recieveInput(int mKey);
 };
+*/
 
 class PUDialog: public SDialog{
 	public:

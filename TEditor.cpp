@@ -709,13 +709,14 @@ void TEditor::initDialogs(){
 	mNewTileMapDialog.init();
 	mNewSpriteDialog.init();
 	
+	/*
 	mRemoveColMap.init();
-
 	mRemoveTileMap.init();
 	mRemoveUnused.init();
 	mRemoveFrame.init();
 	mRemoveSprite.init();
 	mRemoveSelUnused.init();
+	*/
 
 	mPaletteUpdate.init();
 
@@ -2027,8 +2028,11 @@ int TEditor::removeSelectedTile(){
 				
 	dropUnusedTile(mMapSelectedTile);
 
-	mMapSelectedTile = 0;
-	mTileSelectedTile = mTileSet.TTiles[0];
+	if(mMapSelectedTile > 0){
+		mMapSelectedTile--;
+	}
+
+	mTileSelectedTile = mTileSet.TTiles[mMapSelectedTile];
 
 	mTileSelectedTile->bIsSelected = true;				
 	return 0;
@@ -2044,10 +2048,10 @@ int TEditor::activateDropUnusedTile(){
 		}
 
 		if(cTileCount > 0){
-			showMessage("Selected Tile is used in TileMap(s)\nReplace Tile in TileMap(s) before removal");
+			showMessage("Selected Tile is used in TileMap(s)   \n  Replace Tile in TileMap(s) before removal   ");
 		} else {
 			if(mGlobalSettings.bTileSetWarnBeforeDelete){
-				mActiveDialog = &mRemoveSelUnused;
+				activateDTDialog(EDIALOG_TILEDELETE);
 			} else {
 				removeSelectedTile();
 			}
@@ -2059,8 +2063,7 @@ int TEditor::activateDropUnusedTile(){
 
 int TEditor::activateDropUnusedTiles(){
 	if(mCurMode == EMODE_MAP){
-
-		mActiveDialog = &mRemoveUnused;
+		activateDTDialog(EDIALOG_TILEDELETEALL);
 	}
 	return 0;
 }
@@ -2068,7 +2071,7 @@ int TEditor::activateDropUnusedTiles(){
 int TEditor::activateRemoveFrame(){
 	if(mCurMode == EMODE_SPRITE){
 		if(mGlobalSettings.bSpriteWarnBeforeDelete){
-			mActiveDialog = &mRemoveFrame;
+			activateDTDialog(EDIALOG_FRAMEDELETE);
 		} else {
 			removeSelectedFrame();
 		}
@@ -2789,7 +2792,7 @@ int TEditor::activateOpenTileDialog(){
 int TEditor::activateRemoveSpriteDialog(){
 
 	if(mCurMode == EMODE_SPRITE){		
-		mActiveDialog = &mRemoveSprite;		
+		activateDTDialog(EDIALOG_SPRITEDELETE);
 	}
 	return 0;
 }
@@ -2797,7 +2800,7 @@ int TEditor::activateRemoveSpriteDialog(){
 int TEditor::activateRemoveTileMapDialog(){
 	if(mCurMode == EMODE_MAP){
 		if(mTileMaps.size() > 1){
-			mActiveDialog = &mRemoveTileMap;
+			activateDTDialog(EDIALOG_TILEMAPDELETE);
 		}
 	}
 	return 0;
@@ -2819,7 +2822,7 @@ int TEditor::activateNewSpriteDialog(){
 
 int TEditor::removeColMapDialog(){
 	if(mCurMode == EMODE_MAP){
-		mActiveDialog = &mRemoveColMap;
+		activateDTDialog(EDIALOG_COLMAPREMOVE);
 	}
 	return 0;
 }
@@ -4883,7 +4886,7 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	
 	mProgramInfo->bUpdateWinPos = true;
 	
-	mRemoveUnused.bUpdateWinPos = true;
+	//mRemoveUnused.bUpdateWinPos = true;
 	
 	mPaletteUpdate.bUpdateWinPos = true;
 	
@@ -4896,11 +4899,13 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	mOpenSpriteDialog.bUpdateWinPos = true;
 	mNewSpriteDialog.bUpdateWinPos = true;
 	
+	/*
 	mRemoveTileMap.bUpdateWinPos = true;
 	mRemoveColMap.bUpdateWinPos = true;
 	mRemoveFrame.bUpdateWinPos = true;
 	mRemoveSprite.bUpdateWinPos = true;
 	mRemoveSelUnused.bUpdateWinPos = true;
+	*/
 	
 	mPaletteUpdate.bUpdateWinPos = true;
 		
