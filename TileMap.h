@@ -155,6 +155,7 @@ public:
 	int mPixelScale = 1;
 	int mMaxColumns = 4;
 	int mMinTileScale = 5;
+	int mChildTop = 0;
 	const static int MaxScale = 24;
 	const static int MinScale = 4;
 	const static int MaxGrid = 16;

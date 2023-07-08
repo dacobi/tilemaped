@@ -62,6 +62,7 @@ class TSprite{
 		int mCurColumns=1;
         int mMaxColumns = 4;
         int mMinFrameScale=5;
+        int mChildTop = 0;
         const static int MaxCol = 5;
         const static int MinCol = 2;
 		int mColSpace = 10;

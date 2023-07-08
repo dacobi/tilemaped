@@ -356,7 +356,7 @@ void TSprite::renderIm(int ypos, int mScroll){
     mFramesBackGround.h = mGlobalSettings.WindowHeight- mGlobalSettings.TopBarHeight;
 	
 	if(mCurColumns < mMaxColumns){
-		while( (int)( (float)( ( ( (mCurFrameScale*mTexParam.TexSizeY ) +mColSpace ) * mFrames.size() )  / mCurColumns ) ) > mFramesBackGround.h ){				
+		while( (int)( (float)( ( ( (mCurFrameScale*mTexParam.TexSizeY ) +mColSpace ) * mFrames.size() )  / mCurColumns ) ) > (mFramesBackGround.h - mChildTop)){				
 			updateWinPos = true;
 			mCurFrameScale--;
             if(mCurFrameScale == 0){
@@ -412,6 +412,9 @@ void TSprite::renderIm(int ypos, int mScroll){
 	}
 
 	ImGui::BeginChild("SFrames", ImVec2(0,0), false, ImGuiWindowFlags_NoNav);
+
+	ImVec2 cChildPos = ImGui::GetWindowPos();
+	mChildTop = cChildPos.y;
 
 	bool bIsDragged = false;
 	int mDragged = -1;

@@ -2625,7 +2625,7 @@ int TileSet::renderIm(int ypos, int mScroll){
 	mTileSetBackGround.h = mGlobalSettings.WindowHeight- mGlobalSettings.TopBarHeight;
 	
 	if(mCurColumns < mMaxColumns){
-		while( (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeY ) +mColSpace ) * TTiles.size() )  / mCurColumns ) ) > mTileSetBackGround.h ){	
+		while( (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeY ) +mColSpace ) * TTiles.size() )  / mCurColumns ) ) > (mTileSetBackGround.h - mChildTop)){	
 			mCurTileScale--;
 			updateWinPos = true;
 
@@ -2633,7 +2633,7 @@ int TileSet::renderIm(int ypos, int mScroll){
 				mCurTileScale = 1;
 			}
 
-			if(mCurTileScale < (mMinTileScale + 1)){
+			if(mCurTileScale < mMinTileScale){
 				if(mCurColumns < mMaxColumns){
 					mCurColumns++;					
 				} else {
@@ -2682,6 +2682,9 @@ int TileSet::renderIm(int ypos, int mScroll){
 	}
 
 	ImGui::BeginChild("TTiles", ImVec2(0,0), false, ImGuiWindowFlags_NoNav);
+
+	ImVec2 cChildPos = ImGui::GetWindowPos();
+	mChildTop = cChildPos.y;
 
 	bool bIsDragged = false;
 	int mDragged = -1;
