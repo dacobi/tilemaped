@@ -161,7 +161,7 @@ int TBDialog::render(){
 			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mFile + " Import")).c_str())){
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Tile")).c_str())){
-						mGlobalSettings.CurrentEditor->activateOpenTileDialog();		  			
+						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_TILEIMPORT);
 					}
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import TileSet")).c_str())){
 						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_TILESETIMPORT);		  			
@@ -3131,6 +3131,26 @@ DTDialog* DTDialog::createSpriteFramesImportDialog(){
 	newDialog->addText(mGlobalSettings.mImage + " Import Sprite Frame(s) from File?");
 
 	newDialog->addFile("Choose Frame(s) File", "Filename", ".png,.bin,.data,.raw", "SFrames", "", &mGlobalSettings.mNewFramesPath);
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Import", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
+DTDialog* DTDialog::createTileImportDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Import Tile");
+
+	newDialog->setTarget(ESTATE_TILEIMPORT);
+
+	newDialog->addText(mGlobalSettings.mImage + " Import Tile from PNG or RAW?");
+
+	newDialog->addFile("Choose Tile File", "Filename", ".png,.bin,.data,.raw", "TileImp", "", &mGlobalSettings.mNewTilePath);
 
 	newDialog->addSeperator();
 

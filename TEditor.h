@@ -183,7 +183,7 @@ class TEditor{
 		Dialog *mActiveDialog = NULL;
 		Dialog *mActiveMessage = NULL;
 		
-		ITDialog mOpenTileDialog;
+		//ITDialog mOpenTileDialog;
 
 		RTSFDialog mRotateFrame;
 		SSFDialog mScaleFrame;
@@ -253,7 +253,7 @@ class TEditor{
 		bool checkQuit();
 		void setSpriteBrushes();
 		
-		int activateOpenTileDialog();
+		//int activateOpenTileDialog();
 
 		int activateRotateFrameDialog();
 		int activateScaleFrameDialog();

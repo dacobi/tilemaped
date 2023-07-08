@@ -667,6 +667,7 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_FRAMEDELETE] = DTDialog::createFrameRemoveDialog();
 	mDTDialogs[EDIALOG_SPRITEDELETE] = DTDialog::createSpriteRemoveDialog();
 	mDTDialogs[EDIALOG_TILEDELETE] = DTDialog::createTileRemoveDialog();
+	mDTDialogs[EDIALOG_TILEIMPORT] = DTDialog::createTileImportDialog();
 
 	mProjectInfo = IDDialog::createProjectInfoDialog();
 	mProgramInfo = IDDialog::createMessageDialog();
@@ -700,7 +701,7 @@ void TEditor::initDialogs(){
 	mTopBar.mEditor = this;
 	mTopBar.init();
 	
-	mOpenTileDialog.init();
+	//mOpenTileDialog.init();
 
 	mRotateFrame.init();
 	mScaleFrame.init();
@@ -2781,6 +2782,7 @@ int TEditor::activateRotateFrameDialog(){
 	return 0;
 }
 
+/*
 int TEditor::activateOpenTileDialog(){
 	if(mCurMode == EMODE_MAP){
 		mActiveDialog = &mOpenTileDialog;
@@ -2788,6 +2790,7 @@ int TEditor::activateOpenTileDialog(){
 	}
 	return 0;
 }
+*/
 
 int TEditor::activateRemoveSpriteDialog(){
 
@@ -4890,7 +4893,7 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	
 	mPaletteUpdate.bUpdateWinPos = true;
 	
-	mOpenTileDialog.bUpdateWinPos = true;
+	//mOpenTileDialog.bUpdateWinPos = true;
 	
 	mNewTileMapDialog.bUpdateWinPos = true;
 
