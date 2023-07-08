@@ -869,6 +869,7 @@ int TBDialog::render(){
 	return 0;
 }
 
+/*
 void PUDialog::init(){
 	mDialogTextMain = mGlobalSettings.mInfo +" Apply Palette Changes? Undo Stack will be cleared";
 	mDialogTextTitle = "Apply Palette Changes";
@@ -928,7 +929,7 @@ int SDialog::render(){
 
 	return 0;
 }
-
+*/
 /*
 void SADialog::cancel(){
 	Dialog::cancel();

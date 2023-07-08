@@ -472,6 +472,7 @@ class DialogValueFileDefault : public DialogValueFile{
 		virtual void cancel(){mValue = *mDefaultPath; mTextInput.mDialogTextMain = *mDefaultPath; bIsValid = false;}
 };
 
+/*
 class SDialog: public Dialog{
 	public:
 		virtual void init();
@@ -486,6 +487,7 @@ class PUDialog: public SDialog{
 		virtual void init();
 		virtual void recieveInput(int mKey);
 };
+*/
 
 /*
 class SADialog: public SDialog{
