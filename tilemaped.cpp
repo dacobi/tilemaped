@@ -642,11 +642,6 @@ int TEditor::runOCD(int mode){
 
 	while( mGlobalSettings.bRunningOCD ){
 
-		if(mOpenCreate.bInputIsCancel){
-			mGlobalSettings.bRunningOCD = false;			
-			mGlobalSettings.mEditorState = ESTATE_NONE;
-		}
-
 		SDL_SetRenderDrawColor( mGlobalSettings.TRenderer, mGlobalSettings.DefaultBGColor.r,  mGlobalSettings.DefaultBGColor.g,  mGlobalSettings.DefaultBGColor.b, 0xff); 
 		SDL_RenderClear( mGlobalSettings.TRenderer );
 
@@ -707,6 +702,7 @@ int TEditor::runOCD(int mode){
 							mActiveDialog->recieveInput(SDLK_n);
 						} else {
 							mGlobalSettings.bRunningOCD = false;
+							mGlobalSettings.mEditorState = ESTATE_NONE;
 						}
 					}
 					if(e.key.keysym.sym == SDLK_TAB){

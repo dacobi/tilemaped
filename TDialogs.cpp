@@ -874,12 +874,10 @@ int OCDialog::render(){
 	ImGui::BeginMainMenuBar();
 		if (ImGui::BeginMenu("File"))
 		{
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Open")).c_str())){
-				mGlobalSettings.CurrentEditor->cancelActiveDialog();
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Open")).c_str())){				
 				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTOPEN);				
 			}
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Create")).c_str())){
-				mGlobalSettings.CurrentEditor->cancelActiveDialog();
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Create")).c_str())){				
 				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTCREATE, 0);				
 			}
 
@@ -892,6 +890,7 @@ int OCDialog::render(){
 
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mExit + " Quit")).c_str())){
 				mGlobalSettings.bRunningOCD = false;
+				mGlobalSettings.mEditorState = ESTATE_NONE;
 			}
 
 			ImGui::EndMenu();
