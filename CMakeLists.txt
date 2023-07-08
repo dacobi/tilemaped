@@ -24,7 +24,7 @@ target_include_directories(tilemaped SYSTEM PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_I
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	set(CMAKE_CXX_COMPILER "g++")
-	set(CMAKE_CXX_FLAGS "-std=c++17 -O2")
+	set(CMAKE_CXX_FLAGS "-std=c++20 -O2")
 	#-mwindows
 	target_link_directories(tilemaped PUBLIC C:/msys64/mingw64/lib)
 	add_definitions(-Dmain=SDL_main)
