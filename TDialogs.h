@@ -118,6 +118,9 @@ class DTDialog : public Dialog{
 		static DTDialog* createTileImportDialog();
 		static DTDialog* createFrameRotateDialog();
 		static DTDialog* createFrameScaleDialog();
+		static DTDialog* createTileMapCreateDialog();
+		static DTDialog* createSpriteCreateDialog();
+		static DTDialog* createSpriteImportDialog();
 
 };
 

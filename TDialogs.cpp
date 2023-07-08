@@ -257,7 +257,7 @@ int TBDialog::render(){
 						}
  
 						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Create Tilemap")).c_str())){				
-							mGlobalSettings.CurrentEditor->activateNewTileMapDialog();
+							mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_TILEMAPCREATE, mGlobalSettings.mGlobalTexParam.TexBPP < 8 ? 1 : -1, 0, mGlobalSettings.CurrentEditor->mTileSet.TTiles.size()-1);
 						}		
 
 						if(mGlobalSettings.CurrentEditor->mTileMaps.size() > 1){
@@ -3052,6 +3052,59 @@ DTDialog* DTDialog::createProjectCreateDialog(){
 	newDialog->addButton("Cancel", SDLK_n, true);
 
 	return newDialog;
+
+}
+
+DTDialog* DTDialog::createTileMapCreateDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->createValues(2);
+
+	newDialog->setLabel("Create TileMap");
+
+	newDialog->setTarget(ESTATE_TILEMAPCREATE);
+
+	newDialog->addText(mGlobalSettings.mFile + " Create New TileMap?");
+	newDialog->addText(mGlobalSettings.mInfo + " Undo Stack will be cleared");
+
+	newDialog->addSeperator();
+
+	newDialog->addText("TileMap Width & Height");
+
+	newDialog->addRadioGroup(32, &mGlobalSettings.mNewTileMapX);
+	newDialog->addRadioButton("W: 32", 32);
+	newDialog->addRadioButton("W: 64", 64, true);
+	newDialog->addRadioButton("W: 128", 128, true);
+	newDialog->addRadioButton("W: 256", 256, true);
+
+	newDialog->addRadioGroup(32, &mGlobalSettings.mNewTileMapY);
+	newDialog->addRadioButton("H: 32", 32);
+	newDialog->addRadioButton("H: 64", 64, true);
+	newDialog->addRadioButton("H: 128", 128, true);
+	newDialog->addRadioButton("H: 256", 256, true);
+
+	newDialog->addSeperator();
+
+	newDialog->addIntMinMax("Initial Tile Value", 0, &mGlobalSettings.mNewTileMapOffset,newDialog->getValue(0), newDialog->getValue(1));
+
+	newDialog->setRequiredCondition(1);
+	newDialog->addSeperator();
+	newDialog->addInt("Initial Palette Offset", 0, &mGlobalSettings.mNewTileMapPaletteOffset,0,15);
+
+	newDialog->clearRequiredCondition();
+
+	newDialog->addSeperator();
+	newDialog->addButton("Create", SDLK_y);	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
+DTDialog* DTDialog::createSpriteCreateDialog(){
+
+}
+
+DTDialog* DTDialog::createSpriteImportDialog(){
 
 }
 

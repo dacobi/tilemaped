@@ -255,8 +255,8 @@ class TEditor{
 		void setSpriteBrushes();
 		
 		int activateOpenSpriteDialog();
-				
-		int activateNewTileMapDialog();
+
+		//int activateNewTileMapDialog();
 		int activateNewSpriteDialog();
 		int activateRemoveSpriteDialog();
 		int activateRemoveTileMapDialog();

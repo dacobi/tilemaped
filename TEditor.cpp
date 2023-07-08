@@ -670,6 +670,7 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_TILEIMPORT] = DTDialog::createTileImportDialog();
 	mDTDialogs[EDIALOG_FRAMESCALE] = DTDialog::createFrameScaleDialog();
 	mDTDialogs[EDIALOG_FRAMEROTATE] = DTDialog::createFrameRotateDialog();
+	mDTDialogs[EDIALOG_TILEMAPCREATE] = DTDialog::createTileMapCreateDialog();
 
 	mProjectInfo = IDDialog::createProjectInfoDialog();
 	mProgramInfo = IDDialog::createMessageDialog();
@@ -2800,12 +2801,14 @@ int TEditor::activateRemoveTileMapDialog(){
 	return 0;
 }
 
+/*
 int TEditor::activateNewTileMapDialog(){
 	if(mCurMode == EMODE_MAP){
 		mActiveDialog = &mNewTileMapDialog;		
 	}
 	return 0;
 }
+*/
 
 int TEditor::activateNewSpriteDialog(){
 	//if(mCurMode == EMODE_MAP){
