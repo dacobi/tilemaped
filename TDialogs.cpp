@@ -1525,6 +1525,7 @@ void CSDialog::recieveInput(int mKey){
 	}			
 }
 
+/*
 int ITDialog::render(){	
 	
 	Dialog::render();
@@ -1605,6 +1606,7 @@ void ITDialog::recieveInput(int mKey){
 		mTextInput.autoComplete();		
 	}
 }
+*/
 
 /* Sprite*/
 

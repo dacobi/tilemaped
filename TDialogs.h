@@ -536,6 +536,7 @@ class SADialog: public SDialog{
 		TIDialog mTextInput;		
 };
 
+/*
 class ITDialog: public SADialog{
 	public:
 		virtual void init();
@@ -543,6 +544,7 @@ class ITDialog: public SADialog{
 		virtual int render();
 		virtual void recieveInput(int mKey);		
 };
+*/
 
 class RTSFDialog: public Dialog{
 	public:
