@@ -21,6 +21,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <algorithm>
+#include <functional>
 
 #include <libxml/tree.h>
 #include <libxml/parser.h>
