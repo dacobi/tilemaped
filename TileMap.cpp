@@ -2628,10 +2628,16 @@ int TileSet::renderIm(int ypos, int mScroll){
 		while( (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeY ) +mColSpace ) * TTiles.size() )  / mCurColumns ) ) > mTileSetBackGround.h ){	
 			mCurTileScale--;
 			updateWinPos = true;
+
+			if(mCurTileScale == 0){
+				mCurTileScale = 1;
+			}
+
 			if(mCurTileScale < (mMinTileScale + 1)){
 				if(mCurColumns < mMaxColumns){
 					mCurColumns++;					
 				} else {
+					mCurTileScale++;
 					break;
 				}				
 			}

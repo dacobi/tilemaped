@@ -665,7 +665,7 @@ int TBDialog::render(){
 					}
 					if(ImGui::SliderInt("Min Frame Scale", &mGlobalSettings.CurrentEditor->mSprite->mMinFrameScale, TSprite::MinFrame, TSprite::MaxFrame,"%d", ImGuiSliderFlags_NoInput)){
 						mGlobalSettings.CurrentEditor->mSprite->mCurColumns = 1;
-						mGlobalSettings.CurrentEditor->mSprite->mCurFrameScale = 20;
+						mGlobalSettings.CurrentEditor->mSprite->mCurFrameScale = 20;						
 					}
 											
 					ImGui::EndMenu();
