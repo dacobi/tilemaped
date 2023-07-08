@@ -1092,7 +1092,7 @@ int OCDialog::render(){
 	
 	return 0;
 }
-
+/*
 void CTMDialog::init(){
 	mDialogTextMain = mGlobalSettings.mFile + " Create New TileMap";	
 }
@@ -1104,7 +1104,7 @@ void CTMDialog::cancel(){
 		toffset = 1;
 		mPaletteOffset = 0;
 }
-
+*/
 void CSDialog::init(){
 	mDialogTextMain = mGlobalSettings.mFile + " Create New Sprite";	
 }
@@ -1116,6 +1116,7 @@ void CSDialog::cancel(){
 		spritebpp=8;				
 }
 
+/*
 int CTMDialog::render(){
 	
 	Dialog::render();
@@ -1182,6 +1183,7 @@ void CTMDialog::recieveInput(int mKey){
 		bInputIsCancel=true;
 	}			
 }
+*/
 
 int CSDialog::render(){
 	

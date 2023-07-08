@@ -706,7 +706,7 @@ void TEditor::initDialogs(){
 	
 	mOpenSpriteDialog.init();
 
-	mNewTileMapDialog.init();
+	//mNewTileMapDialog.init();
 	mNewSpriteDialog.init();
 	
 	mPaletteUpdate.init();
@@ -4885,7 +4885,7 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	
 	mPaletteUpdate.bUpdateWinPos = true;
 		
-	mNewTileMapDialog.bUpdateWinPos = true;
+	//mNewTileMapDialog.bUpdateWinPos = true;
 
 	mOpenSpriteDialog.bUpdateWinPos = true;
 	mNewSpriteDialog.bUpdateWinPos = true;

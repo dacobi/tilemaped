@@ -190,7 +190,7 @@ class TEditor{
 
 		ISDialog mOpenSpriteDialog;
 		
-		CTMDialog mNewTileMapDialog;
+		//CTMDialog mNewTileMapDialog;
 		CSDialog mNewSpriteDialog;
 		HDialog mHelpDialog;
 

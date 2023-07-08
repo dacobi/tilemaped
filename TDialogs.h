@@ -511,6 +511,7 @@ class ISDialog: public SADialog{
 		bool bCreateNewSprite = false;
 };
 
+/*
 class CTMDialog: public Dialog{
 	public:				
 		virtual void init();				
@@ -522,6 +523,7 @@ class CTMDialog: public Dialog{
 		int toffset=1;		
 		int mPaletteOffset = 0;
 };
+*/
 
 class CSDialog: public Dialog{
 	public:				
