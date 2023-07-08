@@ -500,8 +500,10 @@ void TEditor::stateSpriteImport(){
 	if(bSpriteImportSuccess){
 		if(mCurMode == EMODE_SPRITE){
 			switchSprite(mSprites.size()-1);
+			showMessage("Sprite Imported Successfully");
 		} else {
 			setMode(EMODE_SPRITE);
+			showMessage("Sprite Imported Successfully");
 		}
 	}
 }
