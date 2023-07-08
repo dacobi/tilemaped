@@ -703,24 +703,11 @@ void TEditor::initDialogs(){
 	mTopBar.mEditor = this;
 	mTopBar.init();
 	
-	//mOpenTileDialog.init();
-
-	//mRotateFrame.init();
-	//mScaleFrame.init();
 	mOpenSpriteDialog.init();
 
 	mNewTileMapDialog.init();
 	mNewSpriteDialog.init();
 	
-	/*
-	mRemoveColMap.init();
-	mRemoveTileMap.init();
-	mRemoveUnused.init();
-	mRemoveFrame.init();
-	mRemoveSprite.init();
-	mRemoveSelUnused.init();
-	*/
-
 	mPaletteUpdate.init();
 
 	mPaletteOffset.init();
@@ -4893,26 +4880,12 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	
 	mProgramInfo->bUpdateWinPos = true;
 	
-	//mRemoveUnused.bUpdateWinPos = true;
-	
 	mPaletteUpdate.bUpdateWinPos = true;
-	
-	//mOpenTileDialog.bUpdateWinPos = true;
-	
+		
 	mNewTileMapDialog.bUpdateWinPos = true;
 
-	//mRotateFrame.bUpdateWinPos = true;
-	//mScaleFrame.bUpdateWinPos = true;
 	mOpenSpriteDialog.bUpdateWinPos = true;
 	mNewSpriteDialog.bUpdateWinPos = true;
-	
-	/*
-	mRemoveTileMap.bUpdateWinPos = true;
-	mRemoveColMap.bUpdateWinPos = true;
-	mRemoveFrame.bUpdateWinPos = true;
-	mRemoveSprite.bUpdateWinPos = true;
-	mRemoveSelUnused.bUpdateWinPos = true;
-	*/
 	
 	mPaletteUpdate.bUpdateWinPos = true;
 		

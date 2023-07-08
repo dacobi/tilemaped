@@ -477,49 +477,6 @@ class SDialog: public Dialog{
 		virtual int render();
 };
 
-/*
-class RTDialog: public SDialog{
-	public:
-		virtual void init();
-		virtual void recieveInput(int mKey);
-};
-
-
-class RTSDialog: public RTDialog{
-	public:
-		virtual void init();
-		virtual int render();
-		virtual void recieveInput(int mKey);
-};
-
-class RSFDialog: public RTDialog{
-	public:
-		virtual void init();
-		virtual int render();
-		virtual void recieveInput(int mKey);
-};
-
-
-class RTMDialog: public RTDialog{
-	public:
-		virtual void init();
-		virtual void recieveInput(int mKey);
-};
-
-class RSDialog: public RTDialog{
-	public:
-		virtual void init();
-		virtual void recieveInput(int mKey);
-};
-
-
-class RCMDialog: public RTDialog{
-	public:
-		virtual void init();
-		virtual void recieveInput(int mKey);
-};
-*/
-
 class PUDialog: public SDialog{
 	public:
 		virtual void init();
@@ -537,36 +494,6 @@ class SADialog: public SDialog{
 		SDialog *mSubDialog;
 		TIDialog mTextInput;		
 };
-
-/*
-class ITDialog: public SADialog{
-	public:
-		virtual void init();
-		virtual void cancel();
-		virtual int render();
-		virtual void recieveInput(int mKey);		
-};
-*/
-
-/*
-class RTSFDialog: public Dialog{
-	public:
-		virtual void init();
-		virtual void cancel();
-		virtual int render();
-		virtual void recieveInput(int mKey);
-		float frotateangle = 0;	
-};
-
-class SSFDialog: public RTSFDialog{
-	public:
-		virtual void init();
-		virtual void cancel();
-		virtual int render();
-		virtual void recieveInput(int mKey);
-		float fscalefactor = 0;	
-};
-*/
 
 class ISDialog: public SADialog{
 	public:				

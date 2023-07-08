@@ -254,15 +254,8 @@ class TEditor{
 		bool checkQuit();
 		void setSpriteBrushes();
 		
-		//int activateOpenTileDialog();
-
-		//int activateRotateFrameDialog();
-		//int activateScaleFrameDialog();
-		
 		int activateOpenSpriteDialog();
-
-		//int activateOpenTileSetDialog();
-		
+				
 		int activateNewTileMapDialog();
 		int activateNewSpriteDialog();
 		int activateRemoveSpriteDialog();
