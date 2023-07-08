@@ -2753,8 +2753,6 @@ int TileSet::renderIm(int ypos, int mScroll){
 
 	mGlobalSettings.CurrentEditor->ImButtonsTileSet.updateButtonStates();
 
-	//ImGui::Text(" "); //Child Size, pad hack :)
-
 	ImGui::Spacing();
 
 	ImGui::EndChild();
