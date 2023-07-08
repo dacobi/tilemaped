@@ -525,6 +525,7 @@ class CTMDialog: public Dialog{
 };
 */
 
+/*
 class CSDialog: public Dialog{
 	public:				
 		virtual void init();				
@@ -535,6 +536,7 @@ class CSDialog: public Dialog{
 		int spritey=32;
 		int spritebpp=8;				
 };
+*/
 
 class OCDialog: public Dialog{
 	public:		

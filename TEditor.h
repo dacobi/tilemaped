@@ -191,7 +191,7 @@ class TEditor{
 		ISDialog mOpenSpriteDialog;
 		
 		//CTMDialog mNewTileMapDialog;
-		CSDialog mNewSpriteDialog;
+		//CSDialog mNewSpriteDialog;
 		HDialog mHelpDialog;
 
 		IDDialog *mProjectInfo;
