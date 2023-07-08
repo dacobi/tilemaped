@@ -472,50 +472,6 @@ class DialogValueFileDefault : public DialogValueFile{
 		virtual void cancel(){mValue = *mDefaultPath; mTextInput.mDialogTextMain = *mDefaultPath; bIsValid = false;}
 };
 
-/*
-class SDialog: public Dialog{
-	public:
-		virtual void init();
-		std::string mDialogButtonAccept;
-		std::string mDialogButtonCancel;
-		virtual void recieveInput(int mKey);				
-		virtual int render();
-};
-
-class PUDialog: public SDialog{
-	public:
-		virtual void init();
-		virtual void recieveInput(int mKey);
-};
-*/
-
-/*
-class SADialog: public SDialog{
-	public:
-		virtual void init();
-		virtual void cancel();		
-		virtual void recieveInput(int mKey);		
-		virtual void dropLastInputChar();
-		virtual int render();
-		bool bSubDialogActive = false;	
-		SDialog *mSubDialog;
-		TIDialog mTextInput;		
-};
-
-class ISDialog: public SADialog{
-	public:				
-		virtual void init();				
-		virtual void cancel();
-		virtual void recieveInput(int mKey);				
-		virtual int render();
-		int spritex=32;
-		int spritey=32;
-		int spritebpp=8;
-		int simporttype = 0;			
-		bool bCreateNewSprite = false;
-};
-*/
-
 class OCDialog: public Dialog{
 	public:		
 		virtual int render();

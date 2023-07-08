@@ -182,11 +182,7 @@ class TEditor{
 
 		Dialog *mActiveDialog = NULL;
 		Dialog *mActiveMessage = NULL;
-		
-		//ISDialog mOpenSpriteDialog;
-		//PUDialog mPaletteUpdate;
-		//int activatePaletteUpdate();
-			
+					
 		HDialog mHelpDialog;
 
 		IDDialog *mProjectInfo;
@@ -240,8 +236,7 @@ class TEditor{
 		int showMessage(std::string cMessage, bool isError=false);
 		bool checkQuit();
 		void setSpriteBrushes();
-				
-		int activateRemoveSpriteDialog();
+						
 		int activateRemoveTileMapDialog();
 		int activateColMapDialog(bool bCreateColMap=false);
 		int removeColMapDialog();

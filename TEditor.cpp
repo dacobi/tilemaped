@@ -2075,15 +2075,6 @@ int TEditor::activateRemoveFrame(){
 	return 0;
 }
 
-/*
-int TEditor::activatePaletteUpdate(){
-	if(mCurMode == EMODE_PALED){
-		mActiveDialog = &mPaletteUpdate;
-	}
-	return 0;
-}
-*/
-
 int TEditor::activatePaletteEdit(){
 	if(mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor){		
 		mPalette.mEditColor = mPalette.getIm4Color(mPalette.TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelected]);	
@@ -2756,14 +2747,6 @@ void TEditor::activateSaveDialog(){
 	} else {
 		stateProjectSave();
 	}
-}
-
-int TEditor::activateRemoveSpriteDialog(){
-
-	if(mCurMode == EMODE_SPRITE){		
-		activateDTDialog(EDIALOG_SPRITEDELETE);
-	}
-	return 0;
 }
 
 int TEditor::activateRemoveTileMapDialog(){
@@ -4591,8 +4574,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			
 			}
 			break;
-		case SDL_QUIT:
-			//activateQuitDialog();
+		case SDL_QUIT:			
 			activateDTDialog(EDIALOG_PROGRAMQUIT);			  		
   			break;
 			
@@ -4622,8 +4604,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					if(checkQuit()){
 						return 0;
 					}
-					
-					//activateQuitDialog();
+										
 					activateDTDialog(EDIALOG_PROGRAMQUIT);
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_SPACE){
@@ -4694,8 +4675,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 				if(cEvent->key.keysym.sym == SDLK_n){
 					handleSelection(SELMODE_NONE);
 				}
-	  			if(cEvent->key.keysym.sym == SDLK_F1){	  				
-		  			//activateHelpDialog();
+	  			if(cEvent->key.keysym.sym == SDLK_F1){	  						  			
 					mGlobalSettings.bShowHelpDialog = true;
 					activateDTDialog(EDIALOG_HELPMENU);
 	  			}
@@ -4750,15 +4730,14 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 						if(mGlobalSettings.CurrentEditor->mSprite->mFrames.size() > 1){
 							activateRemoveFrame();
 						} else {							
-							activateRemoveSpriteDialog();
+							activateDTDialog(EDIALOG_SPRITEDELETE);
 						}
 					}					
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F12){	  						  			
 					activateSaveDialog();
 	  			}
-	  			if(cEvent->key.keysym.sym == SDLK_F11){	  				
-		  			//activateSaveAsDialog();
+	  			if(cEvent->key.keysym.sym == SDLK_F11){	  						  			
 					activateDTDialog(EDIALOG_PROJECTSAVEAS);
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F7){	  				
@@ -4840,10 +4819,6 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	mProjectInfo->bUpdateWinPos = true;
 	
 	mProgramInfo->bUpdateWinPos = true;
-	
-	//mPaletteUpdate.bUpdateWinPos = true;		
-	//mOpenSpriteDialog.bUpdateWinPos = true;		
-	//mPaletteUpdate.bUpdateWinPos = true;
 		
 	mColMapEdit.bUpdateWinPos = true;
 
