@@ -671,6 +671,8 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_FRAMESCALE] = DTDialog::createFrameScaleDialog();
 	mDTDialogs[EDIALOG_FRAMEROTATE] = DTDialog::createFrameRotateDialog();
 	mDTDialogs[EDIALOG_TILEMAPCREATE] = DTDialog::createTileMapCreateDialog();
+	mDTDialogs[EDIALOG_SPRITECREATE] = DTDialog::createSpriteCreateDialog();
+	
 
 	mProjectInfo = IDDialog::createProjectInfoDialog();
 	mProgramInfo = IDDialog::createMessageDialog();
@@ -2752,12 +2754,13 @@ void TEditor::activateSaveDialog(){
 	}
 }
 
+/*
 int TEditor::activateOpenSpriteDialog(){
 		mActiveDialog = &mOpenSpriteDialog;
 		mActiveDialog->bDialogIsWatingForText = true;		
 		return 0;
 }
-
+*/
 /*
 int TEditor::activateScaleFrameDialog(){
 	if(mCurMode == EMODE_SPRITE){
@@ -2810,12 +2813,14 @@ int TEditor::activateNewTileMapDialog(){
 }
 */
 
+/*
 int TEditor::activateNewSpriteDialog(){
 	//if(mCurMode == EMODE_MAP){
 		mActiveDialog = &mNewSpriteDialog;		
 	//}
 	return 0;
 }
+*/
 
 int TEditor::removeColMapDialog(){
 	if(mCurMode == EMODE_MAP){

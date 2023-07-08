@@ -254,10 +254,10 @@ class TEditor{
 		bool checkQuit();
 		void setSpriteBrushes();
 		
-		int activateOpenSpriteDialog();
+		//int activateOpenSpriteDialog();
 
 		//int activateNewTileMapDialog();
-		int activateNewSpriteDialog();
+		//int activateNewSpriteDialog();
 		int activateRemoveSpriteDialog();
 		int activateRemoveTileMapDialog();
 		int activateColMapDialog(bool bCreateColMap=false);

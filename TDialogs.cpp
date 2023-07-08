@@ -174,7 +174,7 @@ int TBDialog::render(){
 
 					}
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import Sprite")).c_str())){
-						mGlobalSettings.CurrentEditor->activateOpenSpriteDialog();		  			
+						//mGlobalSettings.CurrentEditor->activateOpenSpriteDialog();		  			
 					}
 
 					ImGui::EndMenu();
@@ -184,7 +184,7 @@ int TBDialog::render(){
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mFile + " Import")).c_str())){
 
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import Sprite")).c_str())){
-						mGlobalSettings.CurrentEditor->activateOpenSpriteDialog();		  			
+						//mGlobalSettings.CurrentEditor->activateOpenSpriteDialog();		  			
 					}
 
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Sprite Frame")).c_str())){
@@ -336,7 +336,7 @@ int TBDialog::render(){
 						}
  
 						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Create Sprite")).c_str())){				
-							mGlobalSettings.CurrentEditor->activateNewSpriteDialog();
+							mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATE);
 						}		
 
 						
@@ -357,7 +357,7 @@ int TBDialog::render(){
 					if(mGlobalSettings.CurrentEditor->mSprites.size()){
 						mGlobalSettings.CurrentEditor->setMode(EMODE_SPRITE);
 					} else {
-						mGlobalSettings.CurrentEditor->activateNewSpriteDialog();
+						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATE);
 					}
 					
 					
@@ -3103,7 +3103,42 @@ DTDialog* DTDialog::createTileMapCreateDialog(){
 }
 
 DTDialog* DTDialog::createSpriteCreateDialog(){
+	DTDialog* newDialog = new DTDialog();
 
+	newDialog->setLabel("Create Sprite");
+
+	newDialog->setTarget(ESTATE_SPRITECREATE);
+
+	newDialog->addText(mGlobalSettings.mFile + " Create New Sprite?");
+	
+	newDialog->addSeperator();
+
+	newDialog->addText("Sprite Width & Height");
+
+	newDialog->addRadioGroup(32, &mGlobalSettings.mNewSpriteX);
+	newDialog->addRadioButton("W: 8", 8);
+	newDialog->addRadioButton("W: 16", 16, true);
+	newDialog->addRadioButton("W: 32", 32, true);
+	newDialog->addRadioButton("W: 64", 64, true);
+
+	newDialog->addRadioGroup(32, &mGlobalSettings.mNewSpriteY);
+	newDialog->addRadioButton("H: 8", 8);
+	newDialog->addRadioButton("H: 16", 16, true);
+	newDialog->addRadioButton("H: 32", 32, true);
+	newDialog->addRadioButton("H: 64", 64, true);
+
+	newDialog->addSeperator();
+	newDialog->addText("Sprite BPP");
+	newDialog->addRadioGroup(8, &mGlobalSettings.mNewSpriteBPP);
+	newDialog->addRadioButton("BPP: 8", 8);
+	newDialog->addRadioButton("BPP: 4", 4, true);
+	
+
+	newDialog->addSeperator();
+	newDialog->addButton("Create", SDLK_y);	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
 }
 
 DTDialog* DTDialog::createSpriteImportDialog(){
