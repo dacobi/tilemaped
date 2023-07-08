@@ -672,6 +672,7 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_FRAMEROTATE] = DTDialog::createFrameRotateDialog();
 	mDTDialogs[EDIALOG_TILEMAPCREATE] = DTDialog::createTileMapCreateDialog();
 	mDTDialogs[EDIALOG_SPRITECREATE] = DTDialog::createSpriteCreateDialog();
+	mDTDialogs[EDIALOG_SPRITEIMPORT] = DTDialog::createSpriteImportDialog();
 	
 
 	mProjectInfo = IDDialog::createProjectInfoDialog();

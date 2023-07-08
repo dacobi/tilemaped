@@ -174,7 +174,7 @@ int TBDialog::render(){
 
 					}
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import Sprite")).c_str())){
-						//mGlobalSettings.CurrentEditor->activateOpenSpriteDialog();		  			
+						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITEIMPORT);
 					}
 
 					ImGui::EndMenu();
@@ -184,7 +184,7 @@ int TBDialog::render(){
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mFile + " Import")).c_str())){
 
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import Sprite")).c_str())){
-						//mGlobalSettings.CurrentEditor->activateOpenSpriteDialog();		  			
+						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITEIMPORT);
 					}
 
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Sprite Frame")).c_str())){
@@ -2985,7 +2985,84 @@ DTDialog* DTDialog::createSpriteCreateDialog(){
 }
 
 DTDialog* DTDialog::createSpriteImportDialog(){
+	DTDialog* newDialog = new DTDialog();
 
+	newDialog->setLabel("Import Sprite");
+
+	newDialog->setTarget(ESTATE_SPRITEIMPORT);
+
+	newDialog->addText(mGlobalSettings.mFile + " Import Sprite from Project file, PNG or RAW?");
+
+	newDialog->addSeperator();
+
+	newDialog->addRadioGroupCondition(0, &mGlobalSettings.mNewSpriteType);
+	newDialog->addRadioButton("Project File", 0);
+	newDialog->addRadioButton("PNG", 1);
+	newDialog->addRadioButton("RAW", 2);
+
+	newDialog->setRequiredCondition(0);
+	newDialog->addSeperator();
+	newDialog->addFile("Choose Sprite Project File", "Project File", ".bin", "SprImpPrjFile", "", &mGlobalSettings.mNewSpritePath);
+
+	newDialog->setRequiredCondition(1);
+	newDialog->addSeperator();
+	newDialog->addText("Sprite Width & Height");
+
+	newDialog->addRadioGroup(32, &mGlobalSettings.mNewSpriteX);
+	newDialog->addRadioButton("W: 8", 8);
+	newDialog->addRadioButton("W: 16", 16, true);
+	newDialog->addRadioButton("W: 32", 32, true);
+	newDialog->addRadioButton("W: 64", 64, true);
+
+	newDialog->addRadioGroup(32, &mGlobalSettings.mNewSpriteY);
+	newDialog->addRadioButton("H: 8", 8);
+	newDialog->addRadioButton("H: 16", 16, true);
+	newDialog->addRadioButton("H: 32", 32, true);
+	newDialog->addRadioButton("H: 64", 64, true);
+
+	newDialog->addSeperator();
+	newDialog->addText("Sprite BPP");
+	newDialog->addRadioGroup(8, &mGlobalSettings.mNewSpriteBPP);
+	newDialog->addRadioButton("BPP: 8", 8);
+	newDialog->addRadioButton("BPP: 4", 4, true);
+
+	newDialog->addSeperator();
+	newDialog->addFile("Choose Sprite PNG File", "PNG File", ".png", "SprImpPNGFile", "", &mGlobalSettings.mNewSpritePath);
+
+	newDialog->setRequiredCondition(2);
+	newDialog->addSeperator();
+	newDialog->addText("Sprite Width & Height");
+
+	newDialog->addRadioGroup(32, &mGlobalSettings.mNewSpriteX);
+	newDialog->addRadioButton("W: 8", 8);
+	newDialog->addRadioButton("W: 16", 16, true);
+	newDialog->addRadioButton("W: 32", 32, true);
+	newDialog->addRadioButton("W: 64", 64, true);
+
+	newDialog->addRadioGroup(32, &mGlobalSettings.mNewSpriteY);
+	newDialog->addRadioButton("H: 8", 8);
+	newDialog->addRadioButton("H: 16", 16, true);
+	newDialog->addRadioButton("H: 32", 32, true);
+	newDialog->addRadioButton("H: 64", 64, true);
+
+	newDialog->addSeperator();
+	newDialog->addText("Sprite BPP");
+	newDialog->addRadioGroup(8, &mGlobalSettings.mNewSpriteBPP);
+	newDialog->addRadioButton("BPP: 8", 8);
+	newDialog->addRadioButton("BPP: 4", 4, true);
+
+	newDialog->addSeperator();
+	newDialog->addFile("Choose Sprite RAW File", "RAW File", ".bin,.raw,.data", "SprImpRAWFile", "", &mGlobalSettings.mNewSpritePath);
+
+	newDialog->clearRequiredCondition();
+	newDialog->addConditionRestore();
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Import", SDLK_y);	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
 }
 
 DTDialog* DTDialog::createTileMapImportDialog(){
