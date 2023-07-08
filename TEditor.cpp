@@ -2754,39 +2754,6 @@ void TEditor::activateSaveDialog(){
 	}
 }
 
-/*
-int TEditor::activateOpenSpriteDialog(){
-		mActiveDialog = &mOpenSpriteDialog;
-		mActiveDialog->bDialogIsWatingForText = true;		
-		return 0;
-}
-*/
-/*
-int TEditor::activateScaleFrameDialog(){
-	if(mCurMode == EMODE_SPRITE){
-		mActiveDialog = &mScaleFrame;		
-	}
-	return 0;
-}
-
-int TEditor::activateRotateFrameDialog(){
-	if(mCurMode == EMODE_SPRITE){
-		mActiveDialog = &mRotateFrame;		
-	}
-	return 0;
-}
-*/
-
-/*
-int TEditor::activateOpenTileDialog(){
-	if(mCurMode == EMODE_MAP){
-		mActiveDialog = &mOpenTileDialog;
-		mActiveDialog->bDialogIsWatingForText = true;		
-	}
-	return 0;
-}
-*/
-
 int TEditor::activateRemoveSpriteDialog(){
 
 	if(mCurMode == EMODE_SPRITE){		
@@ -2803,24 +2770,6 @@ int TEditor::activateRemoveTileMapDialog(){
 	}
 	return 0;
 }
-
-/*
-int TEditor::activateNewTileMapDialog(){
-	if(mCurMode == EMODE_MAP){
-		mActiveDialog = &mNewTileMapDialog;		
-	}
-	return 0;
-}
-*/
-
-/*
-int TEditor::activateNewSpriteDialog(){
-	//if(mCurMode == EMODE_MAP){
-		mActiveDialog = &mNewSpriteDialog;		
-	//}
-	return 0;
-}
-*/
 
 int TEditor::removeColMapDialog(){
 	if(mCurMode == EMODE_MAP){
@@ -4890,12 +4839,8 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	
 	mPaletteUpdate.bUpdateWinPos = true;
 		
-	//mNewTileMapDialog.bUpdateWinPos = true;
-
 	mOpenSpriteDialog.bUpdateWinPos = true;
-	
-	//mNewSpriteDialog.bUpdateWinPos = true;
-	
+		
 	mPaletteUpdate.bUpdateWinPos = true;
 		
 	mColMapEdit.bUpdateWinPos = true;

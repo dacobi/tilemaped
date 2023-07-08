@@ -511,32 +511,6 @@ class ISDialog: public SADialog{
 		bool bCreateNewSprite = false;
 };
 
-/*
-class CTMDialog: public Dialog{
-	public:				
-		virtual void init();				
-		virtual void cancel();
-		virtual void recieveInput(int mKey);				
-		virtual int render();
-		int tmapx=32;
-		int tmapy=32;
-		int toffset=1;		
-		int mPaletteOffset = 0;
-};
-*/
-
-/*
-class CSDialog: public Dialog{
-	public:				
-		virtual void init();				
-		virtual void cancel();
-		virtual void recieveInput(int mKey);				
-		virtual int render();
-		int spritex=32;
-		int spritey=32;
-		int spritebpp=8;				
-};
-*/
 
 class OCDialog: public Dialog{
 	public:		
