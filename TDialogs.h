@@ -121,6 +121,7 @@ class DTDialog : public Dialog{
 		static DTDialog* createTileMapCreateDialog();
 		static DTDialog* createSpriteCreateDialog();
 		static DTDialog* createSpriteImportDialog();
+		static DTDialog* createPaletteUpdateDialog();
 
 };
 
@@ -486,6 +487,7 @@ class PUDialog: public SDialog{
 		virtual void recieveInput(int mKey);
 };
 
+/*
 class SADialog: public SDialog{
 	public:
 		virtual void init();
@@ -510,7 +512,7 @@ class ISDialog: public SADialog{
 		int simporttype = 0;			
 		bool bCreateNewSprite = false;
 };
-
+*/
 
 class OCDialog: public Dialog{
 	public:		

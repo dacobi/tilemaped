@@ -929,6 +929,7 @@ int SDialog::render(){
 	return 0;
 }
 
+/*
 void SADialog::cancel(){
 	Dialog::cancel();
 	mSubDialog->cancel();
@@ -1054,6 +1055,8 @@ void SADialog::dropLastInputChar(){
 	mTextInput.dropLastInputChar();	
 }
 
+*/
+
 int OCDialog::render(){
 	
 	ImGui::BeginMainMenuBar();
@@ -1094,7 +1097,7 @@ int OCDialog::render(){
 }
 
 /* Sprite*/
-
+/*
 int ISDialog::render(){	
 	
 	Dialog::render();
@@ -1248,7 +1251,7 @@ void ISDialog::recieveInput(int mKey){
 	}
 }
 
-
+*/
 /* End*/
 
 void TIDialog::init(){
@@ -3129,6 +3132,25 @@ DTDialog* DTDialog::createProjectCloseDialog(){
 	newDialog->addSeperator();
 
 	newDialog->addButton("Close", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
+DTDialog* DTDialog::createPaletteUpdateDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Apply Palette Changes");
+
+	newDialog->setTarget(ESTATE_PALETTEUPDATE);
+
+	newDialog->addText(mGlobalSettings.mInfo + " Apply Palette Changes?");
+	newDialog->addText(mGlobalSettings.mInfo + " Undo Stack will be cleared");
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Apply", SDLK_y);
 	
 	newDialog->addButton("Cancel", SDLK_n, true);
 

@@ -675,6 +675,7 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_TILEMAPCREATE] = DTDialog::createTileMapCreateDialog();
 	mDTDialogs[EDIALOG_SPRITECREATE] = DTDialog::createSpriteCreateDialog();
 	mDTDialogs[EDIALOG_SPRITEIMPORT] = DTDialog::createSpriteImportDialog();
+	mDTDialogs[EDIALOG_PALETTEUPDATE] = DTDialog::createPaletteUpdateDialog();
 	
 
 	mProjectInfo = IDDialog::createProjectInfoDialog();
@@ -709,12 +710,11 @@ void TEditor::initDialogs(){
 	mTopBar.mEditor = this;
 	mTopBar.init();
 	
-	mOpenSpriteDialog.init();
+	//mOpenSpriteDialog.init();
 
 	//mNewTileMapDialog.init();
-	//mNewSpriteDialog.init();
-	
-	mPaletteUpdate.init();
+	//mNewSpriteDialog.init();	
+	//mPaletteUpdate.init();
 
 	mPaletteOffset.init();
 
@@ -2075,13 +2075,14 @@ int TEditor::activateRemoveFrame(){
 	return 0;
 }
 
+/*
 int TEditor::activatePaletteUpdate(){
 	if(mCurMode == EMODE_PALED){
 		mActiveDialog = &mPaletteUpdate;
 	}
 	return 0;
 }
-
+*/
 
 int TEditor::activatePaletteEdit(){
 	if(mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor){		
@@ -4840,11 +4841,9 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
 	
 	mProgramInfo->bUpdateWinPos = true;
 	
-	mPaletteUpdate.bUpdateWinPos = true;
-		
-	mOpenSpriteDialog.bUpdateWinPos = true;
-		
-	mPaletteUpdate.bUpdateWinPos = true;
+	//mPaletteUpdate.bUpdateWinPos = true;		
+	//mOpenSpriteDialog.bUpdateWinPos = true;		
+	//mPaletteUpdate.bUpdateWinPos = true;
 		
 	mColMapEdit.bUpdateWinPos = true;
 

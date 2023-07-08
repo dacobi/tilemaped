@@ -183,7 +183,9 @@ class TEditor{
 		Dialog *mActiveDialog = NULL;
 		Dialog *mActiveMessage = NULL;
 		
-		ISDialog mOpenSpriteDialog;
+		//ISDialog mOpenSpriteDialog;
+		//PUDialog mPaletteUpdate;
+		//int activatePaletteUpdate();
 			
 		HDialog mHelpDialog;
 
@@ -195,7 +197,8 @@ class TEditor{
 		std::map<int, DTDialog*> mDTDialogs;
 		int activateDTDialog(int cOpenDialog, int cCond = -1, int cVal0 = 0, int cVal1 = 0);
 		
-		PUDialog mPaletteUpdate;
+		
+
 		PODialog mPaletteOffset;
 
 		TCollisionMapEditor mColMapEdit;
@@ -249,7 +252,7 @@ class TEditor{
 
 		int activateProjectInfo();
 		int activatePaletteEdit();
-		int activatePaletteUpdate();
+		
 		int activateDropUnusedTiles();
 		int activateDropUnusedTile();
 		int activateRemoveFrame();
