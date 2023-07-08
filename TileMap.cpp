@@ -1968,6 +1968,13 @@ void TileSet::close(){
 	TTiles.clear();
 	mClipboardTiles.close();
 	mClipboardTileSet.close();
+
+	mCurTileScale = 20;
+	mCurColumns = 1;		
+	mSelEdWidth = 4;
+	mCurEdScale = 10;	
+	mMaxColumns = 4;
+	mMinTileScale = 5;
 }
 
 void TileSet::shutdown(){
@@ -2135,7 +2142,7 @@ int TileSet::deleteTile(int cDropTile){
 	Tile* dTile = *(TTiles.begin() +  cDropTile); 
 	TTiles.erase(TTiles.begin() +  cDropTile);
 	TileAreas.erase(TileAreas.begin() + cDropTile);
-	delete dTile;
+	delete dTile;	
 	resizeEdit();
 	return 0;
 }
@@ -2368,6 +2375,11 @@ std::vector<int> TileSet::getPadding(){
 
 
 void TileSet::resizeEdit(){
+
+	updateWinPos = true;
+	mCurColumns = 1;
+	mCurTileScale = 20;
+
 	int isOdd = TTiles.size() % mSelEdWidth;
 	int cRowNum = TTiles.size() / mSelEdWidth;
 
@@ -2615,11 +2627,10 @@ int TileSet::renderIm(int ypos, int mScroll){
 	if(mCurColumns < mMaxColumns){
 		while( (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeY ) +mColSpace ) * TTiles.size() )  / mCurColumns ) ) > mTileSetBackGround.h ){	
 			mCurTileScale--;
-		
+			updateWinPos = true;
 			if(mCurTileScale < (mMinTileScale + 1)){
 				if(mCurColumns < mMaxColumns){
-					mCurColumns++;
-					updateWinPos = true;
+					mCurColumns++;					
 				} else {
 					break;
 				}				

@@ -112,6 +112,9 @@ int TSprite::removeFrame(int cDropFrame){
     TSFrame* dFrame = *(mFrames.begin() +  cDropFrame); 
 	mFrames.erase(mFrames.begin() +  cDropFrame);
 	FrameAreas.erase(FrameAreas.begin() + cDropFrame);	
+	updateWinPos = true;
+	mCurColumns = 1;
+	mCurFrameScale = 20;
     return 0;
 }
 
@@ -119,6 +122,9 @@ void TSprite::appendFrame(TSFrame* addFrame){
     mFrames.push_back(addFrame);
 	SDL_Rect newRect;
 	FrameAreas.push_back(newRect);
+	updateWinPos = true;
+	mCurColumns = 1;
+	mCurFrameScale = 20;
 }
 
 
@@ -351,6 +357,7 @@ void TSprite::renderIm(int ypos, int mScroll){
 	
 	if(mCurColumns < mMaxColumns){
 		while( (int)( (float)( ( ( (mCurFrameScale*mTexParam.TexSizeY ) +mColSpace ) * mFrames.size() )  / mCurColumns ) ) > mFramesBackGround.h ){	
+			updateWinPos = true;
 			mCurFrameScale--;
             if(mCurFrameScale == 0){
                 mCurFrameScale = 1;
@@ -359,7 +366,7 @@ void TSprite::renderIm(int ypos, int mScroll){
 			if(mCurFrameScale < (mMinFrameScale)){
 				if(mCurColumns < mMaxColumns){
 					mCurColumns++;
-					updateWinPos = true;
+					
 				} else {
 					break;
 				}

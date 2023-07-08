@@ -58,7 +58,7 @@ class TSprite{
         int loadFromBuffer(std::vector<unsigned char> sBuf, TPalette* tpal);
         int importFromBuffer(std::vector<unsigned char> sBuf, TPalette* tpal, std::vector<TSFrame*> &cNewFrames);
         int importPNG(SDL_Surface *cTiles, TPalette* tpal, std::vector<TSFrame*> &cNewFrames);   
-        int mCurFrameScale=10;
+        int mCurFrameScale=20;
 		int mCurColumns=1;
         int mMaxColumns = 4;
         int mMinFrameScale=5;
