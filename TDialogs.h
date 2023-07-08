@@ -421,8 +421,8 @@ class DialogDisplaySpriteCount : public DialogDisplayVectorSize<TSprite>{
 
 class TIDialog: public Dialog{
 	public:
-		int mCursorTime = 0;
-		bool bShowCursor=false;
+		//int mCursorTime = 0;
+		//bool bShowCursor=false;
 		bool bIsInputActive=false;
 		bool bInputIsAccepted=true;
 		bool bIsNumeric=false;
@@ -443,7 +443,7 @@ class TIDialog: public Dialog{
 		int checkCurrentText();
 		void autoComplete();
 		virtual void dropLastInputChar();
-		virtual void init();		
+		//virtual void init();		
 		virtual int render();		
 		std::string mInputLabel = "Filename";
 		bool bIsActive=false;

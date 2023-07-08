@@ -907,6 +907,7 @@ int OCDialog::render(){
 	return 0;
 }
 
+/*
 void TIDialog::init(){
 	
 	mCursorTime += mGlobalSettings.getTicks();
@@ -925,6 +926,7 @@ void TIDialog::init(){
 	}
 	
 }
+*/
 
 void TIDialog::dropLastInputChar(){
 	if(mDialogTextMain.size()){

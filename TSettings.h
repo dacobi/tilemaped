@@ -137,6 +137,10 @@ public:
 	sKey* createSpriteScaleKey(int cSNum);
 	int removeSpriteScaleKey(int cSNum);
 
+	sKey* getFrameScaleKey(int cSNum);
+	sKey* createFrameScaleKey(int cSNum);
+	int removeFrameScaleKey(int cSNum);
+
 	sKey* getSpriteGridKey(int cSNum);
 	sKey* createSpriteGridKey(int cSNum);
 	int removeSpriteGridKey(int cSNum);
@@ -156,6 +160,7 @@ public:
 	sKey *TileSet_EditWidth;
 	sKey *TileSet_PixelScale;	
 	sKey *TileSet_MaxGridWidth;	
+	sKey *TileSet_MinTileScale;	
 	sKey *SelectionEdit_ShowPixelGrid;
 	sKey *SelectionEdit_ShowTileGrid;
 	sKey *SelectionEdit_PixelScale;	
