@@ -511,10 +511,10 @@ int TBDialog::render(){
 						mGlobalSettings.CurrentEditor->rotateFrameRight();
 					}
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Selected Frame")).c_str())){
-						mGlobalSettings.CurrentEditor->activateRotateFrameDialog();
+						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_FRAMEROTATE);
 					}
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Scale Selected Frame")).c_str())){
-						mGlobalSettings.CurrentEditor->activateScaleFrameDialog();
+						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_FRAMESCALE);
 					}
 				}				
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Selected Frame (DEL)")).c_str())){
@@ -2942,6 +2942,46 @@ DTDialog* DTDialog::createSpriteScaledCopyDialog(){
 	newDialog->addSeperator();
 
 	newDialog->addButton("Create", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
+DTDialog* DTDialog::createFrameRotateDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Rotate Selected Frame");
+
+	newDialog->setTarget(ESTATE_FRAMEROTATE);
+
+	newDialog->addText(mGlobalSettings.mImage + " Rotate Selected Frame by Angle in Degrees?");
+
+	newDialog->addFloat("Frame Angle", 0.0, &mGlobalSettings.mRotateFrameAngle, 0.0, 360.0);
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Rotate", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+}
+
+DTDialog* DTDialog::createFrameScaleDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Scale Selected Frame");
+
+	newDialog->setTarget(ESTATE_FRAMESCALE);
+
+	newDialog->addText(mGlobalSettings.mImage + " Scale Selected Frame by Float Factor?");
+
+	newDialog->addFloat("Frame Scale", 1.0, &mGlobalSettings.mScaleFrameFactor, 0.5, 2.0);
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Scale", SDLK_y);
 	
 	newDialog->addButton("Cancel", SDLK_n, true);
 
