@@ -55,13 +55,15 @@ class DTDialog : public Dialog{
 		int mDefaultValue = 0;
 		TIDialog* mActiveInput = NULL;
 		int mCondition = -1;
-		int mConditionBackup = -1;
+		int mConditionBackup = -1;		
 		int mRequiredCondition = -1;
 		int mTargetState = 0;
 		bool bHasColor = false;
 		virtual void setLabel(std::string cLabel){mDialogTextTitle = cLabel;};
 		virtual void setTarget(int cTarget){mTargetState = cTarget;};
-		virtual void setCondition(int cCond){mCondition = cCond; mConditionBackup = mCondition; if(mFiles.size()){bDialogIsWatingForText = true;}};
+		virtual void setCondition(int cCond){mCondition = cCond; mConditionBackup = mCondition; if(mFiles.size()){bDialogIsWatingForText = true;} else {bDialogIsWatingForText = false;}};
+		virtual void setCurrentCondition(int cCond){mCondition = cCond;};
+		virtual void restoreContition(){mCondition = mConditionBackup;};
 		virtual void setRequiredCondition(int cCond){mRequiredCondition = cCond;};
 		virtual void clearRequiredCondition(){mRequiredCondition = -1;};
 		virtual void createValues(int cValNums){mOptionValues.resize(cValNums);};
@@ -226,8 +228,8 @@ class DialogValueBoolCondition : public DialogValueType<bool>{
 	public:
 		int mTargetCondition = -1;
 		DialogValueBoolCondition(DTDialog *cParent, int cCond, std::string cLabel, bool cDefault, bool* cTarget, int cTargetCond, bool cSameline){mParent = cParent; mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; bSameLine = cSameline; mCondition = cCond; mTargetCondition = cTargetCond;}
-		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::Checkbox(mLabel.c_str(), &mValue); if(mValue){ mParent->mCondition = mTargetCondition; } else { mParent->mCondition = mParent->mConditionBackup; } }		
-		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(mTarget){*mTarget = mValue;} if(mValue){ mParent->mCondition = mTargetCondition; } else { mParent->mCondition = mParent->mConditionBackup; } }
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); if(ImGui::Checkbox(mLabel.c_str(), &mValue)){mParent->bUpdateWinPos = true;}; if(mValue){ mParent->setCurrentCondition(mTargetCondition); } else { mParent->restoreContition(); } }		
+		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(mTarget){*mTarget = mValue;} if(mValue){ mParent->setCurrentCondition(mTargetCondition); } else { mParent->restoreContition(); } }
 };
 
 class DialogValueInt : public DialogValueType<int>{	
@@ -304,7 +306,7 @@ class DialogValueRadioGroupCondition : public DialogValueRadioGroup{
 	public:		
 		DialogValueRadioGroupCondition(DTDialog *cParent, int cCond, int cDefault, int* cTarget){mParent = cParent; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mCondition = cCond;};
 		virtual void render();
-		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(mTarget){*mTarget = mValue;} mParent->mCondition = mValue;}
+		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(mTarget){*mTarget = mValue;} mParent->setCurrentCondition(mValue);}
 };
 
 class DialogValueIntTarget : public DialogValueType<int>{	
@@ -316,8 +318,8 @@ class DialogValueIntTarget : public DialogValueType<int>{
 class DialogConditionRestore : public DialogValueBase{
 	public:
 		DialogConditionRestore(DTDialog *cParent){mParent = cParent;};		
-		virtual void render(){mParent->mCondition = mParent->mConditionBackup;};
-		virtual void apply(){mParent->mCondition = mParent->mConditionBackup;}		
+		virtual void render(){mParent->restoreContition();};
+		virtual void apply(){mParent->restoreContition();};	
 };
 
 class DialogDisplayBase : public DialogElement{

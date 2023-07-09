@@ -1311,12 +1311,13 @@ void DialogValueRadioGroupCondition::render(){
 	if(mCondition > -1){if(mParent->mCondition != mCondition){return;}}
 
 
-	mParent->mCondition = mValue;
+	mParent->setCurrentCondition(mValue);
 	
 	for(auto *cBut : mButtons){		 
 		cBut->DialogElement::render(); 
 		if(ImGui::RadioButton(cBut->mLabel.c_str(), cBut->mTarget, cBut->mDefault)){
-			mParent->mCondition = *cBut->mTarget;
+			mParent->setCurrentCondition(*cBut->mTarget);
+			mParent->bUpdateWinPos = true;
 		}
 	}
 }
