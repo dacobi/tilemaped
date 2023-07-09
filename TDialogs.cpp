@@ -660,12 +660,10 @@ int TBDialog::render(){
 						mGlobalSettings.CurrentEditor->setSpriteBrushes();						
 					}
 					if(ImGui::SliderInt("Max Grid Width", &mGlobalSettings.CurrentEditor->mSprite->mMaxColumns, TSprite::MinCol, TSprite::MaxCol,"%d", ImGuiSliderFlags_NoInput)){
-						mGlobalSettings.CurrentEditor->mSprite->mCurColumns = 1;
-						mGlobalSettings.CurrentEditor->mSprite->mCurFrameScale = 20;
+						mGlobalSettings.CurrentEditor->mSprite->resizeScale();						
 					}
-					if(ImGui::SliderInt("Min Frame Scale", &mGlobalSettings.CurrentEditor->mSprite->mMinFrameScale, TSprite::MinFrame, TSprite::MaxFrame,"%d", ImGuiSliderFlags_NoInput)){
-						mGlobalSettings.CurrentEditor->mSprite->mCurColumns = 1;
-						mGlobalSettings.CurrentEditor->mSprite->mCurFrameScale = 20;						
+					if(ImGui::SliderInt("Min Frame Scale", &mGlobalSettings.CurrentEditor->mSprite->mMinFrameScale, TSprite::MinFrame, mGlobalSettings.CurrentEditor->mSprite->MaxFrame,"%d", ImGuiSliderFlags_NoInput)){
+						mGlobalSettings.CurrentEditor->mSprite->resizeScale();						
 					}
 											
 					ImGui::EndMenu();
@@ -729,12 +727,10 @@ int TBDialog::render(){
 
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " TileSet Edit").c_str()))){
 					if(ImGui::SliderInt("Max Grid Width", &mGlobalSettings.CurrentEditor->mTileSet.mMaxColumns, TileSet::MinCol, TileSet::MaxCol,"%d", ImGuiSliderFlags_NoInput)){
-						mGlobalSettings.CurrentEditor->mTileSet.mCurColumns = 1;
-						mGlobalSettings.CurrentEditor->mTileSet.mCurTileScale = 20;
+						mGlobalSettings.CurrentEditor->mTileSet.resizeScale();						
 					}
 					if(ImGui::SliderInt("Min Tile Scale", &mGlobalSettings.CurrentEditor->mTileSet.mMinTileScale, TileSet::MinTile, TileSet::MaxTile, "%d", ImGuiSliderFlags_NoInput)){
-						mGlobalSettings.CurrentEditor->mTileSet.mCurColumns = 1;
-						mGlobalSettings.CurrentEditor->mTileSet.mCurTileScale = 20;
+						mGlobalSettings.CurrentEditor->mTileSet.resizeScale();						
 					}
 					ImGui::EndMenu();
 				}

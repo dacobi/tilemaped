@@ -2123,6 +2123,11 @@ Tile* TileSet::createNewFromBuffer(std::vector<unsigned char> &newBuf, TPalette*
 	newTile->loadFromBuffer(newBuf, tpal);
 	TileAreas.push_back(newRect);
 	TTiles.push_back(newTile);
+
+	if(mGlobalSettings.mGlobalTexParam.TexSizeX == 8){
+		mMinTileScale = 9;
+	}
+
 	resizeEdit();
 	return newTile;
 
@@ -2374,11 +2379,15 @@ std::vector<int> TileSet::getPadding(){
 }
 
 
-void TileSet::resizeEdit(){
-
+void TileSet::resizeScale(){
 	updateWinPos = true;
 	mCurColumns = 1;
-	mCurTileScale = 20;
+	mCurTileScale = TileSet::MaxTile;
+}
+
+void TileSet::resizeEdit(){
+
+	resizeScale();
 
 	int isOdd = TTiles.size() % mSelEdWidth;
 	int cRowNum = TTiles.size() / mSelEdWidth;

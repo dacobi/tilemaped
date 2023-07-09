@@ -431,7 +431,7 @@ class TIDialog: public Dialog{
 		static int MyCallback(ImGuiInputTextCallbackData* data);
 		std::string mCompleteText;		
 		std::vector<int> mAllowedValues;
-		int mMaxLength=0;
+		//int mMaxLength=0;
 		int mMaxRange=0;
 		int mMinRange=0;
 		bool bMustExist=false;

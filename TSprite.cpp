@@ -77,7 +77,9 @@ TSFrame* TSprite::createFrame(TPalette* tpal){
 
     FrameAreas.resize(mFrames.size());
 
-    selectFrame(mFrames.size()-1);   	 		
+    selectFrame(mFrames.size()-1);
+
+	resizeScale();
     
     return newFrame;
 }
@@ -111,10 +113,8 @@ int TSprite::selectPrev(){
 int TSprite::removeFrame(int cDropFrame){
     TSFrame* dFrame = *(mFrames.begin() +  cDropFrame); 
 	mFrames.erase(mFrames.begin() +  cDropFrame);
-	FrameAreas.erase(FrameAreas.begin() + cDropFrame);	
-	updateWinPos = true;
-	mCurColumns = 1;
-	mCurFrameScale = 20;
+	FrameAreas.erase(FrameAreas.begin() + cDropFrame);		
+	resizeScale();
     return 0;
 }
 
@@ -122,9 +122,7 @@ void TSprite::appendFrame(TSFrame* addFrame){
     mFrames.push_back(addFrame);
 	SDL_Rect newRect;
 	FrameAreas.push_back(newRect);
-	updateWinPos = true;
-	mCurColumns = 1;
-	mCurFrameScale = 20;
+	resizeScale();
 }
 
 

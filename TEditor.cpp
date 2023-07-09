@@ -992,9 +992,7 @@ int TEditor::loadFromFolder(std::string path){
 
 			if(cSKey){				
 				mSprite->mMinFrameScale = cSKey->getInteger();
-				mSprite->mCurColumns = 1;
-				mSprite->mCurFrameScale = 20;
-
+				mSprite->resizeScale();				
 			}
 
 			if(mGlobalSettings.mProjectSettings.Clipboard_SaveToProject->bvalue){

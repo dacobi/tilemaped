@@ -21,20 +21,41 @@ class TSprite{
             
             if((cSizeX > 8) || (cSizeY > 8)){
                 mTexParam.TexEditScale--;
-                mCurFrameScale-=1;
+                //mCurFrameScale-=1;
             }
             if((cSizeX > 16) || (cSizeY > 16)){
                 mTexParam.TexEditScale--;
-                mCurFrameScale-=4;
+                //mCurFrameScale-=4;
             }
             if((cSizeX > 32) || (cSizeY > 32)){
                 mTexParam.TexEditScale--;
-                mCurFrameScale-=3;
+                //mCurFrameScale-=3;
             }
 
             if(mTexParam.TexEditScale < 1){
                 mTexParam.TexEditScale = 1;
                 mTexParam.TexPixelSize-=4;
+            }
+
+            switch (cSizeX)
+            {
+            case 64:                
+                MaxFrame = 6;
+                mMinFrameScale = 3;
+                break;
+            case 32:
+                MaxFrame = 10;
+                break;
+            case 16:                
+                mMinFrameScale = 7;
+                break;
+            case 8:
+                mMinFrameScale = 12;
+                MaxFrame = 20;
+                break;
+            
+            default:
+                break;
             }
             
             mClipboard.init("Sprite","Pixel", TBRUSH_PIXEL, &bShowClipboard, mTexParam.TexPixelSize, mTexParam.TexPixelSize, &mTexParam.TexEditScale, mTexParam.TexEditScale, &mCurrentBrushPixel, &mTexParam);
@@ -58,19 +79,20 @@ class TSprite{
         int loadFromBuffer(std::vector<unsigned char> sBuf, TPalette* tpal);
         int importFromBuffer(std::vector<unsigned char> sBuf, TPalette* tpal, std::vector<TSFrame*> &cNewFrames);
         int importPNG(SDL_Surface *cTiles, TPalette* tpal, std::vector<TSFrame*> &cNewFrames);   
-        int mCurFrameScale=20;
-		int mCurColumns=1;
-        int mMaxColumns = 4;
-        int mMinFrameScale=5;
+        int mCurFrameScale = 10;         
+		int mCurColumns = 1;
+        int mMaxColumns = 2;
+        int mMinFrameScale = 5;        
         int mChildTop = 0;
+        int MaxFrame = 15;
+        void resizeScale(){updateWinPos = true; mCurColumns = 1; mCurFrameScale = MaxFrame;};
         const static int MaxCol = 5;
         const static int MinCol = 2;
 		int mColSpace = 10;
         int SpriteWidth=200;		
         const static int MaxScale = 32;
-        const static int MinScale = 4;
-        const static int MaxFrame = 10;
-        const static int MinFrame = 5;
+        const static int MinScale = 4;        
+        const static int MinFrame = 2;
         int mSpriteScrollX = 0;
         int mSpriteScrollY = 0;
         SDL_Rect mFramesBackGround;
