@@ -1328,6 +1328,7 @@ void DialogValueFile::render(){
 	if(mCondition > -1){
 		if(mParent->mCondition != mCondition){
 			bIsValid = true;
+			mTextInput.bIsActive = false;
 			return;
 		}
 	}
@@ -1440,14 +1441,18 @@ void DTDialog::recieveInput(int mKey){
 
 	if(mKey == SDLK_TAB){
 		if(mActiveInput){
-			mActiveInput->autoComplete();
+			if(mActiveInput->bIsActive){
+				mActiveInput->autoComplete();
+			}
 		}		 
 	}
 }
 
 void DTDialog::dropLastInputChar(){	
 	if(mActiveInput){
-		mActiveInput->dropLastInputChar();
+		if(mActiveInput->bIsActive){
+			mActiveInput->dropLastInputChar();
+		}
 	}	
 }
 
