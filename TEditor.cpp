@@ -652,6 +652,7 @@ void TEditor::createDialogs(){
 	
 	initStates();
 
+	mPaletteOffset.init();
 	mHelpDialog.init();
 	
 	mDTDialogs[EDIALOG_ERROR] = NULL;
@@ -719,18 +720,11 @@ void TEditor::initDialogs(){
 	mColorSelected = 0;
 
 	mTopBar.mEditor = this;
-	mTopBar.init();
-	
-	//mOpenSpriteDialog.init();
-
-	//mNewTileMapDialog.init();
-	//mNewSpriteDialog.init();	
-	//mPaletteUpdate.init();
-
-	mPaletteOffset.init();
-
+		
 	if(mGlobalSettings.mGlobalTexParam.TexBPP < 0x8){
 		mGlobalSettings.bShowPaletteOffset = true;
+	} else {
+		mGlobalSettings.bShowPaletteOffset = false;
 	}
 
 	//mBrushesTile.MaxScale = 32;
@@ -2089,15 +2083,6 @@ int TEditor::activateDropUnusedTile(){
 	return 0;
 }
 
-/*
-int TEditor::activateDropUnusedTiles(){
-	if(mCurMode == EMODE_MAP){
-		activateDTDialog(EDIALOG_TILEDELETEALL);
-	}
-	return 0;
-}
-*/
-
 int TEditor::activateRemoveFrame(){
 	if(mCurMode == EMODE_SPRITE){
 		if(mGlobalSettings.bSpriteWarnBeforeDelete){
@@ -2768,15 +2753,6 @@ bool TEditor::checkQuit(){
 	return false;
 }
 
-/*
-int TEditor::activateHelpDialog(){
-	mGlobalSettings.bShowHelpDialog = true;
-	mActiveDialog = &mHelpDialog;
-	
-	return 0;
-}
-*/
-
 void TEditor::activateSaveDialog(){
 	if(fs::exists(fs::status(mGlobalSettings.ProjectPath))){
 		activateDTDialog(EDIALOG_PROJECTSAVE);
@@ -2784,27 +2760,6 @@ void TEditor::activateSaveDialog(){
 		stateProjectSave();
 	}
 }
-
-
-/*
-int TEditor::activateRemoveTileMapDialog(){
-	if(mCurMode == EMODE_MAP){
-		if(mTileMaps.size() > 1){
-			activateDTDialog(EDIALOG_TILEMAPDELETE);
-		}
-	}
-	return 0;
-}
-*/
-
-/*
-int TEditor::removeColMapDialog(){
-	if(mCurMode == EMODE_MAP){
-		activateDTDialog(EDIALOG_COLMAPREMOVE);
-	}
-	return 0;
-}
-*/
 
 int TEditor::activateColMapDialog(bool bCreateColMap){
 	if(bCreateColMap){		

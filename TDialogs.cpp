@@ -81,6 +81,7 @@ int Dialog::render(int xpos, int ypos){
 
 
 void TBDialog::init(){
+	/*
 	mDialogWidth = mGlobalSettings.WindowWidth;
 	mDialogHeight =  mGlobalSettings.TopBarHeight;
 	mDialogTextActions = mGlobalSettings.mFloppy +" Save/Save As: F12/F11    " + mGlobalSettings.mBook + " Help: F1";	
@@ -108,6 +109,7 @@ void TBDialog::init(){
 	};
 
 	mDialogTextProject = mGlobalSettings.mFile + " Project: " + mGlobalSettings.ProjectPath + "  " + mGlobalSettings.mInfo + " Info: F2";
+	*/
 	
 }
 
@@ -145,56 +147,56 @@ int TBDialog::render(){
 			bIsMenuOpen = true;
 
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Save (F12)")).c_str())){
-				mGlobalSettings.CurrentEditor->activateSaveDialog();
+				mEditor->activateSaveDialog();
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Save As (F11)")).c_str())){				
-				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTSAVEAS);
+				mEditor->activateDTDialog(EDIALOG_PROJECTSAVEAS);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Open")).c_str())){
-				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTCLOSE, ESTATE_PROJECTOPEN);
+				mEditor->activateDTDialog(EDIALOG_PROJECTCLOSE, ESTATE_PROJECTOPEN);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Create")).c_str())){
-				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROJECTCLOSE, ESTATE_PROJECTCREATE);				
+				mEditor->activateDTDialog(EDIALOG_PROJECTCLOSE, ESTATE_PROJECTCREATE);				
 			}
 
 
-			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
+			if(mEditor->mCurMode == EMODE_MAP){
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mFile + " Import")).c_str())){
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Tile")).c_str())){
-						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_TILEIMPORT);
+						mEditor->activateDTDialog(EDIALOG_TILEIMPORT);
 					}
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import TileSet")).c_str())){
-						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_TILESETIMPORT);		  			
+						mEditor->activateDTDialog(EDIALOG_TILESETIMPORT);		  			
 					}
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import TileMap")).c_str())){
-						//mGlobalSettings.CurrentEditor->activateOpenTileMapDialog();	  			
+						//mEditor->activateOpenTileMapDialog();	  			
 						int cTileMapCond = -1;
 						if(mGlobalSettings.mGlobalTexParam.TexBPP < 0x8){cTileMapCond = 8;}
-						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_TILEMAPIMPORT, cTileMapCond, 0, mGlobalSettings.CurrentEditor->mTileSet.TTiles.size()-1);
+						mEditor->activateDTDialog(EDIALOG_TILEMAPIMPORT, cTileMapCond, 0, mEditor->mTileSet.TTiles.size()-1);
 
 					}
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import Sprite")).c_str())){
-						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITEIMPORT);
+						mEditor->activateDTDialog(EDIALOG_SPRITEIMPORT);
 					}
 
 					ImGui::EndMenu();
 				}
 			}
-			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE){
+			if(mEditor->mCurMode == EMODE_SPRITE){
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mFile + " Import")).c_str())){
 
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import Sprite")).c_str())){
-						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITEIMPORT);
+						mEditor->activateDTDialog(EDIALOG_SPRITEIMPORT);
 					}
 
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Sprite Frame")).c_str())){
-						//mGlobalSettings.CurrentEditor->activateOpenFrameDialog();		  			
-						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITEFRAMEIMPORT);
+						//mEditor->activateOpenFrameDialog();		  			
+						mEditor->activateDTDialog(EDIALOG_SPRITEFRAMEIMPORT);
 					}
 
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Sprite Frame(s)")).c_str())){
-						//mGlobalSettings.CurrentEditor->activateOpenFramesDialog();		  			
-						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITEFRAMESIMPORT);
+						//mEditor->activateOpenFramesDialog();		  			
+						mEditor->activateDTDialog(EDIALOG_SPRITEFRAMESIMPORT);
 					}
 
 					ImGui::EndMenu();
@@ -235,7 +237,7 @@ int TBDialog::render(){
 			ImGui::Separator();
 
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mExit + " Quit")).c_str())){
-				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PROGRAMQUIT);
+				mEditor->activateDTDialog(EDIALOG_PROGRAMQUIT);
 			}
 
 			ImGui::EndMenu();
@@ -245,24 +247,24 @@ int TBDialog::render(){
 		{
 			bIsMenuOpen = true;
 
-			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
+			if(mEditor->mCurMode == EMODE_MAP){
 				
 					if(ImGui::BeginMenu((std::string(mGlobalSettings.mWindow + " Tilemaps")).c_str())){
 						int nMap=0;
-						for(auto *cMap : mGlobalSettings.CurrentEditor->mTileMaps){
+						for(auto *cMap : mEditor->mTileMaps){
 							if(ImGui::MenuItem(cMap->getMapSize().c_str())){				
-								mGlobalSettings.CurrentEditor->switchTileMap(nMap);
+								mEditor->switchTileMap(nMap);
 							}
 							nMap++;
 						}
  
 						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Create Tilemap")).c_str())){				
-							mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_TILEMAPCREATE, mGlobalSettings.mGlobalTexParam.TexBPP < 8 ? 1 : -1, 0, mGlobalSettings.CurrentEditor->mTileSet.TTiles.size()-1);
+							mEditor->activateDTDialog(EDIALOG_TILEMAPCREATE, mGlobalSettings.mGlobalTexParam.TexBPP < 8 ? 1 : -1, 0, mEditor->mTileSet.TTiles.size()-1);
 						}		
 
-						if(mGlobalSettings.CurrentEditor->mTileMaps.size() > 1){
+						if(mEditor->mTileMaps.size() > 1){
 							if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Remove Tilemap")).c_str())){				
-								mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_TILEMAPDELETE);
+								mEditor->activateDTDialog(EDIALOG_TILEMAPDELETE);
 							}	
 						}
 						
@@ -270,25 +272,25 @@ int TBDialog::render(){
 					}				
 			} else {
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Tilemap")).c_str())){				
-					mGlobalSettings.CurrentEditor->setMode(EMODE_MAP);
+					mEditor->setMode(EMODE_MAP);
 				}
 			}
 
 			
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Tile")).c_str())){				
-				mGlobalSettings.CurrentEditor->setMode(EMODE_TILE);
+				mEditor->setMode(EMODE_TILE);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Palette")).c_str())){				
-				mGlobalSettings.CurrentEditor->setMode(EMODE_PALED);
+				mEditor->setMode(EMODE_PALED);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " TileSet")).c_str())){				
-				mGlobalSettings.CurrentEditor->setMode(EMODE_TILESET);
+				mEditor->setMode(EMODE_TILESET);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Selection")).c_str())){				
-				mGlobalSettings.CurrentEditor->setMode(EMODE_SELEDIT);
+				mEditor->setMode(EMODE_SELEDIT);
 			}
 
-			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE){
+			if(mEditor->mCurMode == EMODE_SPRITE){
 				
 					if(ImGui::BeginMenu((std::string(mGlobalSettings.mWindow + " Sprites")).c_str())){
 						int nSprite=0;
@@ -298,10 +300,10 @@ int TBDialog::render(){
 						std::string cSPriteStart;
 						bool bCFrame;
 						bool bCSprite;												
-						for(auto *cSprite : mGlobalSettings.CurrentEditor->mSprites){							
+						for(auto *cSprite : mEditor->mSprites){							
 							fconv << nSprite << std::endl;									
 							fconv >> snSprite;
-							bCSprite = (cSprite == mGlobalSettings.CurrentEditor->mSprite);
+							bCSprite = (cSprite == mEditor->mSprite);
 
 							if(bCSprite){
 								cSPriteStart = mGlobalSettings.mBall + " Sprite ";
@@ -311,7 +313,7 @@ int TBDialog::render(){
 
 							if(ImGui::BeginMenu(std::string(cSPriteStart + snSprite + ": "+ cSprite->getSpriteSize()).c_str())){
 								if(ImGui::IsItemClicked()){
-									mGlobalSettings.CurrentEditor->switchSprite(nSprite);								
+									mEditor->switchSprite(nSprite);								
 								}
 								std::string cPreFrame;
 								
@@ -327,7 +329,7 @@ int TBDialog::render(){
 									}		
 
 									if(ImGui::MenuItem((std::string(cPreFrame + cSFrame).c_str()))){																					
-										mGlobalSettings.CurrentEditor->switchSprite(nSprite, nf);								
+										mEditor->switchSprite(nSprite, nf);								
 									}								
 								}								
 								ImGui::EndMenu();
@@ -336,12 +338,12 @@ int TBDialog::render(){
 						}
  
 						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Create Sprite")).c_str())){				
-							mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATE);
+							mEditor->activateDTDialog(EDIALOG_SPRITECREATE);
 						}		
 
 						
 						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Remove Sprite")).c_str())){				
-							mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITEDELETE);
+							mEditor->activateDTDialog(EDIALOG_SPRITEDELETE);
 						}	
 
 						
@@ -349,15 +351,15 @@ int TBDialog::render(){
 						ImGui::EndMenu();
 					}
 
-					if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Sprite Frames")).c_str(), NULL, &mGlobalSettings.CurrentEditor->mSprite->bShowSpriteFrames)){
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Sprite Frames")).c_str(), NULL, &mEditor->mSprite->bShowSpriteFrames)){
 						
 					}				
 			} else {
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " Sprite")).c_str())){				
-					if(mGlobalSettings.CurrentEditor->mSprites.size()){
-						mGlobalSettings.CurrentEditor->setMode(EMODE_SPRITE);
+					if(mEditor->mSprites.size()){
+						mEditor->setMode(EMODE_SPRITE);
 					} else {
-						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATE);
+						mEditor->activateDTDialog(EDIALOG_SPRITECREATE);
 					}
 					
 					
@@ -366,32 +368,32 @@ int TBDialog::render(){
 
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Help Dialog (F1)")).c_str())){				
 				mGlobalSettings.bShowHelpDialog = true;
-				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_HELPMENU);
+				mEditor->activateDTDialog(EDIALOG_HELPMENU);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Project Info (F2)")).c_str() ,NULL,  &mGlobalSettings.bShowProjectInfo)){
 				
 			}
 			
 			
-			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
+			if(mEditor->mCurMode == EMODE_MAP){
 				if(mGlobalSettings.mGlobalTexParam.TexBPP < 0x8){
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Palette Offset")).c_str(), NULL, &mGlobalSettings.bShowPaletteOffset) ){ 
 					}
 				}
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Clipboard (F7)").c_str(), NULL , &mGlobalSettings.CurrentEditor->bShowClipboardMap)){		
-					mGlobalSettings.CurrentEditor->activateClipboard(false);
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Clipboard (F7)").c_str(), NULL , &mEditor->bShowClipboardMap)){		
+					mEditor->activateClipboard(false);
 				}
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mGlobalSettings.CurrentEditor->bShowBrushesTile)){										
-					mGlobalSettings.CurrentEditor->activateBrushes(false);
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mEditor->bShowBrushesTile)){										
+					mEditor->activateBrushes(false);
 				}
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush (F9)").c_str())){     
-					mGlobalSettings.CurrentEditor->activateBrush();
+					mEditor->activateBrush();
                 }
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Drop Brush (F10) (ESC)").c_str())){     
-					mGlobalSettings.CurrentEditor->dropBrush();
+					mEditor->dropBrush();
                 }
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos (B)").c_str())){     
-					mGlobalSettings.CurrentEditor->nextBrushPos();
+					mEditor->nextBrushPos();
                 }
 				if(ImGui::MenuItem("Selected Tile Type (S)", NULL , &mGlobalSettings.bShowTypeSelection)){										
 				}
@@ -400,42 +402,42 @@ int TBDialog::render(){
 
 				
 			}
-			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE){
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Clipboard (F7)").c_str(), NULL , &mGlobalSettings.CurrentEditor->mTileSet.bShowClipboardTiles)){		
-					mGlobalSettings.CurrentEditor->activateClipboard(false);
+			if(mEditor->mCurMode == EMODE_TILE){
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Clipboard (F7)").c_str(), NULL , &mEditor->mTileSet.bShowClipboardTiles)){		
+					mEditor->activateClipboard(false);
 				}
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixel)){										
-					mGlobalSettings.CurrentEditor->activateBrushes(false);
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mEditor->bShowBrushesPixel)){										
+					mEditor->activateBrushes(false);
 				}
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush (F9)").c_str())){     
-					mGlobalSettings.CurrentEditor->activateBrush();
+					mEditor->activateBrush();
                 }
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Drop Brush (F10) (ESC)").c_str())){     
-					mGlobalSettings.CurrentEditor->dropBrush();
+					mEditor->dropBrush();
                 }
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos (B)").c_str())){     
-					mGlobalSettings.CurrentEditor->nextBrushPos();
+					mEditor->nextBrushPos();
                 }
 				if(ImGui::MenuItem("Selected Color (S)", NULL , &mGlobalSettings.bShowPixelType)){										
 				}
 				if(ImGui::MenuItem("Pixel Grid (P)", NULL , &mGlobalSettings.bShowPixelGrid)){										
 				}
 			}
-			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE){
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Clipboard (F7)").c_str(), NULL , &mGlobalSettings.CurrentEditor->mSprite->bShowClipboard)){
-					mGlobalSettings.CurrentEditor->activateClipboard(false);									
+			if(mEditor->mCurMode == EMODE_SPRITE){
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Clipboard (F7)").c_str(), NULL , &mEditor->mSprite->bShowClipboard)){
+					mEditor->activateClipboard(false);									
 				}
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mGlobalSettings.CurrentEditor->mSprite->bShowBrushesPixel)){										
-					mGlobalSettings.CurrentEditor->activateBrushes(false);
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mEditor->mSprite->bShowBrushesPixel)){										
+					mEditor->activateBrushes(false);
 				}
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush (F9)").c_str())){     
-					mGlobalSettings.CurrentEditor->activateBrush();
+					mEditor->activateBrush();
                 }
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Drop Brush (F10) (ESC)").c_str())){     
-					mGlobalSettings.CurrentEditor->dropBrush();
+					mEditor->dropBrush();
                 }
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos (B)").c_str())){     
-					mGlobalSettings.CurrentEditor->nextBrushPos();
+					mEditor->nextBrushPos();
                 }				
 				if(ImGui::MenuItem("Selected Color (S)", NULL , &mGlobalSettings.bShowPixelTypeSprite)){										
 				}
@@ -443,21 +445,21 @@ int TBDialog::render(){
 				}
 			}
 
-			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET){
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Clipboard (F7)").c_str(), NULL , &mGlobalSettings.CurrentEditor->mTileSet.bShowClipboardTileSet)){		
-					mGlobalSettings.CurrentEditor->activateClipboard(false);
+			if(mEditor->mCurMode == EMODE_TILESET){
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Clipboard (F7)").c_str(), NULL , &mEditor->mTileSet.bShowClipboardTileSet)){		
+					mEditor->activateClipboard(false);
 				}
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixelTileSet)){                                                                         
-					mGlobalSettings.CurrentEditor->activateBrushes(false);
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mEditor->bShowBrushesPixelTileSet)){                                                                         
+					mEditor->activateBrushes(false);
                 }
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush (F9)").c_str())){     
-					mGlobalSettings.CurrentEditor->activateBrush();
+					mEditor->activateBrush();
                 }
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Drop Brush (F10) (ESC)").c_str())){     
-					mGlobalSettings.CurrentEditor->dropBrush();
+					mEditor->dropBrush();
                 }
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos (B)").c_str())){     
-					mGlobalSettings.CurrentEditor->nextBrushPos();
+					mEditor->nextBrushPos();
                 }			
 				if(ImGui::MenuItem("Tile Grid (T)", NULL , &mGlobalSettings.bShowTileGrid)){										
 				}
@@ -467,18 +469,18 @@ int TBDialog::render(){
 				}
 			}
 
-			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SELEDIT){	
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mGlobalSettings.CurrentEditor->bShowBrushesPixelSelEdit)){     
-					mGlobalSettings.CurrentEditor->activateBrushes(false);
+			if(mEditor->mCurMode == EMODE_SELEDIT){	
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mEditor->bShowBrushesPixelSelEdit)){     
+					mEditor->activateBrushes(false);
                 }
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush (F9)").c_str())){     
-					mGlobalSettings.CurrentEditor->activateBrush();
+					mEditor->activateBrush();
                 }
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Drop Brush (F10) (ESC)").c_str())){     
-					mGlobalSettings.CurrentEditor->dropBrush();
+					mEditor->dropBrush();
                 }
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos (B)").c_str())){     
-					mGlobalSettings.CurrentEditor->nextBrushPos();
+					mEditor->nextBrushPos();
                 }
 				if(ImGui::MenuItem("Tile Grid (T)", NULL , &mGlobalSettings.bShowTileSelGrid)){										
 				}
@@ -495,39 +497,39 @@ int TBDialog::render(){
 		{
 			bIsMenuOpen = true;
 
-			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE){				
+			if(mEditor->mCurMode == EMODE_SPRITE){				
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " New Sprite Frame (F3)")).c_str())){
-					mGlobalSettings.CurrentEditor->createNewFrame();
+					mEditor->createNewFrame();
 				}
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Sprite Frame (F4)")).c_str())){
-					mGlobalSettings.CurrentEditor->createNewFrameCopy(mGlobalSettings.CurrentEditor->mSprite->mFrame);
+					mEditor->createNewFrameCopy(mEditor->mSprite->mFrame);
 				}
-				if(mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeY){					
+				if(mEditor->mSprite->mTexParam.TexSizeX == mEditor->mSprite->mTexParam.TexSizeY){					
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Frame Left (F5)")).c_str())){
-						mGlobalSettings.CurrentEditor->rotateFrameLeft();
+						mEditor->rotateFrameLeft();
 					}
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Frame Right (F6)")).c_str())){
-						mGlobalSettings.CurrentEditor->rotateFrameRight();
+						mEditor->rotateFrameRight();
 					}
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Selected Frame")).c_str())){
-						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_FRAMEROTATE);
+						mEditor->activateDTDialog(EDIALOG_FRAMEROTATE);
 					}
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Scale Selected Frame")).c_str())){
-						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_FRAMESCALE);
+						mEditor->activateDTDialog(EDIALOG_FRAMESCALE);
 					}
 				}				
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Selected Frame (DEL)")).c_str())){
-					if(mGlobalSettings.CurrentEditor->mSprite->mFrames.size() > 1){
-						mGlobalSettings.CurrentEditor->activateRemoveFrame();
+					if(mEditor->mSprite->mFrames.size() > 1){
+						mEditor->activateRemoveFrame();
 					} else {
-						mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITEDELETE);
+						mEditor->activateDTDialog(EDIALOG_SPRITEDELETE);
 					}
 				}
 				
 
 				if(mGlobalSettings.mUseTextureFiltering > 1){
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Filter Selected Frame")).c_str())){
-						mGlobalSettings.CurrentEditor->filterFrame();
+						mEditor->filterFrame();
 					}
 				}
 
@@ -537,9 +539,9 @@ int TBDialog::render(){
 													
 							bool bFrameCopyPosible = false;
 
-							for(auto *cSprt : mGlobalSettings.CurrentEditor->mSprites){
-								if(cSprt != mGlobalSettings.CurrentEditor->mSprite){
-									if((cSprt->mTexParam.TexSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeX) && (cSprt->mTexParam.TexSizeY == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeY) && (cSprt->mTexParam.TexBPP == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexBPP)){
+							for(auto *cSprt : mEditor->mSprites){
+								if(cSprt != mEditor->mSprite){
+									if((cSprt->mTexParam.TexSizeX == mEditor->mSprite->mTexParam.TexSizeX) && (cSprt->mTexParam.TexSizeY == mEditor->mSprite->mTexParam.TexSizeY) && (cSprt->mTexParam.TexBPP == mEditor->mSprite->mTexParam.TexBPP)){
 										bFrameCopyPosible = true;
 									}
 								}
@@ -550,9 +552,9 @@ int TBDialog::render(){
 									std::string sfSCount;
 									std::string cCSFrame;
 									std::stringstream fconv;
-									for(auto *cSprt : mGlobalSettings.CurrentEditor->mSprites){
-										if(cSprt != mGlobalSettings.CurrentEditor->mSprite){
-											if((cSprt->mTexParam.TexSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeX) && (cSprt->mTexParam.TexSizeY == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeY) && (cSprt->mTexParam.TexBPP == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexBPP)){
+									for(auto *cSprt : mEditor->mSprites){
+										if(cSprt != mEditor->mSprite){
+											if((cSprt->mTexParam.TexSizeX == mEditor->mSprite->mTexParam.TexSizeX) && (cSprt->mTexParam.TexSizeY == mEditor->mSprite->mTexParam.TexSizeY) && (cSprt->mTexParam.TexBPP == mEditor->mSprite->mTexParam.TexBPP)){
 											
 												fconv << fSCount << std::endl;
 												fconv >> sfSCount;
@@ -564,7 +566,7 @@ int TBDialog::render(){
 														fconv >> cCSFrame;
 																								
 														if(ImGui::MenuItem((std::string("Frame " + cCSFrame).c_str()))){																					
-															mGlobalSettings.CurrentEditor->createNewFrameCopy(cSprt->mFrames[nf]);
+															mEditor->createNewFrameCopy(cSprt->mFrames[nf]);
 														}								
 													}	
 													ImGui::EndMenu();
@@ -579,68 +581,68 @@ int TBDialog::render(){
 							
 
 								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Copy")).c_str())){
-									mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATECOPY);										
+									mEditor->activateDTDialog(EDIALOG_SPRITECREATECOPY);										
 								}
 
 								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Scaled Copy")).c_str())){										
-									mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATESCALEDCOPY);
+									mEditor->activateDTDialog(EDIALOG_SPRITECREATESCALEDCOPY);
 								}
 
 								bool bAllowUpscale = false;
 								int cAllowedScale = 2;
 
-								if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeX < 64) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeY < 64) ){
+								if( (mEditor->mSprite->mTexParam.TexSizeX < 64) && (mEditor->mSprite->mTexParam.TexSizeY < 64) ){
 									bAllowUpscale = true;
 
-									if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeX < 32) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeY < 32) ){
+									if( (mEditor->mSprite->mTexParam.TexSizeX < 32) && (mEditor->mSprite->mTexParam.TexSizeY < 32) ){
 										cAllowedScale = 4;
 									}
 
-									if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeX < 16) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeY < 16) ){
+									if( (mEditor->mSprite->mTexParam.TexSizeX < 16) && (mEditor->mSprite->mTexParam.TexSizeY < 16) ){
 										cAllowedScale = 8;
 									}																		
 								}
 
 								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Upscaled Copy")).c_str(), NULL, false, bAllowUpscale)){									
-									mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATEUPSCALEDCOPY, cAllowedScale);
+									mEditor->activateDTDialog(EDIALOG_SPRITECREATEUPSCALEDCOPY, cAllowedScale);
 								}
 
 
 								bool bAllowDownscale = false;
 								int cAllowedDownScale = 2;
 
-								if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeX > 8) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeY > 8) ){
+								if( (mEditor->mSprite->mTexParam.TexSizeX > 8) && (mEditor->mSprite->mTexParam.TexSizeY > 8) ){
 									bAllowDownscale = true;
 
-									if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeX > 16) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeY > 16) ){
+									if( (mEditor->mSprite->mTexParam.TexSizeX > 16) && (mEditor->mSprite->mTexParam.TexSizeY > 16) ){
 										cAllowedDownScale = 4;
 									}
 
-									if( (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeX > 32) && (mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeY > 32) ){
+									if( (mEditor->mSprite->mTexParam.TexSizeX > 32) && (mEditor->mSprite->mTexParam.TexSizeY > 32) ){
 										cAllowedDownScale = 8;
 									}																		
 								}
 
 								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Downscaled Copy")).c_str(), NULL, false, bAllowDownscale)){									
-									mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATEDOWNSCALEDCOPY, cAllowedDownScale);
+									mEditor->activateDTDialog(EDIALOG_SPRITECREATEDOWNSCALEDCOPY, cAllowedDownScale);
 								}
 
 								bool bAllowRange = false;
 
-								if( mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeX == mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexSizeY){
+								if( mEditor->mSprite->mTexParam.TexSizeX == mEditor->mSprite->mTexParam.TexSizeY){
 									bAllowRange = true;
 								}
 
 								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Convert BPP")).c_str())){										
-									mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECONVERTBPP, mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexBPP);
+									mEditor->activateDTDialog(EDIALOG_SPRITECONVERTBPP, mEditor->mSprite->mTexParam.TexBPP);
 								}
 
 								if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotation Range")).c_str(), NULL, false, bAllowRange)){									
-									mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATEROTATIONRANGE);
+									mEditor->activateDTDialog(EDIALOG_SPRITECREATEROTATIONRANGE);
 								}
 
 								if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Frame Rotations")).c_str(), NULL, false, bAllowRange)){									
-									mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_SPRITECREATEFRAMEROTATIONS);
+									mEditor->activateDTDialog(EDIALOG_SPRITECREATEFRAMEROTATIONS);
 								}
 															
 								ImGui::EndMenu();		
@@ -655,14 +657,14 @@ int TBDialog::render(){
 					ImGui::EndMenu();
 				}
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Sprite Edit").c_str()))){					
-					if(ImGui::SliderInt("Frame Scale", &mGlobalSettings.CurrentEditor->mSprite->mTexParam.TexPixelSize, TSprite::MinScale, TSprite::MaxScale,"%d", ImGuiSliderFlags_NoInput)){						
-						mGlobalSettings.CurrentEditor->setSpriteBrushes();						
+					if(ImGui::SliderInt("Frame Scale", &mEditor->mSprite->mTexParam.TexPixelSize, TSprite::MinScale, TSprite::MaxScale,"%d", ImGuiSliderFlags_NoInput)){						
+						mEditor->setSpriteBrushes();						
 					}
-					if(ImGui::SliderInt("Max Grid Width", &mGlobalSettings.CurrentEditor->mSprite->mMaxColumns, TSprite::MinCol, TSprite::MaxCol,"%d", ImGuiSliderFlags_NoInput)){
-						mGlobalSettings.CurrentEditor->mSprite->resizeScale();						
+					if(ImGui::SliderInt("Max Grid Width", &mEditor->mSprite->mMaxColumns, TSprite::MinCol, TSprite::MaxCol,"%d", ImGuiSliderFlags_NoInput)){
+						mEditor->mSprite->resizeScale();						
 					}
-					if(ImGui::SliderInt("Min Frame Scale", &mGlobalSettings.CurrentEditor->mSprite->mMinFrameScale, TSprite::MinFrame, mGlobalSettings.CurrentEditor->mSprite->MaxFrame,"%d", ImGuiSliderFlags_NoInput)){
-						mGlobalSettings.CurrentEditor->mSprite->resizeScale();						
+					if(ImGui::SliderInt("Min Frame Scale", &mEditor->mSprite->mMinFrameScale, TSprite::MinFrame, mEditor->mSprite->MaxFrame,"%d", ImGuiSliderFlags_NoInput)){
+						mEditor->mSprite->resizeScale();						
 					}
 											
 					ImGui::EndMenu();
@@ -678,46 +680,46 @@ int TBDialog::render(){
 				}		
 			}
 
-			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP){
+			if(mEditor->mCurMode == EMODE_MAP){
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Flip Tile (F) (X) (Y)")).c_str())){
-					mGlobalSettings.CurrentEditor->flipSelectedTile(0);
+					mEditor->flipSelectedTile(0);
 				}
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " New Tile (F3)")).c_str())){
-					mGlobalSettings.CurrentEditor->createNewTile();
+					mEditor->createNewTile();
 				}				
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Tile (F4)")).c_str())){
-					mGlobalSettings.CurrentEditor->createNewTileCopy(mGlobalSettings.CurrentEditor->mTileSelectedTile);
+					mEditor->createNewTileCopy(mEditor->mTileSelectedTile);
 				}
 
 				if(mGlobalSettings.mGlobalTexParam.TexSizeX == mGlobalSettings.mGlobalTexParam.TexSizeY){					
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Tile Left (F5)")).c_str())){
-						mGlobalSettings.CurrentEditor->rotateTileLeft();
+						mEditor->rotateTileLeft();
 					}
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Tile Right (F6)")).c_str())){
-						mGlobalSettings.CurrentEditor->rotateTile();
+						mEditor->rotateTile();
 					}
 				}
 
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Selected Tile (DEL)")).c_str())){
-					mGlobalSettings.CurrentEditor->activateDropUnusedTile();
+					mEditor->activateDropUnusedTile();
 				}
 
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Unused Tiles")).c_str())){
-					mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_TILEDELETEALL);
+					mEditor->activateDTDialog(EDIALOG_TILEDELETEALL);
 				}
 											
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mFile + " CollisionMap")).c_str())){
 				
-					if(mGlobalSettings.CurrentEditor->mTileMap->bHasCollisionMap){
+					if(mEditor->mTileMap->bHasCollisionMap){
 						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Edit")).c_str())){				
-								mGlobalSettings.CurrentEditor->activateColMapDialog();
+								mEditor->activateColMapDialog();
 							}
 						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Remove")).c_str())){											
-								mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_COLMAPREMOVE);
+								mEditor->activateDTDialog(EDIALOG_COLMAPREMOVE);
 							}
 					} else {
 						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Create")).c_str())){				
-								mGlobalSettings.CurrentEditor->activateColMapDialog(true);
+								mEditor->activateColMapDialog(true);
 						}
 					}
 
@@ -725,11 +727,11 @@ int TBDialog::render(){
 				}
 
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " TileSet Edit").c_str()))){
-					if(ImGui::SliderInt("Max Grid Width", &mGlobalSettings.CurrentEditor->mTileSet.mMaxColumns, TileSet::MinCol, TileSet::MaxCol,"%d", ImGuiSliderFlags_NoInput)){
-						mGlobalSettings.CurrentEditor->mTileSet.resizeScale();						
+					if(ImGui::SliderInt("Max Grid Width", &mEditor->mTileSet.mMaxColumns, TileSet::MinCol, TileSet::MaxCol,"%d", ImGuiSliderFlags_NoInput)){
+						mEditor->mTileSet.resizeScale();						
 					}
-					if(ImGui::SliderInt("Min Tile Scale", &mGlobalSettings.CurrentEditor->mTileSet.mMinTileScale, TileSet::MinTile, TileSet::MaxTile, "%d", ImGuiSliderFlags_NoInput)){
-						mGlobalSettings.CurrentEditor->mTileSet.resizeScale();						
+					if(ImGui::SliderInt("Min Tile Scale", &mEditor->mTileSet.mMinTileScale, TileSet::MinTile, TileSet::MaxTile, "%d", ImGuiSliderFlags_NoInput)){
+						mEditor->mTileSet.resizeScale();						
 					}
 					ImGui::EndMenu();
 				}
@@ -747,7 +749,7 @@ int TBDialog::render(){
 
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " TileMap Clipboard").c_str()))){
 					
-					if(ImGui::MenuItem("Tile Zero Is Transparent", NULL, &mGlobalSettings.CurrentEditor->mTileMap->bIsTileZeroTransparent)){
+					if(ImGui::MenuItem("Tile Zero Is Transparent", NULL, &mEditor->mTileMap->bIsTileZeroTransparent)){
 						
 					}
 					
@@ -755,82 +757,82 @@ int TBDialog::render(){
 				}								
 			}
 
-			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET){
+			if(mEditor->mCurMode == EMODE_TILESET){
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " TileSet Edit").c_str()))){
 					if(ImGui::SliderInt("Grid Width", &mGlobalSettings.mTileSetEditWidth, TileSet::MinGrid, TileSet::MaxGrid,"%d", ImGuiSliderFlags_NoInput)){
-						mGlobalSettings.CurrentEditor->mTileSet.bUpdateEditSelection = true;
+						mEditor->mTileSet.bUpdateEditSelection = true;
 					}
 					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mTileSetEditScale, TileSet::MinScale, TileSet::MaxScale,"%d", ImGuiSliderFlags_NoInput)){
-						mGlobalSettings.CurrentEditor->mTileSet.bUpdateEditSelectionScale = true;
+						mEditor->mTileSet.bUpdateEditSelectionScale = true;
 					}
 					ImGui::EndMenu();
 				}
 				
 			}
 
-			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SELEDIT){
+			if(mEditor->mCurMode == EMODE_SELEDIT){
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Selection Edit").c_str()))){					
 					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mSelectionEditScale, TSelectionEditor::MinScale, TSelectionEditor::MaxScale,"%d", ImGuiSliderFlags_NoInput)){
-						mGlobalSettings.CurrentEditor->mSelEdit.bUpdateEditSelectionScale = true;
+						mEditor->mSelEdit.bUpdateEditSelectionScale = true;
 					}
 					ImGui::EndMenu();
 				}
 				
 			}
 
-			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE){
+			if(mEditor->mCurMode == EMODE_TILE){
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Tile Edit").c_str()))){					
 					if(ImGui::SliderInt("Tile Scale", &mGlobalSettings.mGlobalTexParam.TexPixelSize, Tile::MinScale, Tile::MaxScale,"%d", ImGuiSliderFlags_NoInput)){						
-						mGlobalSettings.CurrentEditor->mBrushesPixel.setBrushDeltas(mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mGlobalTexParam);
-						mGlobalSettings.CurrentEditor->mTileSet.mClipboardTiles.setBrushDeltas(mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mGlobalTexParam);
+						mEditor->mBrushesPixel.setBrushDeltas(mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mGlobalTexParam);
+						mEditor->mTileSet.mClipboardTiles.setBrushDeltas(mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mGlobalTexParam);
 					}
 											
 					ImGui::EndMenu();
 				}
 			}
 
-			if((mGlobalSettings.CurrentEditor->mCurMode != EMODE_PALED) && (mGlobalSettings.CurrentEditor->mCurMode != EMODE_SELEDIT)){
+			if((mEditor->mCurMode != EMODE_PALED) && (mEditor->mCurMode != EMODE_SELEDIT)){
 				
-				if( (mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE) || (mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE) ||(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET) || (mGlobalSettings.CurrentEditor->mCurMode == EMODE_MAP) ){
+				if( (mEditor->mCurMode == EMODE_SPRITE) || (mEditor->mCurMode == EMODE_TILE) ||(mEditor->mCurMode == EMODE_TILESET) || (mEditor->mCurMode == EMODE_MAP) ){
 					if(ImGui::MenuItem(std::string(mGlobalSettings.mCopy + " Copy Selection (C)").c_str())){						
-						mGlobalSettings.CurrentEditor->handleCopyPaste();		
+						mEditor->handleCopyPaste();		
 					}
 					if(ImGui::MenuItem(std::string(mGlobalSettings.mCut + " Move/Cut Selection (M)").c_str())){						
-						mGlobalSettings.CurrentEditor->handleCopyPaste(true);		
+						mEditor->handleCopyPaste(true);		
 					}
 					if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Paste Selection (V)").c_str())){						
-						mGlobalSettings.CurrentEditor->handleClipboardPaste();
+						mEditor->handleClipboardPaste();
 					}
 					if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Next Selection (CTRL + V)").c_str())){						
-						mGlobalSettings.CurrentEditor->handleClipboardPaste(true);
+						mEditor->handleClipboardPaste(true);
 					}
 					if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Drop Selection (F10) (ESC)").c_str())){						
-						mGlobalSettings.CurrentEditor->dropBrush();
+						mEditor->dropBrush();
 					}
 				}				
 
 				if(ImGui::MenuItem("Select All (A)")){
-					mGlobalSettings.CurrentEditor->handleSelection(SELMODE_ALL);
+					mEditor->handleSelection(SELMODE_ALL);
 				}
 				if(ImGui::MenuItem("Select None (N)")){
-					mGlobalSettings.CurrentEditor->handleSelection(SELMODE_NONE);
+					mEditor->handleSelection(SELMODE_NONE);
 				}
 				if(ImGui::MenuItem("Invert Selection (I)")){
-					mGlobalSettings.CurrentEditor->handleSelection(SELMODE_INVERT);
+					mEditor->handleSelection(SELMODE_INVERT);
 				}
 			}
 
-			if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_PALED){
+			if(mEditor->mCurMode == EMODE_PALED){
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import Palette")).c_str())){
-					mGlobalSettings.CurrentEditor->mPalette.bImportingPalette = true;
+					mEditor->mPalette.bImportingPalette = true;
 				}
 			}
 		
 			if(ImGui::MenuItem("Undo (U) (CTRL + Z)")){
-				mGlobalSettings.CurrentEditor->undoLastActionGroup();	  		
+				mEditor->undoLastActionGroup();	  		
 			}
 			if(ImGui::MenuItem("Redo (R)")){
-				mGlobalSettings.CurrentEditor->redoLastActionGroup();	  		
+				mEditor->redoLastActionGroup();	  		
 			}
 						
 			ImGui::EndMenu();

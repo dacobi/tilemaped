@@ -193,8 +193,6 @@ class TEditor{
 		std::map<int, DTDialog*> mDTDialogs;
 		int activateDTDialog(int cOpenDialog, int cCond = -1, int cVal0 = 0, int cVal1 = 0);
 		
-		
-
 		PODialog mPaletteOffset;
 
 		TCollisionMapEditor mColMapEdit;
@@ -238,12 +236,7 @@ class TEditor{
 		void setSpriteBrushes();
 								
 		int activateColMapDialog(bool bCreateColMap=false);
-		
-		//int removeColMapDialog();		
-		//int activateHelpDialog();
-		//int activateRemoveTileMapDialog();
-		//int activateDropUnusedTiles();
-		
+				
 		int cancelActiveDialog();
 		void activateSaveDialog();
 
