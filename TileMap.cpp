@@ -1974,7 +1974,7 @@ void TileSet::close(){
 	mCurEdScale = 10;	
 	mMaxColumns = 4;
 	
-	mCurTileScale = 15;
+	mCurTileScale = TileSet::MaxTile;
 
 	mMinTileScale = 7;
 	mChildTop = 0;

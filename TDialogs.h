@@ -59,6 +59,7 @@ class DTDialog : public Dialog{
 		int mRequiredCondition = -1;
 		int mTargetState = 0;
 		bool bHasColor = false;
+		bool *bCloseBool = NULL;
 		virtual void setLabel(std::string cLabel){mDialogTextTitle = cLabel;};
 		virtual void setTarget(int cTarget){mTargetState = cTarget;};
 		virtual void setCondition(int cCond){mCondition = cCond; mConditionBackup = mCondition; if(mFiles.size()){bDialogIsWatingForText = true;} else {bDialogIsWatingForText = false;}};
@@ -151,7 +152,7 @@ class DTDCDialog : public DTDialog{
 class IDDialog : public DTDialog{
 	public:
 		std::vector<DialogDisplayBase*> mDisplays;
-		bool *bCloseBool = NULL;
+		//bool *bCloseBool = NULL;
 
 		bool bSmallFonts = false;
 		

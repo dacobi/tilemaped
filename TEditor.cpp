@@ -699,6 +699,9 @@ int TEditor::activateDTDialog(int cOpenDialog, int cCond, int cVal0, int cVal1){
 
 	if(cDialog){
 		cancelActiveDialog();
+		if(cDialog->bCloseBool){
+			*cDialog->bCloseBool = true;
+		}
 		cDialog->setCondition(cCond);
 		cDialog->setValue(0, cVal0);
 		cDialog->setValue(1, cVal1);
@@ -4669,7 +4672,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					handleSelection(SELMODE_NONE);
 				}
 	  			if(cEvent->key.keysym.sym == SDLK_F1){	  						  			
-					mGlobalSettings.bShowHelpDialog = true;
+					//mGlobalSettings.bShowHelpDialog = true;
 					activateDTDialog(EDIALOG_HELPMENU);
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F2){	  				

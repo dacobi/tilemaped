@@ -333,7 +333,7 @@ int TBDialog::render(){
 			}
 
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Help Dialog (F1)")).c_str())){				
-				mGlobalSettings.bShowHelpDialog = true;
+				//mGlobalSettings.bShowHelpDialog = true;
 				mEditor->activateDTDialog(EDIALOG_HELPMENU);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Project Info (F2)")).c_str() ,NULL,  &mGlobalSettings.bShowProjectInfo)){
@@ -1052,6 +1052,7 @@ void HDialog::init(){
 	mHelpTextImport = mGlobalSettings.mHelpTextImport;
 	mHelpTextColMapEditor = mGlobalSettings.mHelpTextColMapEditor;
 	mHelpTextSprite = mGlobalSettings.mHelpTextSprite;
+	bCloseBool = &mGlobalSettings.bShowHelpDialog;
 }
 
 void HDialog::recieveInput(int mKey){
@@ -1063,7 +1064,7 @@ int HDialog::render(){
 
 	Dialog::render();
 
-	ImGui::Begin("Help", &mGlobalSettings.bShowHelpDialog, ImGuiWindowFlags_NoNav);
+	ImGui::Begin("Help", bCloseBool, ImGuiWindowFlags_NoNav);
 
 	ImGui::SetWindowSize(ImVec2(950, 900), ImGuiCond_Once);
 
@@ -1172,11 +1173,11 @@ int HDialog::render(){
 	}
 
 	if(ImGui::Button("   Close   ")){
-		mGlobalSettings.bShowHelpDialog = false;
+		*bCloseBool = false;
 		recieveInput(SDLK_n);
 	}
 
-	if(!mGlobalSettings.bShowHelpDialog){
+	if(!*bCloseBool){
 		recieveInput(SDLK_n);
 	}
 
@@ -1405,6 +1406,10 @@ void DTDialog::cancel(){
 
 	for(auto cVal : mValues){
 		cVal->cancel();
+	}
+
+	if(bCloseBool){
+		*bCloseBool = false;
 	}
 }
 
@@ -1662,6 +1667,10 @@ void DTDCDialog::cancel(){
 	bConfirmIsActive = false;
 	
 	mConfirmDialog.cancel();
+
+	if(bCloseBool){
+		*bCloseBool = false;
+	}
 }
 
 void DTDCDialog::addConfirmText(std::string cText, bool bSameline){
