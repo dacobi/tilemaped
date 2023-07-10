@@ -332,8 +332,7 @@ int TBDialog::render(){
 				}
 			}
 
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Help Dialog (F1)")).c_str())){				
-				//mGlobalSettings.bShowHelpDialog = true;
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Help Dialog (F1)")).c_str())){								
 				mEditor->activateDTDialog(EDIALOG_HELPMENU);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Project Info (F2)")).c_str() ,NULL,  &mGlobalSettings.bShowProjectInfo)){

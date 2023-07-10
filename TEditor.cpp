@@ -664,8 +664,7 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_SPRITEFRAMEIMPORT] =  DTDialog::createSpriteFrameImportDialog();
 	mDTDialogs[EDIALOG_SPRITEFRAMESIMPORT] =  DTDialog::createSpriteFramesImportDialog();
 	mDTDialogs[EDIALOG_TILEMAPIMPORT] = DTDialog::createTileMapImportDialog();
-	mDTDialogs[EDIALOG_SPRITECONVERTBPP] =  DTDialog::createSpriteConvertBPPDialog();
-	mDTDialogs[EDIALOG_HELPMENU] = &mHelpDialog;
+	mDTDialogs[EDIALOG_SPRITECONVERTBPP] =  DTDialog::createSpriteConvertBPPDialog();	
 	mDTDialogs[EDIALOG_THEMECOLOR] = DTDialog::createThemeColorDialog();
 	mDTDialogs[EDIALOG_PROJECTOPEN] = DTDialog::createProjectOpenDialog();
 	mDTDialogs[EDIALOG_PROJECTCREATE] = DTDialog::createProjectCreateDialog();
@@ -688,6 +687,7 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_SPRITEIMPORT] = DTDialog::createSpriteImportDialog();
 	mDTDialogs[EDIALOG_PALETTEUPDATE] = DTDialog::createPaletteUpdateDialog();
 	
+	mDTDialogs[EDIALOG_HELPMENU] = &mHelpDialog;
 
 	mProjectInfo = IDDialog::createProjectInfoDialog();
 	mProgramInfo = IDDialog::createMessageDialog();
@@ -4671,8 +4671,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 				if(cEvent->key.keysym.sym == SDLK_n){
 					handleSelection(SELMODE_NONE);
 				}
-	  			if(cEvent->key.keysym.sym == SDLK_F1){	  						  			
-					//mGlobalSettings.bShowHelpDialog = true;
+	  			if(cEvent->key.keysym.sym == SDLK_F1){	  						  								
 					activateDTDialog(EDIALOG_HELPMENU);
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F2){	  				
