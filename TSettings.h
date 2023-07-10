@@ -134,6 +134,8 @@ public:
 	ProjectSettings();
 	void close();
 
+	int removeKey(std::string dKey);
+
 	sKey* getSpriteScaleKey(int cSNum);
 	sKey* createSpriteScaleKey(int cSNum);
 	int removeSpriteScaleKey(int cSNum);

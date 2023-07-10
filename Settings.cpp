@@ -215,7 +215,30 @@ void ProjectSettings::close(){
 	bLoaded = false;
 }
 
+int ProjectSettings::removeKey(std::string dKey){
+	
+	sKey *cSpriteKey = getKey(dKey);
+
+	if(cSpriteKey == keys[0]){
+		return 1;
+	}
+
+	for(int ki = 0;  ki < keys.size(); ki++){
+		if(cSpriteKey == keys[ki]){
+			keys.erase(keys.begin()+ki);
+			
+			for(int i = 0; i < keys.size(); i++){
+				keyindex[keys[i]->kname] = i;
+			}
+			return 0;
+		}
+	}
+
+	return 1;	
+}
+
 sKey* ProjectSettings::getMapTileZeroKey(int cMNum){
+
 	std::stringstream sconv;
 	std::string sSnum;
 	sconv << cMNum << std::endl;
@@ -230,6 +253,7 @@ sKey* ProjectSettings::getMapTileZeroKey(int cMNum){
 }
 
 sKey* ProjectSettings::createMapTileZeroKey(int cMNum){
+
 	std::stringstream sconv;
 	std::string sSnum;
 	sconv << cMNum << std::endl;
@@ -239,31 +263,16 @@ sKey* ProjectSettings::createMapTileZeroKey(int cMNum){
 }
 
 int ProjectSettings::removeMapTileZeroKey(int cMNum){
+
 	std::stringstream sconv;
 	std::string sSnum;
 	sconv << cMNum << std::endl;
 	sconv >> sSnum;
-	sKey *cSpriteKey = getKey(std::string("TileMap"+sSnum+"_TileZeroTransparent"));
-
-	if(cSpriteKey == keys[0]){
-		return 1;
-	}
-
-	for(int ki = 0;  ki < keys.size(); ki++){
-		if(cSpriteKey == keys[ki]){
-			keys.erase(keys.begin()+ki);
-			
-			for(int i = 0; i < keys.size(); i++){
-				keyindex[keys[i]->kname] = i;
-			}
-			return 0;
-		}
-	}
-
-	return 1;	
+	return removeKey(std::string("TileMap"+sSnum+"_TileZeroTransparent"));
 }
 
 sKey* ProjectSettings::getFrameScaleKey(int cSNum){
+
 	std::stringstream sconv;
 	std::string sSnum;
 	sconv << cSNum << std::endl;
@@ -278,6 +287,7 @@ sKey* ProjectSettings::getFrameScaleKey(int cSNum){
 }
 
 sKey* ProjectSettings::createFrameScaleKey(int cSNum){
+
 	std::stringstream sconv;
 	std::string sSnum;
 	sconv << cSNum << std::endl;
@@ -287,28 +297,12 @@ sKey* ProjectSettings::createFrameScaleKey(int cSNum){
 }
 
 int ProjectSettings::removeFrameScaleKey(int cSNum){
+
 	std::stringstream sconv;
 	std::string sSnum;
 	sconv << cSNum << std::endl;
 	sconv >> sSnum;
-	sKey *cSpriteKey = getKey(std::string("Sprite"+sSnum+"_FrameMinScale"));
-
-	if(cSpriteKey == keys[0]){
-		return 1;
-	}
-
-	for(int ki = 0;  ki < keys.size(); ki++){
-		if(cSpriteKey == keys[ki]){
-			keys.erase(keys.begin()+ki);
-			
-			for(int i = 0; i < keys.size(); i++){
-				keyindex[keys[i]->kname] = i;
-			}
-			return 0;
-		}
-	}
-
-	return 1;	
+	return removeKey(std::string("Sprite"+sSnum+"_FrameMinScale"));	
 }
 
 sKey* ProjectSettings::getSpriteScaleKey(int cSNum){
@@ -327,6 +321,7 @@ sKey* ProjectSettings::getSpriteScaleKey(int cSNum){
 }
 
 sKey* ProjectSettings::createSpriteScaleKey(int cSNum){
+
 	std::stringstream sconv;
 	std::string sSnum;
 	sconv << cSNum << std::endl;
@@ -336,28 +331,12 @@ sKey* ProjectSettings::createSpriteScaleKey(int cSNum){
 }
 
 int ProjectSettings::removeSpriteScaleKey(int cSNum){
+
 	std::stringstream sconv;
 	std::string sSnum;
 	sconv << cSNum << std::endl;
 	sconv >> sSnum;
-	sKey *cSpriteKey = getKey(std::string("Sprite"+sSnum+"_PixelScale"));
-
-	if(cSpriteKey == keys[0]){
-		return 1;
-	}
-
-	for(int ki = 0;  ki < keys.size(); ki++){
-		if(cSpriteKey == keys[ki]){
-			keys.erase(keys.begin()+ki);
-			
-			for(int i = 0; i < keys.size(); i++){
-				keyindex[keys[i]->kname] = i;
-			}
-			return 0;
-		}
-	}
-
-	return 1;	
+	return removeKey(std::string("Sprite"+sSnum+"_PixelScale"));	
 }
 
 
@@ -377,6 +356,7 @@ sKey* ProjectSettings::getSpriteGridKey(int cSNum){
 }
 
 sKey* ProjectSettings::createSpriteGridKey(int cSNum){
+
 	std::stringstream sconv;
 	std::string sSnum;
 	sconv << cSNum << std::endl;
@@ -386,28 +366,12 @@ sKey* ProjectSettings::createSpriteGridKey(int cSNum){
 }
 
 int ProjectSettings::removeSpriteGridKey(int cSNum){
+
 	std::stringstream sconv;
 	std::string sSnum;
 	sconv << cSNum << std::endl;
 	sconv >> sSnum;
-	sKey *cSpriteKey = getKey(std::string("Sprite"+sSnum+"_MaxGridWidth"));
-
-	if(cSpriteKey == keys[0]){
-		return 1;
-	}
-
-	for(int ki = 0;  ki < keys.size(); ki++){
-		if(cSpriteKey == keys[ki]){
-			keys.erase(keys.begin()+ki);
-			
-			for(int i = 0; i < keys.size(); i++){
-				keyindex[keys[i]->kname] = i;
-			}
-			return 0;
-		}
-	}
-
-	return 1;	
+	return removeKey(std::string("Sprite"+sSnum+"_MaxGridWidth"));
 }
 
 
