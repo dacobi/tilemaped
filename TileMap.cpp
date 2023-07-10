@@ -1968,13 +1968,16 @@ void TileSet::close(){
 	TTiles.clear();
 	mClipboardTiles.close();
 	mClipboardTileSet.close();
-
-	mCurTileScale = 20;
+	
 	mCurColumns = 1;		
 	mSelEdWidth = 4;
 	mCurEdScale = 10;	
 	mMaxColumns = 4;
-	mMinTileScale = 5;
+	
+	mCurTileScale = 15;
+
+	mMinTileScale = 7;
+	mChildTop = 0;
 }
 
 void TileSet::shutdown(){
@@ -2125,8 +2128,8 @@ Tile* TileSet::createNewFromBuffer(std::vector<unsigned char> &newBuf, TPalette*
 	TTiles.push_back(newTile);
 
 	if(mGlobalSettings.mGlobalTexParam.TexSizeX == 8){
-		mMinTileScale = 9;
-	}
+		mMinTileScale = 10;
+	} 
 
 	resizeEdit();
 	return newTile;

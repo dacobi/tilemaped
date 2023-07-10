@@ -120,17 +120,15 @@ ProjectSettings::ProjectSettings(){
 	TileSet_EditWidth = new sKey("TileSet_EditWidth", type_int, 4);
 	TileSet_PixelScale = new sKey("TileSet_PixelScale", type_int, 10);	
 	TileSet_MaxGridWidth = new sKey("TileSet_MaxGridWidth", type_int, 4);	
-	TileSet_MinTileScale = new sKey("TileSet_MinTileScale", type_int, 5);	
+	TileSet_MinTileScale = new sKey("TileSet_MinTileScale", type_int, 7);	
 	SelectionEdit_ShowPixelGrid = new sKey("SelectionEdit_ShowPixelGrid", type_bool, true);
 	SelectionEdit_ShowTileGrid = new sKey("SelectionEdit_ShowTileGrid", type_bool, true);
 	SelectionEdit_PixelScale = new sKey("SelectionEdit_PixelScale", type_int, 10);	
 	Sprite_ShowPixelGrid = new sKey("Sprite_ShowPixelGrid", type_bool, true);
 	Sprite_WarnBeforeDelete = new sKey("Sprite_WarnBeforeDelete", type_bool, true);
 	Clipboard_SaveToProject = new sKey("Clipboard_SaveToProject", type_bool, false);
-	
-		
-    init();
-		
+			
+    init();		
 }
 
 ProgramSettings::ProgramSettings(){	
@@ -213,7 +211,7 @@ void ProjectSettings::close(){
 	TileSet_EditWidth->ivalue = 4;
 	TileSet_PixelScale->ivalue = 10;
 	TileSet_MaxGridWidth->ivalue = 4;
-	TileSet_MinTileScale->ivalue = 5;
+	TileSet_MinTileScale->ivalue = 7;
 	SelectionEdit_ShowPixelGrid->bvalue = true;
 	SelectionEdit_ShowTileGrid->bvalue = true;
 	SelectionEdit_PixelScale->ivalue = 10;
