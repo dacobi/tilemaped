@@ -185,8 +185,7 @@ void TEditor::initStates(){
 	mStates[ESTATE_PROJECTCREATE] = &TEditor::stateProjectCreate;
 	mStates[ESTATE_PROJECTOPEN] = &TEditor::stateProjectOpen;
 	mStates[ESTATE_PROJECTCLOSE] = &TEditor::stateProjectClose;
-	mStates[ESTATE_TILEIMPORT] = &TEditor::stateTileImport;
-	mStates[ESTATE_TILECREATE] = &TEditor::stateTileCreate;
+	mStates[ESTATE_TILEIMPORT] = &TEditor::stateTileImport;	
 	mStates[ESTATE_TILEDELETE] = &TEditor::stateTileDelete;
 	mStates[ESTATE_TILEDELETEALL] = &TEditor::stateTileDeleteAll;
 	mStates[ESTATE_TILESETIMPORT] = &TEditor::stateTileSetImport;
@@ -250,13 +249,11 @@ void TEditor::stateTileImport(){
 		mActionStack.mLastAction = newActionTile;
 		mActionStack.redoClearStack();
 					
-		showMessage("Tile Loaded Successfully");		
+		showMessage("Tile Imported Successfully");		
 	} else {							
-		showMessage("Error Loading Tile!", true);							
+		showMessage("Error Importing Tile!", true);							
 	}
 }
-
-void TEditor::stateTileCreate(){}
 
 void TEditor::stateTileDelete(){
 	removeSelectedTile();
@@ -315,9 +312,10 @@ void TEditor::stateTileMapImport(){
 	} else {										
 		mActionStack.redoClearStack();
 		mActionStack.undoClearStack();
-		
-		showMessage("TileMap Imported Successfully");
+				
 		switchTileMap(mTileMaps.size()-1);
+
+		showMessage("TileMap Imported Successfully");
 	}
 }
 
@@ -331,9 +329,9 @@ void TEditor::stateTileMapCreate(){
 	mActionStack.redoClearStack();
 	mActionStack.undoClearStack();
 	
-	showMessage("TileMap Created Successfully");
-
 	switchTileMap(mTileMaps.size()-1);
+
+	showMessage("TileMap Created Successfully");
 }
 
 void TEditor::stateTileMapDelete(){
@@ -357,15 +355,22 @@ void TEditor::stateTileMapDelete(){
 		showMessage("TileMap Removed Successfully");
 
 		switchTileMap(0);	
+	} else {
+		showMessage("Error Removing TileMap!", true);
 	}
 }
 
 void TEditor::statePaletteUpdate(){
 	updatePalette();
+	showMessage("Palette Updated Successfully");
 }
 
 void TEditor::stateColmapRemove(){
-	mTileMap->removeCollisionMap();
+	if(mTileMap->removeCollisionMap()){
+		showMessage("Error Removing CollisionMap!", true);
+	} else {
+		showMessage("CollisionMap Removed Successfully");
+	}
 }
 
 void TEditor::stateSpriteCreate(){
@@ -382,6 +387,8 @@ void TEditor::stateSpriteCreate(){
 	} else {
 		switchSprite(mSprites.size()-1);
 	}
+
+	showMessage("Sprite Created Successfully");
 }
 
 void TEditor::stateFrameDelete(){
@@ -401,17 +408,22 @@ void TEditor::stateSpriteDelete(){
 
 	if(cDelSprite != -1){								
 		mSprites.erase(mSprites.begin() + cDelSprite);
-	}
 
-	if(mSprites.size() == 0){
-		mSprite = NULL;					
-		setMode(EMODE_MAP);
-		mLastMode = EMODE_TILE;
-	} else {
-		if(cDelSprite > 0){
-			cDelSprite--;
+		if(mSprites.size() == 0){
+			mSprite = NULL;						
+			setMode(EMODE_MAP);
+			mLastMode = EMODE_TILE;
+		} else {
+			if(cDelSprite > 0){
+				cDelSprite--;
+			}
+			switchSprite(cDelSprite);
 		}
-		switchSprite(cDelSprite);
+		
+		showMessage("Sprite Removed Successfully");
+
+	} else  {
+		showMessage("Error Removing Sprite!", true);
 	}
 }
 
@@ -499,12 +511,11 @@ void TEditor::stateSpriteImport(){
 
 	if(bSpriteImportSuccess){
 		if(mCurMode == EMODE_SPRITE){
-			switchSprite(mSprites.size()-1);
-			showMessage("Sprite Imported Successfully");
+			switchSprite(mSprites.size()-1);			
 		} else {
-			setMode(EMODE_SPRITE);
-			showMessage("Sprite Imported Successfully");
+			setMode(EMODE_SPRITE);			
 		}
+		showMessage("Sprite Imported Successfully");
 	}
 }
 

@@ -271,8 +271,7 @@ class TEditor{
 		void stateProjectCreate();
 		void stateProjectOpen();
 		void stateProjectClose();
-		void stateTileImport();
-		void stateTileCreate();
+		void stateTileImport();		
 		void stateTileDelete();
 		void stateTileDeleteAll();
 		void stateTileSetImport();

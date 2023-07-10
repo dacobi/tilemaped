@@ -205,8 +205,7 @@ struct TextureParameters{
 };
 
 class TSettings{
-	public:
-		//TSettings(){mTexParam = &mGlobalTexParam;}
+	public:		
 		ImGuiIO *mio;
 		void shutdown();
 		void close();
@@ -233,22 +232,12 @@ class TSettings{
 		int WindowHeightActual=1000;
 
 		int TopBarHeight = 50;
-		int TileSetWidth=200;
-		//int SpriteWidth=200;
+		int TileSetWidth=200;		
 		int TileSetDefaultScale=10;
 		int TileMapScale=3;
 		int TileMapHeight=128;
 		int TileMapWidth=128;	
-		
-		/*
-		int TileSizeX=16;
-		int TileSizeY=16;
-		int TileSetBPP=8;
-		int TilePixelSize=16;
-		int mTileEdScale = 4;		
-		int PaletteOffset=0;
-		int TileRenderSize=16;
-		*/
+				
 		std::map<int, int> mTileBPPSize = {{8,1 },{4,2 },{2,4}};
 		std::map<int, int> mFrameSizeIn = {{0,8},{1,16},{2,32},{3,64}};
 		std::map<int, int> mFrameSizeOut = {{8,0},{16,1},{32,2},{64,3}};
@@ -433,8 +422,7 @@ enum {
 	ESTATE_PROJECTCREATE,	
 	ESTATE_PROJECTOPEN,	
 	ESTATE_PROJECTCLOSE,
-	ESTATE_TILEIMPORT,
-	ESTATE_TILECREATE,
+	ESTATE_TILEIMPORT,	
 	ESTATE_TILEDELETE,
 	ESTATE_TILEDELETEALL,
 	ESTATE_TILESETIMPORT,
