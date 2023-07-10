@@ -3831,6 +3831,23 @@ int TEditor::handleEMTile(){
 
 int TEditor::handleEMMAp(){
 
+	int mapWidthX = mGlobalSettings.TileMapWidth*mGlobalSettings.mGlobalTexParam.TexSizeX*mGlobalSettings.TileMapScale;					
+	int mapWidthY = mGlobalSettings.TileMapHeight*mGlobalSettings.mGlobalTexParam.TexSizeY*mGlobalSettings.TileMapScale;
+
+	if(mTileMapScrollX > 0){mTileMapScrollX = 0;}
+	if(mTileMapScrollY > 0){mTileMapScrollY = 0;}
+	
+	if(mTileMapScrollX < -(mapWidthX - (mGlobalSettings.WindowWidth-mGlobalSettings.TileSetWidth))){mTileMapScrollX = -(mapWidthX - (mGlobalSettings.WindowWidth-mGlobalSettings.TileSetWidth));}
+	if(mTileMapScrollY < -(mapWidthY - (mGlobalSettings.WindowHeight - mGlobalSettings.TopBarHeight))){mTileMapScrollY = -(mapWidthY - (mGlobalSettings.WindowHeight - mGlobalSettings.TopBarHeight));}
+	
+	if(mapWidthX < (mGlobalSettings.WindowWidth-mGlobalSettings.TileSetWidth)){
+		mTileMapScrollX = -(mapWidthX - (mGlobalSettings.WindowWidth-mGlobalSettings.TileSetWidth))/2;
+	}
+	
+	if(mapWidthY < (mGlobalSettings.WindowHeight-mGlobalSettings.TopBarHeight)){
+		mTileMapScrollY = -(mapWidthY - (mGlobalSettings.WindowHeight-mGlobalSettings.TopBarHeight))/2;
+	}
+
 	handleTileSet();
 	handleTileMap();
 
@@ -4492,8 +4509,8 @@ int TEditor::handleEvents(){
 	cx /= mGlobalSettings.mUIScale;
 	cy /= mGlobalSettings.mUIScale;
 
-	int mapWidthX = mGlobalSettings.TileMapWidth*mGlobalSettings.mGlobalTexParam.TexSizeX*mGlobalSettings.TileMapScale;					
-	int mapWidthY = mGlobalSettings.TileMapHeight*mGlobalSettings.mGlobalTexParam.TexSizeY*mGlobalSettings.TileMapScale;
+	//int mapWidthX = mGlobalSettings.TileMapWidth*mGlobalSettings.mGlobalTexParam.TexSizeX*mGlobalSettings.TileMapScale;					
+	//int mapWidthY = mGlobalSettings.TileMapHeight*mGlobalSettings.mGlobalTexParam.TexSizeY*mGlobalSettings.TileMapScale;
 	
 	if(mButtonState & SDL_BUTTON(SDL_BUTTON_LEFT)){
 		leftMouseButtonDown = true;
@@ -4570,7 +4587,7 @@ int TEditor::handleEvents(){
 			
 	}
 
-
+	/*
 	if(mTileMapScrollX > 0){mTileMapScrollX = 0;}
 	if(mTileMapScrollY > 0){mTileMapScrollY = 0;}
 	
@@ -4584,6 +4601,7 @@ int TEditor::handleEvents(){
 	if(mapWidthY < (mGlobalSettings.WindowHeight-mGlobalSettings.TopBarHeight)){
 		mTileMapScrollY = -(mapWidthY - (mGlobalSettings.WindowHeight-mGlobalSettings.TopBarHeight))/2;
 	}
+	*/
 
 	leftMouseButtonClicks = 0;
 	rightMouseButtonClicks = 0;
