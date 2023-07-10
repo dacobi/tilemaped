@@ -651,8 +651,7 @@ void TEditor::stateThemeColor(){
 void TEditor::createDialogs(){
 	
 	initStates();
-
-	mPaletteOffset.init();
+	
 	mHelpDialog.init();
 	
 	mDTDialogs[EDIALOG_ERROR] = NULL;

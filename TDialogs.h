@@ -422,9 +422,7 @@ class DialogDisplaySpriteCount : public DialogDisplayVectorSize<TSprite>{
 };
 
 class TIDialog: public Dialog{
-	public:
-		//int mCursorTime = 0;
-		//bool bShowCursor=false;
+	public:		
 		bool bIsInputActive=false;
 		bool bInputIsAccepted=true;
 		bool bIsNumeric=false;
@@ -432,8 +430,7 @@ class TIDialog: public Dialog{
 		int mCompleteIndex=0;				
 		static int MyCallback(ImGuiInputTextCallbackData* data);
 		std::string mCompleteText;		
-		std::vector<int> mAllowedValues;
-		//int mMaxLength=0;
+		std::vector<int> mAllowedValues;		
 		int mMaxRange=0;
 		int mMinRange=0;
 		bool bMustExist=false;
@@ -444,8 +441,7 @@ class TIDialog: public Dialog{
 		bool bMustBeProject=false;
 		int checkCurrentText();
 		void autoComplete();
-		virtual void dropLastInputChar();
-		//virtual void init();		
+		virtual void dropLastInputChar();		
 		virtual int render();		
 		std::string mInputLabel = "Filename";
 		bool bIsActive=false;
@@ -497,8 +493,7 @@ class HDialog: public DTDialog{
 };
 
 class PODialog: public Dialog{
-	public:
-		virtual void init();
+	public:		
 		virtual int render(int xpos, int ypos, TextureParameters *mTexParam);
 };
 

@@ -873,27 +873,6 @@ int OCDialog::render(){
 	return 0;
 }
 
-/*
-void TIDialog::init(){
-	
-	mCursorTime += mGlobalSettings.getTicks();
-
-	if(bInputIsAccepted){
-		mTextColor = mGlobalSettings.DefaultTextColor;
-	} else {
-		mTextColor = mGlobalSettings.ErrorTextColor;
-	}
-
-	if(mCursorTime > 500){
-		mCursorTime = 0;
-		if(bIsInputActive){
-			bShowCursor = !bShowCursor;
-		}
-	}
-	
-}
-*/
-
 void TIDialog::dropLastInputChar(){
 	if(mDialogTextMain.size()){
 		mDialogTextMain.pop_back();
@@ -1206,16 +1185,13 @@ int HDialog::render(){
 	return 0;
 }
 
-void PODialog::init(){
-	mDialogTextMain = mGlobalSettings.mImage + " Palette Offset";
-}
-
 int PODialog::render(int xpos, int ypos, TextureParameters *mTexParam){
 
 	Dialog::render(ypos);
 
 	ImGui::PushFont(mGlobalSettings.SFont);
 
+	mDialogTextMain = "Palette Offset"; //mGlobalSettings.mImage + 
 
 	ImGui::Begin(mDialogTextMain.c_str(), &mGlobalSettings.bShowPaletteOffset, ImGuiWindowFlags_NoNav);
 
@@ -1291,8 +1267,6 @@ void DialogValueRadioGroupCondition::render(){
 		}
 	}
 }
-
-
 
 void DialogValueFile::render(){
 	if(mCondition > -1){
@@ -1430,7 +1404,7 @@ void DTDialog::cancel(){
 	Dialog::cancel();
 
 	for(auto cVal : mValues){
-			cVal->cancel();
+		cVal->cancel();
 	}
 }
 
@@ -1449,7 +1423,6 @@ void DTDialog::addSeperator(){
 
 	mElements.push_back(nSep);
 	mBasicElements.push_back(nSep);
-
 }
 
 void DTDialog::addSameLine(){
@@ -1500,7 +1473,6 @@ void DTDialog::addIntMinMax(std::string cLabel, int cDefault, int *cTarget, int 
 
 	mElements.push_back(nInt);
 	mValues.push_back(nInt);
-
 }
 
 
@@ -1517,7 +1489,6 @@ void DTDialog::addFloat(std::string cLabel, float cDefault, float *cTarget, floa
 
 	mElements.push_back(nFloat);
 	mValues.push_back(nFloat);
-
 }
 
 void DTDialog::addButton(std::string cLabel, int cAction, bool cSameline){
@@ -1525,7 +1496,6 @@ void DTDialog::addButton(std::string cLabel, int cAction, bool cSameline){
 
 	mElements.push_back(nBut);
 	mButtons.push_back(nBut);
-
 }
 
 void DTDialog::addRadioGroup(int cDefault, int* cTarget){
@@ -1686,7 +1656,7 @@ void DTDCDialog::cancel(){
 	Dialog::cancel();
 
 	for(auto cVal : mValues){
-			cVal->cancel();
+		cVal->cancel();
 	}
 
 	bConfirmIsActive = false;
@@ -1775,16 +1745,13 @@ void IDDialog::addDisplayString(std::string cLabel, std::string* cTarget, bool c
 
 void IDDialog::addDisplayColor(SDL_Color *cTarget){
 	DialogDisplayColor *nCol = new DialogDisplayColor(this, mRequiredCondition, "color", cTarget, false);
-
-	//mDisplays.push_back(nCol);
+	
 	mElements.push_back(nCol);
-
 }
 
 void IDDialog::addDisplayColorRestore(){
 	DialogDisplayColorRestore *nCol = new DialogDisplayColorRestore(this, mRequiredCondition, "color", false);
-
-	//mDisplays.push_back(nCol);
+	
 	mElements.push_back(nCol);
 }
 
@@ -1793,7 +1760,6 @@ void IDDialog::addDisplayIntDual(std::string cLabel,std::string cCenter,std::str
 
 	mDisplays.push_back(nInt);
 	mElements.push_back(nInt);
-
 }
 		
 void IDDialog::addDisplayTileCount(std::string cLabel, std::vector<Tile*> *cTarget, bool cSameline){
@@ -1815,7 +1781,6 @@ void IDDialog::addDisplaySpriteCount(std::string cLabel, std::vector<TSprite*> *
 
 	mDisplays.push_back(nSC);
 	mElements.push_back(nSC);
-
 }
 
 void IDDialog::addDisplayTileMapSize(std::string cLabel, TileMap **cTarget, bool cSameline){
@@ -1823,7 +1788,6 @@ void IDDialog::addDisplayTileMapSize(std::string cLabel, TileMap **cTarget, bool
 
 	mDisplays.push_back(nTMGS);
 	mElements.push_back(nTMGS);
-
 }
 
 void IDDialog::addDisplaySpriteSize(std::string cLabel,  TSprite **cTarget, bool cSameline){
@@ -1893,7 +1857,7 @@ IDDialog* IDDialog::createProjectInfoDialog(){
 	return newDialog;
 }
 
-/* */
+/* IDDialog create end */
 
 /* DTDialog create */
 
@@ -2824,6 +2788,10 @@ DTDialog* DTDialog::createProjectSaveDialog(){
 	return newDialog;
 }
 
+/* DTDialog create end */ 
+
+/* DTDCDialog create */ 
+
 DTDCDialog* DTDCDialog::createProjectSaveAsDialog(){
 
 	DTDCDialog* newDialog = new DTDCDialog();
@@ -2854,5 +2822,7 @@ DTDCDialog* DTDCDialog::createProjectSaveAsDialog(){
 	return newDialog;
 
 }
+
+/* DTDCDialog create end */ 
 
 /* Dialog Template End */
