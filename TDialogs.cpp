@@ -79,9 +79,9 @@ int Dialog::render(int xpos, int ypos){
 	return 0;
 }
 
-
+/*
 void TBDialog::init(){
-	/*
+	
 	mDialogWidth = mGlobalSettings.WindowWidth;
 	mDialogHeight =  mGlobalSettings.TopBarHeight;
 	mDialogTextActions = mGlobalSettings.mFloppy +" Save/Save As: F12/F11    " + mGlobalSettings.mBook + " Help: F1";	
@@ -109,9 +109,10 @@ void TBDialog::init(){
 	};
 
 	mDialogTextProject = mGlobalSettings.mFile + " Project: " + mGlobalSettings.ProjectPath + "  " + mGlobalSettings.mInfo + " Info: F2";
-	*/
+	
 	
 }
+*/
 
 int TBDialog::render(){
 	mDialogWidth = mGlobalSettings.WindowWidth;

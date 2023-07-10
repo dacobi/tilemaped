@@ -504,11 +504,10 @@ class PODialog: public Dialog{
 
 class TBDialog: public Dialog{
 	public:
-		std::string mDialogTextActions;
+		//std::string mDialogTextActions;		
+		//std::string mDialogTextProject;		
 		std::string mDialogTextWindow;		
-		std::string mDialogTextProject;		
-		TEditor* mEditor;
-		virtual void init();
+		TEditor* mEditor;		
 		virtual int render();
 		bool bIsMenuOpen = false;
 };
