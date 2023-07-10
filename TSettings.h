@@ -133,6 +133,7 @@ class ProjectSettings : public Settings{
 public:
 	ProjectSettings();
 	void close();
+	void init();
 
 	int removeKey(std::string dKey);
 

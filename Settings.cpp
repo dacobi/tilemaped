@@ -129,28 +129,7 @@ ProjectSettings::ProjectSettings(){
 	Clipboard_SaveToProject = new sKey("Clipboard_SaveToProject", type_bool, false);
 	
 		
-    keys.push_back(Editor_SelectionAppend);
-	keys.push_back(Editor_UseTextureFiltering);
-	keys.push_back(Editor_PixelScale);
-	keys.push_back(Tile_ShowPixelGrid);
-	keys.push_back(TileSet_ShowPixelGrid);
-	keys.push_back(TileSet_ShowTileGrid);
-    keys.push_back(TileSet_UpdateMaps);
-	keys.push_back(TileSet_WarnBeforeDelete);
-    keys.push_back(TileSet_EditWidth);
-	keys.push_back(TileSet_PixelScale);
-	keys.push_back(TileSet_MaxGridWidth);
-	keys.push_back(TileSet_MinTileScale);
-	keys.push_back(SelectionEdit_ShowPixelGrid);
-	keys.push_back(SelectionEdit_ShowTileGrid);
-	keys.push_back(SelectionEdit_PixelScale);
-	keys.push_back(Sprite_ShowPixelGrid);
-	keys.push_back(Sprite_WarnBeforeDelete);
-	keys.push_back(Clipboard_SaveToProject);
-		
-    for(int i = 0; i < keys.size(); i++){
-		keyindex[keys[i]->kname] = i;
-	}
+    init();
 		
 }
 
@@ -192,7 +171,39 @@ ProgramSettings::ProgramSettings(){
 	}
 }
 
+void ProjectSettings::init(){	
+	keys.push_back(Editor_SelectionAppend);
+	keys.push_back(Editor_UseTextureFiltering);
+	keys.push_back(Editor_PixelScale);
+	keys.push_back(Tile_ShowPixelGrid);
+	keys.push_back(TileSet_ShowPixelGrid);
+	keys.push_back(TileSet_ShowTileGrid);
+    keys.push_back(TileSet_UpdateMaps);
+	keys.push_back(TileSet_WarnBeforeDelete);
+    keys.push_back(TileSet_EditWidth);
+	keys.push_back(TileSet_PixelScale);
+	keys.push_back(TileSet_MaxGridWidth);
+	keys.push_back(TileSet_MinTileScale);
+	keys.push_back(SelectionEdit_ShowPixelGrid);
+	keys.push_back(SelectionEdit_ShowTileGrid);
+	keys.push_back(SelectionEdit_PixelScale);
+	keys.push_back(Sprite_ShowPixelGrid);
+	keys.push_back(Sprite_WarnBeforeDelete);
+	keys.push_back(Clipboard_SaveToProject);
+		
+    for(int i = 0; i < keys.size(); i++){
+		keyindex[keys[i]->kname] = i;
+	}
+}
+
 void ProjectSettings::close(){
+
+	keys.clear();
+
+	keys.push_back(error_catch);
+
+	init();
+
 	Editor_SelectionAppend->bvalue = true;
 	Tile_ShowPixelGrid->bvalue = true;
 	TileSet_ShowPixelGrid->bvalue = true;
@@ -216,7 +227,7 @@ void ProjectSettings::close(){
 }
 
 int ProjectSettings::removeKey(std::string dKey){
-	
+
 	sKey *cSpriteKey = getKey(dKey);
 
 	if(cSpriteKey == keys[0]){
