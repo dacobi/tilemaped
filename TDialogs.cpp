@@ -79,41 +79,6 @@ int Dialog::render(int xpos, int ypos){
 	return 0;
 }
 
-/*
-void TBDialog::init(){
-	
-	mDialogWidth = mGlobalSettings.WindowWidth;
-	mDialogHeight =  mGlobalSettings.TopBarHeight;
-	mDialogTextActions = mGlobalSettings.mFloppy +" Save/Save As: F12/F11    " + mGlobalSettings.mBook + " Help: F1";	
-	
-	mDialogTextWindow = mGlobalSettings.mWindow;
-	switch(mEditor->mCurMode){
-		case EMODE_MAP:
-			mDialogTextWindow += " TileMap Editor";
-		break;
-		case EMODE_TILE:
-			mDialogTextWindow += " Tile Editor";
-		break;
-		case EMODE_PALED:
-			mDialogTextWindow += " Palette Editor";
-		break;
-		case EMODE_TILESET:
-			mDialogTextWindow += " TileSet Editor";
-		break;
-		case EMODE_SELEDIT:
-			mDialogTextWindow += " Selection Editor";
-		break;
-		case EMODE_SPRITE:
-			mDialogTextWindow += " Sprite Editor";
-		break;
-	};
-
-	mDialogTextProject = mGlobalSettings.mFile + " Project: " + mGlobalSettings.ProjectPath + "  " + mGlobalSettings.mInfo + " Info: F2";
-	
-	
-}
-*/
-
 int TBDialog::render(){
 	mDialogWidth = mGlobalSettings.WindowWidth;
 		
@@ -538,118 +503,120 @@ int TBDialog::render(){
 
 				if(ImGui::BeginMenu(std::string(mGlobalSettings.mTool + " Sprite Tools").c_str())){
 													
-							bool bFrameCopyPosible = false;
+					bool bFrameCopyPosible = false;
 
-							for(auto *cSprt : mEditor->mSprites){
-								if(cSprt != mEditor->mSprite){
-									if((cSprt->mTexParam.TexSizeX == mEditor->mSprite->mTexParam.TexSizeX) && (cSprt->mTexParam.TexSizeY == mEditor->mSprite->mTexParam.TexSizeY) && (cSprt->mTexParam.TexBPP == mEditor->mSprite->mTexParam.TexBPP)){
-										bFrameCopyPosible = true;
-									}
-								}
+					for(auto *cSprt : mEditor->mSprites){
+						if(cSprt != mEditor->mSprite){
+							if((cSprt->mTexParam.TexSizeX == mEditor->mSprite->mTexParam.TexSizeX) && (cSprt->mTexParam.TexSizeY == mEditor->mSprite->mTexParam.TexSizeY) && (cSprt->mTexParam.TexBPP == mEditor->mSprite->mTexParam.TexBPP)){
+								bFrameCopyPosible = true;
 							}
+						}
+					}
 
-							if(ImGui::BeginMenu((std::string(mGlobalSettings.mImage + " Copy Frame")).c_str(), bFrameCopyPosible)){
-									int fSCount = 0;
-									std::string sfSCount;
-									std::string cCSFrame;
-									std::stringstream fconv;
-									for(auto *cSprt : mEditor->mSprites){
-										if(cSprt != mEditor->mSprite){
-											if((cSprt->mTexParam.TexSizeX == mEditor->mSprite->mTexParam.TexSizeX) && (cSprt->mTexParam.TexSizeY == mEditor->mSprite->mTexParam.TexSizeY) && (cSprt->mTexParam.TexBPP == mEditor->mSprite->mTexParam.TexBPP)){
+					if(ImGui::BeginMenu((std::string(mGlobalSettings.mImage + " Copy Frame")).c_str(), bFrameCopyPosible)){
+						int fSCount = 0;
+						std::string sfSCount;
+						std::string cCSFrame;
+						std::stringstream fconv;
+						
+						for(auto *cSprt : mEditor->mSprites){
+							if(cSprt != mEditor->mSprite){
+								if((cSprt->mTexParam.TexSizeX == mEditor->mSprite->mTexParam.TexSizeX) && (cSprt->mTexParam.TexSizeY == mEditor->mSprite->mTexParam.TexSizeY) && (cSprt->mTexParam.TexBPP == mEditor->mSprite->mTexParam.TexBPP)){
 											
-												fconv << fSCount << std::endl;
-												fconv >> sfSCount;
+									fconv << fSCount << std::endl;
+									fconv >> sfSCount;
 
-												if(ImGui::BeginMenu(std::string("Sprite " + sfSCount + ": " +  cSprt->getSpriteSize()).c_str())){
+									if(ImGui::BeginMenu(std::string("Sprite " + sfSCount + ": " +  cSprt->getSpriteSize()).c_str())){
 
-													for(int nf = 0; nf < cSprt->mFrames.size(); nf++){
-														fconv << nf << std::endl;									
-														fconv >> cCSFrame;
+										for(int nf = 0; nf < cSprt->mFrames.size(); nf++){
+											fconv << nf << std::endl;									
+											fconv >> cCSFrame;
 																								
-														if(ImGui::MenuItem((std::string("Frame " + cCSFrame).c_str()))){																					
-															mEditor->createNewFrameCopy(cSprt->mFrames[nf]);
-														}								
-													}	
-													ImGui::EndMenu();
-												}											
-											}	
-										}
-										fSCount++;
-									}
-								ImGui::EndMenu();		
-								}
+											if(ImGui::MenuItem((std::string("Frame " + cCSFrame).c_str()))){																					
+												mEditor->createNewFrameCopy(cSprt->mFrames[nf]);
+											}								
+										}	
+										
+										ImGui::EndMenu();
+									}											
+								}	
+							}
+							
+							fSCount++;
+						}
+						
+						ImGui::EndMenu();		
+					}
 
 							
 
-								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Copy")).c_str())){
-									mEditor->activateDTDialog(EDIALOG_SPRITECREATECOPY);										
-								}
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Copy")).c_str())){
+						mEditor->activateDTDialog(EDIALOG_SPRITECREATECOPY);										
+					}
 
-								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Scaled Copy")).c_str())){										
-									mEditor->activateDTDialog(EDIALOG_SPRITECREATESCALEDCOPY);
-								}
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Scaled Copy")).c_str())){										
+						mEditor->activateDTDialog(EDIALOG_SPRITECREATESCALEDCOPY);
+					}
 
-								bool bAllowUpscale = false;
-								int cAllowedScale = 2;
+					bool bAllowUpscale = false;
+					int cAllowedScale = 2;
 
-								if( (mEditor->mSprite->mTexParam.TexSizeX < 64) && (mEditor->mSprite->mTexParam.TexSizeY < 64) ){
-									bAllowUpscale = true;
+					if( (mEditor->mSprite->mTexParam.TexSizeX < 64) && (mEditor->mSprite->mTexParam.TexSizeY < 64) ){
+						bAllowUpscale = true;
 
-									if( (mEditor->mSprite->mTexParam.TexSizeX < 32) && (mEditor->mSprite->mTexParam.TexSizeY < 32) ){
-										cAllowedScale = 4;
-									}
+						if( (mEditor->mSprite->mTexParam.TexSizeX < 32) && (mEditor->mSprite->mTexParam.TexSizeY < 32) ){
+							cAllowedScale = 4;
+						}
 
-									if( (mEditor->mSprite->mTexParam.TexSizeX < 16) && (mEditor->mSprite->mTexParam.TexSizeY < 16) ){
-										cAllowedScale = 8;
-									}																		
-								}
+						if( (mEditor->mSprite->mTexParam.TexSizeX < 16) && (mEditor->mSprite->mTexParam.TexSizeY < 16) ){
+							cAllowedScale = 8;
+						}																		
+					}
 
-								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Upscaled Copy")).c_str(), NULL, false, bAllowUpscale)){									
-									mEditor->activateDTDialog(EDIALOG_SPRITECREATEUPSCALEDCOPY, cAllowedScale);
-								}
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Upscaled Copy")).c_str(), NULL, false, bAllowUpscale)){									
+						mEditor->activateDTDialog(EDIALOG_SPRITECREATEUPSCALEDCOPY, cAllowedScale);
+					}
 
 
-								bool bAllowDownscale = false;
-								int cAllowedDownScale = 2;
+					bool bAllowDownscale = false;
+					int cAllowedDownScale = 2;
 
-								if( (mEditor->mSprite->mTexParam.TexSizeX > 8) && (mEditor->mSprite->mTexParam.TexSizeY > 8) ){
-									bAllowDownscale = true;
+					if( (mEditor->mSprite->mTexParam.TexSizeX > 8) && (mEditor->mSprite->mTexParam.TexSizeY > 8) ){
+						bAllowDownscale = true;
 
-									if( (mEditor->mSprite->mTexParam.TexSizeX > 16) && (mEditor->mSprite->mTexParam.TexSizeY > 16) ){
-										cAllowedDownScale = 4;
-									}
+						if( (mEditor->mSprite->mTexParam.TexSizeX > 16) && (mEditor->mSprite->mTexParam.TexSizeY > 16) ){
+							cAllowedDownScale = 4;
+						}
 
-									if( (mEditor->mSprite->mTexParam.TexSizeX > 32) && (mEditor->mSprite->mTexParam.TexSizeY > 32) ){
-										cAllowedDownScale = 8;
-									}																		
-								}
+						if( (mEditor->mSprite->mTexParam.TexSizeX > 32) && (mEditor->mSprite->mTexParam.TexSizeY > 32) ){
+							cAllowedDownScale = 8;
+						}																		
+					}
 
-								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Downscaled Copy")).c_str(), NULL, false, bAllowDownscale)){									
-									mEditor->activateDTDialog(EDIALOG_SPRITECREATEDOWNSCALEDCOPY, cAllowedDownScale);
-								}
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Downscaled Copy")).c_str(), NULL, false, bAllowDownscale)){									
+						mEditor->activateDTDialog(EDIALOG_SPRITECREATEDOWNSCALEDCOPY, cAllowedDownScale);
+					}
 
-								bool bAllowRange = false;
+					bool bAllowRange = false;
 
-								if( mEditor->mSprite->mTexParam.TexSizeX == mEditor->mSprite->mTexParam.TexSizeY){
-									bAllowRange = true;
-								}
+					if( mEditor->mSprite->mTexParam.TexSizeX == mEditor->mSprite->mTexParam.TexSizeY){
+						bAllowRange = true;
+					}
 
-								if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Convert BPP")).c_str())){										
-									mEditor->activateDTDialog(EDIALOG_SPRITECONVERTBPP, mEditor->mSprite->mTexParam.TexBPP);
-								}
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Convert BPP")).c_str())){										
+						mEditor->activateDTDialog(EDIALOG_SPRITECONVERTBPP, mEditor->mSprite->mTexParam.TexBPP);
+					}
 
-								if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotation Range")).c_str(), NULL, false, bAllowRange)){									
-									mEditor->activateDTDialog(EDIALOG_SPRITECREATEROTATIONRANGE);
-								}
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotation Range")).c_str(), NULL, false, bAllowRange)){									
+						mEditor->activateDTDialog(EDIALOG_SPRITECREATEROTATIONRANGE);
+					}
 
-								if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Frame Rotations")).c_str(), NULL, false, bAllowRange)){									
-									mEditor->activateDTDialog(EDIALOG_SPRITECREATEFRAMEROTATIONS);
-								}
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Frame Rotations")).c_str(), NULL, false, bAllowRange)){									
+						mEditor->activateDTDialog(EDIALOG_SPRITECREATEFRAMEROTATIONS);
+					}
 															
-								ImGui::EndMenu();		
-							}
-
-				/*  */	
+					ImGui::EndMenu();		
+				}
 
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Sprite Frame Reordering").c_str()))){										
 					if(ImGui::MenuItem("Warn Before Frame Removal", NULL, &mGlobalSettings.bSpriteWarnBeforeDelete)){
@@ -713,14 +680,15 @@ int TBDialog::render(){
 				
 					if(mEditor->mTileMap->bHasCollisionMap){
 						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Edit")).c_str())){				
-								mEditor->activateColMapDialog();
-							}
+							mEditor->activateColMapDialog();
+						}
+						
 						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Remove")).c_str())){											
-								mEditor->activateDTDialog(EDIALOG_COLMAPREMOVE);
-							}
+							mEditor->activateDTDialog(EDIALOG_COLMAPREMOVE);
+						}
 					} else {
 						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Create")).c_str())){				
-								mEditor->activateColMapDialog(true);
+							mEditor->activateColMapDialog(true);
 						}
 					}
 

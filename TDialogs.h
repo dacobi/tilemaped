@@ -503,9 +503,7 @@ class PODialog: public Dialog{
 };
 
 class TBDialog: public Dialog{
-	public:
-		//std::string mDialogTextActions;		
-		//std::string mDialogTextProject;		
+	public:		
 		std::string mDialogTextWindow;		
 		TEditor* mEditor;		
 		virtual int render();
