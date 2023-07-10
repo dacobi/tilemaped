@@ -2038,10 +2038,7 @@ if((mCurMode == EMODE_MAP) || (mCurMode == EMODE_SELEDIT)){
 	}
 	if(mCurMode == EMODE_TILESET){
 		mTileSet.mActionStack.redoLastActionGroup();
-	}
-	//if(mCurMode == EMODE_SELEDIT){
-	//	mSelEdit.mActionStack.redoLastActionGroup();
-	//}
+	}	
 }
 
 int TEditor::activateProjectInfo(){	
@@ -2092,12 +2089,14 @@ int TEditor::activateDropUnusedTile(){
 	return 0;
 }
 
+/*
 int TEditor::activateDropUnusedTiles(){
 	if(mCurMode == EMODE_MAP){
 		activateDTDialog(EDIALOG_TILEDELETEALL);
 	}
 	return 0;
 }
+*/
 
 int TEditor::activateRemoveFrame(){
 	if(mCurMode == EMODE_SPRITE){
@@ -2769,12 +2768,14 @@ bool TEditor::checkQuit(){
 	return false;
 }
 
+/*
 int TEditor::activateHelpDialog(){
 	mGlobalSettings.bShowHelpDialog = true;
 	mActiveDialog = &mHelpDialog;
 	
 	return 0;
 }
+*/
 
 void TEditor::activateSaveDialog(){
 	if(fs::exists(fs::status(mGlobalSettings.ProjectPath))){
@@ -2784,6 +2785,8 @@ void TEditor::activateSaveDialog(){
 	}
 }
 
+
+/*
 int TEditor::activateRemoveTileMapDialog(){
 	if(mCurMode == EMODE_MAP){
 		if(mTileMaps.size() > 1){
@@ -2792,13 +2795,16 @@ int TEditor::activateRemoveTileMapDialog(){
 	}
 	return 0;
 }
+*/
 
+/*
 int TEditor::removeColMapDialog(){
 	if(mCurMode == EMODE_MAP){
 		activateDTDialog(EDIALOG_COLMAPREMOVE);
 	}
 	return 0;
 }
+*/
 
 int TEditor::activateColMapDialog(bool bCreateColMap){
 	if(bCreateColMap){		
@@ -4488,8 +4494,6 @@ int TEditor::setThemeColors(){
 			break;
 	}
 
-	//cancelActiveDialog();
-
 	if(mGlobalSettings.mINIFile.Win_Theme->ivalue == 1){
 		mGlobalSettings.setColors(true);
 	} else {
@@ -4509,9 +4513,6 @@ int TEditor::handleEvents(){
 	cx /= mGlobalSettings.mUIScale;
 	cy /= mGlobalSettings.mUIScale;
 
-	//int mapWidthX = mGlobalSettings.TileMapWidth*mGlobalSettings.mGlobalTexParam.TexSizeX*mGlobalSettings.TileMapScale;					
-	//int mapWidthY = mGlobalSettings.TileMapHeight*mGlobalSettings.mGlobalTexParam.TexSizeY*mGlobalSettings.TileMapScale;
-	
 	if(mButtonState & SDL_BUTTON(SDL_BUTTON_LEFT)){
 		leftMouseButtonDown = true;
 	} else {		
@@ -4519,6 +4520,7 @@ int TEditor::handleEvents(){
 		bTileMapGrapped = false;
 		bTileSetGrapped = false;
 		bSelEditGrapped = false;
+		bSpriteGrapped = false;
 	}
 
 	if(mButtonState & SDL_BUTTON(SDL_BUTTON_RIGHT)){
@@ -4587,22 +4589,6 @@ int TEditor::handleEvents(){
 			
 	}
 
-	/*
-	if(mTileMapScrollX > 0){mTileMapScrollX = 0;}
-	if(mTileMapScrollY > 0){mTileMapScrollY = 0;}
-	
-	if(mTileMapScrollX < -(mapWidthX - (mGlobalSettings.WindowWidth-mGlobalSettings.TileSetWidth))){mTileMapScrollX = -(mapWidthX - (mGlobalSettings.WindowWidth-mGlobalSettings.TileSetWidth));}
-	if(mTileMapScrollY < -(mapWidthY - (mGlobalSettings.WindowHeight - mGlobalSettings.TopBarHeight))){mTileMapScrollY = -(mapWidthY - (mGlobalSettings.WindowHeight - mGlobalSettings.TopBarHeight));}
-	
-	if(mapWidthX < (mGlobalSettings.WindowWidth-mGlobalSettings.TileSetWidth)){
-		mTileMapScrollX = -(mapWidthX - (mGlobalSettings.WindowWidth-mGlobalSettings.TileSetWidth))/2;
-	}
-	
-	if(mapWidthY < (mGlobalSettings.WindowHeight-mGlobalSettings.TopBarHeight)){
-		mTileMapScrollY = -(mapWidthY - (mGlobalSettings.WindowHeight-mGlobalSettings.TopBarHeight))/2;
-	}
-	*/
-
 	leftMouseButtonClicks = 0;
 	rightMouseButtonClicks = 0;
 
@@ -4643,7 +4629,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  				}
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_RETURN){
-	  					mActiveDialog->recieveInput(SDLK_y);
+	  				mActiveDialog->recieveInput(SDLK_y);
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_ESCAPE){
 					mActiveDialog->recieveInput(SDLK_n);

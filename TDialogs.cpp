@@ -262,7 +262,7 @@ int TBDialog::render(){
 
 						if(mGlobalSettings.CurrentEditor->mTileMaps.size() > 1){
 							if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Remove Tilemap")).c_str())){				
-								mGlobalSettings.CurrentEditor->activateRemoveTileMapDialog();
+								mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_TILEMAPDELETE);
 							}	
 						}
 						
@@ -364,8 +364,7 @@ int TBDialog::render(){
 				}
 			}
 
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Help Dialog (F1)")).c_str())){
-				//mGlobalSettings.CurrentEditor->activateHelpDialog();
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Help Dialog (F1)")).c_str())){				
 				mGlobalSettings.bShowHelpDialog = true;
 				mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_HELPMENU);
 			}
@@ -704,7 +703,7 @@ int TBDialog::render(){
 				}
 
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Unused Tiles")).c_str())){
-					mGlobalSettings.CurrentEditor->activateDropUnusedTiles();
+					mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_TILEDELETEALL);
 				}
 											
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mFile + " CollisionMap")).c_str())){
@@ -714,7 +713,7 @@ int TBDialog::render(){
 								mGlobalSettings.CurrentEditor->activateColMapDialog();
 							}
 						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Remove")).c_str())){											
-								mGlobalSettings.CurrentEditor->removeColMapDialog();
+								mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_COLMAPREMOVE);
 							}
 					} else {
 						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile+ " Create")).c_str())){				
@@ -1705,7 +1704,9 @@ void DTDCDialog::recieveInput(int mKey){
 
 	if(mKey == SDLK_TAB){
 		if(mActiveInput){
-			mActiveInput->autoComplete();
+			if(mActiveInput->bIsActive){
+				mActiveInput->autoComplete();
+			}
 		}		 
 	}
 }

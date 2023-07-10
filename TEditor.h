@@ -236,11 +236,13 @@ class TEditor{
 		int showMessage(std::string cMessage, bool isError=false);
 		bool checkQuit();
 		void setSpriteBrushes();
-						
-		int activateRemoveTileMapDialog();
+								
 		int activateColMapDialog(bool bCreateColMap=false);
-		int removeColMapDialog();
-		int activateHelpDialog();
+		
+		//int removeColMapDialog();		
+		//int activateHelpDialog();
+		//int activateRemoveTileMapDialog();
+		//int activateDropUnusedTiles();
 		
 		int cancelActiveDialog();
 		void activateSaveDialog();
@@ -248,7 +250,6 @@ class TEditor{
 		int activateProjectInfo();
 		int activatePaletteEdit();
 		
-		int activateDropUnusedTiles();
 		int activateDropUnusedTile();
 		int activateRemoveFrame();
 		
