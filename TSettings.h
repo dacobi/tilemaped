@@ -210,7 +210,7 @@ class TSettings{
 		ImGuiIO *mio;
 		void shutdown();
 		void close();
-		TEditor* CurrentEditor;		
+		TEditor* mEditor;		
 		SDL_Renderer *TRenderer;
 		SDL_Window *TWindow;
 		SDL_Texture *TTarget = NULL;

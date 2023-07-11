@@ -6,19 +6,19 @@ extern TSettings mGlobalSettings;
 
 int TCollisionMap::createNew(TileMap *cTileMap){
     mTileMap = cTileMap;
-    MapData.resize(mGlobalSettings.CurrentEditor->mTileSet.TTiles.size(), 0);
+    MapData.resize(mGlobalSettings.mEditor->mTileSet.TTiles.size(), 0);
     return 0;
 }
 
 int TCollisionMap::checkSize(){
     int retval = 0;
 
-    while(MapData.size() < mGlobalSettings.CurrentEditor->mTileSet.TTiles.size()){
+    while(MapData.size() < mGlobalSettings.mEditor->mTileSet.TTiles.size()){
         MapData.push_back(0);
         retval++;
     }
     
-    while(MapData.size() > mGlobalSettings.CurrentEditor->mTileSet.TTiles.size()){
+    while(MapData.size() > mGlobalSettings.mEditor->mTileSet.TTiles.size()){
         MapData.pop_back();
         retval--;
     }
@@ -130,7 +130,7 @@ int TCollisionMapEditor::startEdit(TileMap *cTileMap){
     mTileMap->mColMap.checkSize();
 	
     mSelectedTile = 0;
-	TileAreas.resize(mGlobalSettings.CurrentEditor->mTileSet.TTiles.size());
+	TileAreas.resize(mGlobalSettings.mEditor->mTileSet.TTiles.size());
 	mCollisionValue = mTileMap->mColMap.MapData[mSelectedTile];
 
     return 0;
@@ -142,12 +142,12 @@ int TCollisionMapEditor::render(){
     if(mTileMap->mColMap.checkSize() != 0){
         mSelectedTile = 0;
         mCollisionValue = mTileMap->mColMap.MapData[mSelectedTile];
-        TileAreas.resize(mGlobalSettings.CurrentEditor->mTileSet.TTiles.size());
+        TileAreas.resize(mGlobalSettings.mEditor->mTileSet.TTiles.size());
     }
 
     int mCurColumns = 4;
 
-    if(mGlobalSettings.CurrentEditor->mTileSet.TTiles.size() > 63){
+    if(mGlobalSettings.mEditor->mTileSet.TTiles.size() > 63){
         mCurColumns = 8;
     }
 
@@ -159,8 +159,8 @@ int TCollisionMapEditor::render(){
     int mCurTileScale = 4;
     int mScroll = 0;
 
-    int isOdd = mGlobalSettings.CurrentEditor->mTileSet.TTiles.size() % mCurColumns;
-	int cRowNum = mGlobalSettings.CurrentEditor->mTileSet.TTiles.size() / mCurColumns;
+    int isOdd = mGlobalSettings.mEditor->mTileSet.TTiles.size() % mCurColumns;
+	int cRowNum = mGlobalSettings.mEditor->mTileSet.TTiles.size() / mCurColumns;
 
     if(mGlobalSettings.bHighDPI){
         ImGui::SetNextWindowSize(ImVec2(700,900), ImGuiCond_Once);
@@ -179,7 +179,7 @@ int TCollisionMapEditor::render(){
 		ImGui::SetNextWindowPos(cNewPos, ImGuiCond_Once, ImVec2(0.5f, 0.5f));
 	}
 
-    ImGui::Begin("Collision Map", &mGlobalSettings.CurrentEditor->bShowCollisionEditor, ImGuiWindowFlags_NoNav); 
+    ImGui::Begin("Collision Map", &mGlobalSettings.mEditor->bShowCollisionEditor, ImGuiWindowFlags_NoNav); 
 
     std::stringstream convert;
     std::string sTile;
@@ -247,7 +247,7 @@ int TCollisionMapEditor::render(){
 			ImGui::SetCursorPos(cpos);            
 
 			for(int j = 0; j < mCurColumns; j++){
-				TileAreas[(i * mCurColumns) + j] = mGlobalSettings.CurrentEditor->mTileSet.TTiles[(i*mCurColumns) + j]->renderImCol((cWinPos.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),cWinPos.y + mScroll + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*i), (i*mCurColumns) + j,  mCurTileScale, (((i*mCurColumns) + j) == mSelectedTile));												
+				TileAreas[(i * mCurColumns) + j] = mGlobalSettings.mEditor->mTileSet.TTiles[(i*mCurColumns) + j]->renderImCol((cWinPos.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),cWinPos.y + mScroll + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*i), (i*mCurColumns) + j,  mCurTileScale, (((i*mCurColumns) + j) == mSelectedTile));												
 				if((mCurColumns > 1) && (j < (mCurColumns-1))){					
 					ImGui::SameLine();
 				} 
@@ -265,7 +265,7 @@ int TCollisionMapEditor::render(){
             
 			int i = mCurColumns;
 			for(int j = 0; j < isOdd; j++){
-				TileAreas[(i * cRowNum) + j] = mGlobalSettings.CurrentEditor->mTileSet.TTiles[(i*cRowNum)+j]->renderImCol((cWinPos.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),cWinPos.y + mScroll + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*cRowNum), (i*cRowNum)+j,  mCurTileScale, (((i * cRowNum) + j) == mSelectedTile));															
+				TileAreas[(i * cRowNum) + j] = mGlobalSettings.mEditor->mTileSet.TTiles[(i*cRowNum)+j]->renderImCol((cWinPos.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),cWinPos.y + mScroll + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*cRowNum), (i*cRowNum)+j,  mCurTileScale, (((i * cRowNum) + j) == mSelectedTile));															
                 if((j < (isOdd-1))){
 					ImGui::SameLine();
 				}
@@ -292,10 +292,10 @@ int TCollisionMapEditor::render(){
 	}
 
     if(ImGui::Button("   Close   ")){
-        mGlobalSettings.CurrentEditor->bShowCollisionEditor = false;
+        mGlobalSettings.mEditor->bShowCollisionEditor = false;
     }
 
-    mGlobalSettings.CurrentEditor->ImButtonsColEdit.updateButtonStates();
+    mGlobalSettings.mEditor->ImButtonsColEdit.updateButtonStates();
     
     ImGui::End();
 

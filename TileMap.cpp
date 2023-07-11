@@ -77,7 +77,7 @@ SDL_Rect TPixel::renderIm(int xpos, int ypos, int tscale, bool updateRect ,bool 
 
 		ImDrawList *tList = ImGui::GetWindowDrawList();
 
-		tList->AddRectFilled(elmin, elmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(PixelColor));
+		tList->AddRectFilled(elmin, elmax, mGlobalSettings.mEditor->mPalette.getImColor(PixelColor));
 
 		if(bPixelSelected){
 			ImVec2 exmin,exmax;
@@ -146,7 +146,7 @@ SDL_Rect TPixel::renderEditor(int xpos, int ypos, int tscale, bool updateRect ,b
 
 		ImDrawList *tList = ImGui::GetWindowDrawList();
 
-		tList->AddRectFilled(elmin, elmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(mGlobalSettings.CurrentEditor->mPalette.TPaletteEdit[PixelIndex]));
+		tList->AddRectFilled(elmin, elmax, mGlobalSettings.mEditor->mPalette.getImColor(mGlobalSettings.mEditor->mPalette.TPaletteEdit[PixelIndex]));
 
 		if(bPixelSelectedEdit){			
 			ImVec2 exmin,exmax;
@@ -364,7 +364,7 @@ int TPalette::importPaletteEdit(std::string palPath){
 	int pType = mGlobalSettings.testPaletteFile(palPath);
 
 	if(pType == 0){
-		mGlobalSettings.CurrentEditor->showMessage("Error: Not Palette File!", true);
+		mGlobalSettings.mEditor->showMessage("Error: Not Palette File!", true);
 		return 1;
 	}
 
@@ -416,7 +416,7 @@ int TPalette::importPaletteEdit(std::string palPath){
 			
 			TPaletteEdit.push_back(tmpcol);
 		}
-		mGlobalSettings.CurrentEditor->showMessage("Palette Import Succesful");
+		mGlobalSettings.mEditor->showMessage("Palette Import Succesful");
 		return 0;
 	}
 
@@ -464,7 +464,7 @@ int TPalette::importPaletteEdit(std::string palPath){
 			TPaletteEdit.push_back(tmpcol);
 		}
 		
-		mGlobalSettings.CurrentEditor->showMessage("Palette Import Succesful");		
+		mGlobalSettings.mEditor->showMessage("Palette Import Succesful");		
 		return 0;
 	}
 
@@ -848,7 +848,7 @@ int TPalette::renderIm(int xpos,int ypos, TextureParameters *mTexParam){
 	}
 	}
 
-	mGlobalSettings.CurrentEditor->ImButtonsPalette.updateButtonStates();
+	mGlobalSettings.mEditor->ImButtonsPalette.updateButtonStates();
 
 	ImGui::End();
 
@@ -974,24 +974,24 @@ int TPalette::renderEditor(int xpos,int ypos){
 		}
 	}
 
-	mGlobalSettings.CurrentEditor->ImButtonsPalette.updateButtonStates();
+	mGlobalSettings.mEditor->ImButtonsPalette.updateButtonStates();
 
-	if(mGlobalSettings.CurrentEditor->mColorSelectedEdit > 0){
-		TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelectedEdit] = getSDLColor4Bit(mR, mG, mB);
-		mEditColor = getIm4Color(TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelectedEdit]);
+	if(mGlobalSettings.mEditor->mColorSelectedEdit > 0){
+		TPaletteEdit[mGlobalSettings.mEditor->mColorSelectedEdit] = getSDLColor4Bit(mR, mG, mB);
+		mEditColor = getIm4Color(TPaletteEdit[mGlobalSettings.mEditor->mColorSelectedEdit]);
 	}
 
 	//TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelectedEdit] = getSDLColor(mEditColor);
 
 	if(ImGui::Button("Apply Changes")){
-		mGlobalSettings.CurrentEditor->activateDTDialog(EDIALOG_PALETTEUPDATE);
+		mGlobalSettings.mEditor->activateDTDialog(EDIALOG_PALETTEUPDATE);
 	}
 
 	ImGui::SameLine();
 
 	if(ImGui::Button("Cancel Changes")){
 		TPaletteEdit = TPalette;
-		mEditColor = getIm4Color(TPalette[mGlobalSettings.CurrentEditor->mColorSelectedEdit]);
+		mEditColor = getIm4Color(TPalette[mGlobalSettings.mEditor->mColorSelectedEdit]);
 		setEditColor();	
 	}
 
@@ -1273,7 +1273,7 @@ int Tile::rotater(){
 
 	FileData = tmpData;
 
-	updateTexture(&mGlobalSettings.CurrentEditor->mPalette);
+	updateTexture(&mGlobalSettings.mEditor->mPalette);
 
 	return 0;
 }
@@ -1299,7 +1299,7 @@ int Tile::rotatel(){
 
 	FileData = tmpData;
 
-	updateTexture(&mGlobalSettings.CurrentEditor->mPalette);
+	updateTexture(&mGlobalSettings.mEditor->mPalette);
 
 	return 0;
 }
@@ -1326,10 +1326,10 @@ unsigned char findClosestPaletteColor(const SDL_Color& color, int cMaxPal, int c
 		}
 
         SDL_Color paletteColor;
-        paletteColor.r = mGlobalSettings.CurrentEditor->mPalette.TPalette[i + pOffset].r;
-        paletteColor.g = mGlobalSettings.CurrentEditor->mPalette.TPalette[i + pOffset].g;
-        paletteColor.b = mGlobalSettings.CurrentEditor->mPalette.TPalette[i + pOffset].b;
-		paletteColor.a = mGlobalSettings.CurrentEditor->mPalette.TPalette[i + pOffset].a;
+        paletteColor.r = mGlobalSettings.mEditor->mPalette.TPalette[i + pOffset].r;
+        paletteColor.g = mGlobalSettings.mEditor->mPalette.TPalette[i + pOffset].g;
+        paletteColor.b = mGlobalSettings.mEditor->mPalette.TPalette[i + pOffset].b;
+		paletteColor.a = mGlobalSettings.mEditor->mPalette.TPalette[i + pOffset].a;
 
         int distance = getEuclideanDistance(color, paletteColor);
 
@@ -1357,7 +1357,7 @@ int Tile::rotate(double cAngle){
 			convert >> cQual;
 			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, cQual.c_str());
 			if(mGlobalSettings.mUseTextureFiltering > 1){
-				recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);
+				recreateTexture(&mGlobalSettings.mEditor->mPalette);
 			}
 		}
 		
@@ -1428,7 +1428,7 @@ int Tile::rotate(double cAngle){
 		}
 
 		FileData = bitmap;
-		recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);
+		recreateTexture(&mGlobalSettings.mEditor->mPalette);
 		delete[] pixels;
 
 	}
@@ -1450,7 +1450,7 @@ int Tile::applyFilter(){
 		convert >> cQual;
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, cQual.c_str());
 		if(mGlobalSettings.mUseTextureFiltering > 1){
-			recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);			
+			recreateTexture(&mGlobalSettings.mEditor->mPalette);			
 		}
 
 		SDL_Texture *rTexture = SDL_CreateTexture( mGlobalSettings.TRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, mTexParam->TexSizeX * 8, mTexParam->TexSizeY * 8);
@@ -1513,7 +1513,7 @@ int Tile::applyFilter(){
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");			
 
 		FileData = bitmap;
-		recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);
+		recreateTexture(&mGlobalSettings.mEditor->mPalette);
 		delete[] pixels;
 
 		return 0;
@@ -1536,8 +1536,8 @@ int Tile::upscale(Tile *cCopyTile){
 			convert >> cQual;
 			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, cQual.c_str());
 			if(mGlobalSettings.mUseTextureFiltering > 1){
-				recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);
-				cCopyTile->recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);
+				recreateTexture(&mGlobalSettings.mEditor->mPalette);
+				cCopyTile->recreateTexture(&mGlobalSettings.mEditor->mPalette);
 			}
 		}
 		
@@ -1586,8 +1586,8 @@ int Tile::upscale(Tile *cCopyTile){
 		}	
 
 		FileData = bitmap;
-		recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);
-		cCopyTile->recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);
+		recreateTexture(&mGlobalSettings.mEditor->mPalette);
+		cCopyTile->recreateTexture(&mGlobalSettings.mEditor->mPalette);
 		delete[] pixels;
 	}
 	return 0;
@@ -1608,7 +1608,7 @@ int Tile::scale(double cScale){
 			convert >> cQual;
 			SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, cQual.c_str());
 			if(mGlobalSettings.mUseTextureFiltering > 1){
-				recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);
+				recreateTexture(&mGlobalSettings.mEditor->mPalette);
 			}
 		}
 		
@@ -1675,7 +1675,7 @@ int Tile::scale(double cScale){
 		}	
 
 		FileData = bitmap;
-		recreateTexture(&mGlobalSettings.CurrentEditor->mPalette);
+		recreateTexture(&mGlobalSettings.mEditor->mPalette);
 		delete[] pixels;
 
 	}
@@ -1803,7 +1803,7 @@ SDL_Rect Tile::renderIm(int xpos, int ypos, int mIndex, int &mDragAndDropped, in
 	int mode = 0;
 	int n = mIndex;
 
-	if(mGlobalSettings.CurrentEditor->bLCTRLisDown){
+	if(mGlobalSettings.mEditor->bLCTRLisDown){
 		mode = 1;
 	}
 
@@ -1921,14 +1921,14 @@ void Tile::renderEd(int xpos, int ypos, TPalette* tpal){
 		}
 	}
 	
-	if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel){ // && !mGlobalSettings.CurrentEditor->mBrushesPixel.bIsEditing){
-		if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel->mSelected.size()){
+	if(mGlobalSettings.mEditor->mCurrentBrushPixel){ // && !mGlobalSettings.CurrentEditor->mBrushesPixel.bIsEditing){
+		if(mGlobalSettings.mEditor->mCurrentBrushPixel->mSelected.size()){
 			for(int i=0; i < mTexParam->TexSizeY; i++){
 				for(int j=0; j < mTexParam->TexSizeX; j++){	
-					if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel->findInSelection((j+(i*mTexParam->TexSizeX))) != -1){
-						int findex = mGlobalSettings.CurrentEditor->mCurrentBrushPixel->findInSelection((j+(i*mTexParam->TexSizeX)));
-						if(mGlobalSettings.CurrentEditor->mCurrentBrushPixel->mBrushElements[findex] != -1){
-							tpal->renderTileEd(xpos + (mTexParam->TexPixelSize * mTexParam->TexEditScale)*j, ypos + (mTexParam->TexPixelSize * mTexParam->TexEditScale)*i, mGlobalSettings.CurrentEditor->mCurrentBrushPixel->mBrushElements[findex], mTexParam); 							
+					if(mGlobalSettings.mEditor->mCurrentBrushPixel->findInSelection((j+(i*mTexParam->TexSizeX))) != -1){
+						int findex = mGlobalSettings.mEditor->mCurrentBrushPixel->findInSelection((j+(i*mTexParam->TexSizeX)));
+						if(mGlobalSettings.mEditor->mCurrentBrushPixel->mBrushElements[findex] != -1){
+							tpal->renderTileEd(xpos + (mTexParam->TexPixelSize * mTexParam->TexEditScale)*j, ypos + (mTexParam->TexPixelSize * mTexParam->TexEditScale)*i, mGlobalSettings.mEditor->mCurrentBrushPixel->mBrushElements[findex], mTexParam); 							
 						}
 					}
 				}
@@ -2048,7 +2048,7 @@ int TileSet::importTileSet(std::string cTilePath, std::vector<Tile*> &cNewTiles)
 
 		SDL_Surface *newSurf = IMG_Load(cTilePath.c_str());
 		if(newSurf && (mGlobalSettings.mGlobalTexParam.TexBPP > 0x2)){
-			if(importPNG(newSurf,  &mGlobalSettings.CurrentEditor->mPalette)){
+			if(importPNG(newSurf,  &mGlobalSettings.mEditor->mPalette)){
 				std::cout << "Error Importing TileSet: " << cTilePath << std::endl;
 				return 1;
 			} else {
@@ -2058,7 +2058,7 @@ int TileSet::importTileSet(std::string cTilePath, std::vector<Tile*> &cNewTiles)
 			}
 		} else {
 			fs::path cNewPath = cTilePath;			
-			if(importFile(cNewPath.parent_path().string(), cNewPath.filename().string(), &mGlobalSettings.CurrentEditor->mPalette)){
+			if(importFile(cNewPath.parent_path().string(), cNewPath.filename().string(), &mGlobalSettings.mEditor->mPalette)){
 				std::cout << "Error Importing TileSet: " << cTilePath << std::endl;
 				return 1;
 			} else {
@@ -2474,7 +2474,7 @@ int TileSet::renderEd(int xpos, int ypos){
 
 				for(int ii=0; ii < mGlobalSettings.mGlobalTexParam.TexSizeY; ii++){
 					for(int jj=0; jj < mGlobalSettings.mGlobalTexParam.TexSizeX; jj++){
-						EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderTileEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, TTiles[(j*mSelEdWidth)+i]->getPixel(jj+(ii*mGlobalSettings.mGlobalTexParam.TexSizeX)), mCurEdScale, &mGlobalSettings.mGlobalTexParam); 			//mGlobalSettings.TilePixelSize * 
+						EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.mEditor->mPalette.renderTileEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, TTiles[(j*mSelEdWidth)+i]->getPixel(jj+(ii*mGlobalSettings.mGlobalTexParam.TexSizeX)), mCurEdScale, &mGlobalSettings.mGlobalTexParam); 			//mGlobalSettings.TilePixelSize * 
 					}
 				}
 			
@@ -2495,7 +2495,7 @@ int TileSet::renderEd(int xpos, int ypos){
 
 				for(int ii=0; ii < mGlobalSettings.mGlobalTexParam.TexSizeY; ii++){
 					for(int jj=0; jj < mGlobalSettings.mGlobalTexParam.TexSizeX; jj++){
-						EditPixelAreas[getXY(jj,ii, j, cRowNum)] = mGlobalSettings.CurrentEditor->mPalette.renderTileEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, TTiles[(i*cRowNum)+j]->getPixel(jj+(ii*mGlobalSettings.mGlobalTexParam.TexSizeX)), mCurEdScale, &mGlobalSettings.mGlobalTexParam); 			//mGlobalSettings.TilePixelSize * 
+						EditPixelAreas[getXY(jj,ii, j, cRowNum)] = mGlobalSettings.mEditor->mPalette.renderTileEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, TTiles[(i*cRowNum)+j]->getPixel(jj+(ii*mGlobalSettings.mGlobalTexParam.TexSizeX)), mCurEdScale, &mGlobalSettings.mGlobalTexParam); 			//mGlobalSettings.TilePixelSize * 
 					}
 				}
 
@@ -2509,8 +2509,8 @@ int TileSet::renderEd(int xpos, int ypos){
 			}
 		}
 
-		if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet){// && !mGlobalSettings.CurrentEditor->mBrushesPixel.bIsEditing){
-			if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->mSelected.size()){
+		if(mGlobalSettings.mEditor->mCurrentBrushPixelTileSet){// && !mGlobalSettings.CurrentEditor->mBrushesPixel.bIsEditing){
+			if(mGlobalSettings.mEditor->mCurrentBrushPixelTileSet->mSelected.size()){
 				for(int i = 0; i < mSelEdWidth; i++){
 					for(int j = 0; j <  cRowNum; j++){
 						int cxpos = xpos +  (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX)*i;
@@ -2518,10 +2518,10 @@ int TileSet::renderEd(int xpos, int ypos){
 
 						for(int ii=0; ii < mGlobalSettings.mGlobalTexParam.TexSizeY; ii++){
 							for(int jj=0; jj < mGlobalSettings.mGlobalTexParam.TexSizeX; jj++){
-								if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->findInSelection(getXY(jj,ii, i, j)) != -1){
-									int findex = mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->findInSelection(getXY(jj,ii, i, j));
-									if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->mBrushElements[findex] != -1){
-										mGlobalSettings.CurrentEditor->mPalette.renderTileEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->mBrushElements[findex], mCurEdScale, &mGlobalSettings.mGlobalTexParam); 
+								if(mGlobalSettings.mEditor->mCurrentBrushPixelTileSet->findInSelection(getXY(jj,ii, i, j)) != -1){
+									int findex = mGlobalSettings.mEditor->mCurrentBrushPixelTileSet->findInSelection(getXY(jj,ii, i, j));
+									if(mGlobalSettings.mEditor->mCurrentBrushPixelTileSet->mBrushElements[findex] != -1){
+										mGlobalSettings.mEditor->mPalette.renderTileEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.mEditor->mCurrentBrushPixelTileSet->mBrushElements[findex], mCurEdScale, &mGlobalSettings.mGlobalTexParam); 
 									}
 								}
 							}					
@@ -2537,10 +2537,10 @@ int TileSet::renderEd(int xpos, int ypos){
 
 						for(int ii=0; ii < mGlobalSettings.mGlobalTexParam.TexSizeY; ii++){
 							for(int jj=0; jj < mGlobalSettings.mGlobalTexParam.TexSizeX; jj++){
-								if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->findInSelection(getXY(jj,ii, j, cRowNum)) != -1){
-									int findex = mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->findInSelection(getXY(jj,ii, j, cRowNum));
-									if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->mBrushElements[findex] != -1){
-										mGlobalSettings.CurrentEditor->mPalette.renderTileEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mCurrentBrushPixelTileSet->mBrushElements[findex], mCurEdScale, &mGlobalSettings.mGlobalTexParam); 
+								if(mGlobalSettings.mEditor->mCurrentBrushPixelTileSet->findInSelection(getXY(jj,ii, j, cRowNum)) != -1){
+									int findex = mGlobalSettings.mEditor->mCurrentBrushPixelTileSet->findInSelection(getXY(jj,ii, j, cRowNum));
+									if(mGlobalSettings.mEditor->mCurrentBrushPixelTileSet->mBrushElements[findex] != -1){
+										mGlobalSettings.mEditor->mPalette.renderTileEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.mEditor->mCurrentBrushPixelTileSet->mBrushElements[findex], mCurEdScale, &mGlobalSettings.mGlobalTexParam); 
 									}
 								}							
 							}
@@ -2686,11 +2686,11 @@ int TileSet::renderIm(int ypos, int mScroll){
 	ImGui::Begin("TileSet", NULL, ImGuiWindowFlags_NoNav);    
 
 	if(ImGui::Button("Move Up")){
-		mGlobalSettings.CurrentEditor->moveTileUp();
+		mGlobalSettings.mEditor->moveTileUp();
 	}
 
 	if(ImGui::Button("Move Down")){
-		mGlobalSettings.CurrentEditor->moveTileDown();
+		mGlobalSettings.mEditor->moveTileDown();
 	}
 
 	ImGui::BeginChild("TTiles", ImVec2(0,0), false, ImGuiWindowFlags_NoNav);
@@ -2760,10 +2760,10 @@ int TileSet::renderIm(int ypos, int mScroll){
 	ImGui::PopStyleColor(3);
 
 	if(bIsDragged){		
-		mGlobalSettings.CurrentEditor->swapTiles(mDragSource, mDragTarget, true);
+		mGlobalSettings.mEditor->swapTiles(mDragSource, mDragTarget, true);
 	}
 
-	mGlobalSettings.CurrentEditor->ImButtonsTileSet.updateButtonStates();
+	mGlobalSettings.mEditor->ImButtonsTileSet.updateButtonStates();
 
 	ImGui::Spacing();
 
@@ -3117,14 +3117,14 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 		}
 	}
 	
-	if(mGlobalSettings.CurrentEditor->mCurrentBrushTile){ // && !mGlobalSettings.CurrentEditor->mBrushesTile.bIsEditing){
-		if(mGlobalSettings.CurrentEditor->mCurrentBrushTile->mSelected.size()){
+	if(mGlobalSettings.mEditor->mCurrentBrushTile){ // && !mGlobalSettings.CurrentEditor->mBrushesTile.bIsEditing){
+		if(mGlobalSettings.mEditor->mCurrentBrushTile->mSelected.size()){
 			for(int i=0; i < mGlobalSettings.TileMapHeight; i++){
 				for(int j=0; j < mGlobalSettings.TileMapWidth; j++){					
-					if(mGlobalSettings.CurrentEditor->mCurrentBrushTile->isInSelection((j+(i*mGlobalSettings.TileMapWidth)))){						
-						int findex = mGlobalSettings.CurrentEditor->mCurrentBrushTile->findInSelection((j+(i*mGlobalSettings.TileMapWidth)));
-						if(mGlobalSettings.CurrentEditor->mCurrentBrushTile->mBrushElements[findex] != -1){
-							mTiles->TTiles[mGlobalSettings.CurrentEditor->mCurrentBrushTile->mBrushElements[findex]]->render(xpos + (mGlobalSettings.mGlobalTexParam.TexSizeX * j * mGlobalSettings.TileMapScale), ypos + (mGlobalSettings.mGlobalTexParam.TexSizeY * i * mGlobalSettings.TileMapScale), mGlobalSettings.TileMapScale, mGlobalSettings.CurrentEditor->mCurrentBrushTile->getElementProps(findex));			
+					if(mGlobalSettings.mEditor->mCurrentBrushTile->isInSelection((j+(i*mGlobalSettings.TileMapWidth)))){						
+						int findex = mGlobalSettings.mEditor->mCurrentBrushTile->findInSelection((j+(i*mGlobalSettings.TileMapWidth)));
+						if(mGlobalSettings.mEditor->mCurrentBrushTile->mBrushElements[findex] != -1){
+							mTiles->TTiles[mGlobalSettings.mEditor->mCurrentBrushTile->mBrushElements[findex]]->render(xpos + (mGlobalSettings.mGlobalTexParam.TexSizeX * j * mGlobalSettings.TileMapScale), ypos + (mGlobalSettings.mGlobalTexParam.TexSizeY * i * mGlobalSettings.TileMapScale), mGlobalSettings.TileMapScale, mGlobalSettings.mEditor->mCurrentBrushTile->getElementProps(findex));			
 						}						
 					}
 				}
@@ -3141,8 +3141,8 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer,mGlobalSettings.DefaultGUIBorderColor.r,mGlobalSettings.DefaultGUIBorderColor.g,mGlobalSettings.DefaultGUIBorderColor.b, 0xff);
 	SDL_RenderDrawRect(mGlobalSettings.TRenderer, &mBorder);
 
-	if(mGlobalSettings.CurrentEditor->mTileMap->mSelection.bHasSelection){
-		mGlobalSettings.CurrentEditor->mTileMap->mSelection.renderSelection(xpos, ypos);
+	if(mGlobalSettings.mEditor->mTileMap->mSelection.bHasSelection){
+		mGlobalSettings.mEditor->mTileMap->mSelection.renderSelection(xpos, ypos);
 	}
 
 	return 0;

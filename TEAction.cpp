@@ -52,7 +52,7 @@ void TEActionReplacePixel::redo(){
 }
 
 bool TEActionReplacePixel::checkTileMap(){
-	if(mCurrentTileMap == mGlobalSettings.CurrentEditor->mTileMap){
+	if(mCurrentTileMap == mGlobalSettings.mEditor->mTileMap){
 		return false;
 	}
 	return true;
@@ -60,8 +60,8 @@ bool TEActionReplacePixel::checkTileMap(){
 
 int TEActionReplacePixel::getTileMap(){
 	int cTileMap = -1;
-	for(int i = 0; i < mGlobalSettings.CurrentEditor->mTileMaps.size(); i++){
-		if(mCurrentTileMap == mGlobalSettings.CurrentEditor->mTileMaps[i]){
+	for(int i = 0; i < mGlobalSettings.mEditor->mTileMaps.size(); i++){
+		if(mCurrentTileMap == mGlobalSettings.mEditor->mTileMaps[i]){
 			cTileMap = i;
 		}
 	}
@@ -69,7 +69,7 @@ int TEActionReplacePixel::getTileMap(){
 }
 
 bool TEActionReplacePixel::checkFrame(){
-	if(mCurrentFrame == mGlobalSettings.CurrentEditor->mSprite->mFrame){
+	if(mCurrentFrame == mGlobalSettings.mEditor->mSprite->mFrame){
 		return false;
 	}
 	return true;
@@ -77,8 +77,8 @@ bool TEActionReplacePixel::checkFrame(){
 
 int TEActionReplacePixel::getFrame(){
 	int cFrame = -1;
-	for(int i = 0; i < mGlobalSettings.CurrentEditor->mSprite->mFrames.size(); i++){
-		if(mCurrentFrame == mGlobalSettings.CurrentEditor->mSprite->mFrames[i]){
+	for(int i = 0; i < mGlobalSettings.mEditor->mSprite->mFrames.size(); i++){
+		if(mCurrentFrame == mGlobalSettings.mEditor->mSprite->mFrames[i]){
 			cFrame = i;
 		}
 	}
@@ -102,7 +102,7 @@ void TEActionReplaceTileFlip::redo(){
 }
 
 bool TEActionReplaceTileFlip::checkTileMap(){
-	if(mTileMap == mGlobalSettings.CurrentEditor->mTileMap){
+	if(mTileMap == mGlobalSettings.mEditor->mTileMap){
 		return false;
 	}
 	return true;
@@ -124,8 +124,8 @@ void TEActionReplaceTileFlip::swapTileValues(int tVal1, int tVal2){
 
 int TEActionReplaceTileFlip::getTileMap(){
 	int cTileMap = -1;
-	for(int i = 0; i < mGlobalSettings.CurrentEditor->mTileMaps.size(); i++){
-		if(mTileMap == mGlobalSettings.CurrentEditor->mTileMaps[i]){
+	for(int i = 0; i < mGlobalSettings.mEditor->mTileMaps.size(); i++){
+		if(mTileMap == mGlobalSettings.mEditor->mTileMaps[i]){
 			cTileMap = i;
 		}
 	}
@@ -152,15 +152,15 @@ void TEActionReplaceTileFlip::doAction(TileMap *cTileMap, int mCurTile, int mOld
 }
 
 bool TEActionReplaceTile::checkTileMap(){
-	if(mTileMap == mGlobalSettings.CurrentEditor->mTileMap){
+	if(mTileMap == mGlobalSettings.mEditor->mTileMap){
 		return false;
 	}
 	return true;
 }
 int TEActionReplaceTile::getTileMap(){
 	int cTileMap = -1;
-	for(int i = 0; i < mGlobalSettings.CurrentEditor->mTileMaps.size(); i++){
-		if(mTileMap == mGlobalSettings.CurrentEditor->mTileMaps[i]){
+	for(int i = 0; i < mGlobalSettings.mEditor->mTileMaps.size(); i++){
+		if(mTileMap == mGlobalSettings.mEditor->mTileMaps[i]){
 			cTileMap = i;
 		}
 	}
@@ -194,7 +194,7 @@ void TEActionReplaceTile::doAction(TileMap *cTileMap, int mCurTile, int mOld, in
 
 void TEActionReplacePixel::doAction(Tile* mCurTile, int mCurPix, int mOld, int mNew, TPalette* mPal){
 	mCurrentTile = mCurTile;
-	mCurrentTileMap = mGlobalSettings.CurrentEditor->mTileMap;
+	mCurrentTileMap = mGlobalSettings.mEditor->mTileMap;
 	mCurrentPixel = mCurPix;
 	mOldValue = mOld;
 	mNewValue = mNew;
@@ -449,7 +449,7 @@ void TEActionReplaceFrame::doAction(TSFrame* cFrame, std::vector<unsigned char> 
 }
 
 bool TEActionReplaceFrame::checkFrame(){
-	if(mFrame == mGlobalSettings.CurrentEditor->mSprite->mFrame){
+	if(mFrame == mGlobalSettings.mEditor->mSprite->mFrame){
 		return false;
 	}
 	return true;
@@ -457,8 +457,8 @@ bool TEActionReplaceFrame::checkFrame(){
 
 int TEActionReplaceFrame::getFrame(){
 	int cFrame = -1;
-	for(int i = 0; i < mGlobalSettings.CurrentEditor->mSprite->mFrames.size(); i++){
-		if(mFrame == mGlobalSettings.CurrentEditor->mSprite->mFrames[i]){
+	for(int i = 0; i < mGlobalSettings.mEditor->mSprite->mFrames.size(); i++){
+		if(mFrame == mGlobalSettings.mEditor->mSprite->mFrames[i]){
 			cFrame = i;
 		}
 	}

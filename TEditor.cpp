@@ -141,8 +141,8 @@ int TEditor::createNewProject(){
 	mTileSet.mMaxColumns = 4;
 	mTileSet.resizeEdit();		
 
-	mTileSet.mClipboardTiles.init("Tiles","Pixel", TBRUSH_PIXEL, &mTileSet.bShowClipboardTiles, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.CurrentEditor->mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
-	mTileSet.mClipboardTileSet.init("TileSet","Pixel", TBRUSH_PIXEL, &mTileSet.bShowClipboardTileSet, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.CurrentEditor->mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
+	mTileSet.mClipboardTiles.init("Tiles","Pixel", TBRUSH_PIXEL, &mTileSet.bShowClipboardTiles, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mEditor->mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
+	mTileSet.mClipboardTileSet.init("TileSet","Pixel", TBRUSH_PIXEL, &mTileSet.bShowClipboardTileSet, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mEditor->mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
 
 	initDialogs();
 
@@ -469,7 +469,7 @@ void TEditor::stateSpriteImport(){
 			newSurf = IMG_Load(mGlobalSettings.mNewSpritePath.c_str());
 			if(newSurf){
 				TSprite *cSprite = new TSprite(mGlobalSettings.mNewSpriteX,  mGlobalSettings.mNewSpriteY,  mGlobalSettings.mNewSpriteBPP);
-				if(cSprite->importPNG(newSurf,  &mGlobalSettings.CurrentEditor->mPalette, cNewFrames)){
+				if(cSprite->importPNG(newSurf,  &mGlobalSettings.mEditor->mPalette, cNewFrames)){
 					std::cout << "Error Importing Sprite: " << mGlobalSettings.mNewSpritePath << std::endl;								
 					showMessage("Error Importing Sprite", true);
 				} else {
@@ -559,7 +559,7 @@ void TEditor::stateFramesImport(){
 
 	newSurf = IMG_Load(mGlobalSettings.mNewFramesPath.c_str());
 	if(newSurf){
-		if(!mSprite->importPNG(newSurf, &mGlobalSettings.CurrentEditor->mPalette, cNewFrames)){
+		if(!mSprite->importPNG(newSurf, &mGlobalSettings.mEditor->mPalette, cNewFrames)){
 			bFramesImportSuccess = true;							
 		} 	
 	}else if (mGlobalSettings.getSpriteFileHeader(mGlobalSettings.mNewFramesPath, mGlobalSettings.mNewSpriteX,  mGlobalSettings.mNewSpriteY,  mGlobalSettings.mNewSpriteBPP, fbuffer)){
@@ -877,8 +877,8 @@ int TEditor::loadFromFolder(std::string path){
 		return 1;
 	}
 
-	mTileSet.mClipboardTiles.init("Tiles","Pixel", TBRUSH_PIXEL, &mTileSet.bShowClipboardTiles, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.CurrentEditor->mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
-	mTileSet.mClipboardTileSet.init("TileSet","Pixel", TBRUSH_PIXEL, &mTileSet.bShowClipboardTileSet, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.CurrentEditor->mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
+	mTileSet.mClipboardTiles.init("Tiles","Pixel", TBRUSH_PIXEL, &mTileSet.bShowClipboardTiles, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mEditor->mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
+	mTileSet.mClipboardTileSet.init("TileSet","Pixel", TBRUSH_PIXEL, &mTileSet.bShowClipboardTileSet, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mEditor->mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
 
 	//TODO maybe
 
@@ -1522,7 +1522,7 @@ int TEditor::render(){
 			mCurrentBrushPixelTileSet->getBrushSelection(cx, cy, mTileSet.EditPixelAreas);
 		}
 
-		mPalette.renderIm(100 + (mGlobalSettings.CurrentEditor->mTileSet.mCurEdScale * mGlobalSettings.CurrentEditor->mTileSet.mSelectionAreaX),50+mGlobalSettings.TopBarHeight, &mGlobalSettings.mGlobalTexParam);			
+		mPalette.renderIm(100 + (mGlobalSettings.mEditor->mTileSet.mCurEdScale * mGlobalSettings.mEditor->mTileSet.mSelectionAreaX),50+mGlobalSettings.TopBarHeight, &mGlobalSettings.mGlobalTexParam);			
 		
 		if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
 		mTileSet.renderEd(mTileSetScrollX + 50,mTileSetScrollY + 50+mGlobalSettings.TopBarHeight);
@@ -1565,7 +1565,7 @@ int TEditor::render(){
 			mCurrentBrushPixelSelEdit->getBrushSelection(cx, cy, mSelEdit.EditPixelAreas);
 		}
 
-		mPalette.renderIm(100 + (mGlobalSettings.CurrentEditor->mSelEdit.mCurEdScale * mGlobalSettings.CurrentEditor->mSelEdit.mSelectionAreaX),50+mGlobalSettings.TopBarHeight, &mGlobalSettings.mGlobalTexParam);			
+		mPalette.renderIm(100 + (mGlobalSettings.mEditor->mSelEdit.mCurEdScale * mGlobalSettings.mEditor->mSelEdit.mSelectionAreaX),50+mGlobalSettings.TopBarHeight, &mGlobalSettings.mGlobalTexParam);			
 		
 		if(!mGlobalSettings.bShowPixelType) mColorSelectedTile->bPixelSelected = false;
 		mSelEdit.renderEd(50 + mSelEditScrollX ,50 + mSelEditScrollY + mGlobalSettings.TopBarHeight);
@@ -2097,8 +2097,8 @@ int TEditor::activateRemoveFrame(){
 }
 
 int TEditor::activatePaletteEdit(){
-	if(mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor){		
-		mPalette.mEditColor = mPalette.getIm4Color(mPalette.TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelected]);	
+	if(mGlobalSettings.mEditor->mPalette.bUpdateEditColor){		
+		mPalette.mEditColor = mPalette.getIm4Color(mPalette.TPaletteEdit[mGlobalSettings.mEditor->mColorSelected]);	
 		mPalette.setEditColor();	
 		if(mColorSelectedTileEdit){
 			mColorSelectedTileEdit->bPixelSelectedEdit = false;
@@ -2107,7 +2107,7 @@ int TEditor::activatePaletteEdit(){
 		mColorSelectedTileEdit->bPixelSelectedEdit = true;
 		mColorSelectedEdit = mColorSelected;
 
-		mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor = false;
+		mGlobalSettings.mEditor->mPalette.bUpdateEditColor = false;
 	}	
 
 	if(mColorSelectedEdit == 0){
@@ -3113,7 +3113,7 @@ int TEditor::flipSelectedTile(int cFlipMode){
 
 int TEditor::replaceSelectedColor(int mx, int my){
 	
-	if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILE){
+	if(mGlobalSettings.mEditor->mCurMode == EMODE_TILE){
 
 		if(mGlobalSettings.bShowPixelType || mTileSelectedTile->mSelection.mSelected.size()){
 			int mOldColor = mColorSelected;
@@ -3160,7 +3160,7 @@ int TEditor::replaceSelectedColor(int mx, int my){
 		}
 	}
 
-	if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SPRITE){
+	if(mGlobalSettings.mEditor->mCurMode == EMODE_SPRITE){
 
 		
 		if(mGlobalSettings.bShowPixelTypeSprite || mSprite->mFrame->mSelection.mSelected.size()){
@@ -3212,7 +3212,7 @@ int TEditor::replaceSelectedColor(int mx, int my){
 	}
 
 
-	if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_TILESET){
+	if(mGlobalSettings.mEditor->mCurMode == EMODE_TILESET){
 		if(mGlobalSettings.bShowPixelType || mTileSet.mSelection.mSelected.size()){
 			int mOldColor = mColorSelected;
 
@@ -3269,7 +3269,7 @@ int TEditor::replaceSelectedColor(int mx, int my){
 		}
 	}
 
-	if(mGlobalSettings.CurrentEditor->mCurMode == EMODE_SELEDIT){		
+	if(mGlobalSettings.mEditor->mCurMode == EMODE_SELEDIT){		
 		if(mGlobalSettings.bShowPixelType){
 			int mOldColor = mColorSelected;
 
@@ -3500,7 +3500,7 @@ int TEditor::findSelSprite(){
 			mColorSelectedTile = mPalette.TPixels[mColorSelected];
 			mColorSelectedTile->bPixelSelected = true;
 			mSprite->mFrame->mSelection.cancelSelection();
-			mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor = true;
+			mGlobalSettings.mEditor->mPalette.bUpdateEditColor = true;
 		}
 	}
 
@@ -3600,7 +3600,7 @@ int TEditor::findSelTile(){
 			mColorSelectedTile = mPalette.TPixels[mColorSelected];
 			mColorSelectedTile->bPixelSelected = true;
 			mTileSelectedTile->mSelection.cancelSelection();
-			mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor = true;
+			mGlobalSettings.mEditor->mPalette.bUpdateEditColor = true;
 		}
 	}
 
@@ -3621,7 +3621,7 @@ int TEditor::handlePaletteEdit(){
 			mColorSelectedEdit = tSel;
 			mColorSelectedTileEdit = mPalette.TPixels[tSel];
 			mColorSelectedTileEdit->bPixelSelectedEdit = true;
-			mPalette.mEditColor = mPalette.getIm4Color(mPalette.TPaletteEdit[mGlobalSettings.CurrentEditor->mColorSelectedEdit]);
+			mPalette.mEditColor = mPalette.getIm4Color(mPalette.TPaletteEdit[mGlobalSettings.mEditor->mColorSelectedEdit]);
 			mPalette.setEditColor();
 		}
 	}
@@ -3674,7 +3674,7 @@ int TEditor::handlePalette(){
 			mColorSelectedTile = mPalette.TPixels[tmpSel];
 			mColorSelectedTile->bPixelSelected = true;
 			mLastPixelOffset = mTexParam->PaletteOffset;
-			mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor = true;
+			mGlobalSettings.mEditor->mPalette.bUpdateEditColor = true;
 		}		
 	} else {
 		if((mTexParam->TexBPP < mGlobalSettings.mGlobalTexParam.TexBPP)){ //&& !mPalette.bHasBackupColor
@@ -3686,7 +3686,7 @@ int TEditor::handlePalette(){
 			mColorSelected = tmpSel;
 			mColorSelectedTile = mPalette.TPixels[tmpSel];
 			mColorSelectedTile->bPixelSelected = true;			
-			mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor = true;
+			mGlobalSettings.mEditor->mPalette.bUpdateEditColor = true;
 		}
 	}
 
@@ -3702,7 +3702,7 @@ int TEditor::handlePalette(){
 			mColorSelected = tSel;
 			mColorSelectedTile = mPalette.TPixels[tSel];
 			mColorSelectedTile->bPixelSelected = true;
-			mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor = true;
+			mGlobalSettings.mEditor->mPalette.bUpdateEditColor = true;
 		}
 	}
 
@@ -3894,7 +3894,7 @@ int TEditor::handleSelEdit(){
 				mColorSelectedTile = mPalette.TPixels[mColorSelected];
 				mColorSelectedTile->bPixelSelected = true;
 				mTileSelectedTile->mSelection.cancelSelection();
-				mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor = true;
+				mGlobalSettings.mEditor->mPalette.bUpdateEditColor = true;
 			}
 		}
 	}
@@ -4021,7 +4021,7 @@ int TEditor::handleTileSetEdit(){
 			mColorSelectedTile = mPalette.TPixels[mColorSelected];
 			mColorSelectedTile->bPixelSelected = true;
 			mTileSet.mSelection.cancelSelection();
-			mGlobalSettings.CurrentEditor->mPalette.bUpdateEditColor = true;
+			mGlobalSettings.mEditor->mPalette.bUpdateEditColor = true;
 		}
 	}
 
@@ -4687,7 +4687,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F4){
 					if(mCurMode == EMODE_MAP){								
-						createNewTileCopy(mGlobalSettings.CurrentEditor->mTileSelectedTile);
+						createNewTileCopy(mGlobalSettings.mEditor->mTileSelectedTile);
 					}
 					if(mCurMode == EMODE_SPRITE){				
 		  				createNewFrameCopy(mSprite->mFrame);
@@ -4722,7 +4722,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 						activateDropUnusedTile();
 					}
 					if(mCurMode == EMODE_SPRITE){
-						if(mGlobalSettings.CurrentEditor->mSprite->mFrames.size() > 1){
+						if(mGlobalSettings.mEditor->mSprite->mFrames.size() > 1){
 							activateRemoveFrame();
 						} else {							
 							activateDTDialog(EDIALOG_SPRITEDELETE);

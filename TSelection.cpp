@@ -627,7 +627,7 @@ SDL_Rect TBrush::renderPixel(int xpos, int ypos){
     for(int i=0; i < mBrushHeight; i++){
             for(int j=0; j < mBrushWidth; j++){
                 if(mBrushElements[j+(i*mBrushWidth)] > -1){                    
-                    tList->AddRectFilled(telmin, telmax, mGlobalSettings.CurrentEditor->mPalette.getImColor(mGlobalSettings.CurrentEditor->mPalette.TPalette[mBrushElements[j+(i*mBrushWidth)] + (16 * mParent->mTexParam->PaletteOffset) ] ));                    
+                    tList->AddRectFilled(telmin, telmax, mGlobalSettings.mEditor->mPalette.getImColor(mGlobalSettings.mEditor->mPalette.TPalette[mBrushElements[j+(i*mBrushWidth)] + (16 * mParent->mTexParam->PaletteOffset) ] ));                    
                 }
                 
                 BrushElementAreas[j+(i*mBrushWidth)].x = telmin.x;
@@ -727,12 +727,12 @@ SDL_Rect TBrush::renderTile(int xpos, int ypos){
 
                     if(mGlobalSettings.mGlobalTexParam.TexBPP < 0x8){          
                         if(mParent->bUseTileOffset){
-                            tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TPOffset[mElementProps[j+(i*mBrushWidth)].mPaletteOffset], edmin, edmax);
+                            tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.mEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TPOffset[mElementProps[j+(i*mBrushWidth)].mPaletteOffset], edmin, edmax);
                         } else {          
-                            tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TPOffset[mGlobalSettings.mGlobalTexParam.PaletteOffset], edmin, edmax);
+                            tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.mEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TPOffset[mGlobalSettings.mGlobalTexParam.PaletteOffset], edmin, edmax);
                         }
                     } else {
-                        tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.CurrentEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TileTex, edmin, edmax);                        
+                        tList->AddImage((ImTextureID)(intptr_t)mGlobalSettings.mEditor->mTileSet.TTiles[mBrushElements[j+(i*mBrushWidth)]]->TileTex, edmin, edmax);                        
                         
                     }
                 }
@@ -1282,7 +1282,7 @@ int TBrushList::renderIm(){
 
     ImGui::EndChild();
 
-    mGlobalSettings.CurrentEditor->ImButtonsBrushes.updateButtonStates();
+    mGlobalSettings.mEditor->ImButtonsBrushes.updateButtonStates();
 
     ImGui::End();
 
@@ -1404,9 +1404,9 @@ int TSelectionEditor::renderEd(int xpos, int ypos){
 			for(int ii=0; ii < mGlobalSettings.mGlobalTexParam.TexSizeY; ii++){
 				for(int jj=0; jj < mGlobalSettings.mGlobalTexParam.TexSizeX; jj++){                    
                     if(mGlobalSettings.mGlobalTexParam.TexBPP < 0x8){
-                        EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mTileSet.TTiles[mGlobalSettings.CurrentEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])]->getPixel(jj+(ii*mGlobalSettings.mGlobalTexParam.TexSizeX), (mGlobalSettings.CurrentEditor->mTileMap->getOffset(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])), mGlobalSettings.CurrentEditor->mTileMap->getFlip(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])) , mCurEdScale); 
+                        EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.mEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.mEditor->mTileSet.TTiles[mGlobalSettings.mEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])]->getPixel(jj+(ii*mGlobalSettings.mGlobalTexParam.TexSizeX), (mGlobalSettings.mEditor->mTileMap->getOffset(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])), mGlobalSettings.mEditor->mTileMap->getFlip(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])) , mCurEdScale); 
                     } else {                        
-                        EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mTileSet.TTiles[mGlobalSettings.CurrentEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])]->getPixel(jj+(ii*mGlobalSettings.mGlobalTexParam.TexSizeX), 0, mGlobalSettings.CurrentEditor->mTileMap->getFlip(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])) , mCurEdScale); 
+                        EditPixelAreas[getXY(jj,ii, i, j)] = mGlobalSettings.mEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.mEditor->mTileSet.TTiles[mGlobalSettings.mEditor->mTileMap->getTile(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])]->getPixel(jj+(ii*mGlobalSettings.mGlobalTexParam.TexSizeX), 0, mGlobalSettings.mEditor->mTileMap->getFlip(mCurrentSelection->mSelected[(j*mSelectionWidth)+i])) , mCurEdScale); 
                     }
 					
 				}
@@ -1423,17 +1423,17 @@ int TSelectionEditor::renderEd(int xpos, int ypos){
 
             //Brush render
 
-			if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit){// && !mGlobalSettings.CurrentEditor->mBrushesPixel.bIsEditing){
-				if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit->mSelected.size()){						
+			if(mGlobalSettings.mEditor->mCurrentBrushPixelSelEdit){// && !mGlobalSettings.CurrentEditor->mBrushesPixel.bIsEditing){
+				if(mGlobalSettings.mEditor->mCurrentBrushPixelSelEdit->mSelected.size()){						
 					for(int ii=0; ii < mGlobalSettings.mGlobalTexParam.TexSizeY; ii++){
 						for(int jj=0; jj < mGlobalSettings.mGlobalTexParam.TexSizeX; jj++){					
-							if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit->findInSelection(getXY(jj,ii, i, j)) != -1){
-							    int findex = mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit->findInSelection(getXY(jj,ii, i, j));
-							    if(mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit->mBrushElements[findex] != -1){							
+							if(mGlobalSettings.mEditor->mCurrentBrushPixelSelEdit->findInSelection(getXY(jj,ii, i, j)) != -1){
+							    int findex = mGlobalSettings.mEditor->mCurrentBrushPixelSelEdit->findInSelection(getXY(jj,ii, i, j));
+							    if(mGlobalSettings.mEditor->mCurrentBrushPixelSelEdit->mBrushElements[findex] != -1){							
                                     if(mGlobalSettings.mGlobalTexParam.TexBPP < 0x8){
-                                        mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit->mBrushElements[findex] + (16 * (mGlobalSettings.CurrentEditor->mTileMap->getOffset(mCurrentSelection->mSelected[(j*mSelectionWidth)+i]))), mCurEdScale); 
+                                        mGlobalSettings.mEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.mEditor->mCurrentBrushPixelSelEdit->mBrushElements[findex] + (16 * (mGlobalSettings.mEditor->mTileMap->getOffset(mCurrentSelection->mSelected[(j*mSelectionWidth)+i]))), mCurEdScale); 
                                     } else {                        
-                                        mGlobalSettings.CurrentEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.CurrentEditor->mCurrentBrushPixelSelEdit->mBrushElements[findex] , mCurEdScale); 
+                                        mGlobalSettings.mEditor->mPalette.renderSelEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, mGlobalSettings.mEditor->mCurrentBrushPixelSelEdit->mBrushElements[findex] , mCurEdScale); 
                                     }
 							    }
 						    }
@@ -1809,7 +1809,7 @@ int TClipboard::renderIm(){
 
     ImGui::EndChild();
 
-    mGlobalSettings.CurrentEditor->ImButtonsClipboard.updateButtonStates();
+    mGlobalSettings.mEditor->ImButtonsClipboard.updateButtonStates();
 
     ImGui::End();
 

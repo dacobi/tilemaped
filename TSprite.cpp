@@ -9,14 +9,14 @@ void TSFrame::renderEd(int xpos, int ypos, TPalette* tpal){
 		}
 	}
 	
-	if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel){ // && !mGlobalSettings.CurrentEditor->mBrushesSprite->bIsEditing){
-		if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->mSelected.size()){
+	if(mGlobalSettings.mEditor->mSprite->mCurrentBrushPixel){ // && !mGlobalSettings.CurrentEditor->mBrushesSprite->bIsEditing){
+		if(mGlobalSettings.mEditor->mSprite->mCurrentBrushPixel->mSelected.size()){
 			for(int i=0; i < mTexParam->TexSizeY; i++){
 				for(int j=0; j < mTexParam->TexSizeX; j++){	
-					if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->findInSelection((j+(i*mTexParam->TexSizeX))) != -1){
-						int findex = mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->findInSelection((j+(i*mTexParam->TexSizeX)));
-						if(mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->mBrushElements[findex] != -1){
-							tpal->renderSpriteEd(xpos + (mTexParam->TexPixelSize * mTexParam->TexEditScale)*j, ypos + (mTexParam->TexPixelSize * mTexParam->TexEditScale)*i, mGlobalSettings.CurrentEditor->mSprite->mCurrentBrushPixel->mBrushElements[findex], mTexParam); 							
+					if(mGlobalSettings.mEditor->mSprite->mCurrentBrushPixel->findInSelection((j+(i*mTexParam->TexSizeX))) != -1){
+						int findex = mGlobalSettings.mEditor->mSprite->mCurrentBrushPixel->findInSelection((j+(i*mTexParam->TexSizeX)));
+						if(mGlobalSettings.mEditor->mSprite->mCurrentBrushPixel->mBrushElements[findex] != -1){
+							tpal->renderSpriteEd(xpos + (mTexParam->TexPixelSize * mTexParam->TexEditScale)*j, ypos + (mTexParam->TexPixelSize * mTexParam->TexEditScale)*i, mGlobalSettings.mEditor->mSprite->mCurrentBrushPixel->mBrushElements[findex], mTexParam); 							
 						}
 					}
 				}
@@ -402,11 +402,11 @@ void TSprite::renderIm(int ypos, int mScroll){
 	ImGui::Begin("Sprite Frames", &bShowSpriteFrames, ImGuiWindowFlags_NoNav);    
 
 	if(ImGui::Button("Move Up")){
-		mGlobalSettings.CurrentEditor->moveFrameUp();
+		mGlobalSettings.mEditor->moveFrameUp();
 	}
 
 	if(ImGui::Button("Move Down")){
-		mGlobalSettings.CurrentEditor->moveFrameDown();
+		mGlobalSettings.mEditor->moveFrameDown();
 	}
 
 	ImGui::BeginChild("SFrames", ImVec2(0,0), false, ImGuiWindowFlags_NoNav);
@@ -474,10 +474,10 @@ void TSprite::renderIm(int ypos, int mScroll){
 	ImGui::PopStyleColor(3);
 
 	if(bIsDragged){		
-		mGlobalSettings.CurrentEditor->swapFrames(mDragSource, mDragTarget, true);
+		mGlobalSettings.mEditor->swapFrames(mDragSource, mDragTarget, true);
 	}
 
-	mGlobalSettings.CurrentEditor->ImButtonsSprite.updateButtonStates();
+	mGlobalSettings.mEditor->ImButtonsSprite.updateButtonStates();
 
 	ImGui::Spacing();
 
