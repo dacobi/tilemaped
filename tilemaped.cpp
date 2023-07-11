@@ -1281,11 +1281,7 @@ int main( int argc, char* args[] )
 			if(mCreateNewProject){
 				int retvalcp = 0;
 				retvalcp = mEditor.createNewProject();
-				if(retvalcp){
-					//mEditor.bEditorRunning = false;
-					std::cout << "Errors While Creating Project" << std::endl;
-					//mEditor.closeProject();
-					//mGlobalSettings.bRunningOCD = true;
+				if(retvalcp){															
 					std::string createError = "";
 
 					if(retvalcp & 0x1){
@@ -1305,25 +1301,21 @@ int main( int argc, char* args[] )
 						}
 						createError += "Unknown TileSet Error! Using empty";
 					}
-										
+
 					mEditor.showMessage(createError, true);
 				}		
 			} else {
 				if(mGlobalSettings.testProjectFolder(mGlobalSettings.ProjectPath)){
-					if(mEditor.loadFromFolder(mGlobalSettings.ProjectPath)){
-						//mEditor.bEditorRunning = false;						
+					if(mEditor.loadFromFolder(mGlobalSettings.ProjectPath)){						
 						std::string loadError = "Error in Project Folder: " + mGlobalSettings.ProjectPath;				
-						std::cout << loadError << std::endl;
-						//return 1;
+						std::cout << loadError << std::endl;						
 						mEditor.closeProject();
 						mGlobalSettings.bRunningOCD = true;
 						mEditor.showMessage(loadError, true);
 					}
 				} else {
 					std::string loadError = "Error in Project Folder: " + mGlobalSettings.ProjectPath;				
-					std::cout << loadError << std::endl;
-					//return 1;
-					//mEditor.bEditorRunning = false;					
+					std::cout << loadError << std::endl;					
 					mEditor.closeProject();
 					mGlobalSettings.bRunningOCD = true;
 					mEditor.showMessage(loadError, true);
@@ -1343,9 +1335,9 @@ int main( int argc, char* args[] )
 				if(mGlobalSettings.mEditorState == ESTATE_PROJECTOPEN){
 					if(mEditor.loadFromFolder(mGlobalSettings.ProjectPath)){						
 						std::string loadError = "Error in Project Folder: " + mGlobalSettings.ProjectPath;
+						std::cout << loadError << std::endl;
 						mEditor.closeProject();
-						mGlobalSettings.bRunningOCD = true;
-						mEditor.bEditorRunning = false;
+						mGlobalSettings.bRunningOCD = true;						
 						mGlobalSettings.mEditorState = ESTATE_NONE;						
 						mEditor.showMessage(loadError, true);						
 					} else {
@@ -1355,8 +1347,7 @@ int main( int argc, char* args[] )
 				} else if(mGlobalSettings.mEditorState == ESTATE_PROJECTCREATE){
 					int retvalcp = 0; 
 					retvalcp = mEditor.createNewProject();
-					if(retvalcp){
-						//mEditor.bEditorRunning = false;
+					if(retvalcp){						
 						std::string createError = "";
 
 						if(retvalcp & 0x1){
