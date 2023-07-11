@@ -843,7 +843,7 @@ int OCDialog::render(){
 				mGlobalSettings.mEditor->activateDTDialog(EDIALOG_PROJECTOPEN);				
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Create")).c_str())){				
-				mGlobalSettings.mEditor->activateDTDialog(EDIALOG_PROJECTCREATE); //, 0);				
+				mGlobalSettings.mEditor->activateDTDialog(EDIALOG_PROJECTCREATE);		
 			}
 
 			ImGui::Separator();
@@ -2391,8 +2391,6 @@ DTDialog* DTDialog::createProjectCreateDialog(){
 	newDialog->setLabel("Create Project");
 
 	newDialog->setTarget(ESTATE_PROJECTCREATE);
-
-	//newDialog->setRequiredCondition(0);
 
 	newDialog->addText(mGlobalSettings.mFile + " Create New Project?");
 

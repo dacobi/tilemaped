@@ -79,7 +79,7 @@ void TEditor::closeProject(){
 	mCurrentBrushPixelSelEdit = NULL;		
 
 	mActiveDialog = NULL;
-	mActiveMessage = NULL;
+	//mActiveMessage = NULL;
 
 	mGlobalSettings.close();
 
@@ -91,6 +91,8 @@ void TEditor::shutdown(){
 }
 
 int TEditor::createNewProject(){
+	int retval = 0;
+
 	std::cout << "Creating Project: " << mGlobalSettings.ProjectPath << std::endl;
 	std::cout << "TileMapWidth: " << mGlobalSettings.TileMapWidth << " TileMapHeight: " << mGlobalSettings.TileMapHeight << " TileSizeX: " << mGlobalSettings.mGlobalTexParam.TexSizeX << " TileSizeY: " << mGlobalSettings.mGlobalTexParam.TexSizeY << std::endl;	
 	if(mGlobalSettings.bProjectHasPalette){
@@ -98,11 +100,13 @@ int TEditor::createNewProject(){
 			if(mPalette.importGimpPalette(mGlobalSettings.ProjectPalettePath)){				
 				std::cout << "Error in Palette File! Using default" << std::endl;
 				mPalette.initPalette();
+				retval = 2;
 			}
 		} else {
 			if(mPalette.loadFromFile(mGlobalSettings.ProjectPalettePath)){
 				std::cout << "Error in Palette File! Using default" << std::endl;
 				mPalette.initPalette();
+				retval = 2;
 			}
 		}
 	} else {
@@ -122,6 +126,7 @@ int TEditor::createNewProject(){
 		if(mTileSet.importTileSet(mGlobalSettings.mNewTilePath, cNewTiles)){
 			std::cout << "Error in TileSet File! Using empty" << std::endl;
 			mTileSet.createNew(&mPalette);
+			retval += 1;
 		}
 	} else if(mGlobalSettings.mNewTileSize){
 		if((mGlobalSettings.mNewTileSize == 4) || (mGlobalSettings.mNewTileSize == 8) || (mGlobalSettings.mNewTileSize == 16)){
@@ -133,6 +138,7 @@ int TEditor::createNewProject(){
 		} else {
 			std::cout << "Unknown TileSet Error! Using empty" << std::endl;
 			mTileSet.createNew(&mPalette);
+			retval += 4;
 		}
 	} else {
 		mTileSet.createNew(&mPalette);
@@ -146,7 +152,7 @@ int TEditor::createNewProject(){
 
 	initDialogs();
 
-	return 0;
+	return retval;
 }
 
 void TEditor::showProjectInfo(){
@@ -1800,7 +1806,7 @@ int TEditor::setMode(int newMode){
 			mBrushesPixelSelEd.bIsShown = &bShowBrushesPixelSelEdit;
 
     	} else {        	
-			showMessage("Selection is invalid\nMust be Rectangle of Min 2x2 and Max 16x16 Tiles");
+			showMessage("Selection is invalid\n  Must be Rectangle of Min 2x2 and Max 16x16 Tiles");
 			bTileMapWasChanged = true;
 			return 1;
     	}
@@ -2644,7 +2650,7 @@ int TEditor::showMessage(std::string cMessage, bool isError){
 		mGlobalSettings.mProgramMessage = cMessage;
 		mProgramInfo->setCondition(1);
 		mProgramInfo->update();
-		mActiveMessage = mProgramInfo;
+		mActiveMessage = mProgramInfo;		
 	} else {		
 		mGlobalSettings.mProgramMessage = cMessage;
 		mProgramInfo->setCondition(-1);
@@ -3044,6 +3050,10 @@ int TEditor::cancelActiveDialog(){
 	if(mActiveDialog){	
 		mActiveDialog->cancel();
 		mActiveDialog = NULL;
+	}
+	if(mActiveMessage){
+		mActiveMessage->cancel();
+		mActiveMessage = NULL;	
 	}
 	return 0;
 }

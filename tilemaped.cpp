@@ -655,6 +655,10 @@ int TEditor::runOCD(int mode){
 			mActiveDialog->render();
 		}
 
+		if(mActiveMessage){						
+			mActiveMessage->render();
+		}
+
 		ImGui::Render();                						
 
        	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
@@ -662,6 +666,13 @@ int TEditor::runOCD(int mode){
 		mGlobalSettings.renderShow();
 
 		SDL_Event e;
+
+		if(mActiveMessage){			
+			if(mActiveMessage->bInputIsCancel){
+				mActiveMessage->cancel();
+				mActiveMessage = NULL;				
+			}
+		}
 
 		if(mActiveDialog){
 			if(mActiveDialog->bInputIsAccept){				
@@ -685,7 +696,11 @@ int TEditor::runOCD(int mode){
 				case SDL_TEXTINPUT:
 					
 				break;
-				case SDL_KEYDOWN:							
+				case SDL_KEYDOWN:
+					if(mActiveMessage){
+						mActiveMessage->recieveInput(SDLK_n);
+						break;
+					}					
 					if(e.key.keysym.sym == SDLK_BACKSPACE){
 						if(mActiveDialog){
 							if(mActiveDialog->bDialogIsWatingForText){
@@ -1254,9 +1269,9 @@ int main( int argc, char* args[] )
 
 	if( mGlobalSettings.initSettings() ){
 		std::cout << "SDL Init Failed!" << std::endl;
+		return 1;
 	}
-	else
-	{	
+	else {	
 		mGlobalSettings.mEditor = &mEditor;
 		SDL_Event e;
 		mEditor.createDialogs();
@@ -1264,17 +1279,54 @@ int main( int argc, char* args[] )
 		if(!mGlobalSettings.bRunningOCD) {
 
 			if(mCreateNewProject){
-				if(mEditor.createNewProject()){
-					mEditor.bEditorRunning = false;
+				int retvalcp = 0;
+				retvalcp = mEditor.createNewProject();
+				if(retvalcp){
+					//mEditor.bEditorRunning = false;
+					std::cout << "Errors While Creating Project" << std::endl;
+					//mEditor.closeProject();
+					//mGlobalSettings.bRunningOCD = true;
+					std::string createError = "";
+
+					if(retvalcp & 0x1){
+						createError += "Error in TileSet File! Using empty";
+					}
+
+					if(retvalcp & 0x2){
+						if(retvalcp & 0x1){
+							createError += "\n  ";	
+						}
+						createError += "Error in Palette File! Using default";
+					}
+
+					if(retvalcp & 0x4){
+						if((retvalcp & 0x1) || (retvalcp & 0x2)){
+							createError += "\n  ";	
+						}
+						createError += "Unknown TileSet Error! Using empty";
+					}
+										
+					mEditor.showMessage(createError, true);
 				}		
 			} else {
 				if(mGlobalSettings.testProjectFolder(mGlobalSettings.ProjectPath)){
 					if(mEditor.loadFromFolder(mGlobalSettings.ProjectPath)){
-						mEditor.bEditorRunning = false;
+						//mEditor.bEditorRunning = false;						
+						std::string loadError = "Error in Project Folder: " + mGlobalSettings.ProjectPath;				
+						std::cout << loadError << std::endl;
+						//return 1;
+						mEditor.closeProject();
+						mGlobalSettings.bRunningOCD = true;
+						mEditor.showMessage(loadError, true);
 					}
 				} else {
-					std::cout << "Error in Project Folder: " << mGlobalSettings.ProjectPath << std::endl;
-					mEditor.bEditorRunning = false;					
+					std::string loadError = "Error in Project Folder: " + mGlobalSettings.ProjectPath;				
+					std::cout << loadError << std::endl;
+					//return 1;
+					//mEditor.bEditorRunning = false;					
+					mEditor.closeProject();
+					mGlobalSettings.bRunningOCD = true;
+					mEditor.showMessage(loadError, true);
 				}
 			}
 		
@@ -1283,21 +1335,51 @@ int main( int argc, char* args[] )
 
 		while( mEditor.bEditorRunning || mGlobalSettings.bRunningOCD){
 
-			if(mGlobalSettings.bRunningOCD){			
-				mEditor.runOCD(mGlobalSettings.mOpenCreateProjectState); //);
+			if(mGlobalSettings.bRunningOCD){							
+				mEditor.runOCD(mGlobalSettings.mOpenCreateProjectState); 
 			
 				mGlobalSettings.mOpenCreateProjectState = ESTATE_NONE;
 
 				if(mGlobalSettings.mEditorState == ESTATE_PROJECTOPEN){
-					if(mEditor.loadFromFolder(mGlobalSettings.ProjectPath)){
-						mEditor.bEditorRunning = false;						
-					}
-					mEditor.bEditorRunning = true;
-				} else if(mGlobalSettings.mEditorState == ESTATE_PROJECTCREATE){
-					if(mEditor.createNewProject()){
+					if(mEditor.loadFromFolder(mGlobalSettings.ProjectPath)){						
+						std::string loadError = "Error in Project Folder: " + mGlobalSettings.ProjectPath;
+						mEditor.closeProject();
+						mGlobalSettings.bRunningOCD = true;
 						mEditor.bEditorRunning = false;
+						mGlobalSettings.mEditorState = ESTATE_NONE;						
+						mEditor.showMessage(loadError, true);						
+					} else {
+						mEditor.bEditorRunning = true;
+						mGlobalSettings.mEditorState = ESTATE_NONE;
+					}
+				} else if(mGlobalSettings.mEditorState == ESTATE_PROJECTCREATE){
+					int retvalcp = 0; 
+					retvalcp = mEditor.createNewProject();
+					if(retvalcp){
+						//mEditor.bEditorRunning = false;
+						std::string createError = "";
+
+						if(retvalcp & 0x1){
+							createError += "Error in TileSet File! Using empty";
+						}
+
+						if(retvalcp & 0x2){
+							if(retvalcp & 0x1){
+								createError += "\n  ";	
+							}
+							createError += "Error in Palette File! Using default";
+						}
+
+						if(retvalcp & 0x4){
+							if((retvalcp & 0x1) || (retvalcp & 0x2)){
+								createError += "\n  ";	
+							}
+							createError += "Unknown TileSet Error! Using empty";
+						}
+						mEditor.showMessage(createError, true);
 					}
 					mEditor.bEditorRunning = true;
+					mGlobalSettings.mEditorState = ESTATE_NONE;
 				} else {
 					mEditor.bEditorRunning = false;
 				}
