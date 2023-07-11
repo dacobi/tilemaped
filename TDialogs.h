@@ -80,6 +80,7 @@ class DTDialog : public Dialog{
 		void addSeperator();
 		void addSameLine();
 		void addConditionRestore();
+		void addConditionSetIf(int cTarget, int cState);
 		void addBool(std::string cLabel, bool cDefault, bool *cTarget, bool bSameline = false);
 		void addBoolCondition(std::string cLabel, bool cDefault, bool *cTarget, int cTargCond, bool bSameline = false);
 		void addInt(std::string cLabel, int cDefault, int *cTarget, int cMin, int cMax, bool bSameline = false);
@@ -321,6 +322,15 @@ class DialogConditionRestore : public DialogValueBase{
 		DialogConditionRestore(DTDialog *cParent){mParent = cParent;};		
 		virtual void render(){mParent->restoreContition();};
 		virtual void apply(){mParent->restoreContition();};	
+};
+
+class DialogConditionSetIf : public DialogValueBase{
+	public:
+		int mTargetCondifion;
+		int mCondifionState;
+		DialogConditionSetIf(DTDialog *cParent, int cTarget, int cState){mParent = cParent; mTargetCondifion = cTarget; mCondifionState = cState;};		
+		virtual void render(){if(mParent->mCondition == mCondifionState){mParent->setCurrentCondition(mTargetCondifion);}};
+		virtual void apply(){if(mParent->mCondition == mCondifionState){mParent->setCurrentCondition(mTargetCondifion);}};	
 };
 
 class DialogDisplayBase : public DialogElement{

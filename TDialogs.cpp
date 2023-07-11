@@ -843,7 +843,7 @@ int OCDialog::render(){
 				mGlobalSettings.mEditor->activateDTDialog(EDIALOG_PROJECTOPEN);				
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Create")).c_str())){				
-				mGlobalSettings.mEditor->activateDTDialog(EDIALOG_PROJECTCREATE, 0);				
+				mGlobalSettings.mEditor->activateDTDialog(EDIALOG_PROJECTCREATE); //, 0);				
 			}
 
 			ImGui::Separator();
@@ -1441,6 +1441,12 @@ void DTDialog::addConditionRestore(){
 	DialogConditionRestore *nCondRes = new DialogConditionRestore(this);
 	mElements.push_back(nCondRes);
 	mValues.push_back(nCondRes);
+}
+
+void DTDialog::addConditionSetIf(int cTarget, int cState){
+	DialogConditionSetIf *nCondSet = new DialogConditionSetIf(this, cTarget, cState);
+	mElements.push_back(nCondSet);
+	mValues.push_back(nCondSet);
 }
 
 void DTDialog::addBool(std::string cLabel, bool cDefault, bool *cTarget, bool bSameline){
@@ -2386,7 +2392,7 @@ DTDialog* DTDialog::createProjectCreateDialog(){
 
 	newDialog->setTarget(ESTATE_PROJECTCREATE);
 
-	newDialog->setRequiredCondition(0);
+	//newDialog->setRequiredCondition(0);
 
 	newDialog->addText(mGlobalSettings.mFile + " Create New Project?");
 
@@ -2467,6 +2473,7 @@ DTDialog* DTDialog::createProjectCreateDialog(){
 	newDialog->addRadioButton("BPP: 4", 4, true);
 	newDialog->addRadioButton("BPP: 2", 2, true);
 
+	newDialog->addConditionSetIf(0, -1);
 	newDialog->setRequiredCondition(0);
 	newDialog->addSeperator();
 	newDialog->addText("Tile BPP");
@@ -2476,6 +2483,7 @@ DTDialog* DTDialog::createProjectCreateDialog(){
 	newDialog->addRadioButton("BPP: 2", 2, true);
 
 	
+	newDialog->clearRequiredCondition();
 	newDialog->addConditionRestore();
 
 	newDialog->addSeperator();
