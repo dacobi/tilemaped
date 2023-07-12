@@ -880,7 +880,7 @@ int TEditor::loadFromFolder(std::string path){
 			
 	if(mTileSet.loadFromFile(path,"tiles.bin", &mPalette)){
 		std::cout << "Error loading tiles: " << path << DIRDEL << "tiles.bin" << std::endl;
-		return 1;
+		return 2;
 	}
 
 	mTileSet.mClipboardTiles.init("Tiles","Pixel", TBRUSH_PIXEL, &mTileSet.bShowClipboardTiles, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mEditor->mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
@@ -892,7 +892,7 @@ int TEditor::loadFromFolder(std::string path){
 
 	if(mTileMap->loadFromFile(path, "map0.bin", true)){
 		std::cout << "Error: can't read: " << path << DIRDEL << "map0.bin" << std::endl;
-		return 1;
+		return 4;
 	}
 
 	mTileMaps.push_back(mTileMap);
@@ -911,7 +911,7 @@ int TEditor::loadFromFolder(std::string path){
 		TileMap *newTileMap = new TileMap();
 		if(newTileMap->loadFromFile(cTileMaps.parent_path().string(), cTileMaps.filename().string(), true)){
 			std::cout << "Error: can't read: " << cTileMaps.parent_path().string() << DIRDEL << cTileMaps.filename().string() << std::endl;
-			return 1;
+			return 8;
 		}
 		mTileMaps.push_back(newTileMap);
 		mMapNum++;
@@ -986,7 +986,10 @@ int TEditor::loadFromFolder(std::string path){
 
 		if(mGlobalSettings.getSpriteFileHeader(cSprites.string(), nSpriteX, nSpriteY, nSpriteBPP, sbuffer)){
 			mSprite = new TSprite(nSpriteX, nSpriteY, nSpriteBPP);
-			mSprite->loadFromBuffer(sbuffer, &mPalette);
+			if(mSprite->loadFromBuffer(sbuffer, &mPalette)){
+				std::cout << "Error reading file: " <<  cSprites.string() << std::endl;
+				return 16;
+			}
 			mSprites.push_back(mSprite);
 
 			sKey* cSKey = mGlobalSettings.mProjectSettings.getSpriteScaleKey(nSpriteNum);
@@ -1016,6 +1019,7 @@ int TEditor::loadFromFolder(std::string path){
 
 		} else {
 			std::cout << "Error reading file: " <<  cSprites.string() << std::endl;
+			return 16;
 		}
 		
 		nSpriteNum++;

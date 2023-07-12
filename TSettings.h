@@ -210,6 +210,8 @@ class TSettings{
 		ImGuiIO *mio;
 		void shutdown();
 		void close();
+		void handleCreateError(int retvalcp);
+		void handleLoadError(int retvallp);
 		TEditor* mEditor;		
 		SDL_Renderer *TRenderer;
 		SDL_Window *TWindow;

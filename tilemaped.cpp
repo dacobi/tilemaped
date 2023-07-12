@@ -1093,6 +1093,57 @@ int parseArgs(int argc, char *argv[]){
 	return returnval;
 }
 
+void TSettings::handleCreateError(int retvalcp){
+	if(retvalcp){															
+		std::string createError = "Error Creating Project!";
+
+		if(retvalcp & 0x1){
+			createError += "\n" + mFile + " Error in TileSet File. Using empty";
+		}
+
+		if(retvalcp & 0x2){			
+			createError += "\n" + mFile + " Error in Palette File. Using default";
+		}
+
+		if(retvalcp & 0x4){			
+			createError += "\n" + mInfo + " Unknown TileSet Error. Using empty";
+		}
+		mEditor->showMessage(createError, true);
+	}
+}
+
+void TSettings::handleLoadError(int retvallp){
+	std::string loadError = "Error in Project Folder: " + mGlobalSettings.ProjectPath;				
+	std::cout << loadError << std::endl;
+
+	mEditor->closeProject();
+	bRunningOCD = true;
+
+	switch (retvallp)
+	{
+	case 1:
+		loadError += "\n" + mFile + " Error Loading: \"pal.bin\"";
+		break;
+	case 2:
+		loadError += "\n" + mFile + " Error Loading: \"tiles.bin\"";
+		break;
+	case 4:
+		loadError += "\n" + mFile + " Error Loading: \"map0.bin\"";
+		break;
+	case 8:
+		loadError += "\n" + mFile + " Error While Loading TileMaps";
+		break;
+	case 16:
+		loadError += "\n" + mFile + " Error While Loading Sprites";
+		break;
+	
+	default:
+		break;
+	}
+
+	mEditor->showMessage(loadError, true);
+}
+
 
 int main( int argc, char* args[] )
 {
@@ -1279,46 +1330,18 @@ int main( int argc, char* args[] )
 		if(!mGlobalSettings.bRunningOCD) {
 
 			if(mCreateNewProject){
-				int retvalcp = 0;
-				retvalcp = mEditor.createNewProject();
+				int retvalcp = mEditor.createNewProject();
 				if(retvalcp){															
-					std::string createError = "";
-
-					if(retvalcp & 0x1){
-						createError += "Error in TileSet File! Using empty";
-					}
-
-					if(retvalcp & 0x2){
-						if(retvalcp & 0x1){
-							createError += "\n  ";	
-						}
-						createError += "Error in Palette File! Using default";
-					}
-
-					if(retvalcp & 0x4){
-						if((retvalcp & 0x1) || (retvalcp & 0x2)){
-							createError += "\n  ";	
-						}
-						createError += "Unknown TileSet Error! Using empty";
-					}
-
-					mEditor.showMessage(createError, true);
+					mGlobalSettings.handleCreateError(retvalcp);
 				}		
 			} else {
 				if(mGlobalSettings.testProjectFolder(mGlobalSettings.ProjectPath)){
-					if(mEditor.loadFromFolder(mGlobalSettings.ProjectPath)){						
-						std::string loadError = "Error in Project Folder: " + mGlobalSettings.ProjectPath;				
-						std::cout << loadError << std::endl;						
-						mEditor.closeProject();
-						mGlobalSettings.bRunningOCD = true;
-						mEditor.showMessage(loadError, true);
+					int retvallp = mEditor.loadFromFolder(mGlobalSettings.ProjectPath);
+					if(retvallp){
+						mGlobalSettings.handleLoadError(retvallp);						
 					}
 				} else {
-					std::string loadError = "Error in Project Folder: " + mGlobalSettings.ProjectPath;				
-					std::cout << loadError << std::endl;					
-					mEditor.closeProject();
-					mGlobalSettings.bRunningOCD = true;
-					mEditor.showMessage(loadError, true);
+					mGlobalSettings.handleLoadError(0);
 				}
 			}
 		
@@ -1333,41 +1356,18 @@ int main( int argc, char* args[] )
 				mGlobalSettings.mOpenCreateProjectState = ESTATE_NONE;
 
 				if(mGlobalSettings.mEditorState == ESTATE_PROJECTOPEN){
-					if(mEditor.loadFromFolder(mGlobalSettings.ProjectPath)){						
-						std::string loadError = "Error in Project Folder: " + mGlobalSettings.ProjectPath;
-						std::cout << loadError << std::endl;
-						mEditor.closeProject();
-						mGlobalSettings.bRunningOCD = true;						
-						mGlobalSettings.mEditorState = ESTATE_NONE;						
-						mEditor.showMessage(loadError, true);						
+					int retvallp = mEditor.loadFromFolder(mGlobalSettings.ProjectPath);
+					if(retvallp){						
+						mGlobalSettings.handleLoadError(retvallp);
+						mGlobalSettings.mEditorState = ESTATE_NONE;												
 					} else {
 						mEditor.bEditorRunning = true;
 						mGlobalSettings.mEditorState = ESTATE_NONE;
 					}
 				} else if(mGlobalSettings.mEditorState == ESTATE_PROJECTCREATE){
-					int retvalcp = 0; 
-					retvalcp = mEditor.createNewProject();
+					int retvalcp = mEditor.createNewProject();
 					if(retvalcp){						
-						std::string createError = "";
-
-						if(retvalcp & 0x1){
-							createError += "Error in TileSet File! Using empty";
-						}
-
-						if(retvalcp & 0x2){
-							if(retvalcp & 0x1){
-								createError += "\n  ";	
-							}
-							createError += "Error in Palette File! Using default";
-						}
-
-						if(retvalcp & 0x4){
-							if((retvalcp & 0x1) || (retvalcp & 0x2)){
-								createError += "\n  ";	
-							}
-							createError += "Unknown TileSet Error! Using empty";
-						}
-						mEditor.showMessage(createError, true);
+						mGlobalSettings.handleCreateError(retvalcp);
 					}
 					mEditor.bEditorRunning = true;
 					mGlobalSettings.mEditorState = ESTATE_NONE;
