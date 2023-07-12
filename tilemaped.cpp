@@ -908,15 +908,13 @@ int parseArgs(int argc, char *argv[]){
 		if(std::string(argv[argpos]) == "-o"){
 			if((argc-argpos) >= 2){
 				argpos++;
-				if(fs::is_directory(fs::status(argv[argpos]))){
-					//std::cout << "Folder found" << std::endl;
+				if(fs::is_directory(fs::status(argv[argpos]))){					
 					mGlobalSettings.ProjectPath = std::string(argv[argpos]); 						
 					returnval += 2;
 					argpos++;
 					continue;	
 				} else {
-					mGlobalSettings.mErrorMessage = "Error! Folder not found: " + std::string(argv[argpos]);
-					//std::cout << "Error! Folder not found: " << argv[argpos] << std::endl;						
+					mGlobalSettings.mErrorMessage = "Error! Folder not found: " + std::string(argv[argpos]);					
 					return -1;
 				}
 			}
@@ -935,8 +933,7 @@ int parseArgs(int argc, char *argv[]){
 						mGlobalSettings.mErrorMessage = "Error! Palette file invalid: " + std::string(argv[argpos]);
 					} else {
 						mGlobalSettings.mErrorMessage = "Error! Palette file not found: " + std::string(argv[argpos]);
-					}					
-					//std::cout << "Error! Palette file invalid: " << argv[argpos] << std::endl;
+					}										
 					return -1;
 				}
 			} else { 
@@ -951,9 +948,7 @@ int parseArgs(int argc, char *argv[]){
 				if((nMapSizeX == 32) || (nMapSizeX == 64) || (nMapSizeX == 128) || (nMapSizeX == 256)){				
 					mGlobalSettings.TileMapWidth = nMapSizeX;						
 				} else {
-					mGlobalSettings.mErrorMessage = "Wrong TileMap Size!\nValid values are: 32, 64, 128, 256";
-					//std::cout << "Wrong TileMap Size!" << std::endl;
-					//std::cout << "Valid Values are: 32, 64, 128, 256" << std::endl;						
+					mGlobalSettings.mErrorMessage = "Wrong TileMap Size!\nValid values are: 32, 64, 128, 256";					
 					return -1;
 				}
 
@@ -964,9 +959,7 @@ int parseArgs(int argc, char *argv[]){
 				if((nMapSizeY == 32) || (nMapSizeY == 64) || (nMapSizeY == 128) || (nMapSizeY == 256)){	
 					mGlobalSettings.TileMapHeight = nMapSizeY;
 				} else {
-					mGlobalSettings.mErrorMessage = "Wrong TileMap Size!\nValid values are: 32, 64, 128, 256";
-					//std::cout << "Wrong TileMap Size!" << std::endl;
-					//std::cout << "Valid Values are: 32, 64, 128, 256" << std::endl;						
+					mGlobalSettings.mErrorMessage = "Wrong TileMap Size!\nValid values are: 32, 64, 128, 256";					
 					return -1;
 				}			
 
@@ -977,9 +970,7 @@ int parseArgs(int argc, char *argv[]){
 				if((nTileSize == 16) || (nTileSize == 8)){	
 					mGlobalSettings.mGlobalTexParam.TexSizeX = nTileSize;	
 				} else {
-					mGlobalSettings.mErrorMessage = "Wrong TileSize!\nValid values are: 8, 16";
-					//std::cout << "Wrong TileSize!" << std::endl;
-					//std::cout << "Valid Values are: 8, 16" << std::endl;						
+					mGlobalSettings.mErrorMessage = "Wrong TileSize!\nValid values are: 8, 16";					
 					return -1;
 				}
 
@@ -990,16 +981,13 @@ int parseArgs(int argc, char *argv[]){
 				if((nTileSize == 16) || (nTileSize == 8)){	
 					mGlobalSettings.mGlobalTexParam.TexSizeY = nTileSize;	
 				} else {
-					mGlobalSettings.mErrorMessage = "Wrong TileSize!\nValid values are: 8, 16";
-					//std::cout << "Wrong TileSize!" << std::endl;
-					//std::cout << "Valid Values are: 8, 16" << std::endl;						
+					mGlobalSettings.mErrorMessage = "Wrong TileSize!\nValid values are: 8, 16";					
 					return -1;
 				}
 
 				argpos++;
 				if(fs::exists(fs::status(argv[argpos]))){
-					mGlobalSettings.mErrorMessage = "Error! Folder exists: " + std::string(argv[argpos]);
-					//std::cout << "Error! Folder Exists: " << argv[argpos] << std::endl;						
+					mGlobalSettings.mErrorMessage = "Error! Folder exists: " + std::string(argv[argpos]);					
 					return -1;
 				} else {
 					mGlobalSettings.ProjectPath = std::string(argv[argpos]);						
@@ -1015,15 +1003,13 @@ int parseArgs(int argc, char *argv[]){
 					if(argpos == argc){					
 						return -1;
 					}	
-					if((fs::exists(fs::status(argv[argpos]))) && !(fs::is_directory(fs::status(argv[argpos])))){						
-						//std::cout << "Palette found" << std::endl;						
+					if((fs::exists(fs::status(argv[argpos]))) && !(fs::is_directory(fs::status(argv[argpos])))){												
 						mGlobalSettings.bProjectHasPalette = true;
 						mGlobalSettings.ProjectPalettePath = std::string(argv[argpos]);
 						argpos++;
 						continue;							
 					} else {
-						mGlobalSettings.mErrorMessage = "Error! Palette file not found: " + std::string(argv[argpos]);
-						//std::cout << "Error! Palette file not found: " << argv[argpos] << std::endl;						
+						mGlobalSettings.mErrorMessage = "Error! Palette file not found: " + std::string(argv[argpos]);						
 						return -1;
 					}
 				}								
@@ -1068,8 +1054,7 @@ int parseArgs(int argc, char *argv[]){
 					mGlobalSettings.mNewUIScale = cTmpUI;
 					if(!(returnval & 0x800)) returnval += 0x800;
 				} else {
-					mGlobalSettings.mErrorMessage = "Error! Incorrect DPI value: " + std::string(argv[argpos]) + "\nValid values are bewteen: 100-500";
-					//std::cout << "Error! Incorrect DPI Value: " << cTmpUI << std::endl;					 	
+					mGlobalSettings.mErrorMessage = "Error! Incorrect DPI value: " + std::string(argv[argpos]) + "\nValid values are bewteen: 100-500";					
 					return -1;
 				}
 			} else {
@@ -1094,7 +1079,8 @@ int parseArgs(int argc, char *argv[]){
 }
 
 void TSettings::handleCreateError(int retvalcp){
-	if(retvalcp){															
+	
+	if(retvalcp){																	
 		std::string createError = "Error Creating Project!";
 
 		if(retvalcp & 0x1){
@@ -1108,11 +1094,13 @@ void TSettings::handleCreateError(int retvalcp){
 		if(retvalcp & 0x4){			
 			createError += "\n" + mInfo + " Unknown TileSet Error. Using empty";
 		}
+
 		mEditor->showMessage(createError, true);
 	}
 }
 
 void TSettings::handleLoadError(int retvallp){
+
 	std::string loadError = "Error in Project Folder: " + mGlobalSettings.ProjectPath;				
 	std::cout << loadError << std::endl;
 
@@ -1149,7 +1137,7 @@ int main( int argc, char* args[] )
 {
 	TEditor mEditor;
 	
-	bool mCreateNewProject=false;
+	bool bCreateNewProject = false;
 	bool bRunSoftware = false;
 	bool bVsync = true;
 	bool bRenderD3D = false;
@@ -1234,7 +1222,7 @@ int main( int argc, char* args[] )
 	}
 
 	if((argvals & 0x4)){ 
-		mCreateNewProject = true;		
+		bCreateNewProject = true;		
 	}
 
 	if(argvals & 0x8){
@@ -1329,7 +1317,7 @@ int main( int argc, char* args[] )
 
 		if(!mGlobalSettings.bRunningOCD) {
 
-			if(mCreateNewProject){
+			if(bCreateNewProject){
 				int retvalcp = mEditor.createNewProject();
 				if(retvalcp){															
 					mGlobalSettings.handleCreateError(retvalcp);
