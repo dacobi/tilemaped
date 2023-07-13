@@ -332,6 +332,7 @@ class TSettings{
 		std::vector<std::string> mHelpTextSelection;
 		std::vector<std::string> mHelpTextColMapEditor;
 		std::vector<std::string> mHelpTextSprite;
+		std::vector<std::string> mHelpTextAbout;
 		int mLastTick = 0;
 		int mCurrentTick = 0;
 		int initSettings();

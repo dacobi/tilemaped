@@ -795,6 +795,17 @@ void TSettings::initHelpText(){
 	mHelpTextSprite.push_back("EDITOR: The Sprite Editor works much like the Tile or TileSet Editor.\nSprite Frames can be Scrolled Through using (LEFT SHIFT) + (MOUSE WHEEL)\nSprites have their own Brush Lists. One for BPP 8 and one for BPP 4.\nYou can set the Sprite Frame Scale in the Edit menu under \"Sprite Edit\".");
 	mHelpTextSprite.push_back("SPRITE TOOLS: The \"Edit->Sprite Tools\" menu contains various tools for\nCopying/Scaling/Rotating Sprites/Sprite Frames.");
 	mHelpTextSprite.push_back("TEXTURE FILTERING: When using Sprite Scale/Rotate functions Texture Filtering can be\nenabled in \"Edit->Texture Filtering\". The Options are: \"None\", \"Some\", \"All\".");
+
+	mHelpTextAbout.push_back("VERSION: TilemapEd Version " + TilemapEd_Version);
+#ifdef MWIN64
+	mHelpTextAbout.push_back("INI PATH: " + fs::current_path().string() + DIRDEL + mINIPath);
+#else
+	mHelpTextAbout.push_back("INI PATH: " + mINIPath);	
+#endif
+	mHelpTextAbout.push_back("WEB SITE: https://github.com/dacobi/tilemaped");
+	mHelpTextAbout.push_back("LICENSE: BSD 3-Clause");
+	mHelpTextAbout.push_back("AUTHOR: Jacob Juul Klejs Kolding");
+
 }
 
 void printUsage(){

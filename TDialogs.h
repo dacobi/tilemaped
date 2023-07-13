@@ -498,6 +498,7 @@ class HDialog: public DTDialog{
 		std::vector<std::string> mHelpTextSelection;
 		std::vector<std::string> mHelpTextColMapEditor;
 		std::vector<std::string> mHelpTextSprite;
+		std::vector<std::string> mHelpTextAbout;
 		virtual void init();
 		virtual void recieveInput(int mKey);		
 		virtual int render();

@@ -12,6 +12,7 @@
 				"-o",
 				"${fileDirname}/${fileBasenameNoExtension}",
 				"-I/usr/include/SDL2",
+				"-I/usr/include/libxml2",
 				"-lSDL2",
 				"-lSDL2_image",
 				"-lSDL2_ttf"
@@ -22,11 +23,22 @@
 			"problemMatcher": [
 				"$gcc"
 			],
+			"group": "build",
+			"detail": "compiler: /usr/bin/g++"
+		},
+		{
+			"type": "cmake",
+			"label": "CMake: build",
+			"command": "build",
+			"targets": [
+				"all"
+			],
 			"group": {
 				"kind": "build",
 				"isDefault": true
 			},
-			"detail": "compiler: /usr/bin/g++"
+			"problemMatcher": [],
+			"detail": "CMake template build task"
 		}
 	]
 }

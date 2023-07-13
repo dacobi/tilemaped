@@ -1051,6 +1051,7 @@ void HDialog::init(){
 	mHelpTextImport = mGlobalSettings.mHelpTextImport;
 	mHelpTextColMapEditor = mGlobalSettings.mHelpTextColMapEditor;
 	mHelpTextSprite = mGlobalSettings.mHelpTextSprite;
+	mHelpTextAbout = mGlobalSettings.mHelpTextAbout;
 	bCloseBool = &mGlobalSettings.bShowHelpDialog;
 }
 
@@ -1154,6 +1155,16 @@ int HDialog::render(){
 		ImGui::PushFont(mGlobalSettings.SFont);
 		for(int i = 0; i < mHelpTextImport.size(); i++){
 			ImGui::BulletText("%s", mHelpTextImport[i].c_str());
+		}
+		ImGui::PopFont();
+	}
+
+	ImGui::Separator();
+
+	if(ImGui::CollapsingHeader("About")){
+		ImGui::PushFont(mGlobalSettings.SFont);
+		for(int i = 0; i < mHelpTextAbout.size(); i++){
+			ImGui::BulletText("%s", mHelpTextAbout[i].c_str());
 		}
 		ImGui::PopFont();
 	}
