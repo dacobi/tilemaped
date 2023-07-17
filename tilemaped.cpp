@@ -19,6 +19,7 @@
 #define SCREEN_HEIGHT 1000
 
 #include "version.h"
+#include "license.h"
 
 //#define MAPPIMAGE
 
@@ -804,7 +805,12 @@ void TSettings::initHelpText(){
 #endif
 	mHelpTextAbout.push_back("WEB SITE: https://github.com/dacobi/tilemaped");
 	mHelpTextAbout.push_back("LICENSE: BSD 3-Clause");
-	mHelpTextAbout.push_back("AUTHOR: Jacob Juul Klejs Kolding");
+	
+	
+	mHelpTextLicense.push_back("TilemapEd:\n\n" + License_TilemapEd + "\n");
+	mHelpTextLicense.push_back("Dear ImGui:\n\n" + License_DearImGui + "\n");
+	mHelpTextLicense.push_back("Dear ImGui File Dialog:\n\n" + License_DearImGuiFileDialog + "\n");
+	mHelpTextLicense.push_back("Nerdfonts:\n\n" + License_Nerdfonts);
 
 }
 

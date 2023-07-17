@@ -1052,6 +1052,7 @@ void HDialog::init(){
 	mHelpTextColMapEditor = mGlobalSettings.mHelpTextColMapEditor;
 	mHelpTextSprite = mGlobalSettings.mHelpTextSprite;
 	mHelpTextAbout = mGlobalSettings.mHelpTextAbout;
+	mHelpTextLicense = mGlobalSettings.mHelpTextLicense;
 	bCloseBool = &mGlobalSettings.bShowHelpDialog;
 }
 
@@ -1165,6 +1166,16 @@ int HDialog::render(){
 		ImGui::PushFont(mGlobalSettings.SFont);
 		for(int i = 0; i < mHelpTextAbout.size(); i++){
 			ImGui::BulletText("%s", mHelpTextAbout[i].c_str());
+		}
+		ImGui::PopFont();
+	}
+
+	ImGui::Separator();
+
+	if(ImGui::CollapsingHeader("License")){
+		ImGui::PushFont(mGlobalSettings.SFont);
+		for(int i = 0; i < mHelpTextLicense .size(); i++){
+			ImGui::BulletText("%s", mHelpTextLicense[i].c_str());
 		}
 		ImGui::PopFont();
 	}
