@@ -359,6 +359,173 @@ Uint32 TPalette::mapPaletteColor(int tcolor){
 	return tmpcol;
 }
 
+int TPalette::importPaletteEdit(std::string palPath, int exStart, int exRange, int inStart){
+
+	int pType = mGlobalSettings.testPaletteFile(palPath);
+
+	if(pType == 0){		
+		return 1;
+	}
+
+	if(pType == 2){		
+		std::ifstream input( palPath, std::ios::in );
+		unsigned char tpalette[256][3];
+
+		std::string nline;
+    	std::string ntmp1;    
+		std::string ntmp2;
+		std::string ntmp3;
+    
+    	std::getline(input, nline);
+    	std::getline(input, nline);
+    	std::getline(input, nline);
+    	std::getline(input, nline); 
+
+		int pStartPos = exStart;
+
+		while(pStartPos > 0){
+			pStartPos--;
+			std::getline(input, nline); 
+		}    
+        
+    	std::stringstream convert;
+    	int mr, mg, mb;
+
+		int cColNum = 0;
+    
+    	for(int i = 0; i < exRange; i++){
+ 			std::getline(input, nline);
+
+			cColNum = i;
+
+			ntmp2 = nline;
+
+			std::stringstream conwc(ntmp2); 
+
+			int wordc = 0;
+
+			while(conwc >> ntmp1){
+				wordc++;			
+			}       	
+    		
+			convert << nline << std::endl;
+    		
+			switch (wordc)
+			{
+			case 3:
+				convert >> mr >> mg >> mb;	
+				break;
+			case 4:
+				convert >> mr >> mg >> mb >> ntmp1;	
+				break;
+			case 5:
+				convert >> mr >> mg >> mb >> ntmp1 >> ntmp2;	
+				break;
+			case 6:
+				convert >> mr >> mg >> mb >> ntmp1 >> ntmp2 >> ntmp3;	
+				break;
+			default:
+				break;
+			}
+    	
+	    	tpalette[i][0] = mMapColorIn[mr/16];
+    		tpalette[i][1] = mMapColorIn[mg/16];
+    		tpalette[i][2] = mMapColorIn[mb/16]; 
+
+			if(input.eof()){
+				break;
+			}    	
+    	}
+
+		if(cColNum < (exRange-1)){
+			exRange = cColNum;
+		}
+
+		for(int i = inStart; i < (inStart + exRange); i++){
+						
+			TPaletteEdit[i].r = tpalette[i - inStart][0];
+			TPaletteEdit[i].g = tpalette[i - inStart][1];
+			TPaletteEdit[i].b = tpalette[i - inStart][2];
+
+			if((i  == 0) ) {								
+				TPaletteEdit[i].r = 0;
+				TPaletteEdit[i].g = 0;
+				TPaletteEdit[i].b = 0;
+				TPaletteEdit[i].a = 0;
+			} else {
+				TPaletteEdit[i].a = 255;
+			}
+
+			if(i == mGlobalSettings.mEditor->mColorSelectedEdit){
+				setSelectedColor(TPaletteEdit[i]);				
+			}					
+		}
+		
+		return 0;
+	}
+
+	if(pType == 1){
+	
+		std::ifstream infile(palPath, std::ios::binary );
+    	std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
+
+		int magic1,magic2;
+
+		magic1 = tbuffer[0];
+		magic2 = tbuffer[1];
+
+		tbuffer.erase(tbuffer.begin());
+		tbuffer.erase(tbuffer.begin());
+
+		std::vector<SDL_Color> tmpPal;
+
+		if((magic1 == 16) && (magic2 == 42) && (tbuffer.size() == 512)){
+	
+			for(int i = 0; i < 512; i+=2){
+				SDL_Color tmpcol;
+			
+				tmpcol.r = mMapColorIn[tbuffer[i+1]];
+				tmpcol.g = mMapColorIn[tbuffer[i] >> 4];
+				tmpcol.b = mMapColorIn[tbuffer[i] & 0xf];
+				if((i  == 0) ) {
+					tmpcol.r = 0;
+					tmpcol.g = 0;
+					tmpcol.b = 0;			
+					tmpcol.a = 0;
+				} else {
+					tmpcol.a = 255;
+				}
+			
+				tmpPal.push_back(tmpcol);
+			}
+
+			if((inStart + exRange) > 256){
+				exRange = 256 - inStart;
+			}
+
+			for(int i = inStart; i < (inStart + exRange); i++){
+				TPaletteEdit[i] = tmpPal[exStart + (i - inStart)];
+				if(i == mGlobalSettings.mEditor->mColorSelectedEdit){
+					setSelectedColor(TPaletteEdit[i]);				
+				}			
+			}
+
+			return 0;	
+		}
+	
+		return 1;
+	}
+
+	return 1;
+}
+
+void TPalette::setSelectedColor(SDL_Color cColor){
+	mR = mMapColorOut[cColor.r];
+	mG = mMapColorOut[cColor.g];
+	mB = mMapColorOut[cColor.b];
+	mEditColor = getIm4Color(cColor);
+}
+
 int TPalette::importPaletteEdit(std::string palPath){
 
 	int pType = mGlobalSettings.testPaletteFile(palPath);
@@ -373,7 +540,9 @@ int TPalette::importPaletteEdit(std::string palPath){
 		unsigned char tpalette[256][3];
 
 		std::string nline;
-    	std::string ntmp;    
+    	std::string ntmp1;    
+		std::string ntmp2;
+		std::string ntmp3;
     
     	std::getline(input, nline);
     	std::getline(input, nline);
@@ -382,17 +551,61 @@ int TPalette::importPaletteEdit(std::string palPath){
         
     	std::stringstream convert;
     	int mr, mg, mb;
+
+		int cColNum = 0;
     
     	for(int i = 0; i < 256; i++){
  			std::getline(input, nline);       	
+
+			cColNum = i;
     		
+			ntmp2 = nline;
+
+			std::stringstream conwc(ntmp2); 
+
+			int wordc = 0;
+
+			while(conwc >> ntmp1){
+				wordc++;			
+			}
+    				
 			convert << nline << std::endl;
-    		convert >> mr >> mg >> mb >> ntmp;
-    	
-	    	tpalette[i][0] = mr;
-    		tpalette[i][1] = mg;
-    		tpalette[i][2] = mb;    	
+
+			switch (wordc)
+			{
+			case 3:
+				convert >> mr >> mg >> mb;	
+				break;
+			case 4:
+				convert >> mr >> mg >> mb >> ntmp1;	
+				break;
+			case 5:
+				convert >> mr >> mg >> mb >> ntmp1 >> ntmp2;	
+				break;
+			case 6:
+				convert >> mr >> mg >> mb >> ntmp1 >> ntmp2 >> ntmp3;	
+				break;
+			default:
+				break;
+			}
+    		    	
+	    	tpalette[i][0] = mMapColorIn[mr/16];
+    		tpalette[i][1] = mMapColorIn[mg/16];
+    		tpalette[i][2] = mMapColorIn[mb/16]; 
+
+			if(input.eof()){
+				break;
+			}
     	}
+
+		if(cColNum < 255){
+			while(cColNum < 256){
+				tpalette[cColNum][0] = 0;
+    			tpalette[cColNum][1] = 0;
+    			tpalette[cColNum][2] = 0;    	
+				cColNum++;
+			}
+		}
 
 		if(TPaletteEdit.size()){
 			TPaletteEdit.erase(TPaletteEdit.begin(), TPaletteEdit.end());
@@ -415,6 +628,10 @@ int TPalette::importPaletteEdit(std::string palPath){
 			}
 			
 			TPaletteEdit.push_back(tmpcol);
+			
+			if(i == mGlobalSettings.mEditor->mColorSelectedEdit){
+				setSelectedColor(TPaletteEdit[i]);				
+			}
 		}
 		mGlobalSettings.mEditor->showMessage("Palette Import Succesful");
 		return 0;
@@ -428,48 +645,56 @@ int TPalette::importPaletteEdit(std::string palPath){
 			}
 		}
 
-	std::ifstream infile(palPath, std::ios::binary );
-    std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
+		std::ifstream infile(palPath, std::ios::binary );
+    	std::vector<unsigned char> tbuffer(std::istreambuf_iterator<char>(infile), {});
 
-	int magic1,magic2;
+		int magic1,magic2;
 
-	magic1 = tbuffer[0];
-	magic2 = tbuffer[1];
+		magic1 = tbuffer[0];
+		magic2 = tbuffer[1];
 
-	tbuffer.erase(tbuffer.begin());
-	tbuffer.erase(tbuffer.begin());
+		tbuffer.erase(tbuffer.begin());
+		tbuffer.erase(tbuffer.begin());
 
 	
-	if((magic1 == 16) && (magic2 == 42) && (tbuffer.size() == 512)){
+		if((magic1 == 16) && (magic2 == 42) && (tbuffer.size() == 512)){
 
-		if(TPaletteEdit.size()){
-			TPaletteEdit.erase(TPaletteEdit.begin(), TPaletteEdit.end());
-		}
-	
-		for(int i = 0; i < 512; i+=2){
-			SDL_Color tmpcol;
-			
-			tmpcol.r = mMapColorIn[tbuffer[i+1]];
-			tmpcol.g = mMapColorIn[tbuffer[i] >> 4];
-			tmpcol.b = mMapColorIn[tbuffer[i] & 0xf];
-			if((i  == 0) ) {
-				tmpcol.r = 0;
-				tmpcol.g = 0;
-				tmpcol.b = 0;			
-				tmpcol.a = 0;
-			} else {
-				tmpcol.a = 255;
+			if(TPaletteEdit.size()){
+				TPaletteEdit.erase(TPaletteEdit.begin(), TPaletteEdit.end());
 			}
-			
-			TPaletteEdit.push_back(tmpcol);
-		}
-		
-		mGlobalSettings.mEditor->showMessage("Palette Import Succesful");		
-		return 0;
-	}
 
-	std::cout << "Error Loading Palette: " << palPath << std::endl;
-	return 1;
+			int pixindex = 0;
+	
+			for(int i = 0; i < 512; i+=2){
+				SDL_Color tmpcol;
+			
+				tmpcol.r = mMapColorIn[tbuffer[i+1]];
+				tmpcol.g = mMapColorIn[tbuffer[i] >> 4];
+				tmpcol.b = mMapColorIn[tbuffer[i] & 0xf];
+				if((i  == 0) ) {
+					tmpcol.r = 0;
+					tmpcol.g = 0;
+					tmpcol.b = 0;			
+					tmpcol.a = 0;
+				} else {
+					tmpcol.a = 255;
+				}
+			
+				TPaletteEdit.push_back(tmpcol);
+
+				if(pixindex == mGlobalSettings.mEditor->mColorSelectedEdit){				
+					setSelectedColor(TPaletteEdit[pixindex]);			
+				}
+
+				pixindex++;
+			}
+		
+			mGlobalSettings.mEditor->showMessage("Palette Import Succesful");		
+			return 0;
+		}
+
+		std::cout << "Error Loading Palette: " << palPath << std::endl;
+		return 1;
 	}
 
 	return 0;
@@ -531,11 +756,12 @@ int TPalette::importGimpPalette(std::string palPath){
 			default:
 				break;
 			}
-    	
-	    	tpalette[i][0] = mr;
-    		tpalette[i][1] = mg;
-    		tpalette[i][2] = mb;    	
-
+    		    	
+			
+			tpalette[i][0] = mMapColorIn[mr/16];
+    		tpalette[i][1] = mMapColorIn[mg/16];
+    		tpalette[i][2] = mMapColorIn[mb/16];  
+			
 			if(input.eof()){
 				break;
 			}
@@ -585,13 +811,13 @@ int TPalette::importGimpPalette(std::string palPath){
 		unsigned char tmpChar;
 		
 		for(int i = 0; i < 256; i++){
-    		tmpChar = (tpalette[i][1])/16;
+    		tmpChar = mMapColorOut[tpalette[i][1]];
 			tmpChar = tmpChar << 4;
-        	tmpChar += (tpalette[i][2])/16;
+        	tmpChar += mMapColorOut[tpalette[i][2]];
 
 			tbuffer.push_back(tmpChar);
 
-			tmpChar = (tpalette[i][0])/16;
+			tmpChar = mMapColorOut[tpalette[i][0]];
         	tbuffer.push_back(tmpChar);
     	}
 		

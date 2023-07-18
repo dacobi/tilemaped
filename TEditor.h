@@ -291,6 +291,7 @@ class TEditor{
 		void stateFrameScale();
 		void stateSpriteConvertBPP();
 		void stateThemeColor();
+		void statePaletteImport();
 
 	
 };

@@ -794,6 +794,9 @@ int TBDialog::render(){
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import Palette")).c_str())){
 					mEditor->mPalette.bImportingPalette = true;
 				}
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import Palette Range")).c_str())){
+					mEditor->activateDTDialog(EDIALOG_PALETTEIMPORT, -1, 1);
+				}
 			}
 		
 			if(ImGui::MenuItem("Undo (U) (CTRL + Z)")){
@@ -1715,7 +1718,52 @@ void DTDCDialog::setConfirmConditionExists(std::string *cPath, bool cState){
 	bConditionState = cState;
 }
 
-std::string* DTDCDialog::getFilePath(std::string cFileVal){
+void DTDialog::addIntActiveMinus(std::string cLabel, int cBase, int *cTarget){
+	DialogValueIntActive *nInt = new DialogValueIntActive(this, mRequiredCondition, cLabel, cBase, cTarget, 0);
+
+	mElements.push_back(nInt);
+	mValues.push_back(nInt);
+}
+
+int* DTDialog::getIntValue(std::string cIntLabel){
+	for(auto *cInput : mValues){
+
+		DialogValueInt *cInt = dynamic_cast<DialogValueInt*>(cInput);
+
+		if(cInt){
+			if(cInt->mLabel == cIntLabel){
+				return &cInt->mValue;
+			}
+		}
+
+		DialogValueIntMinMax *cIntMinMax = dynamic_cast<DialogValueIntMinMax*>(cInput);
+
+		if(cIntMinMax){
+			if(cIntMinMax->mLabel == cIntLabel){
+				return &cIntMinMax->mValue;
+			}
+		}		
+	}
+	return NULL;
+}
+
+int* DTDialog::getIntActiveValue(std::string cIntLabel){
+	
+	for(auto *cInput : mValues){
+
+		DialogValueIntActive *cInt = dynamic_cast<DialogValueIntActive*>(cInput);
+
+		if(cInt){
+			if(cInt->mLabel == cIntLabel){
+				return &cInt->mValue;
+			}
+		}		
+	}
+	return NULL;
+}
+
+
+std::string* DTDialog::getFilePath(std::string cFileVal){
 	for(auto *cInput : mFiles){
 		if(cInput->mFileKey == "ChooseFileDlgKey"+cFileVal){
 			return &cInput->mTextInput.mDialogTextMain;
@@ -2765,6 +2813,46 @@ DTDialog* DTDialog::createProjectCloseDialog(){
 	newDialog->addButton("Cancel", SDLK_n, true);
 
 	return newDialog;
+}
+
+DTDialog* DTDialog::createPaletteImportDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->createValues(1);
+
+	newDialog->setLabel("Import Palette Range");
+
+	newDialog->setTarget(ESTATE_PALETTEIMPORT);
+
+	newDialog->addText(mGlobalSettings.mFile + " Import Palette Range?");
+	
+	newDialog->addSeperator();
+
+	newDialog->addFile("Choose Palette File", "PAL File", ".gpl,.bin", "IMPalette", "", &mGlobalSettings.mNewPalettePath);
+
+	newDialog->addSeperator();
+
+	newDialog->addText(mGlobalSettings.mInfo + " Select Palette Range");
+
+	newDialog->addInt("Extern Palette Start Color", 0, &mGlobalSettings.mNewPaletteStartExtern, 0, 255);
+
+	newDialog->addIntActiveMinus("PALSTARTMIN", 256, newDialog->getIntValue("Extern Palette Start Color"));
+
+	newDialog->addIntMinMax("Extern Palette Range", 1, &mGlobalSettings.mNewPaletteRangeExtern,newDialog->getValue(0), newDialog->getIntActiveValue("PALSTARTMIN"));
+
+	newDialog->addIntActiveMinus("PALRANGEMAX", 256, newDialog->getIntValue("Extern Palette Range"));
+
+	newDialog->addIntMinMax("Intern Palette Start Color", 0, &mGlobalSettings.mNewPaletteStartIntern, newDialog->getValue(-1), newDialog->getIntActiveValue("PALRANGEMAX"));
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Import", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+
+
 }
 
 DTDialog* DTDialog::createPaletteUpdateDialog(){

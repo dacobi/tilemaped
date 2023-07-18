@@ -97,6 +97,7 @@ int TEditor::createNewProject(){
 	std::cout << "TileMapWidth: " << mGlobalSettings.TileMapWidth << " TileMapHeight: " << mGlobalSettings.TileMapHeight << " TileSizeX: " << mGlobalSettings.mGlobalTexParam.TexSizeX << " TileSizeY: " << mGlobalSettings.mGlobalTexParam.TexSizeY << std::endl;	
 	if(mGlobalSettings.bProjectHasPalette){
 		if(mGlobalSettings.testPaletteFile(mGlobalSettings.ProjectPalettePath) == 2){
+			mPalette.initPalette();
 			if(mPalette.importGimpPalette(mGlobalSettings.ProjectPalettePath)){				
 				std::cout << "Error in Palette File! Using default" << std::endl;
 				mPalette.initPalette();
@@ -215,7 +216,8 @@ void TEditor::initStates(){
 	mStates[ESTATE_FRAMEROTATE] = &TEditor::stateFrameRotate;
 	mStates[ESTATE_FRAMESCALE] = &TEditor::stateFrameScale;
 	mStates[ESTATE_SPRITECONVERTBPP] = &TEditor::stateSpriteConvertBPP;
-	mStates[ESTATE_THEMECOLOR] = &TEditor::stateThemeColor;	
+	mStates[ESTATE_THEMECOLOR] = &TEditor::stateThemeColor;
+	mStates[ESTATE_PALETTEIMPORT] = &TEditor::statePaletteImport;
 }
 
 void TEditor::stateNone(){std::cout << "ESTATE_NONE"  << std::endl;}
@@ -369,6 +371,14 @@ void TEditor::stateTileMapDelete(){
 void TEditor::statePaletteUpdate(){
 	updatePalette();
 	showMessage("Palette Updated Successfully");
+}
+
+void TEditor::statePaletteImport(){
+	if(mPalette.importPaletteEdit(mGlobalSettings.mNewPalettePath, mGlobalSettings.mNewPaletteStartExtern, mGlobalSettings.mNewPaletteRangeExtern, mGlobalSettings.mNewPaletteStartIntern)){
+		showMessage("Error Importing Palette Range!", true);
+	} else {
+		showMessage("Palette Range Imported Successfully");
+	}
 }
 
 void TEditor::stateColmapRemove(){
@@ -692,6 +702,7 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_SPRITECREATE] = DTDialog::createSpriteCreateDialog();
 	mDTDialogs[EDIALOG_SPRITEIMPORT] = DTDialog::createSpriteImportDialog();
 	mDTDialogs[EDIALOG_PALETTEUPDATE] = DTDialog::createPaletteUpdateDialog();
+	mDTDialogs[EDIALOG_PALETTEIMPORT] = DTDialog::createPaletteImportDialog();
 	
 	mDTDialogs[EDIALOG_HELPMENU] = &mHelpDialog;
 

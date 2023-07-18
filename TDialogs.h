@@ -96,6 +96,13 @@ class DTDialog : public Dialog{
 		void addFile(std::string cLabel, std::string cInputLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist = true, bool cMustBeFile = true, bool cMustBeFolder = false, bool cMustNotBeFile = false, bool cMustNotExist = false, bool cMustBeProject = false, bool cSameline = false);
 		void addFileDefault(std::string cLabel, std::string cInputLabel, std::string cFileExt, std::string cFileKey, std::string *cDefaultPath, std::string* cTarget, bool cMustExist = true, bool cMustBeFile = true, bool cMustBeFolder = false, bool cMustNotBeFile = false, bool cMustNotExist = false, bool cMustBeProject = false, bool cSameline = false);
 
+		void addIntActiveMinus(std::string cLabel, int cBase, int *cTarget);
+
+		int* getIntValue(std::string cIntLabel);	
+		int* getIntActiveValue(std::string cIntLabel);	
+
+		std::string* getFilePath(std::string cFileVal);	
+
 		static DTDialog* createSpriteFrameImportDialog();
 		static DTDialog* createSpriteFramesImportDialog();
 		static DTDialog* createSpriteCopyDialog();
@@ -126,6 +133,7 @@ class DTDialog : public Dialog{
 		static DTDialog* createSpriteCreateDialog();
 		static DTDialog* createSpriteImportDialog();
 		static DTDialog* createPaletteUpdateDialog();
+		static DTDialog* createPaletteImportDialog();
 
 };
 
@@ -144,8 +152,6 @@ class DTDCDialog : public DTDialog{
 		void addConfirmText(std::string cText, bool bSameline = false);
 		void setConfirmButtons(std::string cConfirm, std::string cCancel);
 		void setConfirmConditionExists(std::string *cPath, bool cState);
-
-		std::string* getFilePath(std::string cFileVal);	
 
 		static DTDCDialog* createProjectSaveAsDialog();
 };
@@ -242,6 +248,17 @@ class DialogValueInt : public DialogValueType<int>{
 		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::SliderInt(mLabel.c_str(), &mValue, mMin, mMax);}		
 };
 
+class DialogValueIntActive : public DialogValueType<int>{
+	public:		
+		int mBaseValue;
+		int mType = 0;
+		DialogValueIntActive(DTDialog *cParent, int cCond, std::string cLabel, int cBase, int* cTarget, int cType){mParent = cParent; mBaseValue = cBase; mLabel = cLabel; mTarget = cTarget; mType = cType; bSameLine = false; mCondition = cCond;}
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(mType == 0){ mValue = mBaseValue - *mTarget;} if(mType == 1){ mValue = mBaseValue + *mTarget;} }
+		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(mType == 0){ mValue = mBaseValue - *mTarget;} if(mType == 1){ mValue = mBaseValue + *mTarget;} }
+		virtual void cancel(){};
+		virtual void update(){};
+};
+
 class DialogValueColor : public DialogValueType<ImU32>{	
 	public:
 		ImVec4 mColor = {0,0,0,1};
@@ -259,7 +276,7 @@ class DialogValueIntMinMax : public DialogValueType<int>{
 		int *mMin = NULL;
 		int *mMax = NULL;
 		DialogValueIntMinMax(DTDialog *cParent, int cCond, std::string cLabel, int cDefault, int* cTarget, int *cMin, int *cMax, bool cSameline){mParent = cParent; mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mMin = cMin; mMax = cMax; bSameLine = cSameline; mCondition = cCond;}
-		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); ImGui::SliderInt(mLabel.c_str(), &mValue, *mMin, *mMax);}		
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); if(mValue > *mMax){mValue = *mMax;} ImGui::SliderInt(mLabel.c_str(), &mValue, *mMin, *mMax);}		
 };
 
 

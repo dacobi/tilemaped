@@ -260,6 +260,11 @@ class TSettings{
 		int mNewTileMapState = 0;
 		int mNewTileMapX = 0;
 		int mNewTileMapY = 0;
+
+		std::string mNewPalettePath = "";
+		int mNewPaletteStartExtern = 0;
+		int mNewPaletteRangeExtern = 0;
+		int mNewPaletteStartIntern = 0;
 		
 		float mRotateFrameAngle = 0;
 		float mScaleFrameFactor = 0;
@@ -417,7 +422,8 @@ enum {
 	EDIALOG_TILEMAPCREATE,
 	EDIALOG_SPRITECREATE,
 	EDIALOG_SPRITEIMPORT,
-	EDIALOG_PALETTEUPDATE
+	EDIALOG_PALETTEUPDATE,
+	EDIALOG_PALETTEIMPORT
 } edialogs;
 
 enum {
@@ -451,7 +457,8 @@ enum {
 	ESTATE_FRAMEROTATE,
 	ESTATE_FRAMESCALE,
 	ESTATE_SPRITECONVERTBPP,
-	ESTATE_THEMECOLOR
+	ESTATE_THEMECOLOR,
+	ESTATE_PALETTEIMPORT
 } estates;
 
 

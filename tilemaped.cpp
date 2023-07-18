@@ -431,6 +431,11 @@ void TSettings::close(){
 	mNewSpriteX = 0;
 	mNewSpriteY = 0;
 	mNewSpriteBPP = 8;
+
+	mNewPalettePath = "";
+	mNewPaletteStartExtern = 0;
+	mNewPaletteRangeExtern = 0;
+	mNewPaletteStartIntern = 0;
 	
 	mNewTileMapPath = "";
 	mNewTileMapPaletteOffset = 0;

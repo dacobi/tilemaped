@@ -72,6 +72,7 @@ public:
 	void close();
 	int importGimpPalette(std::string palPath);
 	int importPaletteEdit(std::string palPath);
+	int importPaletteEdit(std::string palPath, int exStart, int exRange, int inStart);
 	bool bImportingPalette = false;
 	std::vector<TPixel*> TPixels;
 	std::vector<TPixel*> TPixelsEdit;
@@ -86,6 +87,7 @@ public:
 	ImVec4 getIm4ColorIm(ImU32 cColor);
 	SDL_Color getSDLColor(ImVec4 cCol);
 	SDL_Color getSDLColor4Bit(int cR, int cG, int cB);
+	void setSelectedColor(SDL_Color cColor);
 	int updatePalette();
 	int renderEditor(int xpos, int ypos);
 	int renderIm(int xpos, int ypos, TextureParameters* mTexParam);
