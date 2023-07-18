@@ -482,7 +482,9 @@ int TPalette::importGimpPalette(std::string palPath){
 		unsigned char tpalette[256][3];
 
 		std::string nline;
-    	std::string ntmp;    
+    	std::string ntmp1;    
+		std::string ntmp2;
+		std::string ntmp3;
     
     	std::getline(input, nline);
     	std::getline(input, nline);
@@ -490,6 +492,7 @@ int TPalette::importGimpPalette(std::string palPath){
     	std::getline(input, nline);            
         
     	std::stringstream convert;
+		
     	int mr, mg, mb;
     
 		int cColNum = 0;
@@ -499,8 +502,35 @@ int TPalette::importGimpPalette(std::string palPath){
 
 			cColNum = i;
     		
+			ntmp2 = nline;
+
+			std::stringstream conwc(ntmp2); 
+
+			int wordc = 0;
+
+			while(conwc >> ntmp1){
+				wordc++;			
+			}
+			
 			convert << nline << std::endl;
-    		convert >> mr >> mg >> mb >> ntmp;
+
+			switch (wordc)
+			{
+			case 3:
+				convert >> mr >> mg >> mb;	
+				break;
+			case 4:
+				convert >> mr >> mg >> mb >> ntmp1;	
+				break;
+			case 5:
+				convert >> mr >> mg >> mb >> ntmp1 >> ntmp2;	
+				break;
+			case 6:
+				convert >> mr >> mg >> mb >> ntmp1 >> ntmp2 >> ntmp3;	
+				break;
+			default:
+				break;
+			}
     	
 	    	tpalette[i][0] = mr;
     		tpalette[i][1] = mg;
