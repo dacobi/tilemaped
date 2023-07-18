@@ -117,6 +117,7 @@ class TEditor{
 		int render();
 		int switchMode();
 		int setMode(int );
+		int canCopyToBrushes();
 		int mCurMode = EMODE_MAP;
 		int mLastMode = EMODE_TILE;
 		int mouseSelX=0;

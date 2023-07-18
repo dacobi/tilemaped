@@ -227,7 +227,7 @@ void TEditor::stateProgramQuit(){
 void TEditor::stateProjectSave(){
 	if(saveToFolder(mGlobalSettings.ProjectPath)){		
 		showMessage("Error Creating Project Folder!", true);
-	} else {
+	} else {		
 		showMessage("Project Saved Successfully");
 	}
 }
@@ -2654,12 +2654,12 @@ int TEditor::showMessage(std::string cMessage, bool isError){
 		mGlobalSettings.mProgramMessage = cMessage;
 		mProgramInfo->setCondition(1);
 		mProgramInfo->update();
-		mActiveMessage = mProgramInfo;		
+		mActiveMessage = mProgramInfo;				
 	} else {		
 		mGlobalSettings.mProgramMessage = cMessage;
 		mProgramInfo->setCondition(-1);
 		mProgramInfo->update();
-		mActiveMessage = mProgramInfo;
+		mActiveMessage = mProgramInfo;		
 	}
 	return 0;
 }
@@ -4509,9 +4509,8 @@ int TEditor::handleEvents(){
 
 	if(mActiveDialog){
 		if(mActiveDialog->bInputIsAccept){
-
-			handleState();
 			cancelActiveDialog();
+			handleState();
 			mGlobalSettings.mEditorState = ESTATE_NONE;
 			return 0;
 		}

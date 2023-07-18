@@ -492,8 +492,12 @@ int TPalette::importGimpPalette(std::string palPath){
     	std::stringstream convert;
     	int mr, mg, mb;
     
+		int cColNum = 0;
+
     	for(int i = 0; i < 256; i++){
- 			std::getline(input, nline);       	
+ 			std::getline(input, nline);
+
+			cColNum = i;
     		
 			convert << nline << std::endl;
     		convert >> mr >> mg >> mb >> ntmp;
@@ -501,7 +505,20 @@ int TPalette::importGimpPalette(std::string palPath){
 	    	tpalette[i][0] = mr;
     		tpalette[i][1] = mg;
     		tpalette[i][2] = mb;    	
+
+			if(input.eof()){
+				break;
+			}
     	}
+
+		if(cColNum < 255){
+			while(cColNum < 256){
+				tpalette[cColNum][0] = 0;
+    			tpalette[cColNum][1] = 0;
+    			tpalette[cColNum][2] = 0;    	
+				cColNum++;
+			}
+		}
 
 		if(TPalette.size()){
 			TPalette.erase(TPalette.begin(), TPalette.end());
