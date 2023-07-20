@@ -96,8 +96,7 @@ int TEditor::createNewProject(){
 	std::cout << "Creating Project: " << mGlobalSettings.ProjectPath << std::endl;
 	std::cout << "TileMapWidth: " << mGlobalSettings.TileMapWidth << " TileMapHeight: " << mGlobalSettings.TileMapHeight << " TileSizeX: " << mGlobalSettings.mGlobalTexParam.TexSizeX << " TileSizeY: " << mGlobalSettings.mGlobalTexParam.TexSizeY << std::endl;	
 	if(mGlobalSettings.bProjectHasPalette){
-		if(mGlobalSettings.testPaletteFile(mGlobalSettings.ProjectPalettePath) == 2){
-			mPalette.initPalette();
+		if(mGlobalSettings.testPaletteFile(mGlobalSettings.ProjectPalettePath) == 2){			
 			if(mPalette.importGimpPalette(mGlobalSettings.ProjectPalettePath)){				
 				std::cout << "Error in Palette File! Using default" << std::endl;
 				mPalette.initPalette();
