@@ -794,8 +794,8 @@ int TBDialog::render(){
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import Palette")).c_str())){
 					mEditor->mPalette.bImportingPalette = true;
 				}
-				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import Palette Range")).c_str())){
-					mEditor->activateDTDialog(EDIALOG_PALETTEIMPORT, -1, 1);
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import Palette Sub Range")).c_str())){
+					mEditor->activateDTDialog(EDIALOG_PALETTEIMPORT);
 				}
 			}
 		
@@ -2818,13 +2818,14 @@ DTDialog* DTDialog::createProjectCloseDialog(){
 DTDialog* DTDialog::createPaletteImportDialog(){
 	DTDialog* newDialog = new DTDialog();
 
-	newDialog->createValues(1);
+	newDialog->createLocalValues(1);
+	newDialog->setLocalValue(0, 1);
 
-	newDialog->setLabel("Import Palette Range");
+	newDialog->setLabel("Import Palette Sub Range");
 
 	newDialog->setTarget(ESTATE_PALETTEIMPORT);
 
-	newDialog->addText(mGlobalSettings.mFile + " Import Palette Range?");
+	newDialog->addText(mGlobalSettings.mFile + " Import Palette Colors Sub Range?");
 	
 	newDialog->addSeperator();
 
@@ -2832,17 +2833,17 @@ DTDialog* DTDialog::createPaletteImportDialog(){
 
 	newDialog->addSeperator();
 
-	newDialog->addText(mGlobalSettings.mInfo + " Select Palette Range");
+	newDialog->addText(mGlobalSettings.mInfo + " Select Palette Colors Sub Range");
 
-	newDialog->addInt("Extern Palette Start Color", 0, &mGlobalSettings.mNewPaletteStartExtern, 0, 255);
+	newDialog->addInt("External Palette Start Color", 0, &mGlobalSettings.mNewPaletteStartExtern, 0, 255);
 
-	newDialog->addIntActiveMinus("PALSTARTMIN", 256, newDialog->getIntValue("Extern Palette Start Color"));
+	newDialog->addIntActiveMinus("PALSTARTMIN", 256, newDialog->getIntValue("External Palette Start Color"));
 
-	newDialog->addIntMinMax("Extern Palette Range", 1, &mGlobalSettings.mNewPaletteRangeExtern,newDialog->getValue(0), newDialog->getIntActiveValue("PALSTARTMIN"));
+	newDialog->addIntMinMax("External Palette Color Range", 256, &mGlobalSettings.mNewPaletteRangeExtern,newDialog->getLocalValue(0), newDialog->getIntActiveValue("PALSTARTMIN"));
 
-	newDialog->addIntActiveMinus("PALRANGEMAX", 256, newDialog->getIntValue("Extern Palette Range"));
+	newDialog->addIntActiveMinus("PALRANGEMAX", 256, newDialog->getIntValue("External Palette Color Range"));
 
-	newDialog->addIntMinMax("Intern Palette Start Color", 0, &mGlobalSettings.mNewPaletteStartIntern, newDialog->getValue(-1), newDialog->getIntActiveValue("PALRANGEMAX"));
+	newDialog->addIntMinMax("Internal Palette Start Color", 0, &mGlobalSettings.mNewPaletteStartIntern, newDialog->getValue(-1), newDialog->getIntActiveValue("PALRANGEMAX"));
 
 	newDialog->addSeperator();
 

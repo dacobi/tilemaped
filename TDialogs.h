@@ -52,6 +52,7 @@ class DTDialog : public Dialog{
 		std::vector<DialogButton*> mButtons;
 		std::vector<DialogValueFile*> mFiles;
 		std::vector<DialogValueOptionInt> mOptionValues;
+		std::vector<DialogValueOptionInt> mOptionValuesLocal;
 		int mDefaultValue = 0;
 		TIDialog* mActiveInput = NULL;
 		int mCondition = -1;
@@ -68,8 +69,11 @@ class DTDialog : public Dialog{
 		virtual void setRequiredCondition(int cCond){mRequiredCondition = cCond;};
 		virtual void clearRequiredCondition(){mRequiredCondition = -1;};
 		virtual void createValues(int cValNums){mOptionValues.resize(cValNums);};
+		virtual void createLocalValues(int cValNums){mOptionValuesLocal.resize(cValNums);};
 		virtual void setValue(int cIndex, int cVal){if(mOptionValues.size()){if( (cIndex >= 0) && (cIndex < mOptionValues.size()) ){mOptionValues[cIndex].mValue = cVal;}}};
 		virtual int* getValue(int cIndex){if(mOptionValues.size()){if( (cIndex >= 0) && (cIndex < mOptionValues.size()) ){return &mOptionValues[cIndex].mValue;}} return &mDefaultValue;};
+		virtual void setLocalValue(int cIndex, int cVal){if(mOptionValuesLocal.size()){if( (cIndex >= 0) && (cIndex < mOptionValuesLocal.size()) ){mOptionValuesLocal[cIndex].mValue = cVal;}}};
+		virtual int* getLocalValue(int cIndex){if(mOptionValuesLocal.size()){if( (cIndex >= 0) && (cIndex < mOptionValuesLocal.size()) ){return &mOptionValuesLocal[cIndex].mValue;}} return &mDefaultValue;};
 		virtual void init();	
 		virtual int render();
 		virtual void update();
@@ -276,7 +280,7 @@ class DialogValueIntMinMax : public DialogValueType<int>{
 		int *mMin = NULL;
 		int *mMax = NULL;
 		DialogValueIntMinMax(DTDialog *cParent, int cCond, std::string cLabel, int cDefault, int* cTarget, int *cMin, int *cMax, bool cSameline){mParent = cParent; mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mMin = cMin; mMax = cMax; bSameLine = cSameline; mCondition = cCond;}
-		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); if(mValue > *mMax){mValue = *mMax;} ImGui::SliderInt(mLabel.c_str(), &mValue, *mMin, *mMax);}		
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); if(mValue > *mMax){mValue = *mMax;} if(mValue < *mMin){mValue = *mMin;} ImGui::SliderInt(mLabel.c_str(), &mValue, *mMin, *mMax);}		
 };
 
 
