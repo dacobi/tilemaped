@@ -378,8 +378,7 @@ int TPalette::importPaletteEdit(std::string palPath, int exStart, int exRange, i
 		std::string nline;
     	std::string ntmp1;    
 		std::string ntmp2;
-		std::string ntmp3;
-    
+		    
     	std::getline(input, nline);
     	std::getline(input, nline);
     	std::getline(input, nline);
@@ -391,14 +390,17 @@ int TPalette::importPaletteEdit(std::string palPath, int exStart, int exRange, i
 			pStartPos--;
 			std::getline(input, nline); 
 		}    
-        
-    	std::stringstream convert;
+            	
     	int mr, mg, mb;
 
 		int cColNum = 0;
     
     	for(int i = 0; i < exRange; i++){
  			std::getline(input, nline);
+
+			if(input.eof()){
+				break;
+			}
 
 			cColNum = i;
 
@@ -412,40 +414,17 @@ int TPalette::importPaletteEdit(std::string palPath, int exStart, int exRange, i
 				wordc++;			
 			}       	
     		
-			convert << nline << std::endl;
-    		
-			switch (wordc)
-			{
-			case 3:
-				convert >> mr >> mg >> mb;	
-				break;
-			case 4:
-				convert >> mr >> mg >> mb >> ntmp1;	
-				break;
-			case 5:
-				convert >> mr >> mg >> mb >> ntmp1 >> ntmp2;	
-				break;
-			case 6:
-				convert >> mr >> mg >> mb >> ntmp1 >> ntmp2 >> ntmp3;	
-				break;
-			default:
-				break;
+			if(wordc < 3){
+				return 1;
 			}
-    	
 
-			/*
-	    	tpalette[i][0] = mMapColorIn[mr/16];
-    		tpalette[i][1] = mMapColorIn[mg/16];
-    		tpalette[i][2] = mMapColorIn[mb/16];
-			*/
+			std::stringstream convert(nline); 
 
+			convert >> mr >> mg >> mb;	
+    		
 			tpalette[i][0] = mMapColorIn[getClosest4Bit(mr)];
     		tpalette[i][1] = mMapColorIn[getClosest4Bit(mg)];
-    		tpalette[i][2] = mMapColorIn[getClosest4Bit(mb)];  
-
-			if(input.eof()){
-				break;
-			}    	
+    		tpalette[i][2] = mMapColorIn[getClosest4Bit(mb)];  			    	
     	}
 
 		if(cColNum < (exRange-1)){
@@ -553,20 +532,22 @@ int TPalette::importPaletteEdit(std::string palPath){
 		std::string nline;
     	std::string ntmp1;    
 		std::string ntmp2;
-		std::string ntmp3;
-    
+	
     	std::getline(input, nline);
     	std::getline(input, nline);
     	std::getline(input, nline);
     	std::getline(input, nline);            
-        
-    	std::stringstream convert;
+            	
     	int mr, mg, mb;
 
 		int cColNum = 0;
     
     	for(int i = 0; i < 256; i++){
  			std::getline(input, nline);       	
+
+			if(input.eof()){
+				break;
+			}
 
 			cColNum = i;
     		
@@ -575,44 +556,22 @@ int TPalette::importPaletteEdit(std::string palPath){
 			std::stringstream conwc(ntmp2); 
 
 			int wordc = 0;
-
+			
 			while(conwc >> ntmp1){
 				wordc++;			
 			}
     				
-			convert << nline << std::endl;
-
-			switch (wordc)
-			{
-			case 3:
-				convert >> mr >> mg >> mb;	
-				break;
-			case 4:
-				convert >> mr >> mg >> mb >> ntmp1;	
-				break;
-			case 5:
-				convert >> mr >> mg >> mb >> ntmp1 >> ntmp2;	
-				break;
-			case 6:
-				convert >> mr >> mg >> mb >> ntmp1 >> ntmp2 >> ntmp3;	
-				break;
-			default:
-				break;
+			if(wordc < 3){				
+				return 1;
 			}
-    		
-			/*
-	    	tpalette[i][0] = mMapColorIn[mr/16];
-    		tpalette[i][1] = mMapColorIn[mg/16];
-    		tpalette[i][2] = mMapColorIn[mb/16]; 
-			*/
+
+			std::stringstream convert(nline); 
+
+			convert >> mr >> mg >> mb;	
 
 			tpalette[i][0] = mMapColorIn[getClosest4Bit(mr)];
     		tpalette[i][1] = mMapColorIn[getClosest4Bit(mg)];
-    		tpalette[i][2] = mMapColorIn[getClosest4Bit(mb)];  
-
-			if(input.eof()){
-				break;
-			}
+    		tpalette[i][2] = mMapColorIn[getClosest4Bit(mb)];  			
     	}
 
 		if(cColNum < 255){
@@ -726,21 +685,22 @@ int TPalette::importGimpPalette(std::string palPath){
 		std::string nline;
     	std::string ntmp1;    
 		std::string ntmp2;
-		std::string ntmp3;
-    
+		    
     	std::getline(input, nline);
     	std::getline(input, nline);
     	std::getline(input, nline);
     	std::getline(input, nline);            
-        
-    	std::stringstream convert;
-		
+        		
     	int mr, mg, mb;
     
 		int cColNum = 0;
 
     	for(int i = 0; i < 256; i++){
  			std::getline(input, nline);
+
+			if(input.eof()){
+				break;
+			}
 
 			cColNum = i;
     		
@@ -754,34 +714,17 @@ int TPalette::importGimpPalette(std::string palPath){
 				wordc++;			
 			}
 			
-			convert << nline << std::endl;
-
-			switch (wordc)
-			{
-			case 3:
-				convert >> mr >> mg >> mb;	
-				break;
-			case 4:
-				convert >> mr >> mg >> mb >> ntmp1;	
-				break;
-			case 5:
-				convert >> mr >> mg >> mb >> ntmp1 >> ntmp2;	
-				break;
-			case 6:
-				convert >> mr >> mg >> mb >> ntmp1 >> ntmp2 >> ntmp3;	
-				break;
-			default:
-				break;
+			if(wordc < 3){				
+				return 1;
 			}
-    		    	
+
+			std::stringstream convert(nline);
+
+			convert >> mr >> mg >> mb;	    		    	
 			
 			tpalette[i][0] = mMapColorIn[getClosest4Bit(mr)];
     		tpalette[i][1] = mMapColorIn[getClosest4Bit(mg)];
-    		tpalette[i][2] = mMapColorIn[getClosest4Bit(mb)];  
-			
-			if(input.eof()){
-				break;
-			}
+    		tpalette[i][2] = mMapColorIn[getClosest4Bit(mb)];  						
     	}
 
 		if(cColNum < 255){

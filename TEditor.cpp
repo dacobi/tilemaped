@@ -2138,6 +2138,8 @@ int TEditor::activatePaletteEdit(){
 		mColorSelectedTileEdit->bPixelSelectedEdit = true;
 
 		mColorSelectedEdit++;
+
+		mPalette.setSelectedColor(mPalette.TPaletteEdit[1]);
 	}
 
 	return 0;
