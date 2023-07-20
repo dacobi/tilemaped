@@ -359,6 +359,10 @@ Uint32 TPalette::mapPaletteColor(int tcolor){
 	return tmpcol;
 }
 
+int TPalette::getClosest4Bit(int cCol){
+	return (int)std::round( (float(cCol)/17.0) );
+}
+
 int TPalette::importPaletteEdit(std::string palPath, int exStart, int exRange, int inStart){
 
 	int pType = mGlobalSettings.testPaletteFile(palPath);
@@ -428,9 +432,16 @@ int TPalette::importPaletteEdit(std::string palPath, int exStart, int exRange, i
 				break;
 			}
     	
+
+			/*
 	    	tpalette[i][0] = mMapColorIn[mr/16];
     		tpalette[i][1] = mMapColorIn[mg/16];
-    		tpalette[i][2] = mMapColorIn[mb/16]; 
+    		tpalette[i][2] = mMapColorIn[mb/16];
+			*/
+
+			tpalette[i][0] = mMapColorIn[getClosest4Bit(mr)];
+    		tpalette[i][1] = mMapColorIn[getClosest4Bit(mg)];
+    		tpalette[i][2] = mMapColorIn[getClosest4Bit(mb)];  
 
 			if(input.eof()){
 				break;
@@ -588,10 +599,16 @@ int TPalette::importPaletteEdit(std::string palPath){
 			default:
 				break;
 			}
-    		    	
+    		
+			/*
 	    	tpalette[i][0] = mMapColorIn[mr/16];
     		tpalette[i][1] = mMapColorIn[mg/16];
     		tpalette[i][2] = mMapColorIn[mb/16]; 
+			*/
+
+			tpalette[i][0] = mMapColorIn[getClosest4Bit(mr)];
+    		tpalette[i][1] = mMapColorIn[getClosest4Bit(mg)];
+    		tpalette[i][2] = mMapColorIn[getClosest4Bit(mb)];  
 
 			if(input.eof()){
 				break;
@@ -758,9 +775,9 @@ int TPalette::importGimpPalette(std::string palPath){
 			}
     		    	
 			
-			tpalette[i][0] = mMapColorIn[mr/16];
-    		tpalette[i][1] = mMapColorIn[mg/16];
-    		tpalette[i][2] = mMapColorIn[mb/16];  
+			tpalette[i][0] = mMapColorIn[getClosest4Bit(mr)];
+    		tpalette[i][1] = mMapColorIn[getClosest4Bit(mg)];
+    		tpalette[i][2] = mMapColorIn[getClosest4Bit(mb)];  
 			
 			if(input.eof()){
 				break;
