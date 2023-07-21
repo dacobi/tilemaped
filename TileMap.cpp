@@ -1201,9 +1201,9 @@ return 0;
 }
 
 void TPalette::setEditColor(){
-	mR = (mEditColor.x * 255.0f) / 16;
-	mG = (mEditColor.y * 255.0f) / 16;
-	mB = (mEditColor.z * 255.0f) / 16;
+	mR = getClosest4Bit((int)(mEditColor.x * 255.0f));
+	mG = getClosest4Bit((int)(mEditColor.y * 255.0f)); //(mEditColor.y * 255.0f) / 16;
+	mB = getClosest4Bit((int)(mEditColor.z * 255.0f)); //(mEditColor.z * 255.0f) / 16;
 }
 
 int TPalette::renderEditor(int xpos,int ypos){
@@ -1281,9 +1281,9 @@ int TPalette::renderEditor(int xpos,int ypos){
 			}
 
 			if(ImGui::Button("Choose")){
-				mR = (mEditColorPick.x * 255.0f) / 16;
-				mG = (mEditColorPick.y * 255.0f) / 16;
-				mB = (mEditColorPick.z * 255.0f) / 16;
+				mR = getClosest4Bit((int)(mEditColorPick.x * 255.0f)); // (mEditColorPick.x * 255.0f) / 16;
+				mG = getClosest4Bit((int)(mEditColorPick.y * 255.0f)); //(mEditColorPick.y * 255.0f) / 16;
+				mB = getClosest4Bit((int)(mEditColorPick.z * 255.0f)); //(mEditColorPick.z * 255.0f) / 16;
 
 				bColorPicker = false;				
 				ImGui::CloseCurrentPopup();
