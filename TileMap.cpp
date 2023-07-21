@@ -808,7 +808,7 @@ int TPalette::exportGimpPaletteEdit(std::string palPath){
 
 	fs::path cPalName = mGlobalSettings.ProjectPath;
 
-	tmpStr = "Name: " + cPalName.filename().string();
+	tmpStr = "Name: " + cPalName.parent_path().filename().string();
 	output << tmpStr << std::endl;
 
 	tmpStr = "Columns: 0";
