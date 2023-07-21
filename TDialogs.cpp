@@ -800,6 +800,10 @@ int TBDialog::render(){
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Export Palette")).c_str())){
 					mEditor->activateDTDialog(EDIALOG_PALETTEEXPORT);
 				}
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Load Default Palette")).c_str())){
+					mEditor->mPalette.initPaletteEdit();
+					mEditor->showMessage("Default X16 Palette Loaded\n  Click <Cancel Changes> to revert to previous Palette");
+				}
 			}
 		
 			if(ImGui::MenuItem("Undo (U) (CTRL + Z)")){

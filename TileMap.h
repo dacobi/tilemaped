@@ -66,6 +66,7 @@ public:
 	bool bHasBackupColor = false;
 	int mBackupColor = 0;
 	int initPalette();
+	int initPaletteEdit();
 	int loadFromFile(std::string palPath);
 	int saveToFolder(std::string palPath);
 	int saveToFile(std::string palPath);

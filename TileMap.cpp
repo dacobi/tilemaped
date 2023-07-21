@@ -1018,6 +1018,31 @@ int TPalette::initPalette(){
 	return 0;
 }
 
+int TPalette::initPaletteEdit(){
+	
+	for(int i = 0; i < 256; i++){		
+		TPaletteEdit[i].r = palette[i][0];
+		TPaletteEdit[i].g = palette[i][1];
+		TPaletteEdit[i].b = palette[i][2];
+
+		if(i == 0) {
+			TPaletteEdit[i].r = 0;
+			TPaletteEdit[i].g = 0;
+			TPaletteEdit[i].b = 0;		
+			TPaletteEdit[i].a = 0;
+		} else {
+			TPaletteEdit[i].a = 255;
+		}		
+		
+		if(i == mGlobalSettings.mEditor->mColorSelectedEdit){
+			setSelectedColor(TPaletteEdit[i]);				
+		}
+	}
+		
+	return 0;
+}
+
+
 int TPalette::updateTPixels(){
 	for(int i = 0; i < 256; i++){				
 		TPixels[i]->setPixelColor(i, this);
