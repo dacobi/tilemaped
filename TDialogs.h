@@ -100,12 +100,15 @@ class DTDialog : public Dialog{
 		void addFile(std::string cLabel, std::string cInputLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist = true, bool cMustBeFile = true, bool cMustBeFolder = false, bool cMustNotBeFile = false, bool cMustNotExist = false, bool cMustBeProject = false, bool cSameline = false);
 		void addFileDefault(std::string cLabel, std::string cInputLabel, std::string cFileExt, std::string cFileKey, std::string *cDefaultPath, std::string* cTarget, bool cMustExist = true, bool cMustBeFile = true, bool cMustBeFolder = false, bool cMustNotBeFile = false, bool cMustNotExist = false, bool cMustBeProject = false, bool cSameline = false);
 
+		void addSetFileExt(std::string cKey, std::string cExt);
+
 		void addIntActiveMinus(std::string cLabel, int cBase, int *cTarget);
 
 		int* getIntValue(std::string cIntLabel);	
 		int* getIntActiveValue(std::string cIntLabel);	
 
 		std::string* getFilePath(std::string cFileVal);	
+		std::string* getFileExt(std::string cFileVal);	
 
 		static DTDialog* createSpriteFrameImportDialog();
 		static DTDialog* createSpriteFramesImportDialog();
@@ -219,6 +222,15 @@ class DialogValueBase : public DialogElement{
 		virtual void cancel(){}
 		virtual void update(){}
 };
+
+class DialogValueSetFileExt : public DialogValueBase{	
+	public:
+		std::string mFileExt;
+		std::string mFileKey;
+		DialogValueSetFileExt(DTDialog *cParent, int cCond, std::string cKey, std::string cExt){mParent = cParent; mFileKey = cKey; mFileExt = cExt; bSameLine = false; mCondition = cCond;}
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} std::string *cNewExt = mParent->getFileExt(mFileKey); if(cNewExt){*cNewExt = mFileExt;} }
+};
+
 
 template <typename T> class DialogValueType : public DialogValueBase{
 	public:

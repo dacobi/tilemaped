@@ -1598,6 +1598,13 @@ void DTDialog::addFileDefault(std::string cLabel,std::string cInputLabel, std::s
 	bDialogIsWatingForText = true;
 }
 
+void DTDialog::addSetFileExt(std::string cKey, std::string cExt){
+
+	DialogValueSetFileExt *nFileExt = new DialogValueSetFileExt(this, mRequiredCondition, cKey, cExt);
+
+	mElements.push_back(nFileExt);
+}
+
 /* DTDCDialog */
 
 int DTDCDialog::render(){
@@ -1762,6 +1769,14 @@ int* DTDialog::getIntActiveValue(std::string cIntLabel){
 	return NULL;
 }
 
+std::string* DTDialog::getFileExt(std::string cFileVal){
+	for(auto *cInput : mFiles){
+		if(cInput->mFileKey == "ChooseFileDlgKey"+cFileVal){
+			return &cInput->mFileExt;
+		}
+	}
+	return NULL;
+}
 
 std::string* DTDialog::getFilePath(std::string cFileVal){
 	for(auto *cInput : mFiles){
