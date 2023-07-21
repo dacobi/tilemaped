@@ -375,6 +375,26 @@ void TEditor::statePaletteUpdate(){
 
 void TEditor::statePaletteExport(){
 
+	switch (mGlobalSettings.mExportPaletteType)
+	{
+	case 1:
+		if(mPalette.exportGimpPaletteEdit(mGlobalSettings.mExportPalettePath)){
+			showMessage("Error Exporting GIMP Palette!",true);
+		} else {
+			showMessage("GIMP Palette Exported Successfully");
+		}
+		break;
+	case 2:
+		if(mPalette.exportPaletteEdit(mGlobalSettings.mExportPalettePath)){
+			showMessage("Error Exporting Palette!",true);
+		} else {
+			showMessage("Palette Exported Successfully");
+		}
+		break;	
+	default:
+		break;
+	}
+
 }
 
 void TEditor::statePaletteImport(){

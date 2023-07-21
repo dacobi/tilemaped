@@ -790,6 +790,62 @@ int TPalette::importGimpPalette(std::string palPath){
 	return 1;
 }
 
+int TPalette::exportGimpPaletteEdit(std::string palPath){
+
+	std::string tmpStr,tmpStr2;
+    std::ofstream output(palPath, std::ios::out );
+    std::stringstream convert;	
+
+	tmpStr = "GIMP Palette";
+	output << tmpStr << std::endl;
+
+	fs::path cPalName = mGlobalSettings.ProjectPath;
+
+	tmpStr = "Name: " + cPalName.filename().string();
+	output << tmpStr << std::endl;
+
+	tmpStr = "Columns: 0";
+	output << tmpStr << std::endl;
+
+	tmpStr = "# Exported From TilemapEd";
+	output << tmpStr << std::endl;
+
+	for(int i = 0; i < 256; i++){
+		tmpStr = "";
+
+		convert << (int)TPaletteEdit[i].r << std::endl;
+		tmpStr2 = "";
+		convert >> tmpStr2;
+		tmpStr += tmpStr2 + " ";
+
+		convert << (int)TPaletteEdit[i].g << std::endl;
+		tmpStr2 = "";
+		convert >> tmpStr2;
+		tmpStr += tmpStr2 + " ";
+
+		convert << (int)TPaletteEdit[i].b << std::endl;
+		tmpStr2 = "";
+		convert >> tmpStr2;
+		tmpStr += tmpStr2 + " ";
+
+		convert << i << std::endl;
+		tmpStr2 = "";
+		convert >> tmpStr2;
+		tmpStr += "Index " + tmpStr2;
+
+		output << tmpStr << std::endl;
+	}
+
+	output.close();
+    
+    return 0;
+}
+
+int TPalette::exportPaletteEdit(std::string palPath){
+
+	return 0;
+}
+
 int TPalette::saveToFile(std::string cpath){
 	if(mGlobalSettings.ProjectPalette.size() == 514){		
 		std::ofstream outfile(cpath, std::ios::binary );
