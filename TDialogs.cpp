@@ -1303,6 +1303,10 @@ void DialogValueRadioGroupCondition::render(){
 	}
 }
 
+void DialogValueFile::close(){
+	ImGuiFileDialog::Instance()->Close();
+}
+
 void DialogValueFile::render(){
 	if(mCondition > -1){
 		if(mParent->mCondition != mCondition){
@@ -1625,10 +1629,17 @@ int DTDCDialog::render(){
 
 	ImGui::Begin(mDialogTextTitle.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);
 
+	if(ImGui::IsWindowFocused()){
+		for(auto *cInput : mFiles){
+			cInput->close();
+		}
+	}
+
 	for(auto *cElem: mElements){
 		cElem->render();
 	}
 
+	
 	ImGui::End();
 
 	if(bConfirmIsActive){		

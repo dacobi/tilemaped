@@ -792,6 +792,13 @@ int TPalette::importGimpPalette(std::string palPath){
 
 int TPalette::exportGimpPaletteEdit(std::string palPath){
 
+	if(fs::exists(fs::status(palPath))){
+		if(fs::is_directory(fs::status(palPath))){
+			std::cout << "Palette path is directory: " << palPath << std::endl;
+			return 1;
+		}
+	}
+
 	std::string tmpStr,tmpStr2;
     std::ofstream output(palPath, std::ios::out );
     std::stringstream convert;	
@@ -842,6 +849,30 @@ int TPalette::exportGimpPaletteEdit(std::string palPath){
 }
 
 int TPalette::exportPaletteEdit(std::string palPath){
+
+	if(fs::exists(fs::status(palPath))){
+		if(fs::is_directory(fs::status(palPath))){
+			std::cout << "Palette path is directory: " << palPath << std::endl;
+			return 1;
+		}
+	}
+
+	std::vector<unsigned char> tbuffer;
+	tbuffer.resize(514);
+	tbuffer[0] = 16;
+	tbuffer[1] = 42;
+
+	int pindex=0;
+	for(int i = 2; i < 514; i+=2){			
+		tbuffer[i] = mMapColorOut[TPaletteEdit[pindex].g] << 4;
+		tbuffer[i] += mMapColorOut[TPaletteEdit[pindex].b];
+		tbuffer[i+1] = mMapColorOut[TPaletteEdit[pindex].r];
+		pindex++;
+	}
+
+	std::ofstream outfile(palPath, std::ios::binary );
+	outfile.write((const char*)tbuffer.data(), tbuffer.size());
+	outfile.close();
 
 	return 0;
 }
