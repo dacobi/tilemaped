@@ -1381,6 +1381,12 @@ int DTDialog::render(){
 
 	ImGui::Begin(mDialogTextTitle.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);
 
+	if(ImGui::IsWindowFocused()){
+		if(mFiles.size()){
+			ImGuiFileDialog::Instance()->Close();
+		}
+	}
+
 	for(auto *cElem: mElements){
 		cElem->render();
 	}
@@ -1634,8 +1640,13 @@ int DTDCDialog::render(){
 	ImGui::Begin(mDialogTextTitle.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);
 
 	if(ImGui::IsWindowFocused()){
-		for(auto *cInput : mFiles){
-			cInput->close();
+		if(mFiles.size()){
+			ImGuiFileDialog::Instance()->Close();
+		}
+
+		if(bConfirmIsActive){
+			bConfirmIsActive = false;
+			mConfirmDialog.cancel();
 		}
 	}
 
@@ -2999,7 +3010,7 @@ DTDCDialog* DTDCDialog::createPaletteExportDialog(){
 	newDialog->setTarget(ESTATE_PALETTEEXPORT);
 
 	newDialog->addText(mGlobalSettings.mFile + " Export Current Editor Palette?");
-	newDialog->addText(mGlobalSettings.mInfo + " (Not Project Palette if <apply changes> has not been clicked)");
+	newDialog->addText(mGlobalSettings.mInfo + " (Not Project Palette if <Apply Changes> has not been clicked)");
 	
 	newDialog->addSeperator();
 
