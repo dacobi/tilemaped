@@ -808,7 +808,7 @@ int TPalette::exportGimpPaletteEdit(std::string palPath){
 
 	fs::path cPalName = mGlobalSettings.ProjectPath;
 
-#ifdef MWIN64
+#ifdef _WIN64
 	tmpStr = "Name: " + cPalName.parent_path().filename().string();
 #else
 	tmpStr = "Name: " + cPalName.filename().string();
