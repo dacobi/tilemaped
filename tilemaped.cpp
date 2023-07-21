@@ -436,6 +436,9 @@ void TSettings::close(){
 	mNewPaletteStartExtern = 0;
 	mNewPaletteRangeExtern = 0;
 	mNewPaletteStartIntern = 0;
+
+	mExportPalettePath = "";
+	mExportPaletteType = 1;
 	
 	mNewTileMapPath = "";
 	mNewTileMapPaletteOffset = 0;

@@ -97,7 +97,7 @@ class DTDialog : public Dialog{
 		void addRadioGroupCondition(int cDefault, int* cTarget);
 		void addIntTarget(int cDefault, int *cTarget);
 		void addColor(std::string cLabel, ImU32 *cDefaultColor, ImU32 *cTarget, bool bSameline = false);
-		void addFile(std::string cLabel, std::string cInputLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist = true, bool cMustBeFile = true, bool cMustBeFolder = false, bool cMustNotBeFile = false, bool cMustNotExist = false, bool cMustBeProject = false, bool cSameline = false);
+		void addFile(std::string cLabel, std::string cInputLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist = true, bool cMustBeFile = true, bool cMustBeFolder = false, bool cMustNotBeFile = false, bool cMustNotExist = false, bool cMustBeProject = false, bool cMustNotBeFolder = false ,bool cSameline = false);
 		void addFileDefault(std::string cLabel, std::string cInputLabel, std::string cFileExt, std::string cFileKey, std::string *cDefaultPath, std::string* cTarget, bool cMustExist = true, bool cMustBeFile = true, bool cMustBeFolder = false, bool cMustNotBeFile = false, bool cMustNotExist = false, bool cMustBeProject = false, bool cSameline = false);
 
 		void addSetFileExt(std::string cKey, std::string cExt);
@@ -161,6 +161,7 @@ class DTDCDialog : public DTDialog{
 		void setConfirmConditionExists(std::string *cPath, bool cState);
 
 		static DTDCDialog* createProjectSaveAsDialog();
+		static DTDCDialog* createPaletteExportDialog();
 };
 
 class IDDialog : public DTDialog{
@@ -481,6 +482,7 @@ class TIDialog: public Dialog{
 		bool bMustBeFile=false;
 		bool bMustBeFolder=false;
 		bool bMustNotBeFile=false;
+		bool bMustNotBeFolder=false;
 		bool bMustNotExist=false;
 		bool bMustBeProject=false;
 		int checkCurrentText();

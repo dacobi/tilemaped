@@ -292,6 +292,7 @@ class TEditor{
 		void stateSpriteConvertBPP();
 		void stateThemeColor();
 		void statePaletteImport();
+		void statePaletteExport();
 
 	
 };

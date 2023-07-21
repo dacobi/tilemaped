@@ -797,6 +797,9 @@ int TBDialog::render(){
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import Palette Sub Range")).c_str())){
 					mEditor->activateDTDialog(EDIALOG_PALETTEIMPORT);
 				}
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Export Palette")).c_str())){
+					mEditor->activateDTDialog(EDIALOG_PALETTEEXPORT);
+				}
 			}
 		
 			if(ImGui::MenuItem("Undo (U) (CTRL + Z)")){
@@ -1020,6 +1023,13 @@ int TIDialog::checkCurrentText(){
 
 		if(bMustBeFolder){
 				if(!cIsFolder){					
+					bInputIsAccepted=false;
+					return 1;
+				}
+		}
+
+		if(bMustNotBeFolder){
+				if(cIsFolder){					
 					bInputIsAccepted=false;
 					return 1;
 				}
@@ -1568,9 +1578,11 @@ void DTDialog::addIntTarget(int cDefault, int *cTarget){
 	mValues.push_back(nInt);
 }
 
-void DTDialog::addFile(std::string cLabel,std::string cInputLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist, bool cMustBeFile, bool cMustBeFolder, bool cMustNotBeFile, bool cMustNotExist, bool cMustBeProject, bool cSameline){
+void DTDialog::addFile(std::string cLabel,std::string cInputLabel, std::string cFileExt, std::string cFileKey, std::string cDefault, std::string* cTarget, bool cMustExist, bool cMustBeFile, bool cMustBeFolder, bool cMustNotBeFile, bool cMustNotExist, bool cMustBeProject, bool cMustNotBeFolder, bool cSameline){
 
 	DialogValueFile *nFile = new DialogValueFile(this, mRequiredCondition, cLabel, cInputLabel, cFileExt, cFileKey, cDefault, cTarget, cMustExist, cMustBeFile, cMustBeFolder, cMustNotBeFile, cMustNotExist, cMustBeProject);
+
+	nFile->mTextInput.bMustNotBeFolder = cMustNotBeFolder;
 
 	nFile->bSameLine = cSameline;
 
@@ -2958,6 +2970,53 @@ DTDCDialog* DTDCDialog::createProjectSaveAsDialog(){
 	newDialog->setConfirmButtons("Confirm","Cancel");
 
 	newDialog->setConfirmConditionExists(newDialog->getFilePath("PrjAsFold"), true);
+
+	return newDialog;
+
+}
+
+DTDCDialog* DTDCDialog::createPaletteExportDialog(){
+
+	DTDCDialog* newDialog = new DTDCDialog();
+
+	newDialog->setLabel("Export Editor Palette");
+
+	newDialog->setTarget(ESTATE_PALETTEEXPORT);
+
+	newDialog->addText(mGlobalSettings.mFile + " Export Current Editor Palette?");
+	newDialog->addText(mGlobalSettings.mInfo + " (Not Project Palette if <apply changes> has not been clicked)");
+	
+	newDialog->addSeperator();
+
+	newDialog->addRadioGroupCondition(1, &mGlobalSettings.mExportPaletteType);
+	newDialog->addRadioButton("GIMP Palette", 1);
+	newDialog->addRadioButton("Project Palette", 2, true);
+	
+	newDialog->setRequiredCondition(1);
+	newDialog->addSetFileExt("ExpPalFile", ".gpl");
+
+	newDialog->setRequiredCondition(2);
+	newDialog->addSetFileExt("ExpPalFile", ".bin");
+
+	newDialog->clearRequiredCondition();
+	newDialog->addConditionRestore();
+
+	newDialog->addFile("Choose Palette File", "PAL File", ".gpl", "ExpPalFile", "", &mGlobalSettings.mExportPalettePath, false, false, false, false, false, false, true);
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Export", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	newDialog->setConfirmLabel("Confirm Overwrite");
+
+	newDialog->addConfirmText(mGlobalSettings.mFile + " Overwrite File on Disk?");
+	newDialog->addConfirmText(mGlobalSettings.mInfo + " Existing Data will be Overwritten");
+
+	newDialog->setConfirmButtons("Confirm","Cancel");
+
+	newDialog->setConfirmConditionExists(newDialog->getFilePath("ExpPalFile"), true);
 
 	return newDialog;
 

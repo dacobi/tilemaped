@@ -217,6 +217,7 @@ void TEditor::initStates(){
 	mStates[ESTATE_SPRITECONVERTBPP] = &TEditor::stateSpriteConvertBPP;
 	mStates[ESTATE_THEMECOLOR] = &TEditor::stateThemeColor;
 	mStates[ESTATE_PALETTEIMPORT] = &TEditor::statePaletteImport;
+	mStates[ESTATE_PALETTEEXPORT] = &TEditor::statePaletteExport;
 }
 
 void TEditor::stateNone(){std::cout << "ESTATE_NONE"  << std::endl;}
@@ -370,6 +371,10 @@ void TEditor::stateTileMapDelete(){
 void TEditor::statePaletteUpdate(){
 	updatePalette();
 	showMessage("Palette Updated Successfully");
+}
+
+void TEditor::statePaletteExport(){
+
 }
 
 void TEditor::statePaletteImport(){
@@ -702,6 +707,8 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_SPRITEIMPORT] = DTDialog::createSpriteImportDialog();
 	mDTDialogs[EDIALOG_PALETTEUPDATE] = DTDialog::createPaletteUpdateDialog();
 	mDTDialogs[EDIALOG_PALETTEIMPORT] = DTDialog::createPaletteImportDialog();
+	mDTDialogs[EDIALOG_PALETTEEXPORT] = DTDCDialog::createPaletteExportDialog();
+	
 	
 	mDTDialogs[EDIALOG_HELPMENU] = &mHelpDialog;
 

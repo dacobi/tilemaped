@@ -265,6 +265,9 @@ class TSettings{
 		int mNewPaletteStartExtern = 0;
 		int mNewPaletteRangeExtern = 0;
 		int mNewPaletteStartIntern = 0;
+
+		std::string mExportPalettePath = "";
+		int mExportPaletteType = 1;
 		
 		float mRotateFrameAngle = 0;
 		float mScaleFrameFactor = 0;
@@ -423,7 +426,8 @@ enum {
 	EDIALOG_SPRITECREATE,
 	EDIALOG_SPRITEIMPORT,
 	EDIALOG_PALETTEUPDATE,
-	EDIALOG_PALETTEIMPORT
+	EDIALOG_PALETTEIMPORT,
+	EDIALOG_PALETTEEXPORT
 } edialogs;
 
 enum {
@@ -458,7 +462,8 @@ enum {
 	ESTATE_FRAMESCALE,
 	ESTATE_SPRITECONVERTBPP,
 	ESTATE_THEMECOLOR,
-	ESTATE_PALETTEIMPORT
+	ESTATE_PALETTEIMPORT,
+	ESTATE_PALETTEEXPORT
 } estates;
 
 
