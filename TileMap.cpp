@@ -816,17 +816,17 @@ int TPalette::exportGimpPaletteEdit(std::string palPath){
 		convert << (int)TPaletteEdit[i].r << std::endl;
 		tmpStr2 = "";
 		convert >> tmpStr2;
-		tmpStr += tmpStr2 + " ";
+		tmpStr += tmpStr2 + "\t";
 
 		convert << (int)TPaletteEdit[i].g << std::endl;
 		tmpStr2 = "";
 		convert >> tmpStr2;
-		tmpStr += tmpStr2 + " ";
+		tmpStr += tmpStr2 + "\t";
 
 		convert << (int)TPaletteEdit[i].b << std::endl;
 		tmpStr2 = "";
 		convert >> tmpStr2;
-		tmpStr += tmpStr2 + " ";
+		tmpStr += tmpStr2 + "\t";
 
 		convert << i << std::endl;
 		tmpStr2 = "";
