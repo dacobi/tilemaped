@@ -790,6 +790,74 @@ int TPalette::importGimpPalette(std::string palPath){
 	return 1;
 }
 
+int TPalette::exportGimpPaletteEdit(std::string palPath, int expStart, int expRange){
+
+	if(fs::exists(fs::status(palPath))){
+		if(fs::is_directory(fs::status(palPath))){
+			std::cout << "Palette path is directory: " << palPath << std::endl;
+			return 1;
+		}
+	}
+
+	if((expStart + expRange) > 256){
+		return 1;
+	}
+
+	std::string tmpStr,tmpStr2;
+    std::ofstream output(palPath, std::ios::out );
+    std::stringstream convert;	
+
+	tmpStr = "GIMP Palette";
+	output << tmpStr << std::endl;
+
+	fs::path cPalName = mGlobalSettings.ProjectPath;
+
+#ifdef _WIN64
+	tmpStr = "Name: " + cPalName.parent_path().filename().string();
+#else
+	tmpStr = "Name: " + cPalName.filename().string();
+#endif
+
+	output << tmpStr << std::endl;
+
+	tmpStr = "Columns: 0";
+	output << tmpStr << std::endl;
+
+	tmpStr = "# Exported From TilemapEd";
+	output << tmpStr << std::endl;
+
+	for(int i = expStart; i < (expStart + expRange); i++){
+		tmpStr = "";
+
+		convert << (int)TPaletteEdit[i].r << std::endl;
+		tmpStr2 = "";
+		convert >> tmpStr2;
+		tmpStr += tmpStr2 + "\t";
+
+		convert << (int)TPaletteEdit[i].g << std::endl;
+		tmpStr2 = "";
+		convert >> tmpStr2;
+		tmpStr += tmpStr2 + "\t";
+
+		convert << (int)TPaletteEdit[i].b << std::endl;
+		tmpStr2 = "";
+		convert >> tmpStr2;
+		tmpStr += tmpStr2 + "\t";
+
+		convert << i << std::endl;
+		tmpStr2 = "";
+		convert >> tmpStr2;
+		tmpStr += "Index " + tmpStr2;
+
+		output << tmpStr << std::endl;
+	}
+
+	output.close();
+
+	return 0;
+}
+
+
 int TPalette::exportGimpPaletteEdit(std::string palPath){
 
 	if(fs::exists(fs::status(palPath))){
@@ -851,6 +919,41 @@ int TPalette::exportGimpPaletteEdit(std::string palPath){
 	output.close();
     
     return 0;
+}
+
+int TPalette::exportPaletteEdit(std::string palPath, int expStart, int expRange){
+
+	if(fs::exists(fs::status(palPath))){
+		if(fs::is_directory(fs::status(palPath))){
+			std::cout << "Palette path is directory: " << palPath << std::endl;
+			return 1;
+		}
+	}
+
+	if((expStart + expRange) > 256){
+		return 1;
+	}
+
+	std::vector<unsigned char> tbuffer;
+	tbuffer.resize((expRange * 2) + 2);
+	tbuffer[0] = 16;
+	tbuffer[1] = 42;
+
+	int pindex = expStart;
+	for(int i = (2 + (expStart * 2)); i < ((expStart + expRange) * 2) + 2; i+=2){			
+		tbuffer[i - (expStart * 2)] = mMapColorOut[TPaletteEdit[pindex].g] << 4;
+		tbuffer[i - (expStart * 2)] += mMapColorOut[TPaletteEdit[pindex].b];
+		tbuffer[i - (expStart * 2) +1] = mMapColorOut[TPaletteEdit[pindex].r];
+		pindex++;
+	}
+
+	std::ofstream outfile(palPath, std::ios::binary );
+	outfile.write((const char*)tbuffer.data(), tbuffer.size());
+	outfile.close();
+
+	return 0;
+
+	return 0;
 }
 
 int TPalette::exportPaletteEdit(std::string palPath){

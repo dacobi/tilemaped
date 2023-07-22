@@ -76,6 +76,8 @@ public:
 	int importPaletteEdit(std::string palPath, int exStart, int exRange, int inStart);
 	int exportGimpPaletteEdit(std::string palPath);
 	int exportPaletteEdit(std::string palPath);
+	int exportGimpPaletteEdit(std::string palPath, int expStart, int expRange);
+	int exportPaletteEdit(std::string palPath, int expStart, int expRange);
 	bool bImportingPalette = false;
 	std::vector<TPixel*> TPixels;
 	std::vector<TPixel*> TPixelsEdit;

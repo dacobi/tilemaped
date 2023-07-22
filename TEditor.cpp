@@ -378,17 +378,33 @@ void TEditor::statePaletteExport(){
 	switch (mGlobalSettings.mExportPaletteType)
 	{
 	case 1:
-		if(mPalette.exportGimpPaletteEdit(mGlobalSettings.mExportPalettePath)){
-			showMessage("Error Exporting GIMP Palette!",true);
+		if(mGlobalSettings.bExportPaletteHasRange){
+			if(mPalette.exportGimpPaletteEdit(mGlobalSettings.mExportPalettePath, mGlobalSettings.mExportPaletteStart, mGlobalSettings.mExportPaletteRange)){
+				showMessage("Error Exporting GIMP Palette Range!",true);
+			} else {
+				showMessage("GIMP Palette Range Exported Successfully");
+			}
 		} else {
-			showMessage("GIMP Palette Exported Successfully");
+			if(mPalette.exportGimpPaletteEdit(mGlobalSettings.mExportPalettePath)){
+				showMessage("Error Exporting GIMP Palette!",true);
+			} else {
+				showMessage("GIMP Palette Exported Successfully");
+			}
 		}
 		break;
 	case 2:
-		if(mPalette.exportPaletteEdit(mGlobalSettings.mExportPalettePath)){
-			showMessage("Error Exporting Palette!",true);
+		if(mGlobalSettings.bExportPaletteHasRange){
+			if(mPalette.exportPaletteEdit(mGlobalSettings.mExportPalettePath, mGlobalSettings.mExportPaletteStart, mGlobalSettings.mExportPaletteRange)){
+				showMessage("Error Exporting Palette Range!",true);
+			} else {
+				showMessage("Palette Range Exported Successfully");
+			}
 		} else {
-			showMessage("Palette Exported Successfully");
+			if(mPalette.exportPaletteEdit(mGlobalSettings.mExportPalettePath)){
+				showMessage("Error Exporting Palette!",true);
+			} else {
+				showMessage("Palette Exported Successfully");
+			}
 		}
 		break;	
 	default:
