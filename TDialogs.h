@@ -155,6 +155,9 @@ class DTDCDialog : public DTDialog{
 		bool bConfirmIsActive = false;
 		std::string *mConditionPath = NULL;
 		bool bConditionState = false;
+
+		bool bFirstConfirm = false;
+		bool bStillConfirm = false;
 		
 		virtual int render();		
 		virtual void recieveInput(int mKey);

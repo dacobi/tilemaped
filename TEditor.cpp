@@ -4642,7 +4642,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 			activateDTDialog(EDIALOG_PROGRAMQUIT);			  		
   			break;
 			
-	  	case SDL_KEYDOWN:
+	  	case SDL_KEYDOWN:			
 			if(mActiveMessage){
 				mActiveMessage->recieveInput(SDLK_n);
 				break;
@@ -4653,9 +4653,11 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  					mActiveDialog->dropLastInputChar();
 	  				}
 	  			}
-	  			if(cEvent->key.keysym.sym == SDLK_RETURN){
-	  				mActiveDialog->recieveInput(SDLK_y);
-	  			}
+				if(!mGlobalSettings.mio->WantCaptureKeyboard){			
+	  				if(cEvent->key.keysym.sym == SDLK_RETURN){
+	  					mActiveDialog->recieveInput(SDLK_y);
+	  				}
+				}
 	  			if(cEvent->key.keysym.sym == SDLK_ESCAPE){
 					mActiveDialog->recieveInput(SDLK_n);
 	  			}

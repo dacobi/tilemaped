@@ -1279,7 +1279,7 @@ void DialogButton::render(){
 
 	DialogElement::render();
 
-	if(ImGui::Button(mLabel.c_str())){
+	if(ImGui::Button(mLabel.c_str())){		
 		mParent->recieveInput(mAction);
 	}
 }
@@ -1647,6 +1647,10 @@ void DTDialog::addSetFileExt(std::string cKey, std::string cExt){
 
 int DTDCDialog::render(){
 
+	if(bConfirmIsActive && !bFirstConfirm && !bStillConfirm){
+		bFirstConfirm = true;
+	}
+
 	Dialog::render();
 
 	ImGui::Begin(mDialogTextTitle.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav);
@@ -1656,9 +1660,16 @@ int DTDCDialog::render(){
 			ImGuiFileDialog::Instance()->Close();
 		}
 
-		if(bConfirmIsActive){
-			bConfirmIsActive = false;
-			mConfirmDialog.cancel();
+		if(bFirstConfirm){
+			bFirstConfirm = false;
+			bStillConfirm = true;
+		} else {
+			if(bConfirmIsActive){
+				bConfirmIsActive = false;
+				bStillConfirm = false;
+				bFirstConfirm = false;
+				mConfirmDialog.cancel();
+			}
 		}
 	}
 
@@ -1666,10 +1677,9 @@ int DTDCDialog::render(){
 		cElem->render();
 	}
 
-	
 	ImGui::End();
 
-	if(bConfirmIsActive){		
+	if(bConfirmIsActive){				
 		mConfirmDialog.render();
 		if(mConfirmDialog.bInputIsAccept){
 			recieveInput(SDLK_y);
@@ -1690,17 +1700,21 @@ void DTDCDialog::recieveInput(int mKey){
 				return;
 			}
 		}
+
+		if(bConfirmIsActive){
+			mConfirmDialog.recieveInput(SDLK_y);
+		}
 		
 		if(mConditionPath){			
 			if(fs::exists(fs::status(*mConditionPath)) == bConditionState){				
-				bConfirmIsActive = true;			
+				bConfirmIsActive = true;					
 			}
 		}
 
 		bool bConfirmIsGo = false;
 
-		if(bConfirmIsActive){
-			if(mConfirmDialog.bInputIsAccept){
+		if(bConfirmIsActive){			
+			if(mConfirmDialog.bInputIsAccept){				
 				bConfirmIsGo = true;
 			}
 		} else {
@@ -1719,12 +1733,16 @@ void DTDCDialog::recieveInput(int mKey){
 				mGlobalSettings.mEditorState = mTargetState;
 			}
 		}
+
+		return;		
 	}		
 	
 	if(mKey == SDLK_n){
 		if(bConfirmIsActive){
 			bConfirmIsActive = false;
 			mConfirmDialog.cancel();
+			bStillConfirm = false;
+			bFirstConfirm = false;			
 		} else {
 			bInputIsCancel=true;
 			bDialogIsWatingForText = false;
@@ -1732,11 +1750,14 @@ void DTDCDialog::recieveInput(int mKey){
 				cVal->cancel();
 			}
 			mConfirmDialog.cancel();
+			bStillConfirm = false;
+			bFirstConfirm = false;
 		}
+		return;
 	}	
 
 	if(mKey == SDLK_TAB){
-		if(mActiveInput){
+		if(mActiveInput && !bConfirmIsActive){			
 			if(mActiveInput->bIsActive){
 				mActiveInput->autoComplete();
 			}
@@ -1752,7 +1773,9 @@ void DTDCDialog::cancel(){
 	}
 
 	bConfirmIsActive = false;
-	
+	bStillConfirm = false;
+	bFirstConfirm = false;
+		
 	mConfirmDialog.cancel();
 
 	if(bCloseBool){
@@ -3034,7 +3057,7 @@ DTDCDialog* DTDCDialog::createProjectSaveAsDialog(){
 
 	newDialog->addText(mGlobalSettings.mFloppy + " Save Current Project as Folder?");
 	
-	newDialog->addFileDefault("Choose Project Folder", "Folder", "", "PrjAsFold", &mGlobalSettings.ProjectPath, &mGlobalSettings.ProjectPath, false, false);
+	newDialog->addFileDefault("Choose Project Folder", "Folder", "", "PrjAsFold", &mGlobalSettings.ProjectPath, &mGlobalSettings.ProjectPath, false, false, false, true);
 
 	newDialog->addSeperator();
 
@@ -3105,9 +3128,10 @@ DTDCDialog* DTDCDialog::createPaletteExportDialog(){
 	newDialog->addInt("Editor Palette Start Color", 0, &mGlobalSettings.mExportPaletteStart, 0, 255);
 
 	newDialog->addIntActiveMinus("EXPPALRANGEMAX", 256, newDialog->getIntValue("Editor Palette Start Color"));
-	newDialog->addIntMinMax("Editor Palette Color Range", 256, &mGlobalSettings.mExportPaletteRange,newDialog->getLocalValue(0), newDialog->getIntActiveValue("EXPPALRANGEMAX"));
+	newDialog->addIntMinMax("Editor Palette Color Range", 256, &mGlobalSettings.mExportPaletteRange, newDialog->getLocalValue(0), newDialog->getIntActiveValue("EXPPALRANGEMAX"));
 
 	newDialog->clearRequiredCondition();
+	newDialog->addConditionRestore();
 
 	newDialog->addSeperator();
 
