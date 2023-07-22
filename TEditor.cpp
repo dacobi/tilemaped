@@ -1399,6 +1399,9 @@ int TEditor::saveToFolder(std::string path){
 
 int TEditor::switchSprite(int cSprite){
 	if((cSprite > -1) &&  (cSprite < mSprites.size())){
+
+		cancelActiveDialog();
+		
 		mSprite = mSprites[cSprite];		
 		mPalette.bUpdateWinPos = true;
 		mSprite->updateWinPos = true;
@@ -1417,6 +1420,9 @@ int TEditor::switchSprite(int cSprite, int cFrame){
 
 int TEditor::switchTileMap(int cTileMap){
 	if((cTileMap > -1) &&  (cTileMap < mTileMaps.size())){
+
+		cancelActiveDialog();
+
 		mTileMap->mMapSelectedTile = mMapSelectedTile;
 		mTileMap->TileMapScale = mGlobalSettings.TileMapScale;
 		mTileMap->mTileMapScrollX = mTileMapScrollX;

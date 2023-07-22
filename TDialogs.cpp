@@ -218,7 +218,20 @@ int TBDialog::render(){
 					if(ImGui::BeginMenu((std::string(mGlobalSettings.mWindow + " Tilemaps")).c_str())){
 						int nMap=0;
 						for(auto *cMap : mEditor->mTileMaps){
-							if(ImGui::MenuItem(cMap->getMapSize().c_str())){				
+
+							std::string cMapName;
+							
+							if(mEditor->mTileMaps.size() > 1){
+								if(nMap == mEditor->mSelectedTileMap){
+									cMapName = mGlobalSettings.mBall + " " + cMap->getMapSize();
+								} else {
+									cMapName = "  " + cMap->getMapSize();
+								}
+							} else {
+								cMapName = cMap->getMapSize();
+							}
+
+							if(ImGui::MenuItem(cMapName.c_str())){				
 								mEditor->switchTileMap(nMap);
 							}
 							nMap++;
