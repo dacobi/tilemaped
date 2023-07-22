@@ -85,6 +85,8 @@ class DTDialog : public Dialog{
 		void addSameLine();
 		void addConditionRestore();
 		void addConditionSetIf(int cTarget, int cState);
+		void addConditionSetIfInt(int *cTarget, int cValue, int cCond);
+		void addConditionSetIfBool(bool *cTarget, bool cValue, int cCond);
 		void addBool(std::string cLabel, bool cDefault, bool *cTarget, bool bSameline = false);
 		void addBoolCondition(std::string cLabel, bool cDefault, bool *cTarget, int cTargCond, bool bSameline = false);
 		void addInt(std::string cLabel, int cDefault, int *cTarget, int cMin, int cMax, bool bSameline = false);
@@ -106,6 +108,9 @@ class DTDialog : public Dialog{
 
 		int* getIntValue(std::string cIntLabel);	
 		int* getIntActiveValue(std::string cIntLabel);	
+
+		int* getIntValueRadio(int cIntIndex);
+		bool* getBoolValue(std::string cBoolLabel);
 
 		std::string* getFilePath(std::string cFileVal);	
 		std::string* getFileExt(std::string cFileVal);	
@@ -366,6 +371,27 @@ class DialogConditionSetIf : public DialogValueBase{
 		virtual void render(){if(mParent->mCondition == mCondifionState){mParent->setCurrentCondition(mTargetCondifion);}};
 		virtual void apply(){if(mParent->mCondition == mCondifionState){mParent->setCurrentCondition(mTargetCondifion);}};	
 };
+
+class DialogConditionSetIfInt : public DialogValueBase{
+	public:
+		int *mTarget;
+		int mTargetValue;	
+		int mTargetCondifion;	
+		DialogConditionSetIfInt(DTDialog *cParent, int cCond, int *cTarget, int cValue, int cTargetCond){mParent = cParent; mTarget = cTarget; mTargetValue = cValue; mTargetCondifion = cTargetCond; mCondition = cCond;};		
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(*mTarget == mTargetValue){mParent->setCurrentCondition(mTargetCondifion);}};
+		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(*mTarget == mTargetValue){mParent->setCurrentCondition(mTargetCondifion);}};	
+};
+
+class DialogConditionSetIfBool : public DialogValueBase{
+	public:
+		bool *mTarget;
+		bool mTargetValue;	
+		int mTargetCondifion;	
+		DialogConditionSetIfBool(DTDialog *cParent, int cCond, bool *cTarget, bool cValue, int cTargetCond){mParent = cParent; mTarget = cTarget; mTargetValue = cValue; mTargetCondifion = cTargetCond; mCondition = cCond;};		
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(*mTarget == mTargetValue){mParent->setCurrentCondition(mTargetCondifion);}};
+		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(*mTarget == mTargetValue){mParent->setCurrentCondition(mTargetCondifion);}};	
+};
+
 
 class DialogDisplayBase : public DialogElement{
 	public:

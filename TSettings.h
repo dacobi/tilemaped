@@ -268,6 +268,9 @@ class TSettings{
 
 		std::string mExportPalettePath = "";
 		int mExportPaletteType = 1;
+		int mExportPaletteStart = 0;
+		int mExportPaletteRange = 0;
+		bool bExportPaletteHasRange = false;
 		
 		float mRotateFrameAngle = 0;
 		float mScaleFrameFactor = 0;

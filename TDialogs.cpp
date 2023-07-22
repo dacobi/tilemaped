@@ -1498,6 +1498,18 @@ void DTDialog::addConditionSetIf(int cTarget, int cState){
 	mValues.push_back(nCondSet);
 }
 
+void DTDialog::addConditionSetIfInt(int *cTarget, int cValue, int cCond){
+	DialogConditionSetIfInt *nCondSet = new DialogConditionSetIfInt(this, mRequiredCondition, cTarget, cValue, cCond);
+	mElements.push_back(nCondSet);
+	mValues.push_back(nCondSet);
+}
+
+void DTDialog::addConditionSetIfBool(bool *cTarget, bool cValue, int cCond){
+	DialogConditionSetIfBool *nCondSet = new DialogConditionSetIfBool(this, mRequiredCondition, cTarget, cValue, cCond);
+	mElements.push_back(nCondSet);
+	mValues.push_back(nCondSet);
+}
+
 void DTDialog::addBool(std::string cLabel, bool cDefault, bool *cTarget, bool bSameline){
 	DialogValueBool *nBool = new DialogValueBool(this, mRequiredCondition, cLabel, cDefault, cTarget, bSameline);
 
@@ -1770,6 +1782,30 @@ void DTDialog::addIntActiveMinus(std::string cLabel, int cBase, int *cTarget){
 	mValues.push_back(nInt);
 }
 
+bool* DTDialog::getBoolValue(std::string cBoolLabel){
+
+	for(auto *cInput : mValues){
+
+		DialogValueBool *cBool = dynamic_cast<DialogValueBool*>(cInput);
+
+		if(cBool){
+			if(cBool->mLabel == cBoolLabel){
+				return &cBool->mValue;
+			}
+		}
+
+		DialogValueBoolCondition *cBoolCond = dynamic_cast<DialogValueBoolCondition*>(cInput);
+
+		if(cBoolCond){
+			if(cBoolCond->mLabel == cBoolLabel){
+				return &cBoolCond->mValue;
+			}
+		}
+	}
+
+	return NULL;
+}
+
 int* DTDialog::getIntValue(std::string cIntLabel){
 	for(auto *cInput : mValues){
 
@@ -1788,6 +1824,24 @@ int* DTDialog::getIntValue(std::string cIntLabel){
 				return &cIntMinMax->mValue;
 			}
 		}		
+	}
+	return NULL;
+}
+
+int* DTDialog::getIntValueRadio(int cIntIndex){
+
+	int cRadioCount = 0;
+
+	for(auto *cInput : mValues){
+
+		DialogValueRadioGroup *cRadioInt = dynamic_cast<DialogValueRadioGroup*>(cInput);
+
+		if(cRadioInt){
+			if(cRadioCount == cIntIndex){
+				return &cRadioInt->mValue;
+			}
+			cRadioCount++;
+		}
 	}
 	return NULL;
 }
@@ -3005,6 +3059,9 @@ DTDCDialog* DTDCDialog::createPaletteExportDialog(){
 
 	DTDCDialog* newDialog = new DTDCDialog();
 
+	newDialog->createLocalValues(1);
+	newDialog->setLocalValue(0, 1);
+
 	newDialog->setLabel("Export Editor Palette");
 
 	newDialog->setTarget(ESTATE_PALETTEEXPORT);
@@ -3028,6 +3085,29 @@ DTDCDialog* DTDCDialog::createPaletteExportDialog(){
 	newDialog->addConditionRestore();
 
 	newDialog->addFile("Choose Palette File", "PAL File", ".gpl", "ExpPalFile", "", &mGlobalSettings.mExportPalettePath, false, false, false, false, false, false, true);
+
+	newDialog->addSeperator();
+
+	newDialog->addBoolCondition("Use Selection Range", false, &mGlobalSettings.bExportPaletteHasRange, 3);
+
+	newDialog->setRequiredCondition(3);
+	newDialog->addText(mGlobalSettings.mInfo + " Select Palette Colors Sub Range");
+
+	newDialog->addConditionSetIfInt(newDialog->getIntValueRadio(0), 2, 4);
+
+	newDialog->setRequiredCondition(4);
+	newDialog->addText(mGlobalSettings.mInfo + " Project Palettes with less than 256 Colors\n  can not be loaded into TilemapEd");
+
+	newDialog->clearRequiredCondition();
+	newDialog->addConditionSetIfBool(newDialog->getBoolValue("Use Selection Range"), true, 3);
+
+	newDialog->setRequiredCondition(3);
+	newDialog->addInt("Editor Palette Start Color", 0, &mGlobalSettings.mExportPaletteStart, 0, 255);
+
+	newDialog->addIntActiveMinus("EXPPALRANGEMAX", 256, newDialog->getIntValue("Editor Palette Start Color"));
+	newDialog->addIntMinMax("Editor Palette Color Range", 256, &mGlobalSettings.mExportPaletteRange,newDialog->getLocalValue(0), newDialog->getIntActiveValue("EXPPALRANGEMAX"));
+
+	newDialog->clearRequiredCondition();
 
 	newDialog->addSeperator();
 
