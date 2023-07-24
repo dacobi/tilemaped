@@ -14,8 +14,7 @@ void Dialog::update(){
 
 }
 
-void Dialog::cancel(){
-	//bDialogIsWatingForText=false;
+void Dialog::cancel(){	
 	bInputIsAccept=false;
 	bInputIsCancel=false;
 }
@@ -1426,8 +1425,7 @@ void DTDialog::recieveInput(int mKey){
 		}
 
 		bInputIsAccept=true;	
-		//bDialogIsWatingForText = false;
-
+		
 		for(auto cVal : mValues){
 			cVal->apply();			
 		}
@@ -1438,8 +1436,7 @@ void DTDialog::recieveInput(int mKey){
 	}		
 	
 	if(mKey == SDLK_n){
-		bInputIsCancel=true;
-		//bDialogIsWatingForText = false;
+		bInputIsCancel=true;		
 		for(auto cVal : mValues){
 			cVal->cancel();
 		}
@@ -1629,9 +1626,7 @@ void DTDialog::addFile(std::string cLabel,std::string cInputLabel, std::string c
 	mValues.push_back(nFile);
 	mFiles.push_back(nFile);
 
-	mActiveInput = &nFile->mTextInput;
-
-	//bDialogIsWatingForText = true;
+	mActiveInput = &nFile->mTextInput;	
 }
 
 void DTDialog::addFileDefault(std::string cLabel,std::string cInputLabel, std::string cFileExt, std::string cFileKey, std::string *cDefaultPath, std::string* cTarget, bool cMustExist, bool cMustBeFile, bool cMustBeFolder, bool cMustNotBeFile, bool cMustNotExist, bool cMustBeProject, bool cSameline){
@@ -1644,9 +1639,7 @@ void DTDialog::addFileDefault(std::string cLabel,std::string cInputLabel, std::s
 	mValues.push_back(nFile);
 	mFiles.push_back(nFile);
 
-	mActiveInput = &nFile->mTextInput;
-
-	//bDialogIsWatingForText = true;
+	mActiveInput = &nFile->mTextInput;	
 }
 
 void DTDialog::addSetFileExt(std::string cKey, std::string cExt){
@@ -1735,8 +1728,7 @@ void DTDCDialog::recieveInput(int mKey){
 		}
 
 		if(bConfirmIsGo){
-			bInputIsAccept=true;	
-			//bDialogIsWatingForText = false;
+			bInputIsAccept=true;				
 
 			for(auto cVal : mValues){
 				cVal->apply();			
@@ -1757,8 +1749,7 @@ void DTDCDialog::recieveInput(int mKey){
 			bStillConfirm = false;
 			bFirstConfirm = false;			
 		} else {
-			bInputIsCancel=true;
-			//bDialogIsWatingForText = false;
+			bInputIsCancel=true;			
 			for(auto cVal : mValues){
 				cVal->cancel();
 			}

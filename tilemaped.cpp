@@ -714,11 +714,10 @@ int TEditor::runOCD(int mode){
 						break;
 					}					
 					if(e.key.keysym.sym == SDLK_BACKSPACE){
-						if(mActiveDialog){
-							//if(mActiveDialog->bDialogIsWatingForText){
-								mActiveDialog->dropLastInputChar();
-							//}
-						} 					}
+						if(mActiveDialog){						
+							mActiveDialog->dropLastInputChar();							
+						} 					
+					}
 					if(e.key.keysym.sym == SDLK_RETURN){
 						if(mActiveDialog){
 							if(!mGlobalSettings.mio->WantCaptureKeyboard){

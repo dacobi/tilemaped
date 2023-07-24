@@ -4654,10 +4654,8 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 				break;
 			}
 	  		if(mActiveDialog){
-	  			if(cEvent->key.keysym.sym == SDLK_BACKSPACE){
-	  				//if(mActiveDialog->bDialogIsWatingForText){				
-	  					mActiveDialog->dropLastInputChar();
-	  				//}
+	  			if(cEvent->key.keysym.sym == SDLK_BACKSPACE){	  				
+	  				mActiveDialog->dropLastInputChar();	  				
 	  			}
 				if(!mGlobalSettings.mio->WantCaptureKeyboard){			
 	  				if(cEvent->key.keysym.sym == SDLK_RETURN){

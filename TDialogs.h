@@ -26,8 +26,7 @@ class Dialog{
 		void setColorScheme(int nScheme);
 		int mDialogWidth = 400;
 		int mDialogHeight = 200;
-		bool bUpdateWinPos = false;
-		//bool bDialogIsWatingForText = false;
+		bool bUpdateWinPos = false;		
 		bool bInputIsAccept = false;
 		bool bInputIsCancel = false;
 		virtual void recieveInput(int mKey);		
@@ -63,7 +62,7 @@ class DTDialog : public Dialog{
 		bool *bCloseBool = NULL;
 		virtual void setLabel(std::string cLabel){mDialogTextTitle = cLabel;};
 		virtual void setTarget(int cTarget){mTargetState = cTarget;};
-		virtual void setCondition(int cCond){mCondition = cCond; mConditionBackup = mCondition;}; //if(mFiles.size()){bDialogIsWatingForText = true;} else {bDialogIsWatingForText = false;}
+		virtual void setCondition(int cCond){mCondition = cCond; mConditionBackup = mCondition;};
 		virtual void setCurrentCondition(int cCond){mCondition = cCond;};
 		virtual void restoreContition(){mCondition = mConditionBackup;};
 		virtual void setRequiredCondition(int cCond){mRequiredCondition = cCond;};
