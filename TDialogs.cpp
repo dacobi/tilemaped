@@ -15,7 +15,7 @@ void Dialog::update(){
 }
 
 void Dialog::cancel(){
-	bDialogIsWatingForText=false;
+	//bDialogIsWatingForText=false;
 	bInputIsAccept=false;
 	bInputIsCancel=false;
 }
@@ -1426,7 +1426,7 @@ void DTDialog::recieveInput(int mKey){
 		}
 
 		bInputIsAccept=true;	
-		bDialogIsWatingForText = false;
+		//bDialogIsWatingForText = false;
 
 		for(auto cVal : mValues){
 			cVal->apply();			
@@ -1439,7 +1439,7 @@ void DTDialog::recieveInput(int mKey){
 	
 	if(mKey == SDLK_n){
 		bInputIsCancel=true;
-		bDialogIsWatingForText = false;
+		//bDialogIsWatingForText = false;
 		for(auto cVal : mValues){
 			cVal->cancel();
 		}
@@ -1631,7 +1631,7 @@ void DTDialog::addFile(std::string cLabel,std::string cInputLabel, std::string c
 
 	mActiveInput = &nFile->mTextInput;
 
-	bDialogIsWatingForText = true;
+	//bDialogIsWatingForText = true;
 }
 
 void DTDialog::addFileDefault(std::string cLabel,std::string cInputLabel, std::string cFileExt, std::string cFileKey, std::string *cDefaultPath, std::string* cTarget, bool cMustExist, bool cMustBeFile, bool cMustBeFolder, bool cMustNotBeFile, bool cMustNotExist, bool cMustBeProject, bool cSameline){
@@ -1646,7 +1646,7 @@ void DTDialog::addFileDefault(std::string cLabel,std::string cInputLabel, std::s
 
 	mActiveInput = &nFile->mTextInput;
 
-	bDialogIsWatingForText = true;
+	//bDialogIsWatingForText = true;
 }
 
 void DTDialog::addSetFileExt(std::string cKey, std::string cExt){
@@ -1736,7 +1736,7 @@ void DTDCDialog::recieveInput(int mKey){
 
 		if(bConfirmIsGo){
 			bInputIsAccept=true;	
-			bDialogIsWatingForText = false;
+			//bDialogIsWatingForText = false;
 
 			for(auto cVal : mValues){
 				cVal->apply();			
@@ -1758,7 +1758,7 @@ void DTDCDialog::recieveInput(int mKey){
 			bFirstConfirm = false;			
 		} else {
 			bInputIsCancel=true;
-			bDialogIsWatingForText = false;
+			//bDialogIsWatingForText = false;
 			for(auto cVal : mValues){
 				cVal->cancel();
 			}

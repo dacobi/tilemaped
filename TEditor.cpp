@@ -4655,9 +4655,9 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 			}
 	  		if(mActiveDialog){
 	  			if(cEvent->key.keysym.sym == SDLK_BACKSPACE){
-	  				if(mActiveDialog->bDialogIsWatingForText){				
+	  				//if(mActiveDialog->bDialogIsWatingForText){				
 	  					mActiveDialog->dropLastInputChar();
-	  				}
+	  				//}
 	  			}
 				if(!mGlobalSettings.mio->WantCaptureKeyboard){			
 	  				if(cEvent->key.keysym.sym == SDLK_RETURN){

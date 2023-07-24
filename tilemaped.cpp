@@ -715,9 +715,9 @@ int TEditor::runOCD(int mode){
 					}					
 					if(e.key.keysym.sym == SDLK_BACKSPACE){
 						if(mActiveDialog){
-							if(mActiveDialog->bDialogIsWatingForText){
+							//if(mActiveDialog->bDialogIsWatingForText){
 								mActiveDialog->dropLastInputChar();
-							}
+							//}
 						} 					}
 					if(e.key.keysym.sym == SDLK_RETURN){
 						if(mActiveDialog){
