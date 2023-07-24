@@ -4664,9 +4664,11 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  					mActiveDialog->recieveInput(SDLK_y);
 	  				}
 				}
-	  			if(cEvent->key.keysym.sym == SDLK_ESCAPE){
-					mActiveDialog->recieveInput(SDLK_n);
-	  			}
+				if(!mGlobalSettings.mio->WantCaptureKeyboard){			
+	  				if(cEvent->key.keysym.sym == SDLK_ESCAPE){
+						mActiveDialog->recieveInput(SDLK_n);
+	  				}
+				}
 				if(cEvent->key.keysym.sym == SDLK_TAB){
 					mActiveDialog->recieveInput(SDLK_TAB);
 	  			}		  			

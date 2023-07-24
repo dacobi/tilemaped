@@ -721,12 +721,16 @@ int TEditor::runOCD(int mode){
 						} 					}
 					if(e.key.keysym.sym == SDLK_RETURN){
 						if(mActiveDialog){
-							mActiveDialog->recieveInput(SDLK_y);
+							if(!mGlobalSettings.mio->WantCaptureKeyboard){
+								mActiveDialog->recieveInput(SDLK_y);
+							}
 						} 
 					}
 					if(e.key.keysym.sym == SDLK_ESCAPE){
 						if(mActiveDialog){
-							mActiveDialog->recieveInput(SDLK_n);
+							if(!mGlobalSettings.mio->WantCaptureKeyboard){
+								mActiveDialog->recieveInput(SDLK_n);
+							}
 						} else {
 							mGlobalSettings.bRunningOCD = false;
 							mGlobalSettings.mEditorState = ESTATE_NONE;
