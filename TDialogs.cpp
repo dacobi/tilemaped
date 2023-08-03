@@ -127,11 +127,13 @@ int TBDialog::render(){
 
 			if(mEditor->mCurMode == EMODE_MAP){
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mFile + " Import")).c_str())){
-					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Tile")).c_str())){
-						mEditor->activateDTDialog(EDIALOG_TILEIMPORT);
-					}
-					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import TileSet")).c_str())){
-						mEditor->activateDTDialog(EDIALOG_TILESETIMPORT);		  			
+					if(mGlobalSettings.mGlobalTexParam.TexBPP > 0x2){
+						if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Tile")).c_str())){
+							mEditor->activateDTDialog(EDIALOG_TILEIMPORT);
+						}
+						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import TileSet")).c_str())){
+							mEditor->activateDTDialog(EDIALOG_TILESETIMPORT, mGlobalSettings.mGlobalTexParam.TexBPP);		  			
+						}
 					}
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import TileMap")).c_str())){
 						//mEditor->activateOpenTileMapDialog();	  			
@@ -2438,6 +2440,38 @@ DTDialog* DTDialog::createTileSetImportDialog(){
 	newDialog->addText(mGlobalSettings.mFile + " Import TileSet from Project file or PNG?");
 
 	newDialog->addFile("Choose TileSet File", "Filename", ".png,.bin", "ImpTileSet", "", &mGlobalSettings.mNewTilePath);
+
+	newDialog->setRequiredCondition(8);
+	
+	newDialog->addSeperator();
+	newDialog->addBoolCondition("Use Color Offset", false, &mGlobalSettings.bNewTileHasOffset, 18);
+
+	newDialog->setRequiredCondition(18);
+
+	newDialog->addText(mGlobalSettings.mInfo + " Select Value to Offset Pixel Values");
+	newDialog->addRadioGroup(1, &mGlobalSettings.mNewTileOffsetType);
+	newDialog->addRadioButton("Add Offset", 1);
+	newDialog->addRadioButton("Subtract Offset", 2, true);
+	newDialog->addInt("Color Offset", 1, &mGlobalSettings.mNewTileColorOffset, 1, 255);	
+	newDialog->addBool("Replace Pixels with Value \'0\'", false, &mGlobalSettings.bNewTileOffsetZero);
+
+	newDialog->setRequiredCondition(4);
+	
+	newDialog->addSeperator();
+	newDialog->addBoolCondition("Use Color Offset", false, &mGlobalSettings.bNewTileHasOffset, 14);
+
+	newDialog->setRequiredCondition(14);
+
+	newDialog->addText(mGlobalSettings.mInfo + " Select Value to Offset Pixel Values");
+	newDialog->addRadioGroup(1, &mGlobalSettings.mNewTileOffsetType);
+	newDialog->addRadioButton("Add Offset", 1);
+	newDialog->addRadioButton("Subtract Offset", 2, true);
+	newDialog->addInt("Color Offset", 1, &mGlobalSettings.mNewTileColorOffset, 1, 15);	
+	newDialog->addBool("Replace Pixels with Value \'0\'", false, &mGlobalSettings.bNewTileOffsetZero);
+
+
+	newDialog->addConditionRestore();
+	newDialog->clearRequiredCondition();
 
 	newDialog->addSeperator();
 

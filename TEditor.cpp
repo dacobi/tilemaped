@@ -293,6 +293,19 @@ void TEditor::stateTileSetImport(){
 		showMessage("Error Importing TileSet", true);		
 	} else {
 
+		if(mGlobalSettings.bNewTileHasOffset){
+
+			int poffset = mGlobalSettings.mNewTileColorOffset;
+
+			if(mGlobalSettings.mNewTileOffsetType == 2){
+				poffset = -poffset;
+			}
+
+			for(auto cTile : cNewTiles){
+				cTile->applyOffset(poffset, mGlobalSettings.bNewTileOffsetZero);
+			}
+		}
+
 		mActionStack.newActionGroup();
 				
 		for(auto cTile : cNewTiles){

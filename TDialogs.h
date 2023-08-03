@@ -63,9 +63,9 @@ class DTDialog : public Dialog{
 		bool *bCloseBool = NULL;
 		virtual void setLabel(std::string cLabel){mDialogTextTitle = cLabel;};
 		virtual void setTarget(int cTarget){mTargetState = cTarget;};
-		virtual void setCondition(int cCond){mCondition = cCond; mConditionBackup = mCondition; mConditionLast = cCond;};
+		virtual void setCondition(int cCond){mCondition = cCond; mConditionBackup = mCondition; mConditionLast = mCondition;}; //mConditionLast = cCond;
 		virtual void setCurrentCondition(int cCond){mCondition = cCond; mConditionLast = cCond;};
-		virtual void restoreContition(){mCondition = mConditionBackup;};
+		virtual void restoreContition(){mCondition = mConditionBackup; mConditionLast = mConditionBackup;};
 		virtual void restoreLastContition(){mCondition = mConditionLast;};
 		virtual void setRequiredCondition(int cCond){mRequiredCondition = cCond;};
 		virtual void clearRequiredCondition(){mRequiredCondition = -1;};
