@@ -57,14 +57,16 @@ class DTDialog : public Dialog{
 		int mCondition = -1;
 		int mConditionBackup = -1;		
 		int mRequiredCondition = -1;
+		int mConditionLast = -1;		
 		int mTargetState = 0;
 		bool bHasColor = false;
 		bool *bCloseBool = NULL;
 		virtual void setLabel(std::string cLabel){mDialogTextTitle = cLabel;};
 		virtual void setTarget(int cTarget){mTargetState = cTarget;};
-		virtual void setCondition(int cCond){mCondition = cCond; mConditionBackup = mCondition;};
-		virtual void setCurrentCondition(int cCond){mCondition = cCond;};
+		virtual void setCondition(int cCond){mCondition = cCond; mConditionBackup = mCondition; mConditionLast = cCond;};
+		virtual void setCurrentCondition(int cCond){mCondition = cCond; mConditionLast = cCond;};
 		virtual void restoreContition(){mCondition = mConditionBackup;};
+		virtual void restoreLastContition(){mCondition = mConditionLast;};
 		virtual void setRequiredCondition(int cCond){mRequiredCondition = cCond;};
 		virtual void clearRequiredCondition(){mRequiredCondition = -1;};
 		virtual void createValues(int cValNums){mOptionValues.resize(cValNums);};
@@ -76,6 +78,7 @@ class DTDialog : public Dialog{
 		virtual void init();	
 		virtual int render();
 		virtual void update();
+		virtual void setdefaults();
 		virtual void recieveInput(int mKey);
 		virtual void dropLastInputChar();				
 		virtual void cancel();
@@ -229,6 +232,7 @@ class DialogValueBase : public DialogElement{
 		virtual void apply(){}
 		virtual void cancel(){}
 		virtual void update(){}
+		virtual void setdefaults(){}
 };
 
 class DialogValueSetFileExt : public DialogValueBase{	
@@ -248,6 +252,7 @@ template <typename T> class DialogValueType : public DialogValueBase{
 		T *mTarget;
 		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} *mTarget = mValue;}
 		virtual void cancel(){mValue = mDefault;}
+		virtual void setdefaults(){if(mTarget){*mTarget = mDefault;}}
 };
 
 class DialogValueBool : public DialogValueType<bool>{	
@@ -260,8 +265,8 @@ class DialogValueBoolCondition : public DialogValueType<bool>{
 	public:
 		int mTargetCondition = -1;
 		DialogValueBoolCondition(DTDialog *cParent, int cCond, std::string cLabel, bool cDefault, bool* cTarget, int cTargetCond, bool cSameline){mParent = cParent; mLabel = cLabel; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; bSameLine = cSameline; mCondition = cCond; mTargetCondition = cTargetCond;}
-		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); if(ImGui::Checkbox(mLabel.c_str(), &mValue)){mParent->bUpdateWinPos = true;}; if(mValue){ mParent->setCurrentCondition(mTargetCondition); } else { mParent->restoreContition(); } }		
-		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(mTarget){*mTarget = mValue;} if(mValue){ mParent->setCurrentCondition(mTargetCondition); } else { mParent->restoreContition(); } }
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} DialogElement::render(); if(ImGui::Checkbox(mLabel.c_str(), &mValue)){mParent->bUpdateWinPos = true;}; if(mValue){ mParent->setCurrentCondition(mTargetCondition); } else { mParent->restoreLastContition(); } }		
+		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(mTarget){*mTarget = mValue;} if(mValue){ mParent->setCurrentCondition(mTargetCondition); } else { mParent->restoreLastContition(); } }
 };
 
 class DialogValueInt : public DialogValueType<int>{	
@@ -281,6 +286,7 @@ class DialogValueIntActive : public DialogValueType<int>{
 		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(mType == 0){ mValue = mBaseValue - *mTarget;} if(mType == 1){ mValue = mBaseValue + *mTarget;} }
 		virtual void cancel(){};
 		virtual void update(){};
+		virtual void setdefaults(){}
 };
 
 class DialogValueColor : public DialogValueType<ImU32>{	
@@ -292,6 +298,7 @@ class DialogValueColor : public DialogValueType<ImU32>{
 		virtual void apply(){*mTarget = 0xFF; *mTarget = *mTarget << 8; *mTarget += (int)(mColor.z * 255.0); *mTarget = *mTarget << 8;*mTarget += (int)(mColor.y * 255.0); *mTarget = *mTarget << 8;*mTarget += (int)(mColor.x * 255.0);}
 		virtual void cancel(){mColor = {0,0,0,1};}
 		virtual void update(){mColor.x = ((*mDefaultColor & 0x000000ff) / 255.0); mColor.y = (((*mDefaultColor & 0x0000ff00) >> 8)/ 255.0); mColor.z = (((*mDefaultColor & 0x00ff0000) >> 16)/ 255.0);}
+		virtual void setdefaults(){}
 };
 
 
@@ -355,14 +362,14 @@ class DialogValueRadioGroupCondition : public DialogValueRadioGroup{
 class DialogValueIntTarget : public DialogValueType<int>{	
 	public:		
 		DialogValueIntTarget(DTDialog *cParent, int cCond, int cDefault, int* cTarget){mParent = cParent; mDefault = cDefault; mValue = mDefault; mTarget = cTarget; mCondition = cCond;}
-		virtual void render(){};
+		virtual void render(){};		
 };
 
 class DialogConditionRestore : public DialogValueBase{
 	public:
 		DialogConditionRestore(DTDialog *cParent){mParent = cParent;};		
 		virtual void render(){mParent->restoreContition();};
-		virtual void apply(){mParent->restoreContition();};	
+		virtual void apply(){mParent->restoreContition();};		
 };
 
 class DialogConditionSetIf : public DialogValueBase{
@@ -371,7 +378,7 @@ class DialogConditionSetIf : public DialogValueBase{
 		int mCondifionState;
 		DialogConditionSetIf(DTDialog *cParent, int cTarget, int cState){mParent = cParent; mTargetCondifion = cTarget; mCondifionState = cState;};		
 		virtual void render(){if(mParent->mCondition == mCondifionState){mParent->setCurrentCondition(mTargetCondifion);}};
-		virtual void apply(){if(mParent->mCondition == mCondifionState){mParent->setCurrentCondition(mTargetCondifion);}};	
+		virtual void apply(){if(mParent->mCondition == mCondifionState){mParent->setCurrentCondition(mTargetCondifion);}};		
 };
 
 class DialogConditionSetIfInt : public DialogValueBase{
@@ -381,7 +388,7 @@ class DialogConditionSetIfInt : public DialogValueBase{
 		int mTargetCondifion;	
 		DialogConditionSetIfInt(DTDialog *cParent, int cCond, int *cTarget, int cValue, int cTargetCond){mParent = cParent; mTarget = cTarget; mTargetValue = cValue; mTargetCondifion = cTargetCond; mCondition = cCond;};		
 		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(*mTarget == mTargetValue){mParent->setCurrentCondition(mTargetCondifion);}};
-		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(*mTarget == mTargetValue){mParent->setCurrentCondition(mTargetCondifion);}};	
+		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(*mTarget == mTargetValue){mParent->setCurrentCondition(mTargetCondifion);}};			
 };
 
 class DialogConditionSetIfBool : public DialogValueBase{
@@ -391,7 +398,7 @@ class DialogConditionSetIfBool : public DialogValueBase{
 		int mTargetCondifion;	
 		DialogConditionSetIfBool(DTDialog *cParent, int cCond, bool *cTarget, bool cValue, int cTargetCond){mParent = cParent; mTarget = cTarget; mTargetValue = cValue; mTargetCondifion = cTargetCond; mCondition = cCond;};		
 		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(*mTarget == mTargetValue){mParent->setCurrentCondition(mTargetCondifion);}};
-		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(*mTarget == mTargetValue){mParent->setCurrentCondition(mTargetCondifion);}};	
+		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(*mTarget == mTargetValue){mParent->setCurrentCondition(mTargetCondifion);}};			
 };
 
 
@@ -535,6 +542,7 @@ class DialogValueFile : public DialogValueType<std::string>{
 		virtual void render();
 		virtual void cancel(){mValue = mDefault; mTextInput.mDialogTextMain = mDefault; bIsValid = false;}
 		void close();
+		virtual void setdefaults(){}
 };
 
 class DialogValueFileDefault : public DialogValueFile{

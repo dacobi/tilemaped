@@ -428,7 +428,7 @@ int TPalette::importPaletteEdit(std::string palPath, int exStart, int exRange, i
     	}
 
 		if(cColNum < (exRange-1)){
-			exRange = cColNum;
+			exRange = cColNum + 1;
 		}
 
 		for(int i = inStart; i < (inStart + exRange); i++){
@@ -2395,6 +2395,64 @@ void Tile::renderEd(int xpos, int ypos, TPalette* tpal){
 
 }
 
+int Tile::applyOffset(int poffset, bool bReplaceZero){
+	unsigned char pixval;
+
+	if(bReplaceZero){
+		std::cout << "Replacing Pixel Zero Values" << std::endl;
+	}
+
+	if(mTexParam->TexBPP == 8){
+		for(int pi = 0; pi < (mTexParam->TexSizeX * mTexParam->TexSizeY); pi++){
+			pixval = FileData[pi];
+
+			if((pixval > 0) || bReplaceZero){
+
+				pixval += poffset;				
+				
+				if((pixval == 0) && !bReplaceZero){
+					if(poffset < 0){
+						pixval = 255;
+					} else {
+						pixval = 1;
+					}
+				}
+				FileData[pi] = pixval;
+			}
+		}
+
+		updateTexture(&mGlobalSettings.mEditor->mPalette);
+		return 0;
+	}
+
+	if(mTexParam->TexBPP == 4){
+		for(int pi = 0; pi < (mTexParam->TexSizeX * mTexParam->TexSizeY); pi++){
+			pixval = getPixel(pi);
+
+			if((pixval > 0) || bReplaceZero){
+				pixval += poffset;				
+
+				if(pixval > 15){
+					pixval = pixval % 16;
+				}
+
+				if((pixval == 0) && !bReplaceZero){
+					if(poffset < 0){
+						pixval = 15;
+					} else {
+						pixval = 1;
+					}
+				}
+				setPixel(pi, pixval);
+			}
+		}
+		updateTexture(&mGlobalSettings.mEditor->mPalette);
+		return 0;
+	}
+
+	return 1;
+}
+
 int Tile::loadFromFile(std::string filename,TPalette* tpal){ 
 	initTile();	
 	return TTexture::loadFromFile(filename,tpal);
@@ -2568,6 +2626,18 @@ int TileSet::importPNG(SDL_Surface *newSurf, TPalette* tpal){
 	}
 			
 	SDL_FreeSurface(newSurf);
+	return 1;
+}
+
+int TileSet::applyOffset(int poffset, bool bReplaceZero){
+
+	if(mGlobalSettings.mGlobalTexParam.TexBPP > 2){
+		for(auto *cTile : TTiles){
+			cTile->applyOffset(poffset, bReplaceZero);
+		}
+		return 0;
+	}
+
 	return 1;
 }
 

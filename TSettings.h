@@ -278,6 +278,10 @@ class TSettings{
 		std::string mNewFramePath = "";
 		std::string mNewFramesPath = "";
 		std::string mNewSpritePath = "";
+		bool bNewTileHasOffset = false;
+		bool bNewTileOffsetZero = false;
+		int mNewTileOffsetType = 1;
+		int mNewTileColorOffset = 1;
 		int mNewSpriteType = 0;
 		int mNewSpriteX = 0;
 		int mNewSpriteY = 0;

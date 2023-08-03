@@ -451,6 +451,9 @@ void TSettings::close(){
 	mNewTileMapY = 0;
 	mNewTilePath = "";
 	mNewTileSize = 0;
+	bNewTileHasOffset = false;
+	mNewTileOffsetType = 1;
+	mNewTileColorOffset = 1;
 	mDeleteTileMapState = 0;			
 	mTileMapFileCount = 0;			
 	bShowTypeSelection = false;

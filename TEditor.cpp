@@ -121,12 +121,28 @@ int TEditor::createNewProject(){
 
 	//mTileSet.mSelEdWidth = 4;
 
+	
+	
+
 	if(fs::exists(fs::status(mGlobalSettings.mNewTilePath))){
 		std::vector<Tile*> cNewTiles;
 		if(mTileSet.importTileSet(mGlobalSettings.mNewTilePath, cNewTiles)){
 			std::cout << "Error in TileSet File! Using empty" << std::endl;
 			mTileSet.createNew(&mPalette);
 			retval += 1;
+		} else {
+			if(mGlobalSettings.bNewTileHasOffset){				
+				if(mGlobalSettings.bNewTileOffsetZero){
+					std::cout << "Replace Pixel Zero Values" << std::endl;
+				}
+				if(mGlobalSettings.mNewTileOffsetType == 1){
+					std::cout << "Apply TileSet Pixel Offset: " << mGlobalSettings.mNewTileColorOffset << std::endl;
+					mTileSet.applyOffset(mGlobalSettings.mNewTileColorOffset, mGlobalSettings.bNewTileOffsetZero);
+				} else {
+					std::cout << "Apply TileSet Pixel Offset: -" << mGlobalSettings.mNewTileColorOffset << std::endl;
+					mTileSet.applyOffset(-mGlobalSettings.mNewTileColorOffset, mGlobalSettings.bNewTileOffsetZero);
+				}				
+			}
 		}
 	} else if(mGlobalSettings.mNewTileSize){
 		if((mGlobalSettings.mNewTileSize == 4) || (mGlobalSettings.mNewTileSize == 8) || (mGlobalSettings.mNewTileSize == 16)){
@@ -761,6 +777,7 @@ int TEditor::activateDTDialog(int cOpenDialog, int cCond, int cVal0, int cVal1){
 		if(cDialog->bCloseBool){
 			*cDialog->bCloseBool = true;
 		}
+		cDialog->setdefaults();
 		cDialog->setCondition(cCond);
 		cDialog->setValue(0, cVal0);
 		cDialog->setValue(1, cVal1);

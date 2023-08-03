@@ -1415,6 +1415,12 @@ void DTDialog::update(){
 	}
 }
 
+void DTDialog::setdefaults(){
+	for(auto *cVals: mValues){
+		cVals->setdefaults();
+	}
+}
+
 void DTDialog::recieveInput(int mKey){
 	if(mKey == SDLK_y){
 
@@ -2649,6 +2655,33 @@ DTDialog* DTDialog::createProjectCreateDialog(){
 	newDialog->addRadioButton("BPP: 4", 4, true);
 	newDialog->addRadioButton("BPP: 2", 2, true);
 	
+	newDialog->addConditionSetIfInt(newDialog->getIntValueRadio(5), 2, 99);
+	
+	newDialog->addSeperator();
+	newDialog->addBoolCondition("Use Color Offset", false, &mGlobalSettings.bNewTileHasOffset, 20);
+
+	newDialog->setRequiredCondition(20);
+
+	newDialog->addText(mGlobalSettings.mInfo + " Select Value to Offset Pixel Values");
+	newDialog->addRadioGroup(1, &mGlobalSettings.mNewTileOffsetType);
+	newDialog->addRadioButton("Add Offset", 1);
+	newDialog->addRadioButton("Subtract Offset", 2, true);
+
+	newDialog->addConditionSetIfInt(newDialog->getIntValueRadio(5), 8, 28);
+	newDialog->setRequiredCondition(28);
+	newDialog->addInt("Color Offset", 1, &mGlobalSettings.mNewTileColorOffset, 1, 255);	
+	
+	newDialog->setRequiredCondition(20);
+	newDialog->addConditionSetIfInt(newDialog->getIntValueRadio(5), 4, 24);
+	newDialog->setRequiredCondition(24);
+	newDialog->addInt("Color Offset", 1, &mGlobalSettings.mNewTileColorOffset, 1, 15);
+
+    newDialog->addConditionSetIf(20, 28);
+	newDialog->addConditionSetIf(20, 24);
+
+	newDialog->setRequiredCondition(20);
+	newDialog->addBool("Replace Pixels with Value \'0\'", false, &mGlobalSettings.bNewTileOffsetZero);
+	
 
 	newDialog->setRequiredCondition(3);
 	newDialog->addSeperator();
@@ -2660,7 +2693,29 @@ DTDialog* DTDialog::createProjectCreateDialog(){
 	newDialog->addRadioGroup(8, &mGlobalSettings.mGlobalTexParam.TexBPP);
 	newDialog->addRadioButton("BPP: 8", 8);
 	newDialog->addRadioButton("BPP: 4", 4, true);
+	newDialog->addSeperator();
+	newDialog->addBoolCondition("Use Color Offset", false, &mGlobalSettings.bNewTileHasOffset, 10);
+	newDialog->setRequiredCondition(10);
+	newDialog->addText(mGlobalSettings.mInfo + " Select Value to Offset Pixel Values");
+	newDialog->addRadioGroup(1, &mGlobalSettings.mNewTileOffsetType);
+	newDialog->addRadioButton("Add Offset", 1);
+	newDialog->addRadioButton("Subtract Offset", 2, true);
 
+	newDialog->addConditionSetIfInt(newDialog->getIntValueRadio(6), 8, 18);
+	newDialog->setRequiredCondition(18);
+	newDialog->addInt("Color Offset", 1, &mGlobalSettings.mNewTileColorOffset, 1, 255);	
+	
+	newDialog->setRequiredCondition(10);
+	newDialog->addConditionSetIfInt(newDialog->getIntValueRadio(6), 4, 14);
+	newDialog->setRequiredCondition(14);
+	newDialog->addInt("Color Offset", 1, &mGlobalSettings.mNewTileColorOffset, 1, 15);
+
+    newDialog->addConditionSetIf(10, 18);
+	newDialog->addConditionSetIf(10, 14);
+
+	newDialog->setRequiredCondition(10);
+	newDialog->addBool("Replace Pixels with Value \'0\'", false, &mGlobalSettings.bNewTileOffsetZero);
+	
 	newDialog->setRequiredCondition(4);
 	newDialog->addSeperator();
 	newDialog->addText("TileSet Initial Size");

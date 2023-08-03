@@ -134,6 +134,7 @@ public:
 	int scale(double cScale);
 	int upscale(Tile* cCopyTile);
 	int applyFilter();
+	int applyOffset(int poffset, bool bReplaceZero = false);
 	bool bIsSelected = false;
 	const static int MaxScale = 24;
 	const static int MinScale = 4;
@@ -186,6 +187,7 @@ public:
 	int importFile(std::string tpath, std::string tfile, TPalette* tpal);
 	int importPNG(SDL_Surface* cTiles, TPalette* tpal);
 	int importTileSet(std::string cTilePath, std::vector<Tile*>& cNewTiles);
+	int applyOffset(int poffset, bool bReplaceZero = false);
 	void dropLastTile();
 	int deleteTile(int cDropTile);
 	int removeTile(int cDropTile);
