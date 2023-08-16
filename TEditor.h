@@ -236,7 +236,7 @@ class TEditor{
 		bool checkQuit();
 		void setSpriteBrushes();
 								
-		int activateColMapDialog(bool bCreateColMap=false);
+		int activateColMapDialog(bool bCreateColMap=false, int cFormat = 0);
 				
 		int cancelActiveDialog();
 		void activateSaveDialog();

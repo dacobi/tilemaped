@@ -4,8 +4,9 @@
 
 extern TSettings mGlobalSettings;
 
-int TCollisionMap::createNew(TileMap *cTileMap){
+int TCollisionMap::createNew(TileMap *cTileMap, int cFormat){
     mTileMap = cTileMap;
+    mMapFormat = cFormat;
     MapData.resize(mGlobalSettings.mEditor->mTileSet.TTiles.size(), 0);
     return 0;
 }
@@ -31,7 +32,7 @@ int TCollisionMap::checkSize(){
 int TCollisionMap::loadFromFile(std::string filename, TileMap *cTileMap){
 
     std::string tmpStr,tmpStr2;
-    int tmpInt,tmpInt2,tmpInt3;
+    int tmpInt,tmpIntF,tmpInt2,tmpInt3;
     std::ifstream input(filename, std::ios::in );
     std::stringstream convert;
 
@@ -41,6 +42,7 @@ int TCollisionMap::loadFromFile(std::string filename, TileMap *cTileMap){
 
     convert >> tmpStr;
     convert >> tmpInt;
+    convert >> tmpIntF;
 
     if(tmpStr == "CollisionMap"){
         std::getline(input, tmpStr);        
@@ -50,6 +52,7 @@ int TCollisionMap::loadFromFile(std::string filename, TileMap *cTileMap){
             MapData.push_back(tmpInt2);
         }        
         mTileMap = cTileMap;
+        mMapFormat = tmpIntF;
         return 0;
     }
 
@@ -75,6 +78,11 @@ int TCollisionMap::saveToFolder(std::string tpath, std::string tprefix){
     convert << MapData.size() << std::endl;
     convert >> tmpStr2;
      
+    tmpStr += tmpStr2 + " ";
+
+    convert << mMapFormat << std::endl;
+    convert >> tmpStr2;
+     
     tmpStr += tmpStr2;
 
     output << tmpStr << std::endl;
@@ -97,10 +105,29 @@ int TCollisionMap::saveToFolder(std::string tpath, std::string tprefix){
     FileData.push_back(mTileMap->mTilemapSizesOut[mTileMap->TileMapWidth]);
 	FileData.push_back(mTileMap->mTilemapSizesOut[mTileMap->TileMapHeight]);
     
-    for(int ii = 0; ii < mTileMap->TileMapHeight; ii++){
-        for(int jj = 0; jj < mTileMap->TileMapWidth; jj++){
-            unsigned char tVal = MapData[mTileMap->getTile((ii * mTileMap->TileMapWidth) + jj)];
-            FileData.push_back(tVal);
+    if(mMapFormat == 0){
+        for(int ii = 0; ii < mTileMap->TileMapHeight; ii++){
+            for(int jj = 0; jj < mTileMap->TileMapWidth; jj++){
+                unsigned char tVal = MapData[mTileMap->getTile((ii * mTileMap->TileMapWidth) + jj)];
+                FileData.push_back(tVal);
+            }
+        }
+    }
+
+    if(mMapFormat == 1){
+        bool bNewByte = false;
+        unsigned char tVal;
+        for(int ii = 0; ii < mTileMap->TileMapHeight; ii++){
+            for(int jj = 0; jj < mTileMap->TileMapWidth; jj++){
+                if(bNewByte){
+                    tVal += (MapData[mTileMap->getTile((ii * mTileMap->TileMapWidth) + jj)] & 0x0f);
+                    FileData.push_back(tVal);
+                    bNewByte = false;
+                } else {
+                    tVal = (MapData[mTileMap->getTile((ii * mTileMap->TileMapWidth) + jj)] & 0x0f) << 4;
+                    bNewByte = true;                    
+                }
+            }
         }
     }
 
@@ -209,7 +236,7 @@ int TCollisionMapEditor::render(){
         }
     }
 
-    if(ImGui::SliderInt("Collision Value", &mCollisionValue, 0, 255,"%d", ImGuiSliderFlags_AlwaysClamp)){
+    if(ImGui::SliderInt("Collision Value", &mCollisionValue, 0, mTileMap->mColMap.mFormatMax[mTileMap->mColMap.mMapFormat] ,"%d", ImGuiSliderFlags_AlwaysClamp)){
         mTileMap->mColMap.MapData[mSelectedTile] = mCollisionValue;
     }
 

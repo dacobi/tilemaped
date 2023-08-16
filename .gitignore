@@ -39,3 +39,11 @@ t1
 t2
 CMakeFiles
 imgui.ini
+example/minim/x16emu
+example/minim/rom.bin
+example/minim/minim.img
+example/minim/tmp
+example/minim/tmp/*
+example/minim/mnt
+example/minim/tools/keytest.c
+example/minim/tools/sort.c

@@ -2864,9 +2864,9 @@ void TEditor::activateSaveDialog(){
 	}
 }
 
-int TEditor::activateColMapDialog(bool bCreateColMap){
+int TEditor::activateColMapDialog(bool bCreateColMap, int cFormat){
 	if(bCreateColMap){		
-		mTileMap->createCollisionMap();
+		mTileMap->createCollisionMap(cFormat);
 	}
 		
 	mColMapEdit.startEdit(mTileMap);

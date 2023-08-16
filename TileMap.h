@@ -248,7 +248,7 @@ public:
 	int createNew();
 	int createNew(int nWidth, int nHeight, int nSValue);
 	int createNew(int nWidth, int nHeight, int nSValue, int cPaletteOffset);
-	int createCollisionMap();
+	int createCollisionMap(int cFormat);
 	int removeCollisionMap();
 	int render(int xpos, int ypos, TileSet* mTiles);
 	std::map<int, int> mTilemapSizesIn = { {0, 32}, {1, 64}, {2, 128}, {3, 256} };

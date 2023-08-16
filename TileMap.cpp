@@ -3352,13 +3352,13 @@ int TileMap::createNew(){
 	return 0;
 }
 
-int TileMap::createCollisionMap(){
+int TileMap::createCollisionMap(int cFormat){
 	if(bHasCollisionMap){
 		return 1;
 	}
 	
 	bHasCollisionMap = true;
-	mColMap.createNew(this);
+	mColMap.createNew(this, cFormat);
 
 	return 0;
 }
