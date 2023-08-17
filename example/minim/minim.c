@@ -492,9 +492,14 @@ void set_player(int pi, struct Player *cPlayer, struct Control *cControl, struct
 	
 	cPlayer->bIsAlive = 1;
 	cPlayer->bIsVisible = 1;
+	cPlayer->mBoomCount = 0;
+	cPlayer->mBoomDelay = 0;
 	
 	cPlayer->bIsOutside = 0;
-
+	
+	cPlayer->PPlace.mPlayer = pi;
+	cPlayer->PPlace.mPFactor = 0;
+	
 	cPlayer->pl_cur_dir = DIR_0;
 	
 	//cPlayer->mLaps = mGame.mLaps;
@@ -933,6 +938,28 @@ void apply_physics(struct Player *cPlayer){
     
 }
 
+void set_boom_sprite(struct PSprite *cSprite, struct Player *cPlayer){
+
+    if(cPlayer->mBoomCount < 1){
+    	cPlayer->bIsVisible = 0;
+    	clear_sprite(cPlayer->mPlayer);
+    } else {
+ 	if(cPlayer->mBoomDelay < 1){
+ 		cPlayer->mBoomCount--;
+ 		cPlayer->mBoomDelay = 5;
+ 	}
+ 	
+ 	cPlayer->mBoomDelay--;
+    	
+    	cSprite->block = SPRITE_BLOCK(VRAM_boom + (cPlayer->mBoomCount * SPRITE_SIZE));
+    	cSprite->palette_offset = 10;
+    	
+    	cSprite->mPos.x = (320-16) + ( cPlayer->mPos.x - mGame.mViewport.x);
+	cSprite->mPos.y = (240-16) + ( cPlayer->mPos.y - mGame.mViewport.y);
+    }
+
+}
+
 void calc_sprite_pos(struct PSprite *cSprite, struct Player *cPlayer){
 	
 	int blockoff;
@@ -1004,19 +1031,38 @@ void calc_sprite_pos(struct PSprite *cSprite, struct Player *cPlayer){
 void process_sprites(){
 
 	if(mGame.Player1.bIsVisible){
-		calc_sprite_pos(&mGame.PSprite1, &mGame.Player1);
+		if(mGame.Player1.bIsAlive){
+			calc_sprite_pos(&mGame.PSprite1, &mGame.Player1);
+		} else {
+			set_boom_sprite(&mGame.PSprite1, &mGame.Player1);		
+		}
 	}
 	
 	if(mGame.Player2.bIsVisible){
-		calc_sprite_pos(&mGame.PSprite2, &mGame.Player2);
+		if(mGame.Player2.bIsAlive){
+			calc_sprite_pos(&mGame.PSprite2, &mGame.Player2);
+		} else {
+			set_boom_sprite(&mGame.PSprite2, &mGame.Player2);		
+		}
+		
 	}
 	
 	if(mGame.Player3.bIsVisible){
-		calc_sprite_pos(&mGame.PSprite3, &mGame.Player3);
+		if(mGame.Player3.bIsAlive){
+			calc_sprite_pos(&mGame.PSprite3, &mGame.Player3);
+		} else {
+			set_boom_sprite(&mGame.PSprite3, &mGame.Player3);		
+		}
+		
 	}
 	
 	if(mGame.Player4.bIsVisible){
-		calc_sprite_pos(&mGame.PSprite4, &mGame.Player4);
+		if(mGame.Player4.bIsAlive){
+			calc_sprite_pos(&mGame.PSprite4, &mGame.Player4);
+		} else {
+			set_boom_sprite(&mGame.PSprite4, &mGame.Player4);
+		}
+		
 	}
 }
 
@@ -1218,8 +1264,11 @@ void killPlayer(struct Player *cPlayer){
 	cPlayer->bFinished = 1;
 	cPlayer->mControl->bIsActive = 0;
 	cPlayer->mControl->bIsBot = 0;
-	cPlayer->bIsVisible = 0;
+
 	cPlayer->bIsAlive = 0;
+	
+	//cPlayer->bIsVisible = 0;
+	cPlayer->mBoomCount = 8;
 	
 	mGame.mPCount--;
 	
@@ -1254,7 +1303,6 @@ void process_player(struct Player *cPlayer){
 	int dist;
 	int dx,dy,cindex;
 	unsigned char cval;
-	char pi;
 //	unsigned char* colmap;
 	
 	if(cPlayer->mControl->bIsBot == 0){
@@ -1334,41 +1382,98 @@ void process_player(struct Player *cPlayer){
 	*/
 	
 		if(cval == 0){
-			if(cPlayer->bIsOutside){
+			if(cPlayer->bIsOutside > 0){
 
 				cPlayer->mOutCount--;
 
-				if(cPlayer->mOutCount < 1){
-				
-					killPlayer(cPlayer);
-					
-					if(mGame.mPCount == 1){
-						for(pi = 0; pi < 4; pi++){
-							if(mGame.Players[pi]->bIsAlive){
-								setPlayerPlace(mGame.Players[pi]);
-							}
-						}
-					} else {
-						if(mGame.mLeader->mPlayer == cPlayer->mPlayer){
-							for(pi = 0; pi < 4; pi++){
-								if(mGame.Players[pi]->bIsAlive){
-									mGame.mLeader = mGame.Players[pi];
-								}
-							}
-						}
-					}
+				if(cPlayer->mOutCount < 1){				
+					killPlayer(cPlayer);					
 				}
-				
+								
 			} else {
 				cPlayer->bIsOutside = 1;
 				cPlayer->mOutCount = MOUTKILL;
 			}			
 		} else {			
-			cPlayer->bIsOutside = 0;			
+			if(cPlayer->bIsOutside > 0){
+				cPlayer->bIsOutside = 0;	
+				cPlayer->mOutCount = MOUTKILL;
+			}
+		}
+		
+		cPlayer->PPlace.mPFactor = cPlayer->mControl->mNextWay + ((mGame.mWaypointNum + 1) * (mGame.mLaps - cPlayer->mLaps));
+		if(cPlayer->bCheckFinish){
+			cPlayer->PPlace.mPFactor += mGame.mWaypointNum;
 		}
 }
 
+void swap_placements(char p1, char p2){
+
+	struct Placement* tmpPlace;
+	
+	tmpPlace = mGame.PPlaces[p1];
+	
+	mGame.PPlaces[p1] = mGame.PPlaces[p2];
+	mGame.PPlaces[p2] = tmpPlace;
+}
+
+void get_live_players(){
+	char pi;
+	char mi;
+	
+	for(pi = 0; pi < 4; pi++){
+		if(mGame.Players[mGame.PPlaces[pi]->mPlayer]->bIsAlive == 0){			
+			for(mi = pi; mi < 4; mi++){
+				if(mGame.Players[mGame.PPlaces[mi]->mPlayer]->bIsAlive){
+					swap_placements(pi, mi);
+					break;
+				}
+
+			}
+		}
+	}	
+
+}
+
+void sort_players4(){
+
+	if(mGame.PPlaces[0]->mPFactor > mGame.PPlaces[1]->mPFactor){
+		swap_placements(0, 1);
+	}
+	
+	if(mGame.PPlaces[2]->mPFactor > mGame.PPlaces[3]->mPFactor){
+		swap_placements(2, 3);
+	}
+	
+
+	if(mGame.PPlaces[0]->mPFactor > mGame.PPlaces[2]->mPFactor){
+		swap_placements(0, 2);
+	}
+	
+	if(mGame.PPlaces[3]->mPFactor > mGame.PPlaces[1]->mPFactor){
+		swap_placements(3, 1);
+	}
+
+}
+
+void sort_players3(){
+
+	if(mGame.PPlaces[0]->mPFactor > mGame.PPlaces[1]->mPFactor){
+		swap_placements(0, 1);
+	}
+	
+	if(mGame.PPlaces[2]->mPFactor > mGame.PPlaces[1]->mPFactor){
+		swap_placements(2, 1);
+	}
+	
+
+	if(mGame.PPlaces[0]->mPFactor > mGame.PPlaces[2]->mPFactor){
+		swap_placements(0, 2);
+	}
+}
+
 void process_players(){
+	char pi;
 
 	if(mGame.Player1.bIsAlive){
 		process_player(&mGame.Player1);
@@ -1385,7 +1490,46 @@ void process_players(){
 	if(mGame.Player4.bIsAlive){
 		process_player(&mGame.Player4);
 	}
+	
+	/*
+	
+	switch(mGame.mPCount){
+		case 4:
+			sort_players4();
+			break;
+		case 3:
+			get_live_players();	
+			sort_players3();
+			break;
+		
+		case 2:
+			get_live_players();
+			break;	
+		case 1:
+			for(pi = 0; pi < 4; pi++){
+				if(mGame.Players[pi]->bIsAlive){
+					setPlayerPlace(mGame.Players[pi]);
+				}
+			}	
+			break;
+		default:
+			break;			
+	};
+	
+	*/
 
+	//if(mGame.mPCount == 1){
+
+//	} else {
+		//if(mGame.mLeader->mPlayer == cPlayer->mPlayer){
+		if(mGame.mLeader->bIsAlive == 0){
+			for(pi = 0; pi < 4; pi++){
+				if(mGame.Players[pi]->bIsAlive){
+					mGame.mLeader = mGame.Players[pi];
+				}
+			}
+		}
+	//}
 
 }
 
@@ -2048,6 +2192,8 @@ void load_level(){
    VERA.layer0.vscroll = 0;
 
    loadVera("sprite0.bin", VRAM_sprites, 3);
+   
+   loadVera("boom.bin", VRAM_boom, 3);
       
    loadVera("tilest1.bin", VRAM_tiles , 2);
    
@@ -2736,6 +2882,8 @@ void setup_race(){
    mGame.mPCount = 4;
    mGame.mFinCount = 0;
    mGame.mWinner = 0;
+   
+
 
    calc_way();
     
@@ -2759,6 +2907,7 @@ void setup_race(){
    botc = 0;
 
    for(cplc = 0; cplc < 4; cplc++){
+	mGame.PPlaces[cplc] = &mGame.Players[cplc]->PPlace;
 	switch(mMenu.mPCtrl[cplc]){
 		case 0:
 		    set_player(cplc, mGame.Players[cplc], mGame.mBots[botc], mGame.mCarPos[cplc], 0, 1);
@@ -2858,7 +3007,7 @@ void main(void) {
 
 	while(mGame.bRacing){
 	
-		waitvsync();
+		//waitvsync();
 		
 		if(mGame.bCountDelay){
 			mGame.bCountDelay--;
@@ -2880,6 +3029,8 @@ void main(void) {
 		process_collision();
 		
 		process_sprites();
+		
+		waitvsync();
            		 		 
 		if(mGame.mFinCount){
 			mGame.mFinCount--;

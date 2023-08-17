@@ -68,7 +68,10 @@
 #define VRAM_tilesbg       0x8800
 #define VRAM_tiles       0xA800
 #define VRAM_sprites         0x10400 //0x12C00
-#define VRAM_textcd          0x12C00
+//#define VRAM_textcd          0x12C00
+#define VRAM_boom          0x12C00
+#define VRAM_textcd         0x13C00
+
 #define VRAM_intro    0x00000
 #define VRAM_texti   0x12C00
 
@@ -313,8 +316,14 @@ typedef struct Control {
 	int mNextWay;
 };
 
-#define MOUTKILL 90
-#define MOUTLOOSE 60
+#define MOUTKILL 60
+#define MOUTLOOSE 50
+
+typedef struct Placement{
+
+	char mPlayer;
+	int mPFactor;
+};
 
 typedef struct Player {
 	int mDir;
@@ -339,12 +348,16 @@ typedef struct Player {
 	
 	char bIsAlive;
 	char bIsVisible;
+	char mBoomCount;
+	signed char mBoomDelay;
 
 	int pl_cur_dir;
 	
 	struct Vec2 mPos;
 	
 	struct Control *mControl;
+	
+	struct Placement PPlace;
 	
 	char mLaps;
 };
@@ -535,6 +548,8 @@ typedef struct Game {
    struct Player Player4;
    
    struct Player* Players[4];
+   
+   struct Placement* PPlaces[4];
 
    struct PSprite PSprite1;
    struct PSprite PSprite2;
@@ -676,6 +691,8 @@ void apply_physics(struct Player *cPlayer);
 
 void calc_sprite_pos(struct PSprite *cSprite, struct Player *cPlayer);
 
+void set_boom_sprite(struct PSprite *cSprite, struct Player *cPlayer);
+
 void process_sprites();
 
 int getWayState(int wState, int cX, int cY, int vX, int vY);
@@ -685,6 +702,14 @@ void process_physics();
 void process_bot(struct Player *cBot);
 
 void process_bots();
+
+void swap_placements(char p1, char p2);
+
+void get_live_players();
+
+void sort_players4();
+
+void sort_players3();
 
 void setPlayerPlace(struct Player *cPlayer);
 
