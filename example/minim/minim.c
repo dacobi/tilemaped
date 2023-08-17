@@ -492,6 +492,8 @@ void set_player(int pi, struct Player *cPlayer, struct Control *cControl, struct
 	
 	cPlayer->bIsAlive = 1;
 	cPlayer->bIsVisible = 1;
+	
+	cPlayer->bIsOutside = 0;
 
 	cPlayer->pl_cur_dir = DIR_0;
 	
@@ -502,6 +504,10 @@ int check_collision_cars(struct Player *cCar1, struct Player *cCar2){
 	
 	int nDX,nDY,cDX,cDY;
 	int colx, coly, colval;
+	
+	if( (cCar1->bIsAlive == 0) || (cCar2->bIsAlive == 0) ){
+		return 0;
+	}
 
 	nDX = cCar1->mPos.x - cCar2->mPos.x;
 	nDY = cCar1->mPos.y - cCar2->mPos.y;
@@ -996,10 +1002,22 @@ void calc_sprite_pos(struct PSprite *cSprite, struct Player *cPlayer){
 }
 
 void process_sprites(){
-	calc_sprite_pos(&mGame.PSprite1, &mGame.Player1);
-	calc_sprite_pos(&mGame.PSprite2, &mGame.Player2);
-	calc_sprite_pos(&mGame.PSprite3, &mGame.Player3);
-	calc_sprite_pos(&mGame.PSprite4, &mGame.Player4);
+
+	if(mGame.Player1.bIsVisible){
+		calc_sprite_pos(&mGame.PSprite1, &mGame.Player1);
+	}
+	
+	if(mGame.Player2.bIsVisible){
+		calc_sprite_pos(&mGame.PSprite2, &mGame.Player2);
+	}
+	
+	if(mGame.Player3.bIsVisible){
+		calc_sprite_pos(&mGame.PSprite3, &mGame.Player3);
+	}
+	
+	if(mGame.Player4.bIsVisible){
+		calc_sprite_pos(&mGame.PSprite4, &mGame.Player4);
+	}
 }
 
 int getWayState(int wState, int cX, int cY, int vX, int vY){
@@ -1070,10 +1088,22 @@ int getWayState(int wState, int cX, int cY, int vX, int vY){
 }
 
 void process_physics(){
- 	apply_physics(&mGame.Player1);
-	apply_physics(&mGame.Player2);
-	apply_physics(&mGame.Player3);
-	apply_physics(&mGame.Player4);    
+
+	if(mGame.Player1.bIsAlive){
+ 		apply_physics(&mGame.Player1);
+ 	}
+ 	
+	if(mGame.Player2.bIsAlive){
+		apply_physics(&mGame.Player2);
+	}
+
+	if(mGame.Player3.bIsAlive){
+		apply_physics(&mGame.Player3);
+	}
+
+	if(mGame.Player4.bIsAlive){
+		apply_physics(&mGame.Player4);    
+	}
 }
 
 
@@ -1183,18 +1213,40 @@ void process_bots(){
 
 }
 
-void setPlayerPlace(struct Player *cPlayer){
+void killPlayer(struct Player *cPlayer){
+
 	cPlayer->bFinished = 1;
 	cPlayer->mControl->bIsActive = 0;
+	cPlayer->mControl->bIsBot = 0;
 	cPlayer->bIsVisible = 0;
+	cPlayer->bIsAlive = 0;
+	
+	mGame.mPCount--;
+	
+	clear_sprite(cPlayer->mPlayer);
+	
+			
+}
+
+void setPlayerPlace(struct Player *cPlayer){
+
+	cPlayer->bFinished = 1;
+	cPlayer->mControl->bIsActive = 0;
+
+	//cPlayer->bIsVisible = 0; //???
+	
 	cPlayer->mPlace = mGame.mPlace;
+	
 	if(mGame.mPlace == 1){
 		mGame.mWinner = cPlayer->mPlayer;
-	}
-	mGame.mPlace++;
-	if(mGame.mPlace > mGame.mPCount){
 		mGame.mFinCount = 120;		
 	}
+	
+	mGame.mPlace++;
+	
+	//if(mGame.mPlace > mGame.mPCount){
+	//	mGame.mFinCount = 120;		
+	//}
 }
 
 void process_player(struct Player *cPlayer){
@@ -1202,7 +1254,7 @@ void process_player(struct Player *cPlayer){
 	int dist;
 	int dx,dy,cindex;
 	unsigned char cval;
-//	char cmod;
+	char pi;
 //	unsigned char* colmap;
 	
 	if(cPlayer->mControl->bIsBot == 0){
@@ -1282,39 +1334,66 @@ void process_player(struct Player *cPlayer){
 	*/
 	
 		if(cval == 0){
-			mGame.PSprites[cPlayer->mPlayer-1]->palette_offset = 0;
-		} else {
-			mGame.PSprites[cPlayer->mPlayer-1]->palette_offset = cPlayer->mPlayer + 11;
+			if(cPlayer->bIsOutside){
+
+				cPlayer->mOutCount--;
+
+				if(cPlayer->mOutCount < 1){
+				
+					killPlayer(cPlayer);
+					
+					if(mGame.mPCount == 1){
+						for(pi = 0; pi < 4; pi++){
+							if(mGame.Players[pi]->bIsAlive){
+								setPlayerPlace(mGame.Players[pi]);
+							}
+						}
+					} else {
+						if(mGame.mLeader->mPlayer == cPlayer->mPlayer){
+							for(pi = 0; pi < 4; pi++){
+								if(mGame.Players[pi]->bIsAlive){
+									mGame.mLeader = mGame.Players[pi];
+								}
+							}
+						}
+					}
+				}
+				
+			} else {
+				cPlayer->bIsOutside = 1;
+				cPlayer->mOutCount = MOUTKILL;
+			}			
+		} else {			
+			cPlayer->bIsOutside = 0;			
 		}
-
-//	}
-
 }
 
 void process_players(){
 
-	//if(mGame.Player1.mControl->bIsBot > 0){
+	if(mGame.Player1.bIsAlive){
 		process_player(&mGame.Player1);
-	//}
+	}
 
-	//if(mGame.Player2.mControl->bIsBot > 0){
+	if(mGame.Player2.bIsAlive){
 		process_player(&mGame.Player2);
-	//}
+	}
 
-	//if(mGame.Player3.mControl->bIsBot > 0){
+	if(mGame.Player3.bIsAlive){
 		process_player(&mGame.Player3);
-	//}
+	}
 
-	//if(mGame.Player4.mControl->bIsBot > 0){
+	if(mGame.Player4.bIsAlive){
 		process_player(&mGame.Player4);
-	//}
+	}
 
 
 }
 
 void calc_viewport(){
 
-	int vx, vy, cpcount;  
+	//int vx, vy, cpcount;  
+	
+	/*
 	
 	vx = 0;
 	vy = 0;
@@ -1335,9 +1414,14 @@ void calc_viewport(){
 	vx += mGame.Player4.mPos.x;
 	vy += mGame.Player4.mPos.y;
 	cpcount++;
-
+		
 	mGame.mViewport.x = vx / cpcount;
 	mGame.mViewport.y = vy / cpcount;
+	
+	*/
+	
+	mGame.mViewport.x = mGame.mLeader->mPos.x;
+	mGame.mViewport.y = mGame.mLeader->mPos.y;	
 	
 	mGScroolX = mGame.mViewport.x - (320);
 	mGScroolY = mGame.mViewport.y - (240);
@@ -1393,10 +1477,21 @@ void load_sprite(struct PSprite *cSprite, int sNum){
 }
 
 void load_psprites(){
-	load_sprite(&mGame.PSprite1,1);
-	load_sprite(&mGame.PSprite2,2);
-	load_sprite(&mGame.PSprite3,3);
-	load_sprite(&mGame.PSprite4,4);			
+	if(mGame.Player1.bIsVisible){
+		load_sprite(&mGame.PSprite1,1);
+	}
+
+	if(mGame.Player2.bIsVisible){
+		load_sprite(&mGame.PSprite2,2);
+	}
+
+	if(mGame.Player3.bIsVisible){
+		load_sprite(&mGame.PSprite3,3);
+	}
+
+	if(mGame.Player4.bIsVisible){
+		load_sprite(&mGame.PSprite4,4);			
+	}
 }
 
 void setMenuSprite(struct PSprite* cMenu, int mx, int my){
@@ -2135,6 +2230,14 @@ void load_audio(char cstream){
 	open_audio();
 	
 	PCMCTRL=0x80;	
+	
+	for(bi = 0; bi < 16; bi++){				
+		__asm__("lda #255");
+	       	__asm__("ldx #$3d");
+		__asm__("ldy #$9f");
+		__asm__("sec");
+		__asm__("jsr $ff44");
+	}	
 		  	
 	while(!(PCMCTRL & 0x80)){
 		sample_load = cbm_k_acptr();
@@ -2684,6 +2787,8 @@ void setup_race(){
 	};
    }
    
+   mGame.mLeader = mGame.Players[0];
+   
    mGame.bCountDown = 4;
 }
 
@@ -2736,6 +2841,15 @@ void main(void) {
 		mGame.bIRQ = 1;
 		
 	    	calc_viewport();    
+	    	
+	    	VERA.layer0.hscroll = mGScroolX;
+        	VERA.layer0.vscroll = mGScroolY;
+
+	        VERA.layer1.hscroll = mGScroolX;
+        	VERA.layer1.vscroll = mGScroolY;
+        	
+		process_sprites();
+
 
 		render_cdmenu();
   	  }

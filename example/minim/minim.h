@@ -313,7 +313,8 @@ typedef struct Control {
 	int mNextWay;
 };
 
-
+#define MOUTKILL 90
+#define MOUTLOOSE 60
 
 typedef struct Player {
 	int mDir;
@@ -332,6 +333,9 @@ typedef struct Player {
 	char bCheckFinish;
 	char bFinished;
 	char mPlayer;
+	
+	char bIsOutside;
+	int mOutCount;
 	
 	char bIsAlive;
 	char bIsVisible;
@@ -514,6 +518,8 @@ typedef struct Game {
    int mFinCount;
    char mWinner;
    
+   struct Player* mLeader;
+   
    struct WText mWText;
 
    struct SBeep mCBeep;
@@ -681,6 +687,8 @@ void process_bot(struct Player *cBot);
 void process_bots();
 
 void setPlayerPlace(struct Player *cPlayer);
+
+void killPlayer(struct Player *cPlayer);
 
 void process_player(struct Player *cPlayer);
 
