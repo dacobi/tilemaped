@@ -319,8 +319,8 @@ typedef struct Control {
 	int mNextWay;
 };
 
-#define MOUTKILL 60
-#define MOUTLOOSE 50
+#define MOUTKILL 80
+#define MOUTLOOSE 70
 
 typedef struct Placement{
 

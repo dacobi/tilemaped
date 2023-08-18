@@ -1033,7 +1033,7 @@ void calc_sprite_pos(struct PSprite *cSprite, struct Player *cPlayer){
     cSprite->mPos.y = (240-16) + ( cPlayer->mPos.y - mGame.mViewport.y);
     
     if(cPlayer->mPlayer != mGame.mLeader->mPlayer){
-    	if( (cSprite->mPos.x < 16) || (cSprite->mPos.x > (640-16)) || (cSprite->mPos.y < 16) || (cSprite->mPos.y > (480-16))){
+    	if( (cSprite->mPos.x < 1) || (cSprite->mPos.x > (640)) || (cSprite->mPos.y < 1) || (cSprite->mPos.y > (480))){
     		killPlayer(cPlayer);
     	}    
     }         	
@@ -1415,7 +1415,8 @@ void process_player(struct Player *cPlayer){
 		} else {			
 			if(cPlayer->bIsOutside > 0){
 				cPlayer->bIsOutside = 0;	
-				cPlayer->bIsValid = 1;					
+				cPlayer->bIsValid = 1;	
+				cPlayer->mOutCount = MOUTKILL;				
 			}
 		}
 		
@@ -2196,17 +2197,17 @@ void set_menucd(int cNR){
 
 	switch(cNR){
 		case 3:
-			setCDSprite(&mGame.mCDown1, TEXTCD_3, 320-32, 140);
+			setCDSprite(&mGame.mCDown1, TEXTCD_3, 320-32+16, 140);
 			break;
 		case 2:
-			setCDSprite(&mGame.mCDown1, TEXTCD_2, 320-32, 140);
+			setCDSprite(&mGame.mCDown1, TEXTCD_2, 320-32+16, 140);
 			break;
 		case 1:
-			setCDSprite(&mGame.mCDown1, TEXTCD_1, 320-32, 140);
+			setCDSprite(&mGame.mCDown1, TEXTCD_1, 320-32+16, 140);
 			break;
 		case 0:
-			setCDSprite(&mGame.mCDown1, TEXTCD_G, 320 - 64 + 8, 140);
-			setCDSprite(&mGame.mCDown2, TEXTCD_O, 320 - 8, 140);			
+			setCDSprite(&mGame.mCDown1, TEXTCD_G, 320 - 64 + 8 + 16, 140);
+			setCDSprite(&mGame.mCDown2, TEXTCD_O, 320 - 8 + 16, 140);			
 			break;
 	}
 }
