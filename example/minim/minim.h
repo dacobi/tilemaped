@@ -600,6 +600,8 @@ typedef struct Game {
    struct Vec2 mOldView;
    
    char bMoveToLead;
+   char bViewXDone;
+   char bViewYDone;   
    
    char bRunning;
    char bRacing;

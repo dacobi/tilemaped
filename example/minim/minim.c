@@ -1414,11 +1414,42 @@ void process_player(struct Player *cPlayer){
 }
 
 void set_leader(char nlead){
+	int vx, vy;
 	if(nlead != mGame.mLeader->mPlayer){
-		mGame.mOldView.x = mGame.mLeader->mPos.x;
-		mGame.mOldView.y = mGame.mLeader->mPos.y;
 		mGame.bMoveToLead = 16;
 		mGame.mLeader = mGame.Players[nlead - 1];	
+		vx =  (mGame.mViewport.x - mGame.mLeader->mPos.x);
+		vy =  (mGame.mViewport.y - mGame.mLeader->mPos.y);
+		
+		if(vx < 0 ){vx = -vx;}
+		if(vy < 0 ){vx = -vy;}		
+		
+		if(vx < 2 ){
+			mGame.bViewXDone = 1;
+		} else {
+			mGame.bViewXDone = 0;
+			mGame.mOldView.x = vx / 16;
+			if(mGame.mOldView.x < 1){
+				mGame.mOldView.x = 1;
+			}	
+		}
+
+		if(vy < 2 ){
+			mGame.bViewYDone = 1;
+		} else {
+			mGame.bViewYDone = 0;
+			mGame.mOldView.y = vy / 16;
+			if(mGame.mOldView.y < 1){
+				mGame.mOldView.y = 1;
+			}
+		}
+		
+		if(mGame.bViewXDone && mGame.bViewYDone){
+			mGame.bMoveToLead = 0;
+		}
+				
+		//mGame.mOldView.y = mGame.mLeader->mPos.y;
+
 	}
 }
 
@@ -1501,8 +1532,8 @@ void calc_player_dfactor(struct Player *cPlayer){
 	sx = sx >> 3;
 	sy = sy >> 3;
 	
-	if(sx > 180){sx = 180;}
-	if(sy > 180){sy = 180;}	
+	if(sx > 181){sx = 181;}
+	if(sy > 181){sy = 181;}	
 
 	cPlayer->PPlace.mPFactor = (sx * sx) + (sy * sy);
 }
@@ -1637,78 +1668,61 @@ void process_players(){
 			break;			
 	};
 	
-
-	
-	/*
-
-		if(mGame.mLeader->bIsAlive == 0){
-			for(pi = 0; pi < 4; pi++){
-				if(mGame.Players[pi]->bIsAlive){
-					set_leader(mGame.Players[pi]->mPlayer);
-				}
-			}
-		}
-	*/
-
 }
 
 void calc_viewport(){
 
-	int vx, vy;//, cpcount;  
-	
-	/*
-	
-	vx = 0;
-	vy = 0;
-	cpcount = 0;
-	
-	vx += mGame.Player1.mPos.x;
-	vy += mGame.Player1.mPos.y;
-	cpcount++;
-
-	vx += mGame.Player2.mPos.x;
-	vy += mGame.Player2.mPos.y;
-	cpcount++;
-
-	vx += mGame.Player3.mPos.x;
-	vy += mGame.Player3.mPos.y;
-	cpcount++;
-
-	vx += mGame.Player4.mPos.x;
-	vy += mGame.Player4.mPos.y;
-	cpcount++;
-		
-	mGame.mViewport.x = vx / cpcount;
-	mGame.mViewport.y = vy / cpcount;
-	
-	*/
-
+	int vx, vy;  		
 	
 	if(mGame.bMoveToLead){
-		vx = (mGame.mOldView.x - mGame.mLeader->mPos.x);
-		vy = (mGame.mOldView.y - mGame.mLeader->mPos.y);
+		
+		vx = (mGame.mViewport.x - mGame.mLeader->mPos.x);
+		vy = (mGame.mViewport.y - mGame.mLeader->mPos.y);						
+		
+		if(mGame.bViewXDone){
+			mGame.mViewport.x = mGame.mLeader->mPos.x;
+			vx = 0; 
+		}
+
+		if(mGame.bViewYDone){
+			mGame.mViewport.y = mGame.mLeader->mPos.y;
+			vy = 0; 
+		}
 		
 		if(vx < 0) {vx = -vx;}
 		if(vy < 0) {vy = -vy;}
 		
-		if((vx < 16) && (vy < 16)){
+		if((vx <= mGame.mOldView.x) && (vy <= mGame.mOldView.y)){
 			mGame.mViewport.x = mGame.mLeader->mPos.x;
 			mGame.mViewport.y = mGame.mLeader->mPos.y;	
 			mGame.bMoveToLead = 0;		
 		} else {
-			if(mGame.mViewport.x < mGame.mLeader->mPos.x){
-				mGame.mViewport.x += (vx >> 4);
-			} else {
-				mGame.mViewport.x -= (vx >> 4);
+			
+			if(mGame.mViewport.x != mGame.mLeader->mPos.x){
+				if(vx <= mGame.mOldView.x){
+					mGame.mOldView.x = vx;
+					mGame.bViewXDone = 1;
+				}
+				if(mGame.mViewport.x < mGame.mLeader->mPos.x){
+					mGame.mViewport.x += mGame.mOldView.x;
+				} else {
+					mGame.mViewport.x -= mGame.mOldView.x;
+				}
 			}
 
-			if(mGame.mViewport.y < mGame.mLeader->mPos.y){
-				mGame.mViewport.y += (vy >> 4);
-			} else {
-				mGame.mViewport.y -= (vy >> 4);
+			if(mGame.mViewport.y != mGame.mLeader->mPos.y){
+				if(vy <= mGame.mOldView.y){
+					mGame.mOldView.y = vy;
+					mGame.bViewYDone = 1;
+				}
+				if(mGame.mViewport.y < mGame.mLeader->mPos.y){
+					mGame.mViewport.y += mGame.mOldView.y;
+				} else {
+					mGame.mViewport.y -= mGame.mOldView.y;
+				}
 			}
 			
-			mGame.bMoveToLead--;
+			mGame.bMoveToLead--;			
 		}
 	} else {		
 		mGame.mViewport.x = mGame.mLeader->mPos.x;
