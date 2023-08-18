@@ -1272,6 +1272,14 @@ void process_bots(){
 
 void killPlayer(struct Player *cPlayer){
 
+	if(cPlayer->bFinished == 1){
+		return;
+	}
+
+	if(mGame.mFinCount){
+		return;
+	}
+
 	cPlayer->bFinished = 1;
 	cPlayer->mControl->bIsActive = 0;
 	cPlayer->mControl->bIsBot = 0;
@@ -1284,7 +1292,7 @@ void killPlayer(struct Player *cPlayer){
 	
 	mGame.mPCount--;
 	
-	//clear_sprite(cPlayer->mPlayer);
+	stop_engine(&cPlayer->mEngine);
 	
 	play_crash(250, 15, 2);
 	
@@ -1370,14 +1378,9 @@ void process_player(struct Player *cPlayer){
 	
 	}
 	
-        //RAM_BANK = 1; 
 
-//	if(cPlayer->mPlayer == 3){
 		cindex = GETINDEX(cPlayer->mPos.x, cPlayer->mPos.y); //, &cmod);
-	//cindex = getMapIndex(mGame.StartPos.x + 16 + 32, mGame.StartPos.y, &cmod);// mGame.StartPos.x ;
 	
-		//colmap = BANK_RAM;
-		
 		if(cindex > 8191){
 			RAM_BANK = 2;
 			cindex -= 8192;
@@ -1386,22 +1389,14 @@ void process_player(struct Player *cPlayer){
 		}
 	
 		cval = mColmap[cindex];
-	
-	/*
-		if(cmod){
-			mapval = (cval & 0x0f);
-		} else {
-			mapval = (cval & 0xf0) >> 4;
-		}
-	*/
-	
+		
 		if(cval == MTRACKOUTSIDE){
 			if(cPlayer->bIsOutside > 0){
 
 				cPlayer->mOutCount--;
 
-				if(cPlayer->mOutCount < 1){				
-					killPlayer(cPlayer);					
+				if(cPlayer->mOutCount < 1){						
+					killPlayer(cPlayer);								
 				}
 				
 				if(cPlayer->mOutCount < MOUTLOOSE){				
@@ -1459,10 +1454,7 @@ void set_leader(char nlead){
 		
 		if(mGame.bViewXDone && mGame.bViewYDone){
 			mGame.bMoveToLead = 0;
-		}
-				
-		//mGame.mOldView.y = mGame.mLeader->mPos.y;
-
+		}				
 	}
 }
 
@@ -2012,6 +2004,62 @@ void init_menu(){
     mMenu.bShowMenu = 1;
 }
 
+void process_engine(struct SThrottle* cEngine, int mvel){
+	signed char mrand;
+	char fhi, flo;
+	mrand = RANDNEXT();
+
+		
+	if(mvel == 0){	
+		mrand = mrand >> 2;
+		fhi = ((cEngine->mFreq + mrand) & 0xff00) >> 8;
+		flo = (cEngine->mFreq  + mrand) & 0x00ff;	
+		mGame.mChannels[cEngine->mChan].mFreqHi = fhi;
+		mGame.mChannels[cEngine->mChan].mFreqLo = flo; 
+
+		mGame.mChannels[cEngine->mChan + 1].mFreqHi = fhi;
+		mGame.mChannels[cEngine->mChan + 1].mFreqLo = flo; 
+	} else {
+		mrand = mrand >> 3;
+		fhi = (((cEngine->mFreq + mrand) + mvel << 1) & 0xff00) >> 8;
+		flo = ((cEngine->mFreq  + mrand) + mvel << 1) & 0x00ff;	
+		
+		mGame.mChannels[cEngine->mChan].mFreqHi = fhi;
+		mGame.mChannels[cEngine->mChan].mFreqLo = flo; 
+
+		mGame.mChannels[cEngine->mChan + 1].mFreqHi = fhi;
+		mGame.mChannels[cEngine->mChan + 1].mFreqLo = flo; 
+	}
+	
+
+}
+
+void start_engine(struct SThrottle* cEngine, char cchan){
+	cEngine->mVol = 0xef;
+	cEngine->mOn = 1;
+	cEngine->mFreq = 200;
+	cEngine->mChan = cchan;	
+
+	mGame.mChannels[cEngine->mChan].mVol = cEngine->mVol;
+	mGame.mChannels[cEngine->mChan].mType = 0x2;
+	mGame.mChannels[cEngine->mChan].mFreqHi = (cEngine->mFreq & 0xff00) >> 8;
+	mGame.mChannels[cEngine->mChan].mFreqLo = cEngine->mFreq & 0x00ff;	
+	
+	
+	mGame.mChannels[cEngine->mChan + 1].mVol = cEngine->mVol >> 3;
+	mGame.mChannels[cEngine->mChan + 1].mType = 0x0;
+	mGame.mChannels[cEngine->mChan + 1].mPuls = 0x60;	
+	mGame.mChannels[cEngine->mChan + 1].mFreqHi = (cEngine->mFreq & 0xff00) >> 8;
+	mGame.mChannels[cEngine->mChan + 1].mFreqLo = cEngine->mFreq & 0x00ff;			
+}
+
+void stop_engine(struct SThrottle* cEngine){
+	mGame.mChannels[cEngine->mChan].mVol = 0;
+	mGame.mChannels[cEngine->mChan + 1].mVol = 0;
+	cEngine->mOn = 0;	
+}
+
+
 void play_beep(int cbasefq, int clength){
 	mGame.mCBeep.mVol = 0xff;
 	mGame.mCBeep.mOn = 1;
@@ -2176,7 +2224,22 @@ void process_sound(){
 			mGame.mChannels[mGame.mBump.mChan - 1].mVol = 0;					
 		}
 	}
+	
+	if(mGame.Player1.mEngine.mOn){
+		process_engine(&mGame.Player1.mEngine, mGame.Player1.mVel);
+	}
 
+	if(mGame.Player2.mEngine.mOn){
+		process_engine(&mGame.Player2.mEngine, mGame.Player2.mVel);
+	}
+
+	if(mGame.Player3.mEngine.mOn){
+		process_engine(&mGame.Player3.mEngine, mGame.Player3.mVel);
+	}
+
+	if(mGame.Player4.mEngine.mOn){
+		process_engine(&mGame.Player4.mEngine, mGame.Player4.mVel);
+	}
 
 }
 
@@ -2215,6 +2278,11 @@ void set_menucd(int cNR){
 void render_cdmenu(){
 	int cdelay = 0;
 	
+	start_engine(&mGame.Player1.mEngine, 2);
+	start_engine(&mGame.Player2.mEngine, 4);
+	start_engine(&mGame.Player3.mEngine, 6);
+	start_engine(&mGame.Player4.mEngine, 8);		
+	
 	while((mGame.bCountDown)){
 		if(cdelay < 1){
 			mGame.bCountDown--;
@@ -2232,7 +2300,7 @@ void render_cdmenu(){
 			}
 			cdelay = 30000;			
 		}
-		cdelay--;		
+		cdelay--;
 	}
 	
 	mGame.bCountDown = 0;
@@ -2373,7 +2441,9 @@ void mblank(void){
 
 	if(mGame.bRacing){
 	
-		process_sound();
+		if(mGame.bCountDown){
+			process_sound();
+		}
 		update_sound();
 		
 		calc_viewport();    
@@ -3087,6 +3157,8 @@ void load_wmenu(){
 
 void setup_race(){
    char cplc, botc;
+   
+   RANDINIT();
 
    mGame.PSprite1.block = SPRITE_BLOCK(VRAM_sprites);
    mGame.PSprite1.mode = SPRITE_MODE_4BPP;
@@ -3278,6 +3350,8 @@ void main(void) {
 		clear_controls();	 
 
 		process_physics();
+		
+		process_sound();
 
 		process_collision();
 		
@@ -3288,12 +3362,16 @@ void main(void) {
 		if(mGame.mFinCount){
 			mGame.mFinCount--;
  			if(mGame.mFinCount < 1){
+ 				stop_engine(&mGame.Player1.mEngine);
+				stop_engine(&mGame.Player2.mEngine);
+				stop_engine(&mGame.Player3.mEngine);
+				stop_engine(&mGame.Player4.mEngine);			
+
  				mGame.bRacing = 0;
  			}
 		}
 	}
-
-
+	
 	if(mGame.bIRQ){
 	
 		VERA.display.video = 0;

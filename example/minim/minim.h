@@ -14,6 +14,12 @@
 #include "waypoints.h"
 #include "atantab.h"
 #include "colmap.h"
+#include "randtab.h"
+
+char randidx;
+
+#define RANDINIT() if(randidx > 99) randidx = 0
+#define RANDNEXT() randtab[randidx]; randidx++; if(randidx > 99) randidx = 0
 
 #define	    SPRITE_BLOCK(addr)			(addr >> 5)
 #define     SPRITE_MODE_8BPP     		128
@@ -319,6 +325,16 @@ typedef struct Control {
 	int mNextWay;
 };
 
+typedef struct SThrottle{
+	char mChan;
+	unsigned int mFreq;
+	char mVol;
+	char mOn;
+	int mLength;
+	int mLastCount;
+};
+
+
 #define MOUTKILL 80
 #define MOUTLOOSE 70
 
@@ -364,6 +380,8 @@ typedef struct Player {
 	struct Placement PPlace;
 	
 	char mLaps;
+	
+	struct SThrottle mEngine;
 };
 
 typedef struct PSprite {
@@ -471,7 +489,6 @@ typedef struct SCrash{
 	int mLength;
 	int mLastCount;
 };
-
 
 typedef struct Menu {   
 
@@ -780,6 +797,12 @@ void play_click(int cbasefq, int clength, int cadd);
 void play_crash(int cbasefq, int clength, int cdec);
 
 void play_bump(int cbasefq, int clength, int cdec);
+
+void start_engine(struct SThrottle* cEngine, char cchan);
+
+void stop_engine(struct SThrottle* cEngine);
+
+void process_engine(struct SThrottle* cEngine, int mvel);
 
 void process_sound();
 
