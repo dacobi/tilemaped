@@ -1033,7 +1033,7 @@ void calc_sprite_pos(struct PSprite *cSprite, struct Player *cPlayer){
     cSprite->mPos.y = (240-16) + ( cPlayer->mPos.y - mGame.mViewport.y);
     
     if(cPlayer->mPlayer != mGame.mLeader->mPlayer){
-    	if( (cSprite->mPos.x < 1) || (cSprite->mPos.x > (640)) || (cSprite->mPos.y < 1) || (cSprite->mPos.y > (480))){
+    	if( (cSprite->mPos.x < 16) || (cSprite->mPos.x > (640-32)) || (cSprite->mPos.y < 16) || (cSprite->mPos.y > (480-32))){
     		killPlayer(cPlayer);
     	}    
     }         	
