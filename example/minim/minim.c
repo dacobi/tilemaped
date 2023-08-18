@@ -1031,7 +1031,12 @@ void calc_sprite_pos(struct PSprite *cSprite, struct Player *cPlayer){
     
     cSprite->mPos.x = (320-16) + ( cPlayer->mPos.x - mGame.mViewport.x);
     cSprite->mPos.y = (240-16) + ( cPlayer->mPos.y - mGame.mViewport.y);
- 	
+    
+    if(cPlayer->mPlayer != mGame.mLeader->mPlayer){
+    	if( (cSprite->mPos.x < 16) || (cSprite->mPos.x > (640-16)) || (cSprite->mPos.y < 16) || (cSprite->mPos.y > (480-16))){
+    		killPlayer(cPlayer);
+    	}    
+    }         	
 }
 
 void process_sprites(){
