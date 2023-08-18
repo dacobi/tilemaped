@@ -609,11 +609,16 @@ void solve_collision(int cDX, int cDY, struct Player *cCar1, struct Player *cCar
 void process_collision(){
 
 	int colcount = 0;
+	char bDidCol = 0;
 
 	if(mGame.bDoCol){	
 		while(check_collision() && (colcount < MAXCOL)){
 			solve_collision(mGame.mColDX, mGame.mColDY, mGame.Players[mGame.mCarCol1], mGame.Players[mGame.mCarCol2]);
 			colcount++;
+			bDidCol = 1;
+		}
+		if(bDidCol){
+			play_bump(550, 5, 8);
 		}
 		mGame.bDoCol = 0;
 	
@@ -1274,7 +1279,9 @@ void killPlayer(struct Player *cPlayer){
 	
 	mGame.mPCount--;
 	
-	clear_sprite(cPlayer->mPlayer);
+	//clear_sprite(cPlayer->mPlayer);
+	
+	play_crash(250, 15, 2);
 	
 			
 }
@@ -2020,6 +2027,47 @@ void play_beep(int cbasefq, int clength){
 	mGame.mChannels[mGame.mCBeep.mChan + 1].mFreqLo = (mGame.mCBeep.mSubFreq & 0x00ff);
 }
 
+
+
+void play_crash(int cbasefq, int clength, int cdec){
+	mGame.mCrash.mVol = 0xff;
+	mGame.mCrash.mOn = 1;
+	mGame.mCrash.mFreq = cbasefq;
+	mGame.mCrash.mLength = clength;
+	mGame.mCrash.mVDec = cdec;
+	mGame.mCrash.mChan = 15;
+	
+	mGame.mChannels[mGame.mCrash.mChan].mVol = mGame.mCrash.mVol;
+	mGame.mChannels[mGame.mCrash.mChan].mType = 0x1;		
+	mGame.mChannels[mGame.mCrash.mChan].mFreqHi = (mGame.mCrash.mFreq & 0xff00) >> 8; 
+	mGame.mChannels[mGame.mCrash.mChan].mFreqLo = mGame.mCrash.mFreq & 0x00ff;
+	
+	mGame.mChannels[mGame.mCrash.mChan - 1].mVol = mGame.mCrash.mVol;
+	mGame.mChannels[mGame.mCrash.mChan - 1].mType = 0x3;		
+	mGame.mChannels[mGame.mCrash.mChan - 1].mFreqHi = ((mGame.mCrash.mFreq << 1) & 0xff00) >> 8; 
+	mGame.mChannels[mGame.mCrash.mChan - 1].mFreqLo = (mGame.mCrash.mFreq << 1) & 0x00ff;
+}
+
+void play_bump(int cbasefq, int clength, int cdec){
+	mGame.mBump.mVol = 0xff;
+	mGame.mBump.mOn = 1;
+	mGame.mBump.mFreq = cbasefq;
+	mGame.mBump.mLength = clength;
+	mGame.mBump.mVDec = cdec;
+	mGame.mBump.mChan = 13;
+	
+	mGame.mChannels[mGame.mBump.mChan].mVol = mGame.mBump.mVol;
+	mGame.mChannels[mGame.mBump.mChan].mType = 0x1;		
+	mGame.mChannels[mGame.mBump.mChan].mFreqHi = (mGame.mBump.mFreq & 0xff00) >> 8; 
+	mGame.mChannels[mGame.mBump.mChan].mFreqLo = mGame.mBump.mFreq & 0x00ff;
+	
+	mGame.mChannels[mGame.mBump.mChan - 1].mVol = mGame.mBump.mVol;
+	mGame.mChannels[mGame.mBump.mChan - 1].mType = 0x3;		
+	mGame.mChannels[mGame.mBump.mChan - 1].mFreqHi = ((mGame.mBump.mFreq << 1) & 0xff00) >> 8; 
+	mGame.mChannels[mGame.mBump.mChan - 1].mFreqLo = (mGame.mBump.mFreq << 1) & 0x00ff;
+}
+
+
 void play_click(int cbasefq, int clength, int cadd){
 
 
@@ -2094,6 +2142,35 @@ void process_sound(){
 			mGame.mChannels[mGame.mCBeep.mChan + 1].mVol = 0;			
 		}
 	}
+	
+	if(mGame.mCrash.mOn){
+		mGame.mCrash.mLength--;
+		
+		mGame.mChannels[mGame.mCrash.mChan].mVol -= mGame.mCrash.mVDec;
+		mGame.mChannels[mGame.mCrash.mChan - 1].mVol -= mGame.mCrash.mVDec;		
+		
+		if(mGame.mCrash.mLength < 1){
+			mGame.mCrash.mOn = 0;
+			mGame.mCrash.mVol = 0;
+			mGame.mChannels[mGame.mCrash.mChan].mVol = 0;
+			mGame.mChannels[mGame.mCrash.mChan - 1].mVol = 0;					
+		}
+	}
+	
+	if(mGame.mBump.mOn){
+		mGame.mBump.mLength--;
+		
+		mGame.mChannels[mGame.mBump.mChan].mVol -= mGame.mBump.mVDec;
+		mGame.mChannels[mGame.mBump.mChan - 1].mVol -= mGame.mBump.mVDec;		
+		
+		if(mGame.mBump.mLength < 1){
+			mGame.mBump.mOn = 0;
+			mGame.mBump.mVol = 0;
+			mGame.mChannels[mGame.mBump.mChan].mVol = 0;
+			mGame.mChannels[mGame.mBump.mChan - 1].mVol = 0;					
+		}
+	}
+
 
 }
 

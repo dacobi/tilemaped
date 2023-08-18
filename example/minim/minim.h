@@ -462,6 +462,16 @@ typedef struct SClick{
 	int mLastCount;
 };
 
+typedef struct SCrash{
+	char mChan;
+	unsigned int mFreq;
+	char mVol;
+	char mOn;
+	int mVDec;
+	int mLength;
+	int mLastCount;
+};
+
 
 typedef struct Menu {   
 
@@ -540,6 +550,8 @@ typedef struct Game {
    struct WText mWText;
 
    struct SBeep mCBeep;
+   struct SCrash mCrash;
+   struct SCrash mBump;   
    int mBeepLength;
 
    int mFinishLine;
@@ -764,6 +776,10 @@ void init_menu();
 void play_beep(int cbasefq, int clength);
 
 void play_click(int cbasefq, int clength, int cadd);
+
+void play_crash(int cbasefq, int clength, int cdec);
+
+void play_bump(int cbasefq, int clength, int cdec);
 
 void process_sound();
 
