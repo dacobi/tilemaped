@@ -246,6 +246,9 @@ extern void rm_keyboard_irq();
 #define GETINDEX(CX, CY) (CX >> 4) + ((CY >> 4) << 7)
 #define mColmap BANK_RAM
 
+#define MTRACKON 0x1F
+#define MTRACKONEDGE 0x2F
+#define MTRACKOUTSIDE 0x0
 
 int mGScroolX, mGScroolY;
 
@@ -260,7 +263,7 @@ unsigned char *load_index;
 
 int sample_max;
 
-unsigned char sample_point[4096];
+unsigned char *sample_point; //[4096];
 
 unsigned char mHi, mLo, mLoad;
 
@@ -322,7 +325,7 @@ typedef struct Control {
 typedef struct Placement{
 
 	char mPlayer;
-	int mPFactor;
+	unsigned int mPFactor;
 };
 
 typedef struct Player {
@@ -347,6 +350,7 @@ typedef struct Player {
 	int mOutCount;
 	
 	char bIsAlive;
+	char bIsValid;
 	char bIsVisible;
 	char mBoomCount;
 	signed char mBoomDelay;
@@ -593,6 +597,10 @@ typedef struct Game {
    
    struct SChan mChannels[16];
    
+   struct Vec2 mOldView;
+   
+   char bMoveToLead;
+   
    char bRunning;
    char bRacing;
    char bCountDown;
@@ -654,6 +662,12 @@ unsigned char getatan(long x);
 int getangle(int x, int y);
 
 void set_player(int pi, struct Player *cPlayer, struct Control *cControl, struct Vec2 *sPos, int isJoy, int isBot);
+
+void set_leader(char nlead);
+
+void calc_player_dfactor(struct Player *cPlayer);
+
+void calc_players_dfactor();
 
 int check_collision_cars(struct Player *cCar1, struct Player *cCar2);
 

@@ -491,6 +491,7 @@ void set_player(int pi, struct Player *cPlayer, struct Control *cControl, struct
 	cPlayer->mPlayer = pi + 1;
 	
 	cPlayer->bIsAlive = 1;
+	cPlayer->bIsValid = 1;
 	cPlayer->bIsVisible = 1;
 	cPlayer->mBoomCount = 0;
 	cPlayer->mBoomDelay = 0;
@@ -1266,6 +1267,7 @@ void killPlayer(struct Player *cPlayer){
 	cPlayer->mControl->bIsBot = 0;
 
 	cPlayer->bIsAlive = 0;
+	cPlayer->bIsValid = 0;	
 	
 	//cPlayer->bIsVisible = 0;
 	cPlayer->mBoomCount = 8;
@@ -1381,13 +1383,17 @@ void process_player(struct Player *cPlayer){
 		}
 	*/
 	
-		if(cval == 0){
+		if(cval == MTRACKOUTSIDE){
 			if(cPlayer->bIsOutside > 0){
 
 				cPlayer->mOutCount--;
 
 				if(cPlayer->mOutCount < 1){				
 					killPlayer(cPlayer);					
+				}
+				
+				if(cPlayer->mOutCount < MOUTLOOSE){				
+					cPlayer->bIsValid = 0;					
 				}
 								
 			} else {
@@ -1397,14 +1403,23 @@ void process_player(struct Player *cPlayer){
 		} else {			
 			if(cPlayer->bIsOutside > 0){
 				cPlayer->bIsOutside = 0;	
-				cPlayer->mOutCount = MOUTKILL;
+				cPlayer->bIsValid = 1;					
 			}
 		}
 		
-		cPlayer->PPlace.mPFactor = cPlayer->mControl->mNextWay + ((mGame.mWaypointNum + 1) * (mGame.mLaps - cPlayer->mLaps));
+		cPlayer->PPlace.mPFactor = cPlayer->mControl->mNextWay + ((mGame.mWaypointNum + 2) * (mGame.mLaps - cPlayer->mLaps));
 		if(cPlayer->bCheckFinish){
-			cPlayer->PPlace.mPFactor += mGame.mWaypointNum;
+			cPlayer->PPlace.mPFactor += mGame.mWaypointNum + 1;
 		}
+}
+
+void set_leader(char nlead){
+	if(nlead != mGame.mLeader->mPlayer){
+		mGame.mOldView.x = mGame.mLeader->mPos.x;
+		mGame.mOldView.y = mGame.mLeader->mPos.y;
+		mGame.bMoveToLead = 16;
+		mGame.mLeader = mGame.Players[nlead - 1];	
+	}
 }
 
 void swap_placements(char p1, char p2){
@@ -1422,9 +1437,9 @@ void get_live_players(){
 	char mi;
 	
 	for(pi = 0; pi < 4; pi++){
-		if(mGame.Players[mGame.PPlaces[pi]->mPlayer]->bIsAlive == 0){			
+		if(mGame.Players[mGame.PPlaces[pi]->mPlayer]->bIsValid == 0){			
 			for(mi = pi; mi < 4; mi++){
-				if(mGame.Players[mGame.PPlaces[mi]->mPlayer]->bIsAlive){
+				if(mGame.Players[mGame.PPlaces[mi]->mPlayer]->bIsValid){
 					swap_placements(pi, mi);
 					break;
 				}
@@ -1472,8 +1487,58 @@ void sort_players3(){
 	}
 }
 
+void calc_player_dfactor(struct Player *cPlayer){
+
+	int dx, dy;
+	unsigned int sx,sy;
+	
+	dx = (cPlayer->mPos.x - mGame.mWaypoints[cPlayer->mControl->mNextWay].x);
+	dy = (cPlayer->mPos.y - mGame.mWaypoints[cPlayer->mControl->mNextWay].y);	
+	
+	if(dx < 0){sx = -dx;} else {sx = dx;}
+	if(dy < 0){sy = -dy;} else {sy = dy;}
+	
+	sx = sx >> 3;
+	sy = sy >> 3;
+	
+	if(sx > 180){sx = 180;}
+	if(sy > 180){sy = 180;}	
+
+	cPlayer->PPlace.mPFactor = (sx * sx) + (sy * sy);
+}
+
+void calc_players_dfactor(){
+
+	if(mGame.Player1.bIsValid){
+		calc_player_dfactor(&mGame.Player1);
+	} else {
+		mGame.Player1.PPlace.mPFactor = 0xffff;
+	}
+
+	if(mGame.Player2.bIsValid){
+		calc_player_dfactor(&mGame.Player2);
+	} else {
+		mGame.Player2.PPlace.mPFactor = 0xffff;
+	}
+
+	if(mGame.Player3.bIsValid){
+		calc_player_dfactor(&mGame.Player3);
+	} else {
+		mGame.Player3.PPlace.mPFactor = 0xffff;
+	}
+
+	if(mGame.Player4.bIsValid){
+		calc_player_dfactor(&mGame.Player4);
+	} else {
+		mGame.Player4.PPlace.mPFactor = 0xffff;
+	}
+
+
+}
+
+
 void process_players(){
-	char pi;
+	char pi, mVCount;
 
 	if(mGame.Player1.bIsAlive){
 		process_player(&mGame.Player1);
@@ -1490,25 +1555,81 @@ void process_players(){
 	if(mGame.Player4.bIsAlive){
 		process_player(&mGame.Player4);
 	}
+		
+	if(mGame.mPCount == 1){	
+		for(pi = 0; pi < 4; pi++){
+			if(mGame.Players[pi]->bIsAlive){
+				setPlayerPlace(mGame.Players[pi]);
+				return;
+			}
+		}
+	}
 	
-	/*
+	mVCount = 0;
 	
-	switch(mGame.mPCount){
+	for(pi = 0; pi < 4; pi++){
+		if(mGame.Players[pi]->bIsValid){
+			mVCount++;
+		}
+	}	
+		
+	switch(mVCount){
 		case 4:
 			sort_players4();
+			
+			if(mGame.PPlaces[0]->mPFactor == mGame.PPlaces[1]->mPFactor){
+				calc_players_dfactor();
+				sort_players4();
+					
+				set_leader(mGame.PPlaces[0]->mPlayer + 1);			
+			} else {
+				set_leader(mGame.PPlaces[1]->mPlayer + 1);
+			}
+			
 			break;
 		case 3:
-			get_live_players();	
+			get_live_players();
+			
 			sort_players3();
+			
+			if(mGame.PPlaces[0]->mPFactor == mGame.PPlaces[1]->mPFactor){
+			
+				calc_players_dfactor();
+				sort_players3();			
+				
+				set_leader(mGame.PPlaces[0]->mPlayer + 1);
+			
+			} else {
+				set_leader(mGame.PPlaces[1]->mPlayer + 1);
+			}
+			
 			break;
 		
 		case 2:
 			get_live_players();
+			
+			if(mGame.PPlaces[0]->mPFactor == mGame.PPlaces[1]->mPFactor){
+				calc_players_dfactor();
+				
+				if(mGame.PPlaces[0]->mPFactor > mGame.PPlaces[1]->mPFactor){
+					set_leader(mGame.PPlaces[1]->mPlayer + 1);
+				} else {
+					set_leader(mGame.PPlaces[0]->mPlayer + 1);
+				}
+			
+			} else {
+				if(mGame.PPlaces[0]->mPFactor > mGame.PPlaces[1]->mPFactor){
+					set_leader(mGame.PPlaces[0]->mPlayer + 1);
+				} else {
+					set_leader(mGame.PPlaces[1]->mPlayer + 1);
+				}							
+			}
+						
 			break;	
 		case 1:
 			for(pi = 0; pi < 4; pi++){
-				if(mGame.Players[pi]->bIsAlive){
-					setPlayerPlace(mGame.Players[pi]);
+				if(mGame.Players[pi]->bIsValid){
+					set_leader(mGame.Players[pi]->mPlayer);
 				}
 			}	
 			break;
@@ -1516,26 +1637,24 @@ void process_players(){
 			break;			
 	};
 	
-	*/
 
-	//if(mGame.mPCount == 1){
+	
+	/*
 
-//	} else {
-		//if(mGame.mLeader->mPlayer == cPlayer->mPlayer){
 		if(mGame.mLeader->bIsAlive == 0){
 			for(pi = 0; pi < 4; pi++){
 				if(mGame.Players[pi]->bIsAlive){
-					mGame.mLeader = mGame.Players[pi];
+					set_leader(mGame.Players[pi]->mPlayer);
 				}
 			}
 		}
-	//}
+	*/
 
 }
 
 void calc_viewport(){
 
-	//int vx, vy, cpcount;  
+	int vx, vy;//, cpcount;  
 	
 	/*
 	
@@ -1563,10 +1682,39 @@ void calc_viewport(){
 	mGame.mViewport.y = vy / cpcount;
 	
 	*/
+
 	
-	mGame.mViewport.x = mGame.mLeader->mPos.x;
-	mGame.mViewport.y = mGame.mLeader->mPos.y;	
-	
+	if(mGame.bMoveToLead){
+		vx = (mGame.mOldView.x - mGame.mLeader->mPos.x);
+		vy = (mGame.mOldView.y - mGame.mLeader->mPos.y);
+		
+		if(vx < 0) {vx = -vx;}
+		if(vy < 0) {vy = -vy;}
+		
+		if((vx < 16) && (vy < 16)){
+			mGame.mViewport.x = mGame.mLeader->mPos.x;
+			mGame.mViewport.y = mGame.mLeader->mPos.y;	
+			mGame.bMoveToLead = 0;		
+		} else {
+			if(mGame.mViewport.x < mGame.mLeader->mPos.x){
+				mGame.mViewport.x += (vx >> 4);
+			} else {
+				mGame.mViewport.x -= (vx >> 4);
+			}
+
+			if(mGame.mViewport.y < mGame.mLeader->mPos.y){
+				mGame.mViewport.y += (vy >> 4);
+			} else {
+				mGame.mViewport.y -= (vy >> 4);
+			}
+			
+			mGame.bMoveToLead--;
+		}
+	} else {		
+		mGame.mViewport.x = mGame.mLeader->mPos.x;
+		mGame.mViewport.y = mGame.mLeader->mPos.y;	
+	}
+		
 	mGScroolX = mGame.mViewport.x - (320);
 	mGScroolY = mGame.mViewport.y - (240);
 }
@@ -2060,6 +2208,8 @@ void msline(void){}
 
 void maflow(void){
 	
+   RAM_BANK = 1;
+	
    while(!(PCMCTRL & 0x80)){
 
 	PCMDATA = *sample_index;
@@ -2313,6 +2463,7 @@ void init_audio(){
 }
 
 void start_audio(){
+	RAM_BANK = 1;
 	PCMRATE = 32;			
 }
 
@@ -2391,6 +2542,9 @@ void load_audio(char cstream){
         	__asm__("sta $9f3d");
 	}
 	
+	RAM_BANK = 1;
+	sample_point = BANK_RAM;
+	
 	aload = sample_point;
 
 	for(bi = 0; bi < 16; bi++){		
@@ -2427,6 +2581,8 @@ void load_audio(char cstream){
 void update_audio(){
 
 	if(mPCM.bLoadSound){ //bLoadSound is set to 12 after AFLOW interrupt
+	
+		RAM_BANK = 1;
 	
 		if(load_index <= (sample_max - 255)){
 	
@@ -2883,8 +3039,8 @@ void setup_race(){
    mGame.mFinCount = 0;
    mGame.mWinner = 0;
    
-
-
+   mGame.bMoveToLead = 0;
+   
    calc_way();
     
    mGame.StartPos.x = mGame.mWaypoints[0].x;// - (320-16);
