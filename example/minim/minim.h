@@ -258,6 +258,10 @@ extern void rm_keyboard_irq();
 #define MTRACKONEDGE 0x2F
 #define MTRACKOUTSIDE 0x0
 
+#define MSPEEDMAX 80
+#define MSPEEDMAXONEDGE 65
+#define MSPEEDMAXOUTSIDE 50
+
 int mGScroolX, mGScroolY;
 
 unsigned char joyl,joyh,joyok,joynum;
@@ -332,7 +336,7 @@ typedef struct SThrottle{
 	char mVol;
 	char mOn;
 	char mRev;
-	signed char mRevTime;	
+	char mRevTime;	
 	int mLength;
 	int mLastCount;
 };

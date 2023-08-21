@@ -9,10 +9,10 @@ int main(){
 	
 	srand(0);
 
-	std::cout << "signed char randtab[100] = {";
+	std::cout << "unsigned char randtab[100] = {";
 	
 	for(int ri = 0; ri < 100; ri++){
-		std::cout << (int)(rand() % 255) - 128;
+		std::cout << (int)(rand() % 255);
 		if(ri != 99){
 			std::cout << ",";
 		}
