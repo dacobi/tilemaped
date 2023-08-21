@@ -1412,6 +1412,8 @@ void process_player(struct Player *cPlayer){
 				cPlayer->bIsOutside = 1;
 				cPlayer->mOutCount = MOUTKILL;
 				cPlayer->mMaxX = MSPEEDMAXOUTSIDE;
+				cPlayer->mEngine.mRev = 0;				
+				cPlayer->mEngine.mRevTime = 0;				
 				//mGame.PSprites[cPlayer->mPlayer - 1]->palette_offset = 10;
 			}			
 		} else {			
@@ -1424,6 +1426,8 @@ void process_player(struct Player *cPlayer){
 			
 			if(cval == MTRACKONEDGE){
 				cPlayer->mMaxX = MSPEEDMAXONEDGE;
+				cPlayer->mEngine.mRev = 0;				
+				cPlayer->mEngine.mRevTime = 0;
 			} else {
 				cPlayer->mMaxX = MSPEEDMAX;
 			}
@@ -2018,44 +2022,24 @@ void process_engine(struct SThrottle* cEngine, int mvel){
 	int mfreq;
 	char fhi, flo;
 
-
 	if(cEngine->mRevTime == 0){
 		mrand = RANDNEXT();
 		mrand = mrand >> 3;
+		
+		if(mvel == 0){
+			mrand = mrand >> 1;
+		}
+		
 		cEngine->mRevTime = mrand;
 		cEngine->mRev = 0;
 	}
 
 	cEngine->mRev++;
 	cEngine->mRevTime--;
-
 		
-	if(mvel == 0){	
-		
-				
+	if(mvel == 0){							
 		mfreq = cEngine->mFreq + cEngine->mRev;
-
-/*		fhi = (mfreq & 0xff00) >> 8;
-		flo = mfreq & 0x00ff;	
-		
-		mGame.mChannels[cEngine->mChan].mFreqHi = fhi;
-		mGame.mChannels[cEngine->mChan].mFreqLo = flo; 
-
-		mGame.mChannels[cEngine->mChan + 1].mFreqHi = fhi;
-		mGame.mChannels[cEngine->mChan + 1].mFreqLo = flo;
-		*/ 
 	} else {
-	/*
-		if(cEngine->mRevTime == 0){
-			mrand = RANDNEXT();
-			mrand = mrand >> 3;
-			cEngine->mRevTime = mrand;
-			cEngine->mRev = 0;
-		}
-		
-		cEngine->mRev++;
-		cEngine->mRevTime--;
-	*/	
 		mfreq = (cEngine->mFreq + cEngine->mRev) + (mvel << 1);
 	}
 
@@ -2067,9 +2051,6 @@ void process_engine(struct SThrottle* cEngine, int mvel){
 
 	mGame.mChannels[cEngine->mChan + 1].mFreqHi = fhi;
 	mGame.mChannels[cEngine->mChan + 1].mFreqLo = flo; 
-	//}
-	
-
 }
 
 void start_engine(struct SThrottle* cEngine, char cchan){
