@@ -12,7 +12,7 @@ int main(){
 	std::cout << "signed char randtab[100] = {";
 	
 	for(int ri = 0; ri < 100; ri++){
-		std::cout << (int)(rand() % 255) - 127;
+		std::cout << (int)(rand() % 255) - 128;
 		if(ri != 99){
 			std::cout << ",";
 		}

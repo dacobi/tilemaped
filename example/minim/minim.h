@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
 #include <conio.h>
@@ -292,8 +293,7 @@ typedef struct PCMAUDIO{
 	
 	char mFile;
 
-	char sound_buf[16];
-
+	char sound_buf[16];	
 };
 
 

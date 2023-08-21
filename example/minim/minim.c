@@ -970,6 +970,8 @@ void calc_sprite_pos(struct PSprite *cSprite, struct Player *cPlayer){
 	
 	int blockoff;
 	
+	blockoff = 0;
+	
 	
 	
  	if((cPlayer->pl_cur_dir == DIR_45) || ( cPlayer->pl_cur_dir == DIR_135) || ( cPlayer->pl_cur_dir == DIR_225) || ( cPlayer->pl_cur_dir == DIR_315)){
@@ -1033,7 +1035,7 @@ void calc_sprite_pos(struct PSprite *cSprite, struct Player *cPlayer){
     cSprite->mPos.y = (240-16) + ( cPlayer->mPos.y - mGame.mViewport.y);
     
     if(cPlayer->mPlayer != mGame.mLeader->mPlayer){
-    	if( (cSprite->mPos.x < 1) || (cSprite->mPos.x > 608) || (cSprite->mPos.y < 1) || (cSprite->mPos.y > 448)){
+    	if( (cSprite->mPos.x < 0) || (cSprite->mPos.x > 608) || (cSprite->mPos.y < 0) || (cSprite->mPos.y > 448)){
     		killPlayer(cPlayer);
     	}    
     }         	
@@ -1734,8 +1736,9 @@ void calc_viewport(){
 		mGame.mViewport.y = mGame.mLeader->mPos.y;	
 	}
 		
-	mGScroolX = mGame.mViewport.x - (320);
-	mGScroolY = mGame.mViewport.y - (240);
+
+//	mGScroolX = mGame.mViewport.x - (320);
+//	mGScroolY = mGame.mViewport.y - (240);
 }
 
 void clear_sprite(int cs){
@@ -1764,13 +1767,19 @@ void load_sprite(struct PSprite *cSprite, int sNum){
 
 	char mcol;
 
-	if(sNum == 1){
-		mcol = 0;		
-	} else {
-		mcol = (1 << (sNum-2)) << 4;
-	}
+	if( (sNum >= 1) &&  (sNum <= 4) ){
+
+		if(sNum == 1){
+			mcol = 0;		
+		} else {
+			mcol = (1 << (sNum-2)) << 4;
+		}
 	
-	mcol += 0x80;
+		mcol += 0x80;
+	
+	} else {
+		mcol = 0;
+	}
 	
 
         VERA.address = SPRITE_REGISTERS(sNum);
@@ -2011,7 +2020,7 @@ void process_engine(struct SThrottle* cEngine, int mvel){
 
 		
 	if(mvel == 0){	
-		mrand = mrand >> 2;
+		mrand = mrand / 4;
 		fhi = ((cEngine->mFreq + mrand) & 0xff00) >> 8;
 		flo = (cEngine->mFreq  + mrand) & 0x00ff;	
 		mGame.mChannels[cEngine->mChan].mFreqHi = fhi;
@@ -2020,7 +2029,7 @@ void process_engine(struct SThrottle* cEngine, int mvel){
 		mGame.mChannels[cEngine->mChan + 1].mFreqHi = fhi;
 		mGame.mChannels[cEngine->mChan + 1].mFreqLo = flo; 
 	} else {
-		mrand = mrand >> 3;
+		mrand = mrand / 4;
 		fhi = (((cEngine->mFreq + mrand) + mvel << 1) & 0xff00) >> 8;
 		flo = ((cEngine->mFreq  + mrand) + mvel << 1) & 0x00ff;	
 		
@@ -2446,7 +2455,10 @@ void mblank(void){
 		}
 		update_sound();
 		
-		calc_viewport();    
+		//calc_viewport();    
+		
+		mGScroolX = mGame.mViewport.x - (320);
+		mGScroolY = mGame.mViewport.y - (240);
                        
 	        VERA.layer0.hscroll = mGScroolX;
         	VERA.layer0.vscroll = mGScroolY;
@@ -2734,6 +2746,7 @@ void load_audio(char cstream){
        	__asm__("ldx _mLo");
 	__asm__("ldy _mHi");
 	__asm__("jsr $ff44");
+	
 	       	
 	mPCM.bLoadSound = 0;	
 		
@@ -3267,12 +3280,11 @@ void setup_race(){
 }
 
 void main(void) {
-   
+
    init_menu(); 
    init_game();  
 
    mauien = 0;
-  // maudio = 0;
    PCMRATE = 0;
 	
    install_irq();      
@@ -3285,11 +3297,12 @@ void main(void) {
 	load_menu();
 		
 	init_audio();
-	start_audio();        
+
+//	start_audio();        
 	
         VERA.irq_enable = 0x1 | 0x8;        
 	
-//	start_audio();        
+	start_audio();        
 
    	render_menu();
    	
@@ -3314,16 +3327,18 @@ void main(void) {
 				
 		mGame.bIRQ = 1;
 		
-	    	calc_viewport();    
+	    	calc_viewport(); 
+	    	
+		process_sprites();
+	    	
+	    	mGScroolX = mGame.mViewport.x - (320);
+		mGScroolY = mGame.mViewport.y - (240);
 	    	
 	    	VERA.layer0.hscroll = mGScroolX;
         	VERA.layer0.vscroll = mGScroolY;
 
 	        VERA.layer1.hscroll = mGScroolX;
-        	VERA.layer1.vscroll = mGScroolY;
-        	
-		process_sprites();
-
+        	VERA.layer1.vscroll = mGScroolY;        	
 
 		render_cdmenu();
   	  }
@@ -3354,6 +3369,8 @@ void main(void) {
 		process_sound();
 
 		process_collision();
+		
+	    	calc_viewport();    
 		
 		process_sprites();
 		
@@ -3395,11 +3412,11 @@ void main(void) {
 	        	load_wmenu();
 	        	
         		init_audio();
-        		start_audio();	
+        		//start_audio();	
 	        	       		        
        		        VERA.irq_enable = 0x1 | 0x8;        
         		
-        		//start_audio();	
+        		start_audio();	
        		        
        		        render_wmenu();
        		        

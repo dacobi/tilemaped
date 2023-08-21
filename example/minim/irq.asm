@@ -120,6 +120,10 @@ ldx old_keyboard + 1
 sta $032e
 stx $032f
 cli
+EmptyBuffer:
+jsr $FFE4   ; Kernal GETIN
+cmp #0
+bne EmptyBuffer
 rts
 .endproc
 
