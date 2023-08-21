@@ -1399,21 +1399,21 @@ void process_player(struct Player *cPlayer){
 
 				if(cPlayer->mOutCount < 1){						
 					killPlayer(cPlayer);								
-				}
-				
-				if(cPlayer->mOutCount < MOUTLOOSE){				
+				} else if(cPlayer->mOutCount < MOUTLOOSE){				
 					cPlayer->bIsValid = 0;					
 				}
 								
 			} else {
 				cPlayer->bIsOutside = 1;
 				cPlayer->mOutCount = MOUTKILL;
+				//mGame.PSprites[cPlayer->mPlayer - 1]->palette_offset = 10;
 			}			
 		} else {			
 			if(cPlayer->bIsOutside > 0){
 				cPlayer->bIsOutside = 0;	
 				cPlayer->bIsValid = 1;	
-				cPlayer->mOutCount = MOUTKILL;				
+				cPlayer->mOutCount = MOUTKILL;
+				//mGame.PSprites[cPlayer->mPlayer - 1]->palette_offset = 10 + cPlayer->mPlayer;				
 			}
 		}
 		
@@ -1765,21 +1765,42 @@ void clear_sprites(int cS, int cR){
 
 void load_sprite(struct PSprite *cSprite, int sNum){
 
+/*
 	char mcol;
 
 	if( (sNum >= 1) &&  (sNum <= 4) ){
 
+		
 		if(sNum == 1){
 			mcol = 0;		
 		} else {
 			mcol = (1 << (sNum-2)) << 4;
 		}
+		
+		
+		switch (sNum){
+			case 1:
+				mcol = 0x80;
+				break;
+			case 2:
+				mcol = 0x90;
+				break;
+			case 3:
+				mcol = 0xA0;
+				break;
+			case 4:
+				mcol = 0xC0;
+				break;
+		};
 	
 		mcol += 0x80;
+		
+		mcol = mcol & 0xf0;
 	
 	} else {
 		mcol = 0;
 	}
+	*/
 	
 
         VERA.address = SPRITE_REGISTERS(sNum);
@@ -1791,7 +1812,7 @@ void load_sprite(struct PSprite *cSprite, int sNum){
         VERA.data0 = cSprite->mPos.x >> 8;
         VERA.data0 = cSprite->mPos.y & 0xff;
         VERA.data0 = cSprite->mPos.y >> 8;
-        VERA.data0 = mcol | cSprite->z | cSprite->flipx | cSprite->flipy;                 // leave collision mask and flips alone for now.
+        VERA.data0 = cSprite->colmask | cSprite->z | cSprite->flipx | cSprite->flipy;                 // leave collision mask and flips alone for now.
         VERA.data0 = cSprite->dimensions | cSprite->palette_offset;
 
 }
@@ -2259,6 +2280,7 @@ void setCDSprite(struct PSprite* cMenu, int cChar, int mx, int my){
    cMenu->mPos.x = mx;
    cMenu->mPos.y = my;
    cMenu->z = SPRITE_LAYER_1;
+   cMenu->colmask = 0;
    cMenu->dimensions = SPRITE_64_BY_64;
    cMenu->palette_offset = 0;
 
@@ -3023,7 +3045,7 @@ void load_menu(){
    
    VERA.layer1.tilebase = (VRAM_intro >> 9);// +3;
    
-   load_audio(1);
+   //load_audio(1);
        
    VERA.display.video = 0x61;
 
@@ -3160,7 +3182,7 @@ void load_wmenu(){
    
    VERA.layer1.tilebase = (VRAM_intro >> 9);// +3;
    
-   load_audio(2);
+   //load_audio(2);
        
    VERA.display.video = 0x61;
 	
@@ -3178,6 +3200,7 @@ void setup_race(){
    mGame.PSprite1.mPos.x = 320 - 16 - 16;//playerX - 16;//* (playerX);
    mGame.PSprite1.mPos.y = 240 - 16;//playerY - 16; // * (playerY);
    mGame.PSprite1.z = SPRITE_LAYER_1;
+   mGame.PSprite1.colmask = 0x80;
    mGame.PSprite1.dimensions = SPRITE_32_BY_32;
    mGame.PSprite1.palette_offset = 12;
    mGame.PSprite1.flipx = 0;
@@ -3188,6 +3211,7 @@ void setup_race(){
    mGame.PSprite2.mPos.x = 320 - 16 + 16;//playerX - 16;//* (playerX);
    mGame.PSprite2.mPos.y = 240 - 16;//playerY - 16; // * (playerY);
    mGame.PSprite2.z = SPRITE_LAYER_1;
+   mGame.PSprite2.colmask = 0x90;
    mGame.PSprite2.dimensions = SPRITE_32_BY_32;
    mGame.PSprite2.palette_offset = 13;
    mGame.PSprite2.flipx = 0;
@@ -3199,6 +3223,7 @@ void setup_race(){
    mGame.PSprite3.mPos.x = 320 - 16 + 16 + 32;//playerX - 16;//* (playerX);
    mGame.PSprite3.mPos.y = 240 - 16;//playerY - 16; // * (playerY);
    mGame.PSprite3.z = SPRITE_LAYER_1;
+   mGame.PSprite3.colmask = 0xA0;
    mGame.PSprite3.dimensions = SPRITE_32_BY_32;
    mGame.PSprite3.palette_offset = 14;
    mGame.PSprite3.flipx = 0;
@@ -3209,6 +3234,7 @@ void setup_race(){
    mGame.PSprite4.mPos.x = 320 - 16 - 16 - 32;//playerX - 16;//* (playerX);
    mGame.PSprite4.mPos.y = 240 - 16;//playerY - 16; // * (playerY);
    mGame.PSprite4.z = SPRITE_LAYER_1;
+   mGame.PSprite4.colmask = 0xC0;
    mGame.PSprite4.dimensions = SPRITE_32_BY_32;
    mGame.PSprite4.palette_offset = 15;
    mGame.PSprite4.flipx = 0;
@@ -3296,13 +3322,13 @@ void main(void) {
 
 	load_menu();
 		
-	init_audio();
+	//init_audio();
 
 //	start_audio();        
 	
-        VERA.irq_enable = 0x1 | 0x8;        
+        VERA.irq_enable = 0x1; // | 0x8;        
 	
-	start_audio();        
+	//start_audio();        
 
    	render_menu();
    	
@@ -3312,8 +3338,8 @@ void main(void) {
    
 		clear_sprites(1,70);
 		
-	   	stop_audio();   
-	   	close_audio();     
+	   	//stop_audio();   
+	   	//close_audio();     
 	   	
 	        VERA.irq_enable = 0;
 	        		     	        
@@ -3411,17 +3437,17 @@ void main(void) {
 	        		
 	        	load_wmenu();
 	        	
-        		init_audio();
+        		//init_audio();
         		//start_audio();	
 	        	       		        
-       		        VERA.irq_enable = 0x1 | 0x8;        
+       		        VERA.irq_enable = 0x1; // | 0x8;        
         		
-        		start_audio();	
+        		//start_audio();	
        		        
        		        render_wmenu();
        		        
-        	   	stop_audio();   
-        	   	close_audio();  
+        	   	//stop_audio();   
+        	   	//close_audio();  
         	   	   
 		        VERA.irq_enable = 0;       		       	       
 	        }

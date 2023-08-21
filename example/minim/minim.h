@@ -33,9 +33,9 @@ char randidx;
 #define     SPRITE_SIZE				512
 
 #define	    SPRITE_DISABLED		        0
-#define	    SPRITE_LAYER_BACKGROUND		(1 << 2)
-#define	    SPRITE_LAYER_0		        (2 << 2)
-#define	    SPRITE_LAYER_1		        (3 << 2)
+#define	    SPRITE_LAYER_BACKGROUND		0x4
+#define	    SPRITE_LAYER_0		        0x8
+#define	    SPRITE_LAYER_1		        0xC
 
 
 #define VRAM_bitmap 0x04000
@@ -389,6 +389,7 @@ typedef struct PSprite {
 	char z; 
 	char flipx;
 	char flipy;
+	char colmask;
 	int block;
 	char mode;
 	char dimensions;
