@@ -22,8 +22,9 @@ char randidx;
 #define RANDINIT() if(randidx > 99) randidx = 0
 #define RANDNEXT() randtab[randidx]; randidx++; if(randidx > 99) randidx = 0
 
-#define	    SPRITE_BLOCK(addr)			(addr >> 5)
-#define     SPRITE_MODE_8BPP     		128
+#define	    SPRITE_BLOCKLO(addr)			(addr >> 5)
+#define	    SPRITE_BLOCKHI(addr)			(addr >> 13)
+#define     SPRITE_MODE_8BPP     		0x80
 #define     SPRITE_MODE_4BPP     		0
 //#define	    SPRITE_32_BY_32		        (128 + 32)
 #define	    SPRITE_32_BY_32		        0xA0
@@ -235,7 +236,7 @@ char randidx;
 
 #define CARSIZE 32
 #define CARSIZESQR 1024
-#define MAXCOL 6
+#define MAXCOL 4
 #define GAME_LEVELS 2
 //#define MENUDEL 500
 #define MENUDEL 4
@@ -330,6 +331,8 @@ typedef struct SThrottle{
 	unsigned int mFreq;
 	char mVol;
 	char mOn;
+	char mRev;
+	signed char mRevTime;	
 	int mLength;
 	int mLastCount;
 };
@@ -390,7 +393,8 @@ typedef struct PSprite {
 	char flipx;
 	char flipy;
 	char colmask;
-	int block;
+	char blocklo;
+	char blockhi;	
 	char mode;
 	char dimensions;
 	char palette_offset;

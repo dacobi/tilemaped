@@ -2,11 +2,13 @@
 
 void setTextSprite(struct PSprite* cMenu, int cChar, int mx, int my){
 
-   cMenu->block = SPRITE_BLOCK(VRAM_texti + cChar);
+   cMenu->blocklo = SPRITE_BLOCKLO(VRAM_texti + cChar);
+   cMenu->blockhi = SPRITE_BLOCKHI(VRAM_texti + cChar);   
    cMenu->mode = SPRITE_MODE_4BPP;
    cMenu->mPos.x = mx;
    cMenu->mPos.y = my;
    cMenu->z = SPRITE_LAYER_1;
+   cMenu->colmask = 0;
    cMenu->dimensions = SPRITE_8_BY_8;
    cMenu->palette_offset = 15;
 
@@ -957,7 +959,8 @@ void set_boom_sprite(struct PSprite *cSprite, struct Player *cPlayer){
  	
  	cPlayer->mBoomDelay--;
     	
-    	cSprite->block = SPRITE_BLOCK(VRAM_boom + (cPlayer->mBoomCount * SPRITE_SIZE));
+    	cSprite->blocklo = SPRITE_BLOCKLO(VRAM_boom + (cPlayer->mBoomCount * SPRITE_SIZE));
+    	cSprite->blockhi = SPRITE_BLOCKHI(VRAM_boom + (cPlayer->mBoomCount * SPRITE_SIZE));    	
     	cSprite->palette_offset = 10;
     	
     	cSprite->mPos.x = (320-16) + ( cPlayer->mPos.x - mGame.mViewport.x);
@@ -1029,7 +1032,8 @@ void calc_sprite_pos(struct PSprite *cSprite, struct Player *cPlayer){
         }
 	
 
-    cSprite->block = SPRITE_BLOCK(VRAM_sprites+blockoff);
+    cSprite->blocklo = SPRITE_BLOCKLO(VRAM_sprites+blockoff);
+    cSprite->blockhi = SPRITE_BLOCKHI(VRAM_sprites+blockoff);    
     
     cSprite->mPos.x = (320-16) + ( cPlayer->mPos.x - mGame.mViewport.x);
     cSprite->mPos.y = (240-16) + ( cPlayer->mPos.y - mGame.mViewport.y);
@@ -1765,54 +1769,16 @@ void clear_sprites(int cS, int cR){
 
 void load_sprite(struct PSprite *cSprite, int sNum){
 
-/*
-	char mcol;
-
-	if( (sNum >= 1) &&  (sNum <= 4) ){
-
-		
-		if(sNum == 1){
-			mcol = 0;		
-		} else {
-			mcol = (1 << (sNum-2)) << 4;
-		}
-		
-		
-		switch (sNum){
-			case 1:
-				mcol = 0x80;
-				break;
-			case 2:
-				mcol = 0x90;
-				break;
-			case 3:
-				mcol = 0xA0;
-				break;
-			case 4:
-				mcol = 0xC0;
-				break;
-		};
-	
-		mcol += 0x80;
-		
-		mcol = mcol & 0xf0;
-	
-	} else {
-		mcol = 0;
-	}
-	*/
-	
-
         VERA.address = SPRITE_REGISTERS(sNum);
         VERA.address_hi = VERA_INC_1 + 1; // the "+1" is the VRAM high
 
-        VERA.data0 = cSprite->block & 0xff; // lower VRAM address bits
-        VERA.data0 = cSprite->mode + ((cSprite->block >> 8) & 0x1f);
+        VERA.data0 = cSprite->blocklo;// & 0xff; // lower VRAM address bits
+        VERA.data0 = cSprite->mode | cSprite->blockhi; //((cSprite->block >> 8) & 0x0f);
         VERA.data0 = cSprite->mPos.x & 0xff;
         VERA.data0 = cSprite->mPos.x >> 8;
         VERA.data0 = cSprite->mPos.y & 0xff;
         VERA.data0 = cSprite->mPos.y >> 8;
-        VERA.data0 = cSprite->colmask | cSprite->z | cSprite->flipx | cSprite->flipy;                 // leave collision mask and flips alone for now.
+        VERA.data0 = cSprite->colmask | cSprite->z | cSprite->flipx | cSprite->flipy;        
         VERA.data0 = cSprite->dimensions | cSprite->palette_offset;
 
 }
@@ -1837,11 +1803,13 @@ void load_psprites(){
 
 void setMenuSprite(struct PSprite* cMenu, int mx, int my){
 
-   cMenu->block = SPRITE_BLOCK(VRAM_texti);
+   cMenu->blocklo = SPRITE_BLOCKLO(VRAM_texti);
+   cMenu->blockhi = SPRITE_BLOCKHI(VRAM_texti);
    cMenu->mode = SPRITE_MODE_4BPP;
    cMenu->mPos.x = mx;
    cMenu->mPos.y = my;
    cMenu->z = SPRITE_LAYER_1;
+   cMenu->colmask = 0;
    cMenu->dimensions = SPRITE_8_BY_8;
    cMenu->palette_offset = 15;
 
@@ -1849,8 +1817,11 @@ void setMenuSprite(struct PSprite* cMenu, int mx, int my){
 }
 
 void setMenuPlayer(int cPlayer, int cM1, int cM2){
-	mMenu.PMenu[cPlayer][0]->block = SPRITE_BLOCK(VRAM_texti + cM1);
-	mMenu.PMenu[cPlayer][1]->block = SPRITE_BLOCK(VRAM_texti + cM2);
+	mMenu.PMenu[cPlayer][0]->blocklo = SPRITE_BLOCKLO(VRAM_texti + cM1);
+	mMenu.PMenu[cPlayer][1]->blocklo = SPRITE_BLOCKLO(VRAM_texti + cM2);
+	
+	mMenu.PMenu[cPlayer][0]->blockhi = SPRITE_BLOCKHI(VRAM_texti + cM1);
+	mMenu.PMenu[cPlayer][1]->blockhi = SPRITE_BLOCKHI(VRAM_texti + cM2);
 }
 
 void setPlCtrl(int cPlayer, int cIdx){
@@ -2036,23 +2007,50 @@ void init_menu(){
 
 void process_engine(struct SThrottle* cEngine, int mvel){
 	signed char mrand;
+	unsigned char mrandval;
+	int mfreq;
 	char fhi, flo;
-	mrand = RANDNEXT();
+
 
 		
 	if(mvel == 0){	
-		mrand = mrand / 4;
-		fhi = ((cEngine->mFreq + mrand) & 0xff00) >> 8;
-		flo = (cEngine->mFreq  + mrand) & 0x00ff;	
+		if(cEngine->mRevTime < 1){
+			mrand = RANDNEXT();
+			mrandval = mrand;
+			mrandval = mrandval >> 3;
+			cEngine->mRevTime = mrandval;
+			cEngine->mRev = 0;
+		}
+		
+		cEngine->mRev++;
+		cEngine->mRevTime--;
+				
+		mfreq = cEngine->mFreq + cEngine->mRev;
+
+		fhi = (mfreq & 0xff00) >> 8;
+		flo = mfreq & 0x00ff;	
+		
 		mGame.mChannels[cEngine->mChan].mFreqHi = fhi;
 		mGame.mChannels[cEngine->mChan].mFreqLo = flo; 
 
 		mGame.mChannels[cEngine->mChan + 1].mFreqHi = fhi;
 		mGame.mChannels[cEngine->mChan + 1].mFreqLo = flo; 
 	} else {
-		mrand = mrand / 4;
-		fhi = (((cEngine->mFreq + mrand) + mvel << 1) & 0xff00) >> 8;
-		flo = ((cEngine->mFreq  + mrand) + mvel << 1) & 0x00ff;	
+		if(cEngine->mRevTime < 1){
+			mrand = RANDNEXT();
+			mrandval = mrand;
+			mrandval = mrandval >> 2;
+			cEngine->mRevTime = mrandval;
+			cEngine->mRev = 0;
+		}
+		
+		cEngine->mRev++;
+		cEngine->mRevTime--;
+		
+		mfreq = (cEngine->mFreq + cEngine->mRev) + (mvel << 1);
+
+		fhi = (mfreq & 0xff00) >> 8;
+		flo = mfreq & 0x00ff;	
 		
 		mGame.mChannels[cEngine->mChan].mFreqHi = fhi;
 		mGame.mChannels[cEngine->mChan].mFreqLo = flo; 
@@ -2065,10 +2063,12 @@ void process_engine(struct SThrottle* cEngine, int mvel){
 }
 
 void start_engine(struct SThrottle* cEngine, char cchan){
-	cEngine->mVol = 0xef;
+	cEngine->mVol = 0x6f;
 	cEngine->mOn = 1;
 	cEngine->mFreq = 200;
 	cEngine->mChan = cchan;	
+	cEngine->mRev = 0;
+	cEngine->mRevTime = 0;	
 
 	mGame.mChannels[cEngine->mChan].mVol = cEngine->mVol;
 	mGame.mChannels[cEngine->mChan].mType = 0x2;
@@ -2076,9 +2076,9 @@ void start_engine(struct SThrottle* cEngine, char cchan){
 	mGame.mChannels[cEngine->mChan].mFreqLo = cEngine->mFreq & 0x00ff;	
 	
 	
-	mGame.mChannels[cEngine->mChan + 1].mVol = cEngine->mVol >> 3;
+	mGame.mChannels[cEngine->mChan + 1].mVol = cEngine->mVol;// >> 3;
 	mGame.mChannels[cEngine->mChan + 1].mType = 0x0;
-	mGame.mChannels[cEngine->mChan + 1].mPuls = 0x60;	
+	mGame.mChannels[cEngine->mChan + 1].mPuls = 0x30;	
 	mGame.mChannels[cEngine->mChan + 1].mFreqHi = (cEngine->mFreq & 0xff00) >> 8;
 	mGame.mChannels[cEngine->mChan + 1].mFreqLo = cEngine->mFreq & 0x00ff;			
 }
@@ -2275,7 +2275,8 @@ void process_sound(){
 
 void setCDSprite(struct PSprite* cMenu, int cChar, int mx, int my){
 
-   cMenu->block = SPRITE_BLOCK(VRAM_textcd + cChar);
+   cMenu->blocklo = SPRITE_BLOCKLO(VRAM_textcd + cChar);
+   cMenu->blockhi = SPRITE_BLOCKHI(VRAM_textcd + cChar);   
    cMenu->mode = SPRITE_MODE_4BPP;
    cMenu->mPos.x = mx;
    cMenu->mPos.y = my;
@@ -3195,7 +3196,8 @@ void setup_race(){
    
    RANDINIT();
 
-   mGame.PSprite1.block = SPRITE_BLOCK(VRAM_sprites);
+   mGame.PSprite1.blocklo = SPRITE_BLOCKLO(VRAM_sprites);
+   mGame.PSprite1.blockhi = SPRITE_BLOCKHI(VRAM_sprites);   
    mGame.PSprite1.mode = SPRITE_MODE_4BPP;
    mGame.PSprite1.mPos.x = 320 - 16 - 16;//playerX - 16;//* (playerX);
    mGame.PSprite1.mPos.y = 240 - 16;//playerY - 16; // * (playerY);
@@ -3206,7 +3208,8 @@ void setup_race(){
    mGame.PSprite1.flipx = 0;
    mGame.PSprite1.flipy = 0;
 
-   mGame.PSprite2.block = SPRITE_BLOCK(VRAM_sprites);
+   mGame.PSprite2.blocklo = SPRITE_BLOCKLO(VRAM_sprites);
+   mGame.PSprite2.blockhi = SPRITE_BLOCKHI(VRAM_sprites);   
    mGame.PSprite2.mode = SPRITE_MODE_4BPP;
    mGame.PSprite2.mPos.x = 320 - 16 + 16;//playerX - 16;//* (playerX);
    mGame.PSprite2.mPos.y = 240 - 16;//playerY - 16; // * (playerY);
@@ -3218,7 +3221,8 @@ void setup_race(){
    mGame.PSprite2.flipy = 0;
    
 
-   mGame.PSprite3.block = SPRITE_BLOCK(VRAM_sprites);
+   mGame.PSprite3.blocklo = SPRITE_BLOCKLO(VRAM_sprites);
+   mGame.PSprite3.blockhi = SPRITE_BLOCKHI(VRAM_sprites);   
    mGame.PSprite3.mode = SPRITE_MODE_4BPP;
    mGame.PSprite3.mPos.x = 320 - 16 + 16 + 32;//playerX - 16;//* (playerX);
    mGame.PSprite3.mPos.y = 240 - 16;//playerY - 16; // * (playerY);
@@ -3229,7 +3233,8 @@ void setup_race(){
    mGame.PSprite3.flipx = 0;
    mGame.PSprite3.flipy = 0;
 
-   mGame.PSprite4.block = SPRITE_BLOCK(VRAM_sprites);
+   mGame.PSprite4.blocklo = SPRITE_BLOCKLO(VRAM_sprites);
+   mGame.PSprite4.blockhi = SPRITE_BLOCKHI(VRAM_sprites);   
    mGame.PSprite4.mode = SPRITE_MODE_4BPP;
    mGame.PSprite4.mPos.x = 320 - 16 - 16 - 32;//playerX - 16;//* (playerX);
    mGame.PSprite4.mPos.y = 240 - 16;//playerY - 16; // * (playerY);
