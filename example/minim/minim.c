@@ -8,6 +8,8 @@ void setTextSprite(struct PSprite* cMenu, int cChar, int mx, int my){
    cMenu->mPos.x = mx;
    cMenu->mPos.y = my;
    cMenu->z = SPRITE_LAYER_1;
+   cMenu->flipx = 0;
+   cMenu->flipy = 0;   
    cMenu->colmask = 0;
    cMenu->dimensions = SPRITE_8_BY_8;
    cMenu->palette_offset = 15;
@@ -503,9 +505,7 @@ void set_player(int pi, struct Player *cPlayer, struct Control *cControl, struct
 	cPlayer->PPlace.mPlayer = pi;
 	cPlayer->PPlace.mPFactor = 0;
 	
-	cPlayer->pl_cur_dir = DIR_0;
-	
-	//cPlayer->mLaps = mGame.mLaps;
+	cPlayer->pl_cur_dir = DIR_0;		
 }
 
 int check_collision_cars(struct Player *cCar1, struct Player *cCar2){
@@ -856,8 +856,12 @@ void loadFile(char *fname, unsigned int address){
 }
 
 int rangechk(int dir){
+	int tdir;
 
-	if((dir < 0) || (dir > 359)){return 0;}
+	if((dir < 0) || (dir > 359)){
+  		VERA.control = 0x80;
+		 __asm__("jsr %w",IOINIT);
+   	}
 
 	if((dir < 5) || (dir > 354)){return DIR_0;}
 
@@ -869,14 +873,30 @@ int rangechk(int dir){
 
         if((dir > 312) && (dir < 318)){return DIR_315;}
 
-	return ((dir+5)/ 10)+1;
-
+	tdir = ((dir+5)/ 10)+1;
+	
+	if(tdir > 36){
+		return 36;
+	}
+	
+	return tdir;
 }
 
 int rangechkcar(int dir){
     int tdir = dir;
-    if(tdir < 0)  while(tdir < 0){tdir += 360;}
-    if(tdir > 359) while(tdir > 359){tdir -= 360;}
+    
+    if(tdir < 0){
+      	while(tdir < 0){
+      		tdir += 360;
+      	}
+	return tdir;
+    }
+     
+    if(tdir > 359){
+    	while(tdir > 359){
+    		tdir -= 360;
+    	}
+    }
 
     return tdir;
 }
@@ -976,11 +996,22 @@ void calc_sprite_pos(struct PSprite *cSprite, struct Player *cPlayer){
 	
 	blockoff = 0;
 	
+	if(cPlayer->pl_cur_dir < DIR_0){
+	        mGame.bRacing = 0;   
+               	mGame.mWinner = 1;     	
+	}
+
+	if(cPlayer->pl_cur_dir > DIR_315){
+	        mGame.bRacing = 0;   
+               	mGame.mWinner = 2;     	
+	}
+	
 	
 	
  	if((cPlayer->pl_cur_dir == DIR_45) || ( cPlayer->pl_cur_dir == DIR_135) || ( cPlayer->pl_cur_dir == DIR_225) || ( cPlayer->pl_cur_dir == DIR_315)){
+ 	
                 blockoff=10*SPRITE_SIZE;
-
+                        
 		switch( cPlayer->pl_cur_dir){
 		    case DIR_45:
 			cSprite->flipx = 0x0;
@@ -1004,32 +1035,172 @@ void calc_sprite_pos(struct PSprite *cSprite, struct Player *cPlayer){
 	} else {
 
 
-	if(( cPlayer->pl_cur_dir >= DIR_0) && ( cPlayer->pl_cur_dir <= DIR_90)){
-		cSprite->flipx = 0x0;
-                cSprite->flipy = 0x0;
-	        blockoff=((cPlayer->pl_cur_dir-1)*SPRITE_SIZE);
-	}
+		if(( cPlayer->pl_cur_dir >= DIR_0) && ( cPlayer->pl_cur_dir <= DIR_90)){
+		
+			cSprite->flipx = 0x0;
+        	        cSprite->flipy = 0x0;
+        	        
+		        //blockoff = ( ( cPlayer->pl_cur_dir - 1 ) * SPRITE_SIZE);
+		        
+		        switch(cPlayer->pl_cur_dir){
+		        	case DIR_0:
+		        		blockoff = 0;
+		        		break;
+		        	case DIR_10:
+		        		blockoff = SPRITE_SIZE;
+		        		break;
+		        	case DIR_20:
+		        		blockoff = SPRITE_SIZE * 2;
+		        		break;
+		        	case DIR_30:
+		        		blockoff = SPRITE_SIZE * 3;
+		        		break;
+		        	case DIR_40:
+		        		blockoff = SPRITE_SIZE * 4;
+		        		break;
+		        	case DIR_50:
+		        		blockoff = SPRITE_SIZE * 5;
+		        		break;
+		        	case DIR_60:
+		        		blockoff = SPRITE_SIZE * 6;
+		        		break;
+		        	case DIR_70:
+		        		blockoff = SPRITE_SIZE * 7;
+		        		break;
+		        	case DIR_80:
+		        		blockoff = SPRITE_SIZE * 8;
+		        		break;
+		        	case DIR_90:
+		        		blockoff = SPRITE_SIZE * 9;
+		        		break;		        
+		        };
+		        
+		} else
 
-        if(( cPlayer->pl_cur_dir > DIR_90) && ( cPlayer->pl_cur_dir <= DIR_180)){
-                cSprite->flipx = 0x0;
-                cSprite->flipy = 0x2;
-	        blockoff=((9-(cPlayer->pl_cur_dir-10))*SPRITE_SIZE);
+        	if(( cPlayer->pl_cur_dir > DIR_90) && ( cPlayer->pl_cur_dir <= DIR_180)){
+        	        
+        	        cSprite->flipx = 0x0;
+        	        cSprite->flipy = 0x2;
+        	        
+		        //blockoff = ( ( 9 - ( cPlayer->pl_cur_dir - 10 )) * SPRITE_SIZE);
+		        
+		       switch(cPlayer->pl_cur_dir){
+		        	case DIR_180:
+		        		blockoff = 0;
+		        		break;
+		        	case DIR_170:
+		        		blockoff = SPRITE_SIZE;
+		        		break;
+		        	case DIR_160:
+		        		blockoff = SPRITE_SIZE * 2;
+		        		break;
+		        	case DIR_150:
+		        		blockoff = SPRITE_SIZE * 3;
+		        		break;
+		        	case DIR_140:
+		        		blockoff = SPRITE_SIZE * 4;
+		        		break;
+		        	case DIR_130:
+		        		blockoff = SPRITE_SIZE * 5;
+		        		break;
+		        	case DIR_120:
+		        		blockoff = SPRITE_SIZE * 6;
+		        		break;
+		        	case DIR_110:
+		        		blockoff = SPRITE_SIZE * 7;
+		        		break;
+		        	case DIR_100:
+		        		blockoff = SPRITE_SIZE * 8;
+		        		break;		        
+		        };
 
+	        } else
+
+	        if(( cPlayer->pl_cur_dir > DIR_180) && ( cPlayer->pl_cur_dir <= DIR_270)){
+
+	                cSprite->flipx = 0x1;
+	                cSprite->flipy = 0x2;
+	                
+	                //blockoff = ( (cPlayer->pl_cur_dir-19) * SPRITE_SIZE);
+	                
+		        switch(cPlayer->pl_cur_dir){
+		        	case DIR_190:
+		        		blockoff = SPRITE_SIZE;
+		        		break;
+		        	case DIR_200:
+		        		blockoff = SPRITE_SIZE * 2;
+		        		break;
+		        	case DIR_210:
+		        		blockoff = SPRITE_SIZE * 3;
+		        		break;
+		        	case DIR_220:
+		        		blockoff = SPRITE_SIZE * 4;
+		        		break;
+		        	case DIR_230:
+		        		blockoff = SPRITE_SIZE * 5;
+		        		break;
+		        	case DIR_240:
+		        		blockoff = SPRITE_SIZE * 6;
+		        		break;
+		        	case DIR_250:
+		        		blockoff = SPRITE_SIZE * 7;
+		        		break;
+		        	case DIR_260:
+		        		blockoff = SPRITE_SIZE * 8;
+		        		break;
+		        	case DIR_270:
+		        		blockoff = SPRITE_SIZE * 9;
+		        		break;		        
+		        };
+	                
+
+	        } else
+
+	       	if( ( cPlayer->pl_cur_dir > DIR_270) &&  ( cPlayer->pl_cur_dir <= DIR_350) ){
+	                
+	                cSprite->flipx = 0x1;
+	                cSprite->flipy = 0x0;
+	                
+	                //blockoff = ( (9-( cPlayer->pl_cur_dir-28)) * SPRITE_SIZE);
+	                
+       		       switch(cPlayer->pl_cur_dir){
+		        	case DIR_350:
+		        		blockoff = SPRITE_SIZE;
+		        		break;
+		        	case DIR_340:
+		        		blockoff = SPRITE_SIZE * 2;
+		        		break;
+		        	case DIR_330:
+		        		blockoff = SPRITE_SIZE * 3;
+		        		break;
+		        	case DIR_320:
+		        		blockoff = SPRITE_SIZE * 4;
+		        		break;
+		        	case DIR_310:
+		        		blockoff = SPRITE_SIZE * 5;
+		        		break;
+		        	case DIR_300:
+		        		blockoff = SPRITE_SIZE * 6;
+		        		break;
+		        	case DIR_290:
+		        		blockoff = SPRITE_SIZE * 7;
+		        		break;
+		        	case DIR_280:
+		        		blockoff = SPRITE_SIZE * 8;
+		        		break;		        
+		        };
+
+	        }	        	        	        
         }
-
-        if(( cPlayer->pl_cur_dir > DIR_180) && ( cPlayer->pl_cur_dir <= DIR_270)){
-                cSprite->flipx = 0x1;
-                cSprite->flipy = 0x2;
-                blockoff=((cPlayer->pl_cur_dir-19)*SPRITE_SIZE);
-
+        
+        if(blockoff > (10 * SPRITE_SIZE)){
+        	mGame.bRacing = 0;        	
+        	mGame.mWinner = 3;
         }
-
-       if(( cPlayer->pl_cur_dir > DIR_270)){
-                cSprite->flipx = 0x1;
-                cSprite->flipy = 0x0;
-                blockoff=((9-( cPlayer->pl_cur_dir-28))*SPRITE_SIZE);
-        }
-
+        
+        if(blockoff < 0){
+        	mGame.bRacing = 0;        	
+        	mGame.mWinner = 4;
         }
 	
 
@@ -1412,21 +1583,17 @@ void process_player(struct Player *cPlayer){
 				cPlayer->bIsOutside = 1;
 				cPlayer->mOutCount = MOUTKILL;
 				cPlayer->mMaxX = MSPEEDMAXOUTSIDE;
-				cPlayer->mEngine.mRev = 0;				
-				cPlayer->mEngine.mRevTime = 0;				
-				//mGame.PSprites[cPlayer->mPlayer - 1]->palette_offset = 10;
 			}			
+			cPlayer->mEngine.mRevTime = 0;				
 		} else {			
 			if(cPlayer->bIsOutside > 0){
 				cPlayer->bIsOutside = 0;	
 				cPlayer->bIsValid = 1;	
 				cPlayer->mOutCount = MOUTKILL;								
-				//mGame.PSprites[cPlayer->mPlayer - 1]->palette_offset = 10 + cPlayer->mPlayer;				
 			}
 			
 			if(cval == MTRACKONEDGE){
 				cPlayer->mMaxX = MSPEEDMAXONEDGE;
-				cPlayer->mEngine.mRev = 0;				
 				cPlayer->mEngine.mRevTime = 0;
 			} else {
 				cPlayer->mMaxX = MSPEEDMAX;
@@ -1821,6 +1988,8 @@ void setMenuSprite(struct PSprite* cMenu, int mx, int my){
    cMenu->mPos.x = mx;
    cMenu->mPos.y = my;
    cMenu->z = SPRITE_LAYER_1;
+   cMenu->flipx = 0;
+   cMenu->flipy = 0;   
    cMenu->colmask = 0;
    cMenu->dimensions = SPRITE_8_BY_8;
    cMenu->palette_offset = 15;
@@ -2272,6 +2441,8 @@ void setCDSprite(struct PSprite* cMenu, int cChar, int mx, int my){
    cMenu->mPos.x = mx;
    cMenu->mPos.y = my;
    cMenu->z = SPRITE_LAYER_1;
+   cMenu->flipx = 0;
+   cMenu->flipy = 0;   
    cMenu->colmask = 0;
    cMenu->dimensions = SPRITE_64_BY_64;
    cMenu->palette_offset = 0;
