@@ -873,10 +873,14 @@ int rangechk(int dir){
 
         if((dir > 312) && (dir < 318)){return DIR_315;}
 
-	tdir = ((dir+5)/ 10)+1;
+	tdir = ( (dir+5) / 10) + 1;
 	
-	if(tdir > 36){
-		return 36;
+	if(tdir > DIR_350){
+		return DIR_350;
+	}
+
+	if(tdir < 1){
+		return DIR_0;
 	}
 	
 	return tdir;
@@ -921,7 +925,7 @@ void apply_physics(struct Player *cPlayer){
     }
 
     if((cPlayer->mControl->mLeft == 1)  && (cPlayer->mVel > 10)){
-            cPlayer->mDir = rangechkcar(cPlayer->mDir-5);
+            cPlayer->mDir = rangechkcar(cPlayer->mDir - 5);
             cPlayer->mVelL++;
            if(cPlayer->mVelR > 0)cPlayer->mVelR--;
     } else {
@@ -929,7 +933,7 @@ void apply_physics(struct Player *cPlayer){
     }
 
     if((cPlayer->mControl->mRight == 1) && (cPlayer->mVel > 10)){
-            cPlayer->mDir = rangechkcar(cPlayer->mDir+5);
+            cPlayer->mDir = rangechkcar(cPlayer->mDir + 5);
 	    //mDir++;
             cPlayer->mVelR++;
            if(cPlayer->mVelL > 0) cPlayer->mVelL--;
@@ -960,7 +964,8 @@ void apply_physics(struct Player *cPlayer){
     cPlayer->mVelX = ((tmpdirx * cPlayer->mVel) + (tmplx * cPlayer->mVelL) + (tmprx * cPlayer->mVelR))/2550;
     cPlayer->mVelY = ((tmpdiry * cPlayer->mVel) + (tmply * cPlayer->mVelL) + (tmpry * cPlayer->mVelR))/2550;
 
-    cPlayer->pl_cur_dir = rangechk(rangechkcar(cPlayer->mDir));
+//    cPlayer->pl_cur_dir = rangechk(rangechkcar(cPlayer->mDir));
+    cPlayer->pl_cur_dir = rangechk(cPlayer->mDir);
 
     cPlayer->mPos.x += cPlayer->mVelX;
     cPlayer->mPos.y -= cPlayer->mVelY;

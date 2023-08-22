@@ -234,8 +234,9 @@ char randidx;
 #define JOY_PAD_L 0b00000010
 #define JOY_PAD_R 0b00000001
 
-#define CARSIZE 32
-#define CARSIZESQR 1024
+#define CARSIZE 26
+#define CARSIZESQR 648
+
 #define MAXCOL 4
 #define GAME_LEVELS 2
 //#define MENUDEL 500
