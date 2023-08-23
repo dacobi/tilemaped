@@ -76,8 +76,12 @@ char randidx;
 #define VRAM_tilesbg       0x8800
 #define VRAM_tiles       0xA800
 #define VRAM_sprites         0x10400 //0x12C00
+#define VRAM_sprites_hi 0x8
+#define VRAM_sprites_lo 0x20
 //#define VRAM_textcd          0x12C00
 #define VRAM_boom          0x12C00
+#define VRAM_boom_hi    0x9
+#define VRAM_boom_lo 0x60
 #define VRAM_textcd         0x13C00
 
 #define VRAM_intro    0x00000
@@ -376,7 +380,7 @@ typedef struct Player {
 	char bIsAlive;
 	char bIsValid;
 	char bIsVisible;
-	char mBoomCount;
+	unsigned short mBoomCount;
 	signed char mBoomDelay;
 
 	int pl_cur_dir;
@@ -505,7 +509,7 @@ typedef struct Menu {
 	struct PText mPl1;
 	struct PText mPl2;
 	struct PText mPl3;
-	struct PText mPl4;
+	//struct PText mPl4;
 	
 	struct TText mTText;
 	struct LText mLText;
@@ -524,12 +528,12 @@ typedef struct Menu {
 	struct PSprite mMenuPl3_1;
 	struct PSprite mMenuPl3_2;
 
-	struct PSprite mMenuPl4_1;
-	struct PSprite mMenuPl4_2;
+	//struct PSprite mMenuPl4_1;
+	//struct PSprite mMenuPl4_2;
 
 
-	struct PSprite* PMenu[4][2];
-	struct PText* PLMenu[4];
+	struct PSprite* PMenu[3][2];
+	struct PText* PLMenu[3];
 	
 	struct MLine mMenuLines[8];
 	
@@ -538,7 +542,7 @@ typedef struct Menu {
 	
 	int mNumbers[10];
 	
-	char mPCtrl[4];
+	char mPCtrl[3];
 	char mLevel;
 	char mLaps;
 	
@@ -588,18 +592,18 @@ typedef struct Game {
    struct Player Player1;
    struct Player Player2;
    struct Player Player3;
-   struct Player Player4;
+//   struct Player Player4;
    
-   struct Player* Players[4];
+   struct Player* Players[3];
    
-   struct Placement* PPlaces[4];
+   struct Placement* PPlaces[3];
 
    struct PSprite PSprite1;
    struct PSprite PSprite2;
    struct PSprite PSprite3;
-   struct PSprite PSprite4;
+//   struct PSprite PSprite4;
    
-   struct PSprite* PSprites[4];
+   struct PSprite* PSprites[3];
    
    struct PSprite mCDown1;
    struct PSprite mCDown2;   
@@ -615,13 +619,13 @@ typedef struct Game {
    struct Control Bot1;
    struct Control Bot2;
    struct Control Bot3;
-   struct Control Bot4;
-   struct Control* mBots[4];
+  // struct Control Bot4;
+   struct Control* mBots[3];
    
    struct Control* Joysticks[4];
    
-   struct Control* mControls[10];
-   struct Control* mPControls[4];
+   struct Control* mControls[9];
+   struct Control* mPControls[3];
    
    struct Vec2 mViewport;
    
@@ -630,9 +634,9 @@ typedef struct Game {
    struct Vec2 CarPos1;
    struct Vec2 CarPos2;
    struct Vec2 CarPos3;
-   struct Vec2 CarPos4; 
+//   struct Vec2 CarPos4; 
    
-   struct Vec2* mCarPos[4];
+   struct Vec2* mCarPos[3];
    
    struct SChan mChannels[16];
    
@@ -762,7 +766,7 @@ void swap_placements(char p1, char p2);
 
 void get_live_players();
 
-void sort_players4();
+//void sort_players4();
 
 void sort_players3();
 
