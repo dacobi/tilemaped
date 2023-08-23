@@ -2932,7 +2932,7 @@ void load_audio(char cstream){
 		  	
 	while(!(PCMCTRL & 0x80)){
 		sample_load = cbm_k_acptr();
-        	//__asm__("lda %v",sample_load); // sample_load is already in Reg A
+        	__asm__("lda %v",sample_load); // sample_load is already in Reg A
         	__asm__("sta $9f3d");
 	}
 	
@@ -3248,7 +3248,7 @@ void load_menu(){
    
    VERA.layer1.tilebase = (VRAM_intro >> 9);// +3;
    
-   //load_audio(1);
+   load_audio(1);
        
    VERA.display.video = 0x61;
 
@@ -3385,7 +3385,7 @@ void load_wmenu(){
    
    VERA.layer1.tilebase = (VRAM_intro >> 9);// +3;
    
-   //load_audio(2);
+   load_audio(2);
        
    VERA.display.video = 0x61;
 	
@@ -3531,13 +3531,13 @@ void main(void) {
 
 	load_menu();
 		
-	//init_audio();
+	init_audio();
 
-//	start_audio();        
+	start_audio();        
 	
-        VERA.irq_enable = 0x1; // | 0x8;        
+        VERA.irq_enable = 0x1 | 0x8;        
 	
-	//start_audio();        
+	start_audio();        
 
    	render_menu();
    	
@@ -3547,8 +3547,8 @@ void main(void) {
    
 		clear_sprites(1,70);
 		
-	   	//stop_audio();   
-	   	//close_audio();     
+	   	stop_audio();   
+	   	close_audio();     
 	   	
 	        VERA.irq_enable = 0;
 	        		     	        
@@ -3646,17 +3646,17 @@ void main(void) {
 	        		
 	        	load_wmenu();
 	        	
-        		//init_audio();
-        		//start_audio();	
+        		init_audio();
+        		start_audio();	
 	        	       		        
-       		        VERA.irq_enable = 0x1; // | 0x8;        
+       		        VERA.irq_enable = 0x1 | 0x8;        
         		
-        		//start_audio();	
+        		start_audio();	
        		        
        		        render_wmenu();
        		        
-        	   	//stop_audio();   
-        	   	//close_audio();  
+        	   	stop_audio();   
+        	   	close_audio();  
         	   	   
 		        VERA.irq_enable = 0;       		       	       
 	        }
