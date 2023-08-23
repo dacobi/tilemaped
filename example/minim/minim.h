@@ -433,6 +433,16 @@ typedef struct TText {
 	struct PSprite mL2;
 };
 
+typedef struct AIText {
+	struct PSprite mA;
+	struct PSprite mI;
+	struct PSprite mL1;
+	struct PSprite mE1;	
+	struct PSprite mV;
+	struct PSprite mE2;	
+	struct PSprite mL2;
+};
+
 typedef struct LText {
 	struct PSprite mL;
 	struct PSprite mA;
@@ -511,6 +521,8 @@ typedef struct Menu {
 	struct PText mPl3;
 	//struct PText mPl4;
 	
+	struct AIText mAIText;
+			
 	struct TText mTText;
 	struct LText mLText;
 	struct SText mSText;
@@ -518,6 +530,8 @@ typedef struct Menu {
 	
 	struct PSprite mMenuLVL;
 	struct PSprite mMenuLABS;
+	
+	struct PSprite mMenuAI;
 
 	struct PSprite mMenuPl1_1;
 	struct PSprite mMenuPl1_2;
@@ -545,6 +559,7 @@ typedef struct Menu {
 	char mPCtrl[3];
 	char mLevel;
 	char mLaps;
+	char mAISpeed;	
 	
 	signed char mMenuItem;
 	signed char mMenuItemLast;
@@ -575,6 +590,8 @@ typedef struct Game {
    char mPCount;
    int mFinCount;
    char mWinner;
+   
+   signed char mAISpeed;	
    
    struct Player* mLeader;
    
@@ -675,6 +692,8 @@ void init_wtext(struct WText* wText, int cNR);
 void init_ptext(struct PText* cPText, int cPlayer, int cNR, int mx, int my);
 
 void init_ttext(struct TText* cText, int mx, int my);
+
+void init_aitext(struct AIText* cText, int mx, int my);
 
 void init_ltext(struct LText* cText, int mx, int my);
 

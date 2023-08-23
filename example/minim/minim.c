@@ -104,6 +104,45 @@ void init_ptext(struct PText* cPText, int cPlayer, int cNR, int mx, int my){
 
 }
 
+void init_aitext(struct AIText* cText, int mx, int my){
+
+	int cSpace = 0;
+	int cDelta = 8;
+	
+	mMenu.mMenuLines[3].mCCount = 8;
+
+	mMenu.mMenuLines[3].mChar[0] = &cText->mA;
+	mMenu.mMenuLines[3].mChar[1] = &cText->mI;
+
+	mMenu.mMenuLines[3].mChar[2] = &cText->mL1;
+	mMenu.mMenuLines[3].mChar[3] = &cText->mE1;
+	mMenu.mMenuLines[3].mChar[4] = &cText->mV;
+	mMenu.mMenuLines[3].mChar[5] = &cText->mE2;
+	mMenu.mMenuLines[3].mChar[6] = &cText->mL2;
+	mMenu.mMenuLines[3].mChar[7] = &mMenu.mMenuAI;
+
+	setTextSprite(&cText->mA, TEXTI_A, mx + cSpace, my);
+	cSpace += cDelta;
+
+	setTextSprite(&cText->mI, TEXTI_I, mx + cSpace, my);
+	cSpace += cDelta;
+//	cSpace += 1;	
+
+	setTextSprite(&cText->mL1, TEXTI_L, mx + cSpace, my);
+	cSpace += cDelta;
+
+	setTextSprite(&cText->mE1, TEXTI_E, mx + cSpace, my);
+	cSpace += cDelta;
+
+	setTextSprite(&cText->mV, TEXTI_V, mx + cSpace, my);
+	cSpace += cDelta;
+
+	setTextSprite(&cText->mE2, TEXTI_E, mx + cSpace, my);
+	cSpace += cDelta;
+
+	setTextSprite(&cText->mL2, TEXTI_L, mx + cSpace, my);
+}
+
 void init_ttext(struct TText* cText, int mx, int my){
 	int cSpace = 0;
 	int cDelta = 8;
@@ -482,7 +521,14 @@ void set_player(int pi, struct Player *cPlayer, struct Control *cControl, struct
 	cPlayer->mVelY = 0;
 	cPlayer->mVelL = 0;
 	cPlayer->mVelR = 0;
-	cPlayer->mMaxX = MSPEEDMAX;
+	
+		
+	if(cControl->bIsBot > 0){
+		cPlayer->mMaxX = MSPEEDMAX + mGame.mAISpeed;
+	} else {
+		cPlayer->mMaxX = MSPEEDMAX;
+	}
+	
 	cPlayer->mMaxP = 50;
 	
 	cPlayer->mLevel = mGame.mLevel;
@@ -947,7 +993,7 @@ void apply_physics(struct Player *cPlayer){
     }
 
 //    if(cPlayer->mVel < 0) { cPlayer->mVel = 0;}
-    if(cPlayer->mVel > cPlayer->mMaxX){ cPlayer->mVel-=4;} // = cPlayer->mMaxX;
+    if(cPlayer->mVel > cPlayer->mMaxX){ cPlayer->mVel-=3;} // = cPlayer->mMaxX;
     if(cPlayer->mVel < 0) { cPlayer->mVel = 0;}    
     if(cPlayer->mVel < 15 ) {cPlayer->mVelL = 0; cPlayer->mVelR = 0;}
     
@@ -1616,7 +1662,11 @@ void process_player(struct Player *cPlayer){
 				cPlayer->mMaxX = MSPEEDMAXONEDGE;
 				cPlayer->mEngine.mRevTime = 0;
 			} else {
-				cPlayer->mMaxX = MSPEEDMAX;
+				if(cPlayer->mControl->bIsBot > 0){
+					cPlayer->mMaxX = MSPEEDMAX + mGame.mAISpeed;
+				} else {
+					cPlayer->mMaxX = MSPEEDMAX;
+				}						
 			}
 		}
 		
@@ -2155,7 +2205,10 @@ void init_menu(){
     
     setTextSprite(&mMenu.mMenuLVL, TEXTI_1, 287,67);
     setTextSprite(&mMenu.mMenuLABS, TEXTI_5, 279,77);
+    
+    setTextSprite(&mMenu.mMenuAI, TEXTI_3, 80, 97);
 
+    init_aitext(&mMenu.mAIText, 20, 97);
 
     init_ttext(&mMenu.mTText, 243 , 67);
     init_ltext(&mMenu.mLText, 243 , 77);    
@@ -2205,6 +2258,8 @@ void init_menu(){
     
     mMenu.mLevel = 1;
     mMenu.mLaps = 5;
+    
+    mMenu.mAISpeed = 3;
     
     mMenu.mMClick.mChan = 0;
     mMenu.mMClick.mOn = 0;
@@ -3100,11 +3155,7 @@ void render_menu(){
 	    		mMenu.mMenuItemLast = mMenu.mMenuItem;
 
     			mMenu.mMenuItem--;
-    			
-    			if(mMenu.mMenuItem == 3){
-		    		mMenu.mMenuItem = 2;
-    			}
-    			
+    			    		
     			if(mMenu.mMenuItem < 0){
 		    		mMenu.mMenuItem = 7;
     			}
@@ -3119,11 +3170,7 @@ void render_menu(){
 	    		mMenu.mMenuItemLast = mMenu.mMenuItem;
          		
     			mMenu.mMenuItem++;
-    			
-    			if(mMenu.mMenuItem == 3){
-		    		mMenu.mMenuItem = 4;
-    			}
-    			
+    			    	
     			if(mMenu.mMenuItem > 7){
 		    		mMenu.mMenuItem = 0;
     			}
@@ -3139,6 +3186,18 @@ void render_menu(){
     				setPlCtrl(mMenu.mMenuItem, mMenu.mPCtrl[mMenu.mMenuItem]);
     				mMenu.mMenuItemUpdate |= 1;	
     			}
+
+    			if(mMenu.mMenuItem == 3){
+    				play_click(1500, mMenu.mClickLengthShort, 800);
+    				mMenu.mAISpeed--;
+    				if(mMenu.mAISpeed < 1){
+	    				mMenu.mAISpeed = 5;
+    				}
+    				setTextSprite(&mMenu.mMenuAI, mMenu.mNumbers[mMenu.mAISpeed], 80,97);
+    				mMenu.mMenuItemUpdate |= 1;	
+    			}
+
+
     			if(mMenu.mMenuItem == 4){
     				play_click(1500, mMenu.mClickLengthShort, 800);
     				mMenu.mLevel--;
@@ -3165,6 +3224,18 @@ void render_menu(){
     				setPlCtrl(mMenu.mMenuItem, mMenu.mPCtrl[mMenu.mMenuItem]);
     				mMenu.mMenuItemUpdate |= 1;	
     			}
+    			
+    			if(mMenu.mMenuItem == 3){
+    				play_click(1500, mMenu.mClickLengthShort, 800);
+    				mMenu.mAISpeed++;
+    				if(mMenu.mAISpeed > 5){
+	    				mMenu.mAISpeed = 1;
+    				}
+    				setTextSprite(&mMenu.mMenuAI, mMenu.mNumbers[mMenu.mAISpeed], 80,97);
+    				mMenu.mMenuItemUpdate |= 1;	
+    			}
+
+    			
     			if(mMenu.mMenuItem == 4){
     				play_click(1500, mMenu.mClickLengthShort, 800);
     				mMenu.mLevel++;
@@ -3456,6 +3527,24 @@ void setup_race(){
    mGame.mFinCount = 0;
    mGame.mWinner = 0;
    
+   switch(mMenu.mAISpeed){
+   	case 1:
+   		mGame.mAISpeed = -12;
+   		break;
+   	case 2:
+   		mGame.mAISpeed = -8;
+   		break;
+   	case 3:
+   		mGame.mAISpeed = 0;
+   		break;
+   	case 4:
+   		mGame.mAISpeed = 3;
+   		break;
+   	case 5:
+   		mGame.mAISpeed = 6;
+   		break;   
+   };
+      
    mGame.bMoveToLead = 0;
    
    calc_way();
