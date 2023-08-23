@@ -126,7 +126,7 @@ void init_aitext(struct AIText* cText, int mx, int my){
 
 	setTextSprite(&cText->mI, TEXTI_I, mx + cSpace, my);
 	cSpace += cDelta;
-//	cSpace += 1;	
+	cSpace += 4;	
 
 	setTextSprite(&cText->mL1, TEXTI_L, mx + cSpace, my);
 	cSpace += cDelta;
@@ -2206,7 +2206,7 @@ void init_menu(){
     setTextSprite(&mMenu.mMenuLVL, TEXTI_1, 287,67);
     setTextSprite(&mMenu.mMenuLABS, TEXTI_5, 279,77);
     
-    setTextSprite(&mMenu.mMenuAI, TEXTI_3, 80, 97);
+    setTextSprite(&mMenu.mMenuAI, TEXTI_3, MAILEVELPOS, 97);
 
     init_aitext(&mMenu.mAIText, 20, 97);
 
@@ -3193,7 +3193,7 @@ void render_menu(){
     				if(mMenu.mAISpeed < 1){
 	    				mMenu.mAISpeed = 5;
     				}
-    				setTextSprite(&mMenu.mMenuAI, mMenu.mNumbers[mMenu.mAISpeed], 80,97);
+    				setTextSprite(&mMenu.mMenuAI, mMenu.mNumbers[mMenu.mAISpeed], MAILEVELPOS,97);
     				mMenu.mMenuItemUpdate |= 1;	
     			}
 
@@ -3231,7 +3231,7 @@ void render_menu(){
     				if(mMenu.mAISpeed > 5){
 	    				mMenu.mAISpeed = 1;
     				}
-    				setTextSprite(&mMenu.mMenuAI, mMenu.mNumbers[mMenu.mAISpeed], 80,97);
+    				setTextSprite(&mMenu.mMenuAI, mMenu.mNumbers[mMenu.mAISpeed], MAILEVELPOS,97);
     				mMenu.mMenuItemUpdate |= 1;	
     			}
 
@@ -3529,19 +3529,19 @@ void setup_race(){
    
    switch(mMenu.mAISpeed){
    	case 1:
-   		mGame.mAISpeed = -12;
+   		mGame.mAISpeed = MAILEVEL1; //-12;
    		break;
    	case 2:
-   		mGame.mAISpeed = -8;
+   		mGame.mAISpeed = MAILEVEL2 ;//-8;
    		break;
    	case 3:
-   		mGame.mAISpeed = 0;
+   		mGame.mAISpeed = MAILEVEL3; //0;
    		break;
    	case 4:
-   		mGame.mAISpeed = 3;
+   		mGame.mAISpeed = MAILEVEL4; //3;
    		break;
    	case 5:
-   		mGame.mAISpeed = 6;
+   		mGame.mAISpeed = MAILEVEL5; //6
    		break;   
    };
       

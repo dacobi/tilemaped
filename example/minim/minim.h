@@ -133,6 +133,14 @@ char randidx;
 #define TEXTI_T (TEXTISIZE * 17)
 #define TEXTI_X (TEXTISIZE * 18)
 
+#define MAILEVELPOS 85
+
+#define MAILEVEL1 -10
+#define MAILEVEL2 -8
+#define MAILEVEL3 0
+#define MAILEVEL4 2
+#define MAILEVEL5 5
+
 #define CKEY_ENTER 13
 #define CKEY_UP 145
 #define CKEY_DOWN 17
