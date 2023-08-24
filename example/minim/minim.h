@@ -787,8 +787,6 @@ void load_sprite(struct PSprite *cSprite, int sNum);
 
 void load_psprites();
 
-//void setMenuSprite(struct PSprite* cMenu, int mx, int my);
-
 void setMenuPlayer(int cPlayer, int cM1, int cM2);
 
 void setPlCtrl(int cPlayer, int cIdx);

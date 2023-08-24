@@ -1961,25 +1961,6 @@ void load_psprites(){
 */
 }
 
-/*
-void setMenuSprite(struct PSprite* cMenu, int mx, int my){
-
-   cMenu->blocklo = SPRITE_BLOCKLO(VRAM_texti);
-   cMenu->blockhi = SPRITE_BLOCKHI(VRAM_texti);
-   cMenu->mode = SPRITE_MODE_4BPP;
-   cMenu->mPos.x = mx;
-   cMenu->mPos.y = my;
-   cMenu->z = SPRITE_LAYER_1;
-   cMenu->flipx = 0;
-   cMenu->flipy = 0;   
-   cMenu->colmask = 0;
-   cMenu->dimensions = SPRITE_8_BY_8;
-   cMenu->palette_offset = 15;
-
-
-}
-*/
-
 void setMenuPlayer(int cPlayer, int cM1, int cM2){
 	mMenu.PMenu[cPlayer][0]->blocklo = SPRITE_BLOCKLO(VRAM_texti + cM1);
 	mMenu.PMenu[cPlayer][1]->blocklo = SPRITE_BLOCKLO(VRAM_texti + cM2);
@@ -2086,19 +2067,6 @@ void init_menu(){
     //mMenu.PMenu[3][0] = &mMenu.mMenuPl4_1;
     //mMenu.PMenu[3][1] = &mMenu.mMenuPl4_2;
         
-/*        
-        
-    setMenuSprite(&mMenu.mMenuPl1_1, 80, 67);
-    setMenuSprite(&mMenu.mMenuPl1_2, 86, 67);
-
-    setMenuSprite(&mMenu.mMenuPl2_1, 80, 77);
-    setMenuSprite(&mMenu.mMenuPl2_2, 86, 77);
-
-    setMenuSprite(&mMenu.mMenuPl3_1, 80, 87);
-    setMenuSprite(&mMenu.mMenuPl3_2, 86, 87);
-
-*/
-
     setTextSprite(&mMenu.mMenuPl1_1, 0, 80, 67);
     setTextSprite(&mMenu.mMenuPl1_2, 0, 86, 67);
 
@@ -2108,15 +2076,14 @@ void init_menu(){
     setTextSprite(&mMenu.mMenuPl3_1, 0, 80, 87);
     setTextSprite(&mMenu.mMenuPl3_2, 0, 86, 87);
     
+    //setTextSprite(&mMenu.mMenuPl4_1, 0, 80, 97);
+    //setTextSprite(&mMenu.mMenuPl4_2, 0, 86, 97);
 
     setTextSprite(&mMenu.mMenuLVL, TEXTI_1, 287,67);
+
     setTextSprite(&mMenu.mMenuLABS, TEXTI_5, 279,77);
     
     setTextSprite(&mMenu.mMenuAI, TEXTI_3, MAILEVELPOS, 97);
-
-    //setMenuSprite(&mMenu.mMenuPl4_1, 80, 97);
-    //setMenuSprite(&mMenu.mMenuPl4_2, 86, 97);
- 
  
     setMenuPlayer(0, TEXTI_J, TEXTI_1);
     setMenuPlayer(1, TEXTI_A, TEXTI_I);
