@@ -94,198 +94,6 @@ void init_lmenu(char cline, char ccnum, int cchars[], int mspace, struct PSprite
 	}	
 }
 
-/*  
-void init_ptext(struct PText* cPText, int cPlayer, int cNR, int mx, int my){
-	int cSpace = 0;
-	int cDelta = 8;
-	
-	mMenu.mMenuLines[cPlayer].mCCount = 9;
-	
-	mMenu.mMenuLines[cPlayer].mChar[0] = &cPText->mP;
-	mMenu.mMenuLines[cPlayer].mChar[1] = &cPText->mL;
-	mMenu.mMenuLines[cPlayer].mChar[2] = &cPText->mA;
-	mMenu.mMenuLines[cPlayer].mChar[3] = &cPText->mY;
-	mMenu.mMenuLines[cPlayer].mChar[4] = &cPText->mE;
-	mMenu.mMenuLines[cPlayer].mChar[5] = &cPText->mR;
-	mMenu.mMenuLines[cPlayer].mChar[6] = &cPText->mNR;
-	
-	mMenu.mMenuLines[cPlayer].mChar[7] = mMenu.PMenu[cPlayer][0];
-	mMenu.mMenuLines[cPlayer].mChar[8] = mMenu.PMenu[cPlayer][1];
-
-	
-	setTextSprite(&cPText->mP, TEXTI_P, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cPText->mL, TEXTI_L, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cPText->mA, TEXTI_A, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cPText->mY, TEXTI_Y, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cPText->mE, TEXTI_E, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cPText->mR, TEXTI_R, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cPText->mNR, cNR, mx + cSpace, my);
-	cSpace += cDelta;
-
-}
-*/
-
-
-/*
-void init_aitext(struct AIText* cText, int mx, int my){
-
-	int cSpace = 0;
-	int cDelta = 8;
-	
-	mMenu.mMenuLines[3].mCCount = 8;
-
-	mMenu.mMenuLines[3].mChar[0] = &cText->mA;
-	mMenu.mMenuLines[3].mChar[1] = &cText->mI;
-
-	mMenu.mMenuLines[3].mChar[2] = &cText->mL1;
-	mMenu.mMenuLines[3].mChar[3] = &cText->mE1;
-	mMenu.mMenuLines[3].mChar[4] = &cText->mV;
-	mMenu.mMenuLines[3].mChar[5] = &cText->mE2;
-	mMenu.mMenuLines[3].mChar[6] = &cText->mL2;
-	mMenu.mMenuLines[3].mChar[7] = &mMenu.mMenuAI;
-
-	setTextSprite(&cText->mA, TEXTI_A, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cText->mI, TEXTI_I, mx + cSpace, my);
-	cSpace += cDelta;
-	cSpace += 4;	
-
-	setTextSprite(&cText->mL1, TEXTI_L, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cText->mE1, TEXTI_E, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cText->mV, TEXTI_V, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cText->mE2, TEXTI_E, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cText->mL2, TEXTI_L, mx + cSpace, my);
-}
-*/
-
-/*
-void init_ttext(struct TText* cText, int mx, int my){
-	int cSpace = 0;
-	int cDelta = 8;
-	
-	mMenu.mMenuLines[4].mCCount = 6;
-	mMenu.mMenuLines[4].mChar[0] = &cText->mL1;
-	mMenu.mMenuLines[4].mChar[1] = &cText->mE1;
-	mMenu.mMenuLines[4].mChar[2] = &cText->mV;
-	mMenu.mMenuLines[4].mChar[3] = &cText->mE2;
-	mMenu.mMenuLines[4].mChar[4] = &cText->mL2;
-	mMenu.mMenuLines[4].mChar[5] =	&mMenu.mMenuLVL;
-	
-	setTextSprite(&cText->mL1, TEXTI_L, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cText->mE1, TEXTI_E, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cText->mV, TEXTI_V, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cText->mE2, TEXTI_E, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cText->mL2, TEXTI_L, mx + cSpace, my);
-}
-*/
-
-/*
-void init_ltext(struct LText* cText, int mx, int my){
-	int cSpace = 0;
-	int cDelta = 8;
-	
-	mMenu.mMenuLines[5].mCCount = 5;
-	mMenu.mMenuLines[5].mChar[0] = &cText->mL;
-	mMenu.mMenuLines[5].mChar[1] = &cText->mA;
-	mMenu.mMenuLines[5].mChar[2] = &cText->mP;
-	mMenu.mMenuLines[5].mChar[3] = &cText->mS;
-	mMenu.mMenuLines[5].mChar[4] =	&mMenu.mMenuLABS;
-	
-	setTextSprite(&cText->mL, TEXTI_L, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cText->mA, TEXTI_A, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cText->mP, TEXTI_P, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cText->mS, TEXTI_S, mx + cSpace, my);
-}
-*/
-
-/*
-void init_stext(struct SText* cText, int mx, int my){
-	int cSpace = 0;
-	int cDelta = 8;
-
-	mMenu.mMenuLines[6].mCCount = 5;
-	mMenu.mMenuLines[6].mChar[0] = &cText->mS;
-	mMenu.mMenuLines[6].mChar[1] = &cText->mT1;
-	mMenu.mMenuLines[6].mChar[2] = &cText->mA;
-	mMenu.mMenuLines[6].mChar[3] = &cText->mR;
-	mMenu.mMenuLines[6].mChar[4] = &cText->mT2;	
-
-	
-	setTextSprite(&cText->mS, TEXTI_S, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cText->mT1, TEXTI_T, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cText->mA, TEXTI_A, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cText->mR, TEXTI_R, mx + cSpace, my);
-	
-	cSpace += cDelta;
-	setTextSprite(&cText->mT2, TEXTI_T, mx + cSpace, my);
-}
-
-void init_etext(struct EText* cText, int mx, int my){
-	int cSpace = 0;
-	int cDelta = 8;
-	
-	mMenu.mMenuLines[7].mCCount = 4;
-	mMenu.mMenuLines[7].mChar[0] = &cText->mE;
-	mMenu.mMenuLines[7].mChar[1] = &cText->mX;
-	mMenu.mMenuLines[7].mChar[2] = &cText->mI;
-	mMenu.mMenuLines[7].mChar[3] = &cText->mT;
-
-	
-	setTextSprite(&cText->mE, TEXTI_E, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cText->mX, TEXTI_X, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cText->mI, TEXTI_I, mx + cSpace, my);
-	cSpace += cDelta;
-
-	setTextSprite(&cText->mT, TEXTI_T, mx + cSpace, my);
-}
-
-*/
-
 void reset_vera(){
 	int mVeraRange;
 
@@ -2153,6 +1961,7 @@ void load_psprites(){
 */
 }
 
+/*
 void setMenuSprite(struct PSprite* cMenu, int mx, int my){
 
    cMenu->blocklo = SPRITE_BLOCKLO(VRAM_texti);
@@ -2169,6 +1978,7 @@ void setMenuSprite(struct PSprite* cMenu, int mx, int my){
 
 
 }
+*/
 
 void setMenuPlayer(int cPlayer, int cM1, int cM2){
 	mMenu.PMenu[cPlayer][0]->blocklo = SPRITE_BLOCKLO(VRAM_texti + cM1);
@@ -2206,39 +2016,6 @@ void setPlCtrl(int cPlayer, int cIdx){
 
 }
 
-/*
-void setPlayerOffset(int cPlayer, int cOffset){
-
-	mMenu.PLMenu[cPlayer]->mP.palette_offset = cOffset;
-	mMenu.PLMenu[cPlayer]->mL.palette_offset = cOffset;
-	mMenu.PLMenu[cPlayer]->mA.palette_offset = cOffset;
-	mMenu.PLMenu[cPlayer]->mY.palette_offset = cOffset;
-	mMenu.PLMenu[cPlayer]->mE.palette_offset = cOffset;
-	mMenu.PLMenu[cPlayer]->mR.palette_offset = cOffset;
-	mMenu.PLMenu[cPlayer]->mNR.palette_offset = cOffset;
-
-    	mMenu.PMenu[cPlayer][0]->palette_offset = cOffset;
-	mMenu.PMenu[cPlayer][1]->palette_offset = cOffset; 
-
-
-}
-
-void load_plmenu(int cPlayer, int sOff){
-
-   load_sprite(&mMenu.PLMenu[cPlayer]->mP, sOff);
-   load_sprite(&mMenu.PLMenu[cPlayer]->mL, sOff + 1);
-   load_sprite(&mMenu.PLMenu[cPlayer]->mA, sOff + 2);
-   load_sprite(&mMenu.PLMenu[cPlayer]->mY, sOff + 3);
-   load_sprite(&mMenu.PLMenu[cPlayer]->mE, sOff + 4);
-   load_sprite(&mMenu.PLMenu[cPlayer]->mR, sOff + 5);
-   load_sprite(&mMenu.PLMenu[cPlayer]->mNR, sOff + 6);
-   
-   load_sprite(mMenu.PMenu[cPlayer][0], sOff + 7);
-   load_sprite(mMenu.PMenu[cPlayer][1], sOff + 8);
-}
-*/
-
-
 void load_lmenu(int cLine){
   int li = 0;
   int sOff;
@@ -2273,7 +2050,6 @@ void init_menulines(){
     int mELine[4] = {TEXTI_E, TEXTI_X, TEXTI_I, TEXTI_T};        
     int mAILine[7] = {TEXTI_A, TEXTI_I, TEXTI_L, TEXTI_E, TEXTI_V, TEXTI_E, TEXTI_L};
 
-
     RAM_BANK = 1;
     BINIT();
     
@@ -2281,14 +2057,6 @@ void init_menulines(){
     init_lmenu(1, 7, mPLine2, -1, &mMenu.mMenuPl2_1, &mMenu.mMenuPl2_2, 20, 77);
     init_lmenu(2, 7, mPLine3, -1, &mMenu.mMenuPl3_1, &mMenu.mMenuPl3_2, 20, 87);        
     
-
-/*  
-    setTextSprite(&mMenu.mMenuLVL, TEXTI_1, 287,67);
-    setTextSprite(&mMenu.mMenuLABS, TEXTI_5, 279,77);
-    
-    setTextSprite(&mMenu.mMenuAI, TEXTI_3, MAILEVELPOS, 97);
-    */
-
     init_lmenu(3, 7, mAILine, 2, &mMenu.mMenuAI, 0, 20 , 97);
     
     init_lmenu(4, 5, mTLine, -1, &mMenu.mMenuLVL, 0, 243 , 67);
@@ -2303,17 +2071,6 @@ void init_menulines(){
 
 void init_menu(){
 
-/*
-    int mPLine1[7] = {TEXTI_P, TEXTI_L, TEXTI_A, TEXTI_Y, TEXTI_E, TEXTI_R, TEXTI_1 };
-    int mPLine2[7] = {TEXTI_P, TEXTI_L, TEXTI_A, TEXTI_Y, TEXTI_E, TEXTI_R, TEXTI_2 };
-    int mPLine3[7] = {TEXTI_P, TEXTI_L, TEXTI_A, TEXTI_Y, TEXTI_E, TEXTI_R, TEXTI_3 };        
-    int mTLine[5] = {TEXTI_L, TEXTI_E, TEXTI_V, TEXTI_E, TEXTI_L};
-    int mLLine[4] = {TEXTI_L, TEXTI_A, TEXTI_P, TEXTI_S};    
-    int mSLine[5] = {TEXTI_S, TEXTI_T, TEXTI_A, TEXTI_R, TEXTI_T};    
-    int mELine[4] = {TEXTI_E, TEXTI_X, TEXTI_I, TEXTI_T};        
-    int mAILine[7] = {TEXTI_A, TEXTI_I, TEXTI_L, TEXTI_E, TEXTI_V, TEXTI_E, TEXTI_L};
-    
-*/
     mMenu.bRunning = 0;
     mMenu.bWinnerRunning = 0;
 
@@ -2328,12 +2085,9 @@ void init_menu(){
 
     //mMenu.PMenu[3][0] = &mMenu.mMenuPl4_1;
     //mMenu.PMenu[3][1] = &mMenu.mMenuPl4_2;
-    
-    //mMenu.PLMenu[0] = &mMenu.mPl1;
-    //mMenu.PLMenu[1] = &mMenu.mPl2;
-    //mMenu.PLMenu[2] = &mMenu.mPl3;
-    //mMenu.PLMenu[3] = &mMenu.mPl4;
-    
+        
+/*        
+        
     setMenuSprite(&mMenu.mMenuPl1_1, 80, 67);
     setMenuSprite(&mMenu.mMenuPl1_2, 86, 67);
 
@@ -2342,7 +2096,19 @@ void init_menu(){
 
     setMenuSprite(&mMenu.mMenuPl3_1, 80, 87);
     setMenuSprite(&mMenu.mMenuPl3_2, 86, 87);
+
+*/
+
+    setTextSprite(&mMenu.mMenuPl1_1, 0, 80, 67);
+    setTextSprite(&mMenu.mMenuPl1_2, 0, 86, 67);
+
+    setTextSprite(&mMenu.mMenuPl2_1, 0, 80, 77);
+    setTextSprite(&mMenu.mMenuPl2_2, 0, 86, 77);
+
+    setTextSprite(&mMenu.mMenuPl3_1, 0, 80, 87);
+    setTextSprite(&mMenu.mMenuPl3_2, 0, 86, 87);
     
+
     setTextSprite(&mMenu.mMenuLVL, TEXTI_1, 287,67);
     setTextSprite(&mMenu.mMenuLABS, TEXTI_5, 279,77);
     
@@ -2351,47 +2117,7 @@ void init_menu(){
     //setMenuSprite(&mMenu.mMenuPl4_1, 80, 97);
     //setMenuSprite(&mMenu.mMenuPl4_2, 86, 97);
  
-//    init_ptext(&mMenu.mPl1, 0, TEXTI_1, 20, 67);
-//    init_ptext(&mMenu.mPl2, 1, TEXTI_2, 20, 77);
-//    init_ptext(&mMenu.mPl3, 2, TEXTI_3, 20, 87);
-    //init_ptext(&mMenu.mPl4, 3, TEXTI_4, 20, 97);
  
- 
- /*
-    RAM_BANK = 1;
-    BINIT();
-    
-    init_lmenu(0, 7, mPLine1, -1, &mMenu.mMenuPl1_1, &mMenu.mMenuPl1_2, 20, 67);
-    init_lmenu(1, 7, mPLine2, -1, &mMenu.mMenuPl2_1, &mMenu.mMenuPl2_2, 20, 77);
-    init_lmenu(2, 7, mPLine3, -1, &mMenu.mMenuPl3_1, &mMenu.mMenuPl3_2, 20, 87);        
-    
-    setTextSprite(&mMenu.mMenuLVL, TEXTI_1, 287,67);
-    setTextSprite(&mMenu.mMenuLABS, TEXTI_5, 279,77);
-    
-    setTextSprite(&mMenu.mMenuAI, TEXTI_3, MAILEVELPOS, 97);
-
-    //init_aitext(&mMenu.mAIText, 20, 97);
-     init_lmenu(3, 7, mAILine, 2, &mMenu.mMenuAI, 0, 20 , 97);
-
-//    init_ttext(&mMenu.mTText, 243 , 67);
-    
-    init_lmenu(4, 5, mTLine, -1, &mMenu.mMenuLVL, 0, 243 , 67);
-    
-//    init_ltext(&mMenu.mLText, 243 , 77);    
-    init_lmenu(5, 4, mLLine, -1, &mMenu.mMenuLABS, 0, 243 , 77);
-
-//    init_stext(&mMenu.mSText, 243 , 87);
-
-    init_lmenu(6, 5, mSLine, -1, 0, 0, 243 , 87);
-
-//    init_etext(&mMenu.mEText, 243 , 97);
-
-    init_lmenu(7, 4, mELine, -1, 0, 0, 243 , 97);
-
-*/
-
-//    init_menulines();
-
     setMenuPlayer(0, TEXTI_J, TEXTI_1);
     setMenuPlayer(1, TEXTI_A, TEXTI_I);
     setMenuPlayer(2, TEXTI_A, TEXTI_I);
@@ -2442,8 +2168,7 @@ void init_menu(){
     mMenu.mMClick.mOn = 0;
     mMenu.mClickLength = 5;
     mMenu.mClickLengthShort = 3;
-	
-    
+	    
     mMenu.bShowMenu = 1;
 }
 

@@ -455,66 +455,6 @@ typedef struct WText {
 	char mPIndex;
 };
 
-/*
-typedef struct PText {
-	struct PSprite mP;
-	struct PSprite mL;
-	struct PSprite mA;
-	struct PSprite mY;
-	struct PSprite mE;
-	struct PSprite mR;
-	struct PSprite mNR;
-};
-*/
-
-/*
-typedef struct TText {
-	struct PSprite mL1;
-	struct PSprite mE1;	
-	struct PSprite mV;
-	struct PSprite mE2;	
-	struct PSprite mL2;
-};
-*/
-
-/*
-typedef struct AIText {
-	struct PSprite mA;
-	struct PSprite mI;
-	struct PSprite mL1;
-	struct PSprite mE1;	
-	struct PSprite mV;
-	struct PSprite mE2;	
-	struct PSprite mL2;
-};
-*/
-
-/*
-typedef struct LText {
-	struct PSprite mL;
-	struct PSprite mA;
-	struct PSprite mP;
-	struct PSprite mS;
-};
-*/
-
-/*
-typedef struct SText {
-	struct PSprite mS;
-	struct PSprite mT1;
-	struct PSprite mA;
-	struct PSprite mR;
-	struct PSprite mT2;
-};
-
-typedef struct EText {
-	struct PSprite mE;
-	struct PSprite mX;
-	struct PSprite mI;
-	struct PSprite mT;
-};
-*/
-
 typedef struct MLine {
 	char mCCount;
 	char mSPos;
@@ -562,18 +502,6 @@ typedef struct SCrash{
 };
 
 typedef struct Menu {   
-
-//	struct PText mPl1;
-//	struct PText mPl2;
-//	struct PText mPl3;
-	//struct PText mPl4;
-	
-//	struct AIText mAIText;
-			
-//	struct TText mTText;
-//	struct LText mLText;
-//	struct SText mSText;
-//	struct EText mEText;
 	
 	struct PSprite mMenuLVL;
 	struct PSprite mMenuLABS;
@@ -592,9 +520,7 @@ typedef struct Menu {
 	//struct PSprite mMenuPl4_1;
 	//struct PSprite mMenuPl4_2;
 
-
 	struct PSprite* PMenu[3][2];
-//	struct PText* PLMenu[3];
 	
 	struct MLine mMenuLines[8];
 	
@@ -755,18 +681,6 @@ void init_lmenu(char cline, char ccnum, int cchars[], int mspace, struct PSprite
 
 void init_wtext(struct WText* wText, int cNR);
    
-//void init_ptext(struct PText* cPText, int cPlayer, int cNR, int mx, int my);
-
-//void init_ttext(struct TText* cText, int mx, int my);
-
-//void init_aitext(struct AIText* cText, int mx, int my);
-
-//void init_ltext(struct LText* cText, int mx, int my);
-
-//void init_stext(struct SText* cText, int mx, int my);
-
-//void init_etext(struct EText* cText, int mx, int my);
-
 void reset_vera();
 
 void soundpsg(unsigned char mchan, unsigned char mtype, unsigned char mpuls, unsigned char mvol, unsigned char mHi, unsigned char mLow);
@@ -873,15 +787,11 @@ void load_sprite(struct PSprite *cSprite, int sNum);
 
 void load_psprites();
 
-void setMenuSprite(struct PSprite* cMenu, int mx, int my);
+//void setMenuSprite(struct PSprite* cMenu, int mx, int my);
 
 void setMenuPlayer(int cPlayer, int cM1, int cM2);
 
 void setPlCtrl(int cPlayer, int cIdx);
-
-//void setPlayerOffset(int cPlayer, int cOffset);
-
-//void load_plmenu(int cPlayer, int sOff);
 
 void load_lmenu(int cLine);
 
