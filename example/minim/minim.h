@@ -237,6 +237,11 @@ char randidx;
 #define GAME_LEVELS 2
 #define MMAXWAYPOINTS 12
 
+unsigned short mBankStack;
+
+#define BINIT() mBankStack = BANK_RAM + 4096
+#define BALLOC(BSIZE) mBankStack; mBankStack += BSIZE
+
 char mNumbers[10] = "0123456789";
 
 #define SETPATHNUM(PATH, NUM, INDEX) PATH[INDEX] = mNumbers[NUM]
@@ -450,6 +455,7 @@ typedef struct WText {
 	char mPIndex;
 };
 
+/*
 typedef struct PText {
 	struct PSprite mP;
 	struct PSprite mL;
@@ -459,7 +465,9 @@ typedef struct PText {
 	struct PSprite mR;
 	struct PSprite mNR;
 };
+*/
 
+/*
 typedef struct TText {
 	struct PSprite mL1;
 	struct PSprite mE1;	
@@ -467,7 +475,9 @@ typedef struct TText {
 	struct PSprite mE2;	
 	struct PSprite mL2;
 };
+*/
 
+/*
 typedef struct AIText {
 	struct PSprite mA;
 	struct PSprite mI;
@@ -477,15 +487,18 @@ typedef struct AIText {
 	struct PSprite mE2;	
 	struct PSprite mL2;
 };
+*/
 
+/*
 typedef struct LText {
 	struct PSprite mL;
 	struct PSprite mA;
 	struct PSprite mP;
 	struct PSprite mS;
 };
+*/
 
-
+/*
 typedef struct SText {
 	struct PSprite mS;
 	struct PSprite mT1;
@@ -500,6 +513,7 @@ typedef struct EText {
 	struct PSprite mI;
 	struct PSprite mT;
 };
+*/
 
 typedef struct MLine {
 	char mCCount;
@@ -549,17 +563,17 @@ typedef struct SCrash{
 
 typedef struct Menu {   
 
-	struct PText mPl1;
-	struct PText mPl2;
-	struct PText mPl3;
+//	struct PText mPl1;
+//	struct PText mPl2;
+//	struct PText mPl3;
 	//struct PText mPl4;
 	
-	struct AIText mAIText;
+//	struct AIText mAIText;
 			
-	struct TText mTText;
-	struct LText mLText;
-	struct SText mSText;
-	struct EText mEText;
+//	struct TText mTText;
+//	struct LText mLText;
+//	struct SText mSText;
+//	struct EText mEText;
 	
 	struct PSprite mMenuLVL;
 	struct PSprite mMenuLABS;
@@ -580,7 +594,7 @@ typedef struct Menu {
 
 
 	struct PSprite* PMenu[3][2];
-	struct PText* PLMenu[3];
+//	struct PText* PLMenu[3];
 	
 	struct MLine mMenuLines[8];
 	
@@ -737,19 +751,21 @@ void load_debug();
 
 void setTextSprite(struct PSprite* cMenu, int cChar, int mx, int my);
 
+void init_lmenu(char cline, char ccnum, int cchars[], int mspace, struct PSprite* cH1, struct PSprite* cH2, int mx, int my);
+
 void init_wtext(struct WText* wText, int cNR);
    
-void init_ptext(struct PText* cPText, int cPlayer, int cNR, int mx, int my);
+//void init_ptext(struct PText* cPText, int cPlayer, int cNR, int mx, int my);
 
-void init_ttext(struct TText* cText, int mx, int my);
+//void init_ttext(struct TText* cText, int mx, int my);
 
-void init_aitext(struct AIText* cText, int mx, int my);
+//void init_aitext(struct AIText* cText, int mx, int my);
 
-void init_ltext(struct LText* cText, int mx, int my);
+//void init_ltext(struct LText* cText, int mx, int my);
 
-void init_stext(struct SText* cText, int mx, int my);
+//void init_stext(struct SText* cText, int mx, int my);
 
-void init_etext(struct EText* cText, int mx, int my);
+//void init_etext(struct EText* cText, int mx, int my);
 
 void reset_vera();
 
@@ -863,15 +879,17 @@ void setMenuPlayer(int cPlayer, int cM1, int cM2);
 
 void setPlCtrl(int cPlayer, int cIdx);
 
-void setPlayerOffset(int cPlayer, int cOffset);
+//void setPlayerOffset(int cPlayer, int cOffset);
 
-void load_plmenu(int cPlayer, int sOff);
+//void load_plmenu(int cPlayer, int sOff);
 
 void load_lmenu(int cLine);
 
 void setMenuOffset(int cLine, int cOffset);
 
 void init_menu();
+
+void init_menulines();
 
 void play_beep(int cbasefq, int clength);
 
