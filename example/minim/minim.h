@@ -235,6 +235,7 @@ char randidx;
 #define JOY_PAD_R 0b00000001
 
 #define GAME_LEVELS 2
+#define MMAXWAYPOINTS 12
 
 char mNumbers[10] = "0123456789";
 
@@ -627,7 +628,7 @@ typedef struct Game {
    
 #ifdef MDEBUG   
    char bDebug;   
-   struct PSprite mDebug[12];
+   struct PSprite mDebug[MMAXWAYPOINTS];
 #endif   
    
    signed char mAISpeed;	
@@ -643,7 +644,7 @@ typedef struct Game {
 
    int mFinishLine;
    char mWaypointNum;
-   struct Vec2C mWaypoints[12];
+   struct Vec2C mWaypoints[MMAXWAYPOINTS];
    
    struct Player Player1;
    struct Player Player2;
