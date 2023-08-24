@@ -1,15 +1,15 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdint.h>
-#include <conio.h>
-#include <joystick.h>
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//#include <stdint.h>
+//#include <conio.h>
+//#include <joystick.h>
 
 
 #include <cx16.h>
 #include <cbm.h>
 #include <6502.h>
-#include <mouse.h>
+//#include <mouse.h>
 
 #include "sintable.h"
 #include "waypoints.h"
@@ -246,11 +246,53 @@ char randidx;
 #define JOY_PAD_L 0b00000010
 #define JOY_PAD_R 0b00000001
 
+#define GAME_LEVELS 2
+
+char mNumbers[10] = "0123456789";
+
+#define SETPATHNUM(PATH, NUM, INDEX) PATH[INDEX] = mNumbers[NUM]
+
+char mtxintpath[10] = "dat/txint";
+char mintropath[10] = "dat/intro";
+char mpalipath[9] = "dat/pali";
+
+char mcarspath[9] = "dat/cars";
+char mboompath[9] = "dat/boom";
+char mtxcdpath[9] = "dat/txcd";
+
+char mtxwnpath[9] = "dat/txwn";
+char mwinpath[8] = "dat/win";
+
+char msndpath[9] = "dat/snd1";
+#define MSNDPOS 7
+
+char mclmpath[9] = "dat/clm1";
+#define MCLMPOS 7
+
+char mmbgpath[9] = "dat/mbg1";
+#define MMBGPOS 7
+
+char mtrkpath[9] = "dat/trk1";
+#define MTRKPOS 7
+
+char mpalpath[9] = "dat/pal1";
+#define MPALPOS 7
+
+char mtlstpath[10] = "dat/tlst1";
+#define MTLSTPOS 8
+
+char mtlsbgpath[11] = "dat/tlsbg1";
+#define MTLSBGPOS 9
+
+char mwpalpath[10] = "dat/wpal1";
+#define MWPALPOS 8
+
+
+
 #define CARSIZE 26
 #define CARSIZESQR 648
 
 #define MAXCOL 4
-#define GAME_LEVELS 2
 //#define MENUDEL 500
 #define MENUDEL 4
 
@@ -310,8 +352,6 @@ typedef struct PCMAUDIO{
 	char bLoadSound;
 	
 	char mFile;
-
-	char sound_buf[16];	
 };
 
 
@@ -589,6 +629,8 @@ typedef struct Menu {
 
 struct Menu mMenu;
       
+//#define MDEBUG 1
+      
 typedef struct Game {   
    
    char mLevels;
@@ -598,6 +640,11 @@ typedef struct Game {
    char mPCount;
    int mFinCount;
    char mWinner;
+   
+#ifdef MDEBUG   
+   char bDebug;   
+   struct PSprite mDebug[12];
+#endif   
    
    signed char mAISpeed;	
    
@@ -612,7 +659,7 @@ typedef struct Game {
 
    int mFinishLine;
    char mWaypointNum;
-   struct Vec2C mWaypoints[20];
+   struct Vec2C mWaypoints[12];
    
    struct Player Player1;
    struct Player Player2;
@@ -692,6 +739,16 @@ typedef struct Game {
 
 
 struct Game mGame;
+
+#ifdef MDEBUG   
+
+void init_debug();
+
+void process_debug();
+
+void load_debug();
+
+#endif
 
 void setTextSprite(struct PSprite* cMenu, int cChar, int mx, int my);
 

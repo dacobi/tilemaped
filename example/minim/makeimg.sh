@@ -1,9 +1,9 @@
 #!/bin/bash
 ./mountimg
 rm mnt/MINIM.PRG
-rm mnt/DATA/*
+rm mnt/DAT/*
 cp MINIM.PRG mnt/
-cp DATA/* mnt/DATA/
+cp DAT/* mnt/DAT/
 umount mnt
 rm minim.zip
 7z a minim.zip minim.img

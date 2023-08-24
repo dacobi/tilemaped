@@ -887,21 +887,21 @@ void calc_way(){
 }
 
 void loadVera(char *fname, unsigned int address, int flag){
-   char folder[25] = "data/";
+   //char folder[25] = "data/";
 
-   strcat(folder, fname);
+   //strcat(folder, fname);
 
-   cbm_k_setnam(folder);
+   cbm_k_setnam(fname);
    cbm_k_setlfs(1,8,0);
    cbm_k_load(flag, address);    
 }
 
 void loadFile(char *fname, unsigned int address){
-   char folder[25] = "data/";
+//   char folder[25] = "data/";
 
-   strcat(folder, fname);
+//   strcat(folder, fname);
 
-   cbm_k_setnam(folder);
+   cbm_k_setnam(fname);
    cbm_k_setlfs(1,8,0);
    cbm_k_load(0, address);    
 }
@@ -1307,6 +1307,13 @@ void process_sprites(){
 		}
 		
 	}
+
+#ifdef MDEBUG	
+	if(mGame.bDebug){
+		process_debug();	
+	}
+#endif	
+	
 	
 	/*
 	if(mGame.Player4.bIsVisible){
@@ -1569,7 +1576,12 @@ void process_player(struct Player *cPlayer){
 	int dist;
 	int dx,dy,cindex;
 	unsigned char cval;
+	char mDebug;
+	char bDebug;	
 //	unsigned char* colmap;
+	
+	mDebug = 0;
+	bDebug = 0;	
 	
 	if(cPlayer->mControl->bIsBot == 0){
 	
@@ -1589,24 +1601,46 @@ void process_player(struct Player *cPlayer){
 
 		if(dist < 65){
 			if(cPlayer->mControl->mNextWay == (mGame.mWaypointNum-1)){
+				mDebug = cPlayer->mControl->mNextWay;
+				bDebug = 1;
 				cPlayer->mControl->mNextWay = 0;
 				cPlayer->bCheckFinish = 1;
+
 			} else {
+				mDebug = cPlayer->mControl->mNextWay;			
+				bDebug = 1;				
 				cPlayer->mControl->mNextWay++;
+
 			}				
 		} else {
 			if(getWayState(mGame.mWaypoints[cPlayer->mControl->mNextWay].c, cPlayer->mPos.x, cPlayer->mPos.y, mGame.mWaypoints[cPlayer->mControl->mNextWay].x, mGame.mWaypoints[cPlayer->mControl->mNextWay].y)){
 				if(cPlayer->mControl->mNextWay == (mGame.mWaypointNum-1)){
+					mDebug = cPlayer->mControl->mNextWay;				
+					bDebug = 1;					
 					cPlayer->mControl->mNextWay = 0;
 					cPlayer->bCheckFinish = 1;
+
 				} else {
+					mDebug = cPlayer->mControl->mNextWay;
+					bDebug = 1;					
 					cPlayer->mControl->mNextWay++;
+
 				}				
 
 			}
 		}
 
 	}
+
+#ifdef MDEBUG	
+	if(mGame.bDebug){
+		if(cPlayer->mPlayer == 1){
+			if(bDebug){
+				mGame.mDebug[mDebug].palette_offset++;
+			}
+		}
+	}
+#endif	
 	
 	if(cPlayer->bCheckFinish){
 		if(cPlayer->mPos.y < mGame.mFinishLine){
@@ -2737,6 +2771,14 @@ void mblank(void){
         	VERA.layer1.vscroll = mGScroolY;
 			
 		load_psprites();
+		
+#ifdef MDEBUG		
+		if(mGame.bDebug){
+			load_debug();	
+		}
+#endif
+
+		
 	}	
 	
 
@@ -2755,20 +2797,16 @@ void load_level(){
    
    RAM_BANK = 1; 
    
-   loadFile("colmap16.bin", (unsigned short)BANK_RAM);
-   
-//   cbm_k_setnam("colmap16.bin");
-//   cbm_k_setlfs(0,8,0);
-//   cbm_k_load(0, (unsigned short)BANK_RAM);    
-   
+   //SETPATHNUM(mclmpath, mGame.mLevel, MCLMPOS);
+   SETPATHNUM(mclmpath, 1, MCLMPOS);
+      
+   loadFile(mclmpath, (unsigned short)BANK_RAM);
+      
    RAM_BANK = 1; 
 
-	
-   if(mGame.mLevel == 2){
-   	loadVera("dpal.bin", VRAM_palette, 3); 
-   } else {
-   	loadVera("palt1.bin", VRAM_palette, 3); 
-   }
+   SETPATHNUM(mpalpath, mGame.mLevel, MPALPOS);
+   
+   loadVera(mpalpath, VRAM_palette, 3); 
    
    VERA.display.hscale = 128;
    VERA.display.vscale = 128;
@@ -2790,23 +2828,26 @@ void load_level(){
    VERA.layer0.hscroll = 0;
    VERA.layer0.vscroll = 0;
 
-   loadVera("sprite0.bin", VRAM_sprites, 3);
+   loadVera(mcarspath, VRAM_sprites, 3);   
    
-   loadVera("boom.bin", VRAM_boom, 3);
+   loadVera(mboompath, VRAM_boom, 3);
       
-   loadVera("tilest1.bin", VRAM_tiles , 2);
+     
+   SETPATHNUM(mtlstpath, 1, MTLSTPOS);
+      
+   loadVera(mtlstpath, VRAM_tiles , 2);
    
-   if(mGame.mLevel == 2){
-   	loadVera("tilesbgd.bin", VRAM_tilesbg , 2);
-   } else {
-	loadVera("tilesbg4.bin", VRAM_tilesbg , 2);
-   }
-        
-   loadVera("textcd.bin", VRAM_textcd, 3);   
 
-   loadVera("map0.bin", VRAM_layer1_map, 2);
+   SETPATHNUM(mtlsbgpath, mGame.mLevel, MTLSBGPOS);
+   loadVera(mtlsbgpath, VRAM_tilesbg , 2);
+           
+   loadVera(mtxcdpath, VRAM_textcd, 3);   
+
+   SETPATHNUM(mtrkpath, 1, MTRKPOS);
+   loadVera(mtrkpath, VRAM_layer1_map, 2);
     
-   loadVera("map1.bin", VRAM_layer0_map, 2);
+   SETPATHNUM(mmbgpath, 1, MMBGPOS);    
+   loadVera(mmbgpath, VRAM_layer0_map, 2);
 
    VERA.display.video = 0x71;
    
@@ -2924,9 +2965,10 @@ void stop_audio(){
 }
 
 void open_audio(){
-	snprintf(mPCM.sound_buf, 16, "data/sound%d.bin", mPCM.mStream);
+		
+	SETPATHNUM(msndpath, mPCM.mStream, MSNDPOS);			
 
-	cbm_k_setnam(mPCM.sound_buf);
+	cbm_k_setnam(msndpath);
 	cbm_k_setlfs(mPCM.mFile,8,0);
 	cbm_k_open();
 	
@@ -3297,7 +3339,7 @@ void load_menu(){
    VERA.display.video = 0;
    reset_vera();
     
-   loadVera("ipal.bin", VRAM_palette, 3); 
+   loadVera(mpalipath, VRAM_palette, 3); 
 
    VERA.layer0.hscroll = 0;
    VERA.layer0.vscroll = 0;
@@ -3313,9 +3355,9 @@ void load_menu(){
    VERA.layer0.config = 0;
    VERA.layer1.config = 7;
   
-   loadVera("carintro.bin", VRAM_intro, 2);
+   loadVera(mintropath, VRAM_intro, 2);
     
-   loadVera("texti.bin", VRAM_texti, 3);
+   loadVera(mtxintpath, VRAM_texti, 3);
    
    VERA.layer1.tilebase = (VRAM_intro >> 9);// +3;
    
@@ -3410,18 +3452,23 @@ void load_wmenu(){
    VERA.display.video = 0;
    reset_vera();
    
-      switch(mGame.mWinner){
+   SETPATHNUM(mwpalpath, mGame.mWinner, MWPALPOS);
+
+   loadVera(mwpalpath, VRAM_palette, 3);    
+   
+
+   switch(mGame.mWinner){
 	case 1:
 		pchar = TEXTW_1; 
-		loadVera("wpalb.bin", VRAM_palette, 3); 
+		//loadVera("wpalb.bin", VRAM_palette, 3); 
 		break;
 	case 2:
 		pchar = TEXTW_2; 
-		loadVera("wpalg.bin", VRAM_palette, 3); 
+		//loadVera("wpalg.bin", VRAM_palette, 3); 
 		break;
 	case 3:
 		pchar = TEXTW_3; 
-		loadVera("wpalr.bin", VRAM_palette, 3); 
+		//loadVera("wpalr.bin", VRAM_palette, 3); 
 		break;
 /*	case 4:
 		pchar = TEXTW_4; 
@@ -3429,10 +3476,9 @@ void load_wmenu(){
 		break;*/
 	default:
 		pchar = TEXTW_1; 
-		loadVera("wpalb.bin", VRAM_palette, 3); 
+		//loadVera("wpalb.bin", VRAM_palette, 3); 
 		break;
-	};
-
+   };
    
    
 
@@ -3450,9 +3496,9 @@ void load_wmenu(){
    VERA.layer0.config = 0;
    VERA.layer1.config = 7;
   
-   loadVera("winner2.bin", VRAM_intro, 2);
+   loadVera(mwinpath, VRAM_intro, 2);
     
-   loadVera("textw.bin", VRAM_texti, 3);
+   loadVera(mtxwnpath, VRAM_texti, 3);
    
    VERA.layer1.tilebase = (VRAM_intro >> 9);// +3;
    
@@ -3463,6 +3509,54 @@ void load_wmenu(){
    init_wtext(&mGame.mWText, pchar);
 		     
 }
+
+#ifdef MDEBUG   
+
+void init_debug(){
+	char di;
+
+	for(di = 0; di < 12; di++){
+		mGame.mDebug[di].blocklo = VRAM_boom_lo; //SPRITE_BLOCKLO(VRAM_sprites);
+   		mGame.mDebug[di].blockhi = VRAM_boom_hi; // SPRITE_BLOCKHI(VRAM_sprites);   
+		mGame.mDebug[di].mode = SPRITE_MODE_4BPP;
+		mGame.mDebug[di].z = SPRITE_LAYER_1;
+		mGame.mDebug[di].colmask = 0x0;
+		mGame.mDebug[di].dimensions = SPRITE_32_BY_32;
+		mGame.mDebug[di].palette_offset = 10;
+		mGame.mDebug[di].flipx = 0;
+		mGame.mDebug[di].flipy = 0;
+	}
+	
+
+	//process_debug();
+
+}
+
+void process_debug(){
+	char di;
+		
+	for(di = 0; di < 12; di++){
+		mGame.mDebug[di].mPos.x = (320-16) + (mGame.mWaypoints[di].x - mGame.mViewport.x);
+		mGame.mDebug[di].mPos.y = (240-16) + (mGame.mWaypoints[di].y - mGame.mViewport.y);
+		
+		if( (mGame.mDebug[di].mPos.x > 32) && (mGame.mDebug[di].mPos.x < (640-32)) &&(mGame.mDebug[di].mPos.y > 32) && (mGame.mDebug[di].mPos.y < (480-32))  ){
+			mGame.mDebug[di].z = SPRITE_LAYER_1;
+		} else {
+			mGame.mDebug[di].z = 0;
+		}
+		
+	}	
+}
+
+void load_debug(){
+	char di;
+		
+	for(di = 0; di < 12; di++){
+		load_sprite(&mGame.mDebug[di], di+7);			
+	}
+}
+
+#endif
 
 void setup_race(){
    char cplc, botc;
@@ -3522,6 +3616,22 @@ void setup_race(){
 
    mGame.mLaps = mMenu.mLaps;
    mGame.mLevel = mMenu.mLevel;
+   
+   calc_way();
+   
+#ifdef MDEBUG      
+
+   mGame.mLevel = 1;
+   
+   if(mMenu.mLevel == 2){
+   	mGame.bDebug = 1;
+   	init_debug();
+   } else {
+      	mGame.bDebug = 0;
+   }
+   
+#endif   
+   
    mGame.mPlace = 1;
    mGame.mPCount = 3;
    mGame.mFinCount = 0;
@@ -3546,9 +3656,7 @@ void setup_race(){
    };
       
    mGame.bMoveToLead = 0;
-   
-   calc_way();
-    
+       
    mGame.StartPos.x = mGame.mWaypoints[0].x;// - (320-16);
    mGame.StartPos.y = mGame.mWaypoints[0].y;// - (240-16);
 
