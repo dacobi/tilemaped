@@ -312,7 +312,7 @@ extern void rm_keyboard_irq();
 #define MSPEEDMAXONEDGE 65
 #define MSPEEDMAXOUTSIDE 50
 
-int mGScroolX, mGScroolY;
+int mScrollX, mScrollY;
 
 unsigned char joyl,joyh,joyok,joynum;
 
@@ -565,6 +565,8 @@ typedef struct Game {
    char mPCount;
    int mFinCount;
    char mWinner;
+   
+   char bFrameReady;
    
 #ifdef MDEBUG   
    char bDebug;   

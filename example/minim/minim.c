@@ -1466,7 +1466,7 @@ void process_player(struct Player *cPlayer){
 
 		dist = dx+dy;
 
-		/*
+		
 		if(dist < 65){
 			if(cPlayer->mControl->mNextWay == (mGame.mWaypointNum-1)){
 				mDebug = cPlayer->mControl->mNextWay;
@@ -1480,7 +1480,7 @@ void process_player(struct Player *cPlayer){
 				cPlayer->mControl->mNextWay++;
 
 			}				
-		} else {*/
+		} else {
 			if(getWayState(mGame.mWaypoints[cPlayer->mControl->mNextWay].c, cPlayer->mPos.x, cPlayer->mPos.y, mGame.mWaypoints[cPlayer->mControl->mNextWay].x, mGame.mWaypoints[cPlayer->mControl->mNextWay].y)){
 				if(cPlayer->mControl->mNextWay == (mGame.mWaypointNum-1)){
 					mDebug = cPlayer->mControl->mNextWay;				
@@ -1496,7 +1496,7 @@ void process_player(struct Player *cPlayer){
 				}				
 
 			}
-		//}
+		}
 
 	}
 
@@ -2432,6 +2432,7 @@ void render_cdmenu(){
 //	start_engine(&mGame.Player4.mEngine, 8);		
 	
 	while((mGame.bCountDown)){
+	    		   
 		if(cdelay < 1){
 			mGame.bCountDown--;
 			if(mGame.bCountDown == 0){
@@ -2450,6 +2451,7 @@ void render_cdmenu(){
 		}
 		cdelay--;
 	}
+	
 	
 	mGame.bCountDown = 0;
 	mGame.bCountDelay = 70;
@@ -2503,6 +2505,8 @@ void init_game(){
     mGame.bDoCol = 0;
     
     mGame.bIRQ = 0;
+    
+    mGame.bFrameReady = 0;
     
     mGame.bRunning = 1;
     mGame.bRacing = 0;
@@ -2593,29 +2597,34 @@ void mblank(void){
 	if(mGame.bRacing){
 	
 		if(mGame.bCountDown){
+
 			process_sound();
-		}
-		update_sound();
-		
-		//calc_viewport();    
-		
-		mGScroolX = mGame.mViewport.x - (320);
-		mGScroolY = mGame.mViewport.y - (240);
-                       
-	        VERA.layer0.hscroll = mGScroolX;
-        	VERA.layer0.vscroll = mGScroolY;
-
-	        VERA.layer1.hscroll = mGScroolX;
-        	VERA.layer1.vscroll = mGScroolY;
+			update_sound();
 			
-		load_psprites();
+		} else if(mGame.bFrameReady){
 		
-#ifdef MDEBUG		
-		if(mGame.bDebug){
-			load_debug();	
-		}
-#endif
+			update_sound();
+		
+			//calc_viewport();    
+		
+			mScrollX = mGame.mViewport.x - (320);
+			mScrollY = mGame.mViewport.y - (240);
+                       
+		        VERA.layer0.hscroll = mScrollX;
+        		VERA.layer0.vscroll = mScrollY;
 
+		        VERA.layer1.hscroll = mScrollX;
+        		VERA.layer1.vscroll = mScrollY;
+				
+			load_psprites();
+			
+			mGame.bFrameReady = 0;				
+#ifdef MDEBUG		
+			if(mGame.bDebug){
+				load_debug();	
+			}
+#endif
+		}
 		
 	}	
 	
@@ -3536,6 +3545,8 @@ void setup_race(){
    
    mGame.mLeader = mGame.Players[0];
    
+   mGame.bFrameReady = 0;
+   
    mGame.bCountDown = 4;
 }
 
@@ -3577,8 +3588,8 @@ void main(void) {
 	   	
 	        VERA.irq_enable = 0;
 	        		     	        
-		mGScroolX = 0;
-		mGScroolY = 0;
+		mScrollX = 0;
+		mScrollY = 0;
 
  		setup_race();
  		load_level();
@@ -3591,14 +3602,14 @@ void main(void) {
 	    	
 		process_sprites();
 	    	
-	    	mGScroolX = mGame.mViewport.x - (320);
-		mGScroolY = mGame.mViewport.y - (240);
+	    	mScrollX = mGame.mViewport.x - (320);
+		mScrollY = mGame.mViewport.y - (240);
 	    	
-	    	VERA.layer0.hscroll = mGScroolX;
-        	VERA.layer0.vscroll = mGScroolY;
+	    	VERA.layer0.hscroll = mScrollX;
+        	VERA.layer0.vscroll = mScrollY;
 
-	        VERA.layer1.hscroll = mGScroolX;
-        	VERA.layer1.vscroll = mGScroolY;        	
+	        VERA.layer1.hscroll = mScrollX;
+        	VERA.layer1.vscroll = mScrollY;        	
 
 		render_cdmenu();
   	  }
@@ -3634,6 +3645,8 @@ void main(void) {
 		
 		process_sprites();
 		
+		mGame.bFrameReady = 1;
+		    
 		waitvsync();
            		 		 
 		if(mGame.mFinCount){
