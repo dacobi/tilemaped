@@ -1,18 +1,8 @@
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <string.h>
-//#include <stdint.h>
-//#include <conio.h>
-//#include <joystick.h>
-
-
 #include <cx16.h>
 #include <cbm.h>
-#include <6502.h>
-//#include <mouse.h>
+//#include <6502.h>
 
 #include "sintable.h"
-#include "waypoints.h"
 #include "atantab.h"
 #include "colmap.h"
 #include "randtab.h"
@@ -26,7 +16,6 @@ char randidx;
 #define	    SPRITE_BLOCKHI(addr)			(addr >> 13)
 #define     SPRITE_MODE_8BPP     		0x80
 #define     SPRITE_MODE_4BPP     		0
-//#define	    SPRITE_32_BY_32		        (128 + 32)
 #define	    SPRITE_32_BY_32		        0xA0
 #define	    SPRITE_16_BY_16		        0x50
 #define	    SPRITE_8_BY_8		        0x0
@@ -40,7 +29,6 @@ char randidx;
 
 
 #define VRAM_bitmap 0x04000
-//#define VRAM_palette 0x1FA00
 #define VRAM_palette 	   0x1FA00
 
 #define VRAM_psg  0x1F9C0
@@ -272,6 +260,9 @@ char mclmpath[9] = "dat/clm1";
 char mmbgpath[9] = "dat/mbg1";
 #define MMBGPOS 7
 
+char mwaypath[9] = "dat/way1";
+#define MWAYPOS 7
+
 char mtrkpath[9] = "dat/trk1";
 #define MTRKPOS 7
 
@@ -286,8 +277,6 @@ char mtlsbgpath[11] = "dat/tlsbg1";
 
 char mwpalpath[10] = "dat/wpal1";
 #define MWPALPOS 8
-
-
 
 #define CARSIZE 26
 #define CARSIZESQR 648
@@ -354,7 +343,6 @@ typedef struct PCMAUDIO{
 	char mFile;
 };
 
-
 struct PCMAUDIO mPCM;
 
 typedef struct Vec2{
@@ -367,7 +355,6 @@ typedef struct Vec2C{
 	int y;
 	char c;
 };
-
 
 typedef struct Control {	
 	char bIsActive;
@@ -393,7 +380,6 @@ typedef struct SThrottle{
 	int mLength;
 	int mLastCount;
 };
-
 
 #define MOUTKILL 80
 #define MOUTLOOSE 70
@@ -513,8 +499,6 @@ typedef struct EText {
 	struct PSprite mI;
 	struct PSprite mT;
 };
-
-
 
 typedef struct MLine {
 	char mCCount;

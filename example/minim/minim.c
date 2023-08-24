@@ -872,17 +872,33 @@ int getcos(int x){
 }
 
 void calc_way(){
- 	int ii;
+ 	int wi;
+ 	int nX, nY;
+ 	char nC;
+ 	
+ 	cbm_k_setnam(mwaypath);
+	cbm_k_setlfs(3,8,0);
+	cbm_k_open();
 	
-	mGame.mWaypointNum = points_level1;
+	cbm_k_ckout(3);
 	
-	for(ii = 0; ii < points_level1; ii++){
-		mGame.mWaypoints[ii].x = (way_level1[ii][0] * 16) + 8;
-		mGame.mWaypoints[ii].y = (way_level1[ii][1] * 16) + 8;
-		mGame.mWaypoints[ii].c = way_level1[ii][2];
+	wi = cbm_k_acptr();
+	
+	mGame.mWaypointNum = wi;
+			
+	for(wi = 0; wi < mGame.mWaypointNum; wi++){
+		nX = cbm_k_acptr();
+		nY = cbm_k_acptr();
+		nC = cbm_k_acptr();				
+	
+		mGame.mWaypoints[wi].x = (nX * 16) + 8;
+		mGame.mWaypoints[wi].y = (nY * 16) + 8;
+		mGame.mWaypoints[wi].c = nC;
 	}
 	
 	mGame.mFinishLine = mGame.mWaypoints[0].y;
+	
+	cbm_k_close(3);
 
 }
 
@@ -1599,6 +1615,7 @@ void process_player(struct Player *cPlayer){
 
 		dist = dx+dy;
 
+		/*
 		if(dist < 65){
 			if(cPlayer->mControl->mNextWay == (mGame.mWaypointNum-1)){
 				mDebug = cPlayer->mControl->mNextWay;
@@ -1612,7 +1629,7 @@ void process_player(struct Player *cPlayer){
 				cPlayer->mControl->mNextWay++;
 
 			}				
-		} else {
+		} else {*/
 			if(getWayState(mGame.mWaypoints[cPlayer->mControl->mNextWay].c, cPlayer->mPos.x, cPlayer->mPos.y, mGame.mWaypoints[cPlayer->mControl->mNextWay].x, mGame.mWaypoints[cPlayer->mControl->mNextWay].y)){
 				if(cPlayer->mControl->mNextWay == (mGame.mWaypointNum-1)){
 					mDebug = cPlayer->mControl->mNextWay;				
@@ -1628,7 +1645,7 @@ void process_player(struct Player *cPlayer){
 				}				
 
 			}
-		}
+		//}
 
 	}
 
@@ -3058,8 +3075,7 @@ void load_audio(char cstream){
        	__asm__("ldx _mLo");
 	__asm__("ldy _mHi");
 	__asm__("jsr $ff44");
-	
-	       	
+		       	
 	mPCM.bLoadSound = 0;	
 		
 	load_index = sample_point; 
@@ -3456,32 +3472,21 @@ void load_wmenu(){
 
    loadVera(mwpalpath, VRAM_palette, 3);    
    
-
    switch(mGame.mWinner){
 	case 1:
-		pchar = TEXTW_1; 
-		//loadVera("wpalb.bin", VRAM_palette, 3); 
+		pchar = TEXTW_1;  
 		break;
 	case 2:
 		pchar = TEXTW_2; 
-		//loadVera("wpalg.bin", VRAM_palette, 3); 
 		break;
 	case 3:
 		pchar = TEXTW_3; 
-		//loadVera("wpalr.bin", VRAM_palette, 3); 
 		break;
-/*	case 4:
-		pchar = TEXTW_4; 
-		loadVera("wpalr.bin", VRAM_palette, 3); 
-		break;*/
 	default:
 		pchar = TEXTW_1; 
-		//loadVera("wpalb.bin", VRAM_palette, 3); 
 		break;
    };
    
-   
-
    VERA.layer0.hscroll = 0;
    VERA.layer0.vscroll = 0;
 
@@ -3491,7 +3496,6 @@ void load_wmenu(){
    
    VERA.display.hscale = 64;
    VERA.display.vscale = 64;
-
 
    VERA.layer0.config = 0;
    VERA.layer1.config = 7;
@@ -3503,11 +3507,10 @@ void load_wmenu(){
    VERA.layer1.tilebase = (VRAM_intro >> 9);// +3;
    
    load_audio(2);
-       
-   VERA.display.video = 0x61;
-	
+       	
    init_wtext(&mGame.mWText, pchar);
-		     
+   
+   VERA.display.video = 0x61;		     
 }
 
 #ifdef MDEBUG   
@@ -3539,7 +3542,7 @@ void process_debug(){
 		mGame.mDebug[di].mPos.x = (320-16) + (mGame.mWaypoints[di].x - mGame.mViewport.x);
 		mGame.mDebug[di].mPos.y = (240-16) + (mGame.mWaypoints[di].y - mGame.mViewport.y);
 		
-		if( (mGame.mDebug[di].mPos.x > 32) && (mGame.mDebug[di].mPos.x < (640-32)) &&(mGame.mDebug[di].mPos.y > 32) && (mGame.mDebug[di].mPos.y < (480-32))  ){
+		if( (mGame.mDebug[di].mPos.x > 0) && (mGame.mDebug[di].mPos.x < (640)) &&(mGame.mDebug[di].mPos.y > 0) && (mGame.mDebug[di].mPos.y < (480))  ){
 			mGame.mDebug[di].z = SPRITE_LAYER_1;
 		} else {
 			mGame.mDebug[di].z = 0;

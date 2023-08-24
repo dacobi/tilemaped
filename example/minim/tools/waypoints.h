@@ -1,6 +1,6 @@
-int points_level1 = 12;
+unsigned char points_level = 12;
 
-int way_level1[12][3] = {{9,40,8},
+unsigned char way_level[12][3] = {{9,40,8},
 	               {9,19,8},
 		       {16,16,1},
 		       {84,16,1},
