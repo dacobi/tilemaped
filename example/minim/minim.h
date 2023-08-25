@@ -289,7 +289,7 @@ char mwpalpath[10] = "dat/wpal1";
 
 #define MAXCOL 4
 //#define MENUDEL 500
-#define MENUDEL 4
+#define MENUDEL 2
 
 #define PCMCTRL (*(volatile unsigned char*)0x9F3B)
 #define PCMRATE (*(volatile unsigned char*)0x9F3C)
@@ -729,6 +729,10 @@ void process_collision();
 int getdelta(int car, int point);
 
 unsigned char getkey(unsigned char ckeynum);
+
+char getanykey();
+
+void check_quit();
 
 void clearkey(unsigned char ckeynum);
 
