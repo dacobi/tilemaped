@@ -41,26 +41,34 @@ void init_wtext(struct WText* wText, int cNR){
 			pv--;
 		}
 	}
-		
-	setTextSprite(&wText->mChars[0], TEXTW_P, cx, cy);
-	cx += cdelta;
-	setTextSprite(&wText->mChars[1], TEXTW_L, cx, cy);
-	cx += cdelta;
-	setTextSprite(&wText->mChars[2], TEXTW_A, cx, cy);
-	cx += cdelta;
-	setTextSprite(&wText->mChars[3], TEXTW_Y, cx, cy);
-	cx += cdelta;
-	setTextSprite(&wText->mChars[4], TEXTW_E, cx, cy);
-	cx += cdelta;
-	setTextSprite(&wText->mChars[5], TEXTW_R, cx, cy);
-	cx += cdelta;
-	setTextSprite(&wText->mChars[6], cNR, cx, cy);
+	
+	BINIT();
 	
 	for(pi = 0; pi < 7; pi++){
-		mGame.mWText.mChars[pi].dimensions = SPRITE_32_BY_32;
+		mMenu.mMenuLines[0].mChar[pi] = (struct PSprite*)BALLOC(sizeof(struct PSprite));
 	}
-
-
+	
+	mMenu.mMenuLines[0].mCCount = 7;
+		
+	setTextSprite(mMenu.mMenuLines[0].mChar[0], TEXTW_P, cx, cy);
+	cx += cdelta;
+	setTextSprite(mMenu.mMenuLines[0].mChar[1], TEXTW_L, cx, cy);
+	cx += cdelta;
+	setTextSprite(mMenu.mMenuLines[0].mChar[2], TEXTW_A, cx, cy);
+	cx += cdelta;
+	setTextSprite(mMenu.mMenuLines[0].mChar[3], TEXTW_Y, cx, cy);
+	cx += cdelta;
+	setTextSprite(mMenu.mMenuLines[0].mChar[4], TEXTW_E, cx, cy);
+	cx += cdelta;
+	setTextSprite(mMenu.mMenuLines[0].mChar[5], TEXTW_R, cx, cy);
+	cx += cdelta;
+	setTextSprite(mMenu.mMenuLines[0].mChar[6], cNR, cx, cy);
+	
+	for(pi = 0; pi < 7; pi++){
+		mMenu.mMenuLines[0].mChar[pi]->dimensions = SPRITE_32_BY_32;
+	}
+	
+	load_lmenu(0);
 }
 
 void init_lmenu(char cline, char ccnum, int cchars[], int mspace, struct PSprite* cH1, struct PSprite* cH2, int mx, int my){
@@ -167,6 +175,14 @@ void clearpsg(unsigned char mchan){
     VERA.data0 = 0;
     VERA.data0 = 0;
 
+}
+
+void stop_sound(){
+	char ci;
+	for(ci = 0; ci < 16; ci++){
+		clearpsg(ci);
+	}
+	
 }
 
 void update_sound(){
@@ -405,7 +421,7 @@ void set_player(int pi, struct Player *cPlayer, struct Control *cControl, struct
 	cPlayer->pl_cur_dir = DIR_0;		
 }
 
-int check_collision_cars(struct Player *cCar1, struct Player *cCar2){
+char check_collision_cars(struct Player *cCar1, struct Player *cCar2){
 	
 	int nDX,nDY,cDX,cDY;
 	int colx, coly, colval;
@@ -456,7 +472,7 @@ int check_collision_cars(struct Player *cCar1, struct Player *cCar2){
 	return 0;
 }
 
-int check_collision(){
+char check_collision(){
 
 	if(check_collision_cars(mGame.Players[0], mGame.Players[1])){
 		mGame.mCarCol1 = 0;
@@ -558,6 +574,15 @@ int getdelta(int car, int point){
 	}		
 }
 
+void clearkey(unsigned char ckeynum){
+
+    keynum = ckeynum;
+
+    __asm__("ldx _keynum");
+
+   clearkeystat();
+}
+
 unsigned char getkey(unsigned char ckeynum){
 
     unsigned char retval;
@@ -573,7 +598,7 @@ unsigned char getkey(unsigned char ckeynum){
 
 }
 
-int process_joystick(int jnum){
+void process_joystick(int jnum){
 
       joynum = jnum;
 
@@ -617,7 +642,7 @@ int process_joystick(int jnum){
 	}	
 
 
-	return 0;
+	//return 0;
 }
 
 void process_keys(char mkeynum){
@@ -692,12 +717,12 @@ void process_input(){
       }
    }
 	
-    /*
-	if(getkey(KEY_ESC) > 0){
-	   mGame.bRacing = 0;
-	  
-	}
-    */	
+   
+   if(getkey(KEY_ESC) > 0){
+	clearkey(KEY_ESC);
+	mGame.bGamePaused = 1;	  
+   }
+    	
 }
 
 int getsin(int x){
@@ -754,20 +779,12 @@ void calc_way(){
 }
 
 void loadVera(char *fname, unsigned int address, int flag){
-   //char folder[25] = "data/";
-
-   //strcat(folder, fname);
-
    cbm_k_setnam(fname);
    cbm_k_setlfs(1,8,0);
    cbm_k_load(flag, address);    
 }
 
 void loadFile(char *fname, unsigned int address){
-//   char folder[25] = "data/";
-
-//   strcat(folder, fname);
-
    cbm_k_setnam(fname);
    cbm_k_setlfs(1,8,0);
    cbm_k_load(0, address);    
@@ -1193,7 +1210,7 @@ void process_sprites(){
 	}*/
 }
 
-int getWayState(int wState, int cX, int cY, int vX, int vY){
+char getWayState(int wState, int cX, int cY, int vX, int vY){
 
 		switch(wState){
 			case 1:
@@ -2022,9 +2039,7 @@ void setMenuOffset(int cLine, int cOffset){
 
 void init_menulines(){
 
-    int mPLine1[7] = {TEXTI_P, TEXTI_L, TEXTI_A, TEXTI_Y, TEXTI_E, TEXTI_R, TEXTI_1 };
-    int mPLine2[7] = {TEXTI_P, TEXTI_L, TEXTI_A, TEXTI_Y, TEXTI_E, TEXTI_R, TEXTI_2 };
-    int mPLine3[7] = {TEXTI_P, TEXTI_L, TEXTI_A, TEXTI_Y, TEXTI_E, TEXTI_R, TEXTI_3 };        
+    int mPLine[7] = {TEXTI_P, TEXTI_L, TEXTI_A, TEXTI_Y, TEXTI_E, TEXTI_R, TEXTI_1 };
     int mTLine[5] = {TEXTI_L, TEXTI_E, TEXTI_V, TEXTI_E, TEXTI_L};
     int mLLine[4] = {TEXTI_L, TEXTI_A, TEXTI_P, TEXTI_S};    
     int mSLine[5] = {TEXTI_S, TEXTI_T, TEXTI_A, TEXTI_R, TEXTI_T};    
@@ -2034,9 +2049,13 @@ void init_menulines(){
     RAM_BANK = 1;
     BINIT();
     
-    init_lmenu(0, 7, mPLine1, -1, &mMenu.mMenuPl1_1, &mMenu.mMenuPl1_2, 20, 67);
-    init_lmenu(1, 7, mPLine2, -1, &mMenu.mMenuPl2_1, &mMenu.mMenuPl2_2, 20, 77);
-    init_lmenu(2, 7, mPLine3, -1, &mMenu.mMenuPl3_1, &mMenu.mMenuPl3_2, 20, 87);        
+    init_lmenu(0, 7, mPLine, -1, &mMenu.mMenuPl1_1, &mMenu.mMenuPl1_2, 20, 67);
+    
+    mPLine[6] = TEXTI_2;
+    init_lmenu(1, 7, mPLine, -1, &mMenu.mMenuPl2_1, &mMenu.mMenuPl2_2, 20, 77);
+    
+    mPLine[6] = TEXTI_3;
+    init_lmenu(2, 7, mPLine, -1, &mMenu.mMenuPl3_1, &mMenu.mMenuPl3_2, 20, 87);        
     
     init_lmenu(3, 7, mAILine, 2, &mMenu.mMenuAI, 0, 20 , 97);
     
@@ -2054,6 +2073,7 @@ void init_menu(){
 
     mMenu.bRunning = 0;
     mMenu.bWinnerRunning = 0;
+    mPCM.bLoadSound = 0;	
 
     mMenu.PMenu[0][0] = &mMenu.mMenuPl1_1;
     mMenu.PMenu[0][1] = &mMenu.mMenuPl1_2;
@@ -2146,10 +2166,10 @@ void process_engine(struct SThrottle* cEngine, int mvel){
 
 	if(cEngine->mRevTime == 0){
 		mrand = RANDNEXT();
-		mrand = mrand >> 3;
+		mrand = mrand >> 2;
 		
 		if(mvel == 0){
-			mrand = mrand >> 1;
+			mrand = mrand >> 2;
 		}
 		
 		cEngine->mRevTime = mrand;
@@ -2170,6 +2190,15 @@ void process_engine(struct SThrottle* cEngine, int mvel){
 		
 	mGame.mChannels[cEngine->mChan].mFreqHi = fhi;
 	mGame.mChannels[cEngine->mChan].mFreqLo = flo; 
+
+/*
+	if(mvel){
+		mfreq -= mvel >> 1;
+
+		fhi = (mfreq & 0xff00) >> 8;
+		flo = mfreq & 0x00ff;
+	}
+*/
 
 	mGame.mChannels[cEngine->mChan + 1].mFreqHi = fhi;
 	mGame.mChannels[cEngine->mChan + 1].mFreqLo = flo; 
@@ -2439,13 +2468,13 @@ void render_cdmenu(){
 				play_beep(2000, mGame.mBeepLength * 3);
 				set_menucd(mGame.bCountDown);
 				waitvsync();
-				load_sprite(&mGame.mCDown1, 5);
-				load_sprite(&mGame.mCDown2, 6);
+				load_sprite(&mGame.mCDown1, 4);
+				load_sprite(&mGame.mCDown2, 5);
 			} else {
 				play_beep(1000, mGame.mBeepLength);
 				set_menucd(mGame.bCountDown);
 				waitvsync();
-				load_sprite(&mGame.mCDown1, 5);
+				load_sprite(&mGame.mCDown1, 4);
 			}
 			cdelay = 30000;			
 		}
@@ -2510,11 +2539,10 @@ void init_game(){
     
     mGame.bRunning = 1;
     mGame.bRacing = 0;
+    mGame.bGamePaused = 0;
     //mGame.bCountDown = 0;
     
     mGame.mWinner = 0;
-
-            
 }
 
 void mscol(void){
@@ -2542,14 +2570,19 @@ void maflow(void){
 }	
 
 void mblank(void){
-	char wi;
+	//char wi;
 	char mL1, mL2;
 
 	if(mMenu.bWinnerRunning){
 		if(mMenu.bDoUpdate){
-			for(wi = 0; wi < 7; wi++){
-				load_sprite(&mGame.mWText.mChars[wi], wi+ 1);	
-			}
+			//for(wi = 0; wi < 7; wi++){
+			//	load_sprite(&mGame.mWText.mChars[wi], wi+ 1);	
+			//}
+			
+			RAM_BANK = 1;
+			
+			load_lmenu(0);
+			
 			mMenu.mMenuItemUpdate = 0;
 			mMenu.bDoUpdate = 0;
 		}
@@ -2561,16 +2594,16 @@ void mblank(void){
 	
 		if(mMenu.bDoUpdate){
 		
-		RAM_BANK = 1;
+			RAM_BANK = 1;
 		   
-		mL1 = mMenu.mMenuLoad1;
-		mL2 = mMenu.mMenuLoad2;		
+			mL1 = mMenu.mMenuLoad1;
+			mL2 = mMenu.mMenuLoad2;		
 	
-		load_lmenu(mL1);
-		load_lmenu(mL2);	
+			load_lmenu(mL1);
+			load_lmenu(mL2);	
 		
-		mMenu.mMenuItemUpdate = 0;	
-		mMenu.bDoUpdate = 0;
+			mMenu.mMenuItemUpdate = 0;	
+			mMenu.bDoUpdate = 0;
 		}
 		
 		//load_lmenu(mMenu.mMenuLoad1);
@@ -2630,6 +2663,7 @@ void mblank(void){
 	
 
 	if(mauien){
+		RAM_BANK = 1;
 		update_audio();
 	}
 }
@@ -2704,7 +2738,7 @@ void load_level(){
 //   load_sprite(&mGame.PSprite4,4);			
 }
 
-int getPlItem(int cPl, int nIdx, int cDir){
+char getPlItem(int cPl, int nIdx, int cDir){
 	int nItem;
 	int pi;
 	int used;
@@ -2753,11 +2787,11 @@ int getPlItem(int cPl, int nIdx, int cDir){
 		
 	} while(used);
 
-	return nItem;
+	return (char)nItem;
 
 }
 
-int process_input_menu(){
+char process_input_menu(){
 
 	if(mMenu.mMenuControl){
 		mMenu.mMenuControl--;
@@ -2794,13 +2828,15 @@ int process_input_menu(){
 
 void init_audio(){
 	
+	
 	PCMCTRL = mPCM.mCtrl;
-	//PCMDATA = *sample_index;			
-	mauien = 1;
+	//PCMDATA = (char)0x0;			
+	//mauien = 1;
 }
 
 void start_audio(){
 	RAM_BANK = 1;
+	mauien = 1;
 	PCMRATE = 32;			
 }
 
@@ -2843,10 +2879,38 @@ void reload_audio(){
 	mPCM.mChunks = 0;
 }
 
+void init_PCM(){
+
+	//reset_vera();
+	
+	PCMCTRL= 0;	
+	PCMRATE = 0;
+	mauien = 0;	
+	//PCMDATA = (char)0x0;				
+	
+	//sample_point = BANK_RAM;
+	
+	mPCM.bLoadSound = 0;	
+	
+	mPCM.mStream = 1;
+		
+	load_index = sample_point; 
+	sample_index = sample_point; 
+	sample_max = sample_point + 4096; 
+	
+	mPCM.mFrames = 0;
+	mPCM.mChunks = 0;	
+	
+	mPCM.mFile = 2;
+	
+	//mPCM.mCtrl = 0x80;
+}
 
 void load_audio(char cstream){
 	int bi;
 	unsigned char* aload;
+	
+	mPCM.bLoadSound = 0;	
 	
 	mPCM.mStream = cstream;
 	
@@ -2864,7 +2928,9 @@ void load_audio(char cstream){
 	
 	open_audio();
 	
-	PCMCTRL=0x80;	
+	//PCMCTRL=0x80;	
+	
+	//reload_audio();
 	
 	for(bi = 0; bi < 16; bi++){				
 		__asm__("lda #255");
@@ -2881,7 +2947,7 @@ void load_audio(char cstream){
 	}
 	
 	RAM_BANK = 1;
-	sample_point = BANK_RAM;
+//	sample_point = BANK_RAM;
 	
 	aload = sample_point;
 
@@ -2889,6 +2955,8 @@ void load_audio(char cstream){
 	
 		mLo = (unsigned char)((unsigned short)aload & 0x00ff);
 		mHi = (unsigned char)(((unsigned short)aload & 0xff00) >> 8);	
+
+		RAM_BANK = 1;
 
 		__asm__("lda #255");
 	       	__asm__("ldx _mLo");
@@ -2901,6 +2969,8 @@ void load_audio(char cstream){
 	mLo = (unsigned char)((unsigned short)aload & 0x00ff);
 	mHi = (unsigned char)(((unsigned short)aload & 0xff00) >> 8);	
 
+	RAM_BANK = 1;
+	
 	__asm__("lda #16");
        	__asm__("ldx _mLo");
 	__asm__("ldy _mHi");
@@ -3020,7 +3090,6 @@ void render_menu(){
             
     while(mMenu.bShowMenu){
     	
-
 	mdelay--;
     	
     	if(mMenu.mMenuItemUpdate == 0){
@@ -3124,7 +3193,6 @@ void render_menu(){
     				setTextSprite(&mMenu.mMenuAI, mMenu.mNumbers[mMenu.mAISpeed], MAILEVELPOS,97);
     				mMenu.mMenuItemUpdate |= 1;	
     			}
-
     			
     			if(mMenu.mMenuItem == 4){
     				play_click(1500, mMenu.mClickLengthShort, 800);
@@ -3148,8 +3216,7 @@ void render_menu(){
     		default: 	
 	    		break;
     	}
-    	
-    	
+    	    	
     	    	
     	if(mdelay < 1){    
     		mMenu.mSelected++;
@@ -3181,7 +3248,7 @@ void render_menu(){
 }
 
 void load_menu(){
-    int oi;
+   int oi;
 
    VERA.control = 0x80;	
    VERA.display.video = 0;
@@ -3210,16 +3277,15 @@ void load_menu(){
    loadVera(mtxintpath, VRAM_texti, 3);
    
    VERA.layer1.tilebase = (VRAM_intro >> 9);// +3;
+          
+   for(oi = 0; oi < 8; oi++){    
+   	setMenuOffset(oi, 15);    	
+        load_lmenu(oi);
+   }
    
    load_audio(1);
-       
-   VERA.display.video = 0x61;
-
-    for(oi = 0; oi < 8; oi++){    
-    	setMenuOffset(oi, 15);    	
-        load_lmenu(oi);
-    }
-            
+    
+   VERA.display.video = 0x61;            
 }
 
 void render_wmenu(){
@@ -3244,12 +3310,14 @@ void render_wmenu(){
 
 		pi = mGame.mWText.mPIndex;
 		
+		RAM_BANK = 1;
+		
 		//waitvsync();
 		//pdel--;
 			
 		if(pdel < 1){
 			for(wi = 0; wi < 7; wi++){
-			mGame.mWText.mChars[wi].palette_offset = mGame.mWText.mPOffset[pi];
+				mMenu.mMenuLines[0].mChar[wi]->palette_offset = mGame.mWText.mPOffset[pi];
 			pi++;
 			if(pi > 13){
 				pi = 0;
@@ -3554,22 +3622,33 @@ void main(void) {
 
    init_menu(); 
    init_game();  
+  
+   //mauien = 0;
+   
+   //init_PCM();
+   
+   //PCMRATE = 0;
 
-   mauien = 0;
-   PCMRATE = 0;
-	
+   //VERA.irq_enable = 0;		
    install_irq();      
-   VERA.irq_enable = 1;
+//   VERA.irq_enable = 0;
    set_keyboard_irq();
+
+     init_PCM();  
+
+  VERA.irq_enable = 0;
+  
+
+
   
    while(mGame.bRunning){
         	
 
 	load_menu();
-		
+				
 	init_audio();
 
-	start_audio();        
+	//start_audio();        
 	
         VERA.irq_enable = 0x1 | 0x8;        
 	
@@ -3623,8 +3702,8 @@ void main(void) {
 		if(mGame.bCountDelay){
 			mGame.bCountDelay--;
 			if(mGame.bCountDelay < 1){
+				clear_sprite(4);
 				clear_sprite(5);
-				clear_sprite(6);
 			}
 		}
 				
@@ -3648,6 +3727,21 @@ void main(void) {
 		mGame.bFrameReady = 1;
 		    
 		waitvsync();
+		
+		while(mGame.bGamePaused){
+		   stop_sound();
+		   if(getkey(KEY_ENTER) > 0){
+       			mGame.bGamePaused = 0;
+      			mGame.bRacing = 0;	  
+		   }
+		   
+		   if(getkey(KEY_ESC) > 0){
+			clearkey(KEY_ESC);
+       			mGame.bGamePaused = 0;	  
+		   }
+
+
+		}
            		 		 
 		if(mGame.mFinCount){
 			mGame.mFinCount--;
@@ -3666,13 +3760,13 @@ void main(void) {
 	
 		VERA.display.video = 0;
 
-		clear_sprites(1,4);
+		clear_sprites(1,3);
 
 		clear_channels();
 		if(mGame.bCountDelay){
 			mGame.bCountDelay = 0;		
+			clear_sprite(4);
 			clear_sprite(5);
-			clear_sprite(6);
 		}
 
 	        VERA.irq_enable = 1;
@@ -3685,7 +3779,7 @@ void main(void) {
 	        	load_wmenu();
 	        	
         		init_audio();
-        		start_audio();	
+        		//start_audio();	
 	        	       		        
        		        VERA.irq_enable = 0x1 | 0x8;        
         		

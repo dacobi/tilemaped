@@ -239,7 +239,7 @@ char randidx;
 
 unsigned short mBankStack;
 
-#define BINIT() mBankStack = BANK_RAM + 4096
+#define BINIT() mBankStack = (unsigned short)BANK_RAM + 4096
 #define BALLOC(BSIZE) mBankStack; mBankStack += BSIZE
 
 char mNumbers[10] = "0123456789";
@@ -298,6 +298,7 @@ char mwpalpath[10] = "dat/wpal1";
 extern void install_irq();
 extern void remove_irq();
 extern void getkeystat();
+extern void clearkeystat();
 extern void set_keyboard_irq();
 extern void rm_keyboard_irq();
 
@@ -323,9 +324,10 @@ unsigned char sample_load;
 unsigned char *sample_index;
 unsigned char *load_index;
 
-int sample_max;
+unsigned char * sample_max;
 
-unsigned char *sample_point; //[4096];
+//unsigned char sample_point[4096];
+#define sample_point BANK_RAM
 
 unsigned char mHi, mLo, mLoad;
 
@@ -450,7 +452,6 @@ typedef struct PSprite {
 };
 
 typedef struct WText {
-	struct PSprite mChars[7];
 	char mPOffset[14];
 	char mPIndex;
 };
@@ -459,7 +460,6 @@ typedef struct MLine {
 	char mCCount;
 	char mSPos;
 	struct PSprite *mChar[9];
-
 };
 
 typedef struct SChan{
@@ -647,6 +647,7 @@ typedef struct Game {
    
    char bRunning;
    char bRacing;
+   char bGamePaused;
    char bCountDown;
    int bCountDelay;	   
    
@@ -691,6 +692,8 @@ void clearpsg(unsigned char mchan);
 
 void update_sound();
 
+void stop_sound();
+
 void clear_chan(struct SChan* cChan);
 
 void clear_channels();
@@ -715,9 +718,9 @@ void calc_player_dfactor(struct Player *cPlayer);
 
 void calc_players_dfactor();
 
-int check_collision_cars(struct Player *cCar1, struct Player *cCar2);
+char check_collision_cars(struct Player *cCar1, struct Player *cCar2);
 
-int check_collision();
+char check_collision();
 
 void solve_collision(int cDX, int cDY, struct Player *cCar1, struct Player *cCar2);
 
@@ -727,7 +730,9 @@ int getdelta(int car, int point);
 
 unsigned char getkey(unsigned char ckeynum);
 
-int process_joystick(int jnum);
+void clearkey(unsigned char ckeynum);
+
+void process_joystick(int jnum);
 
 void process_keys(char mkeynum);
 
@@ -755,7 +760,7 @@ void set_boom_sprite(struct PSprite *cSprite, struct Player *cPlayer);
 
 void process_sprites();
 
-int getWayState(int wState, int cX, int cY, int vX, int vY);
+char getWayState(int wState, int cX, int cY, int vX, int vY);
 
 void process_physics();
 
@@ -837,9 +842,9 @@ void mblank(void);
 
 void load_level();
 
-int getPlItem(int cPl, int nIdx, int cDir);
+char getPlItem(int cPl, int nIdx, int cDir);
 
-int process_input_menu();
+char process_input_menu();
 
 void render_menu();
 
@@ -854,6 +859,8 @@ void close_audio();
 void reload_audio();
 
 void init_audio();
+
+void init_PCM();
 
 void start_audio();
 

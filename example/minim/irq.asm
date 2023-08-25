@@ -3,6 +3,7 @@
 .export _install_irq
 .export _remove_irq
 .export _getkeystat
+.export _clearkeystat
 .export _set_keyboard_irq
 .export _rm_keyboard_irq
 
@@ -134,6 +135,12 @@ rts
   rts
 .endproc
 
+
+.proc _clearkeystat: near
+  lda #0
+  sta keyboard_scancodes_status , x
+  rts
+.endproc
 
 .proc keyhandler: near
 php
