@@ -250,7 +250,7 @@ char randidx;
 #define JOY_PAD_L 0b00000010
 #define JOY_PAD_R 0b00000001
 
-#define GAME_LEVELS 2
+#define GAME_LEVELS 5
 #define MMAXWAYPOINTS 12
 
 unsigned short mBankStack;
@@ -593,6 +593,25 @@ typedef struct Game {
    
    signed char mAISpeed;	
    
+   unsigned short mCarsAddr;
+   unsigned short mBoomAddr;
+   unsigned short mTXTCDAddr;
+   unsigned short mTXTCDAddrShort;
+   unsigned short mTXTLapsAddr;
+   unsigned short mTXTLapsAddrShort;                  
+   
+   char mCarsHi;
+   char mCarsLo;
+
+   char mBoomHi;
+   char mBoomLo;
+   
+   char mTXTCDHi;
+   char mTXTCDLo;
+
+   char mTXTLapsHi;
+   char mTXTLapsLo;
+   
    struct Player* mLeader;
    
    struct WText mWText;
@@ -687,6 +706,8 @@ typedef struct Game {
 
 struct Game mGame;
 
+void load_game();
+
 #ifdef MDEBUG   
 
 void init_debug();
@@ -698,6 +719,8 @@ void load_debug();
 #endif
 
 void setTextSprite(struct PSprite* cMenu, int cChar, int mx, int my);
+
+void set_text_sprite(struct PSprite* cMenu, unsigned short cHi, char cLo, char cSize, char cOff, unsigned short cChar, int mx, int my);
 
 void setTrackSprite(struct PSprite* cMenu, int cChar, int mx, int my);
 
