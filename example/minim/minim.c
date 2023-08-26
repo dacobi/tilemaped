@@ -2589,6 +2589,9 @@ void init_game(){
     reset_controls();
     clear_channels();
     
+    mauien = 0;   
+    PCMRATE = 0;
+    
     mGame.mCBeep.mChan = 0;
     mGame.mCBeep.mOn = 0;
     mGame.mBeepLength = 15;
@@ -2626,7 +2629,6 @@ void maflow(void){
 	
    while(!(PCMCTRL & 0x80)){
 
-        //RAM_BANK = 1;
 	PCMDATA = *sample_index;
 	
 	sample_index++;
@@ -2640,15 +2642,11 @@ void maflow(void){
 }	
 
 void mblank(void){
-	//char wi;
+
 	char mL1, mL2;
 
 	if(mMenu.bWinnerRunning){
-		if(mMenu.bDoUpdate){
-			//for(wi = 0; wi < 7; wi++){
-			//	load_sprite(&mGame.mWText.mChars[wi], wi+ 1);	
-			//}
-			
+		if(mMenu.bDoUpdate){			
 			RAM_BANK = 1;
 			
 			load_lmenu(0);
@@ -2675,23 +2673,7 @@ void mblank(void){
 			mMenu.mMenuItemUpdate = 0;	
 			mMenu.bDoUpdate = 0;
 		}
-		
-		//load_lmenu(mMenu.mMenuLoad1);
-		//load_lmenu(mMenu.mMenuLoad2);		
-		
-		
-		/*
-		if(mMenu.mMenuItemUpdate & 0x2){			
-			load_lmenu(mMenu.mMenuItemLast);		
-			mMenu.mMenuItemUpdate &= 1;
-		}
-		
-		if(mMenu.mMenuItemUpdate & 0x1){						
-			load_lmenu(mMenu.mMenuItem);
-			mMenu.mMenuItemUpdate &= 2;
-		}
-		*/
-		
+				
 		process_sound();
 		update_sound();		
 	}
@@ -2986,36 +2968,7 @@ void reload_audio(){
 	mPCM.mChunks = 0;
 }
 
-void init_PCM(){
-
-	//reset_vera();
-	
-	PCMCTRL= 0;	
-	PCMRATE = 0;
-	mauien = 0;	
-	//PCMDATA = (char)0x0;				
-	
-	//sample_point = BANK_RAM;
-	
-	mPCM.bLoadSound = 0;	
-	
-	mPCM.mStream = 1;
-		
-	load_index = sample_point; 
-	sample_index = sample_point; 
-	sample_max = sample_point + 4096; 
-	
-	mPCM.mFrames = 0;
-	mPCM.mChunks = 0;	
-	
-	mPCM.mFile = 2;
-	
-	//mPCM.mCtrl = 0x80;
-}
-
 void load_audio(char cstream){
-	int bi;
-	unsigned char* aload;
 	
 	mPCM.bLoadSound = 0;	
 	
@@ -3035,85 +2988,21 @@ void load_audio(char cstream){
 	
 	open_audio();
 		
-	//reload_audio();
-	//RAM_BANK = 1;
-	
-	
-	/*
-	for(bi = 0; bi < 16; bi++){				
-	//	RAM_BANK = 1;
-		__asm__("lda #255");
-	       	__asm__("ldx #$3d");
-		__asm__("ldy #$9f");
-		__asm__("sec");
-		__asm__("jsr $ff44");
-	}	*/
-	
-	/*
-	RAM_BANK = 1;
-	
-	aload = sample_point;
-
-	for(bi = 0; bi < 16; bi++){		
-	
-		mLo = (unsigned char)((unsigned short)aload & 0x00ff);
-		mHi = (unsigned char)((unsigned short)aload >> 8);	
-
-		__asm__("sei");
-		RAM_BANK = 1;		
-		__asm__("lda #255");
-	       	__asm__("ldx _mLo");
-		__asm__("ldy _mHi");
-		__asm__("jsr $ff44");
-		__asm__("cli");	
-	       	
-	       	aload += 255;			
-	}
-	
-	mLo = (unsigned char)((unsigned short)aload & 0x00ff);
-	mHi = (unsigned char)((unsigned short)aload >> 8);	
-
-	__asm__("sei");
-	RAM_BANK = 1;		
-	__asm__("lda #16");
-       	__asm__("ldx _mLo");
-	__asm__("ldy _mHi");
-	__asm__("jsr $ff44");
-	__asm__("cli");	
-
-
-
-	load_index = sample_point; 
-	sample_index = sample_point; 
-	sample_max = sample_point + 4096; 
-	
-	RAM_BANK = 1;	*/
-
-
-
-
-
-
-
 	PCMCTRL = 0x80;	
 
 	while(!(PCMCTRL & 0x80)){
 		sample_load = cbm_k_acptr();
         	//__asm__("lda %v",sample_load); // sample_load is already in Reg A
         	__asm__("sta $9f3d");
-        	sample_index++;
 	}
 	
 	RAM_BANK = 1;	
-		       	
-	mPCM.bLoadSound = 0;	
-		
+		       			
 	load_index = sample_point; 
 	sample_index = sample_point; 
 	sample_max = sample_point + 4096; 
 
 	while(load_index < sample_max){
-		//RAM_BANK = 1;	
 		*load_index = cbm_k_acptr();
 		load_index++;
 	}
@@ -3127,13 +3016,11 @@ void load_audio(char cstream){
 void update_audio(){
 
 	if(mPCM.bLoadSound){ //bLoadSound is set to 12 after AFLOW interrupt
-	
-		RAM_BANK = 1;
-	
+		
 		if(load_index <= (sample_max - 255)){
 	
 			mLo = (unsigned char)((unsigned short)load_index & 0x00ff);
-			mHi = (unsigned char)(((unsigned short)load_index & 0xff00) >> 8);	
+			mHi = (unsigned char)((unsigned short)load_index >> 8);	
 
 			RAM_BANK = 1;
 	
@@ -3141,9 +3028,7 @@ void update_audio(){
        			__asm__("ldx _mLo");
 		       	__asm__("ldy _mHi");
 		       	__asm__("jsr $ff44");
-		       	
-			RAM_BANK = 1;
-		       	
+		       						       	
 		       	load_index += 255;
 		       	
 		       	if(load_index == sample_max){
@@ -3151,7 +3036,6 @@ void update_audio(){
 		       		load_index = sample_point;		       				       		
 		       		
 		       	} else if( ((unsigned short)sample_max - (unsigned short)load_index) <= 12){
-
 
 				RAM_BANK = 1;		       			       		
 
@@ -3162,7 +3046,6 @@ void update_audio(){
 				}				
 
 				load_index = sample_point;
-				RAM_BANK = 1;		       	
 		       	}
        	
 	       	} else {
@@ -3170,7 +3053,7 @@ void update_audio(){
        			mLoad = (unsigned char)((unsigned short)sample_max - (unsigned short)load_index);
        	
 			mLo = (unsigned char)((unsigned short)load_index & 0x00ff);
-			mHi = (unsigned char)(((unsigned short)load_index & 0xff00) >> 8);	
+			mHi = (unsigned char)((unsigned short)load_index >> 8);	
 
 			RAM_BANK = 1;
 
@@ -3184,7 +3067,7 @@ void update_audio(){
 			mLoad = (255 - mLoad);
        		
 			mLo = (unsigned char)((unsigned short)load_index & 0x00ff);
-			mHi = (unsigned char)(((unsigned short)load_index & 0xff00) >> 8);	
+			mHi = (unsigned char)((unsigned short)load_index >> 8);	
 
 			RAM_BANK = 1;
 		
@@ -3192,8 +3075,6 @@ void update_audio(){
        			__asm__("ldx _mLo");
 		       	__asm__("ldy _mHi");
 		       	__asm__("jsr $ff44");
-
-			RAM_BANK = 1;		       	
 	       	
 		       	load_index += mLoad;
 				       		       	
@@ -3213,9 +3094,7 @@ void update_audio(){
 				if(load_index == sample_max){
 					load_index = sample_point;
 				}		
-			}
-			
-			RAM_BANK = 1;
+			}			
 		}	       
        	}
        	
@@ -3233,11 +3112,10 @@ void update_audio(){
 
 void render_menu(){
     int mdelay = 5;
-  
-    mMenu.bRunning = 1;
-  
+    
     mMenu.mMenuItem = 0;
     mMenu.mMenuItemLast = 0;
+    
     mMenu.mMenuItemUpdate = 0;
     mMenu.bDoUpdate = 0;
     
@@ -3245,6 +3123,8 @@ void render_menu(){
             
     mMenu.mMenuLoad1 = 0;
     mMenu.mMenuLoad2 = 0;            
+    
+    mMenu.bRunning = 1;    
             
     while(mMenu.bShowMenu){
     	
@@ -3789,23 +3669,10 @@ void main(void) {
    init_menu(); 
    init_game();  
   
-   //mauien = 0;
-   
-   //init_PCM();
-   
-   //PCMRATE = 0;
-
-   //VERA.irq_enable = 0;		
    install_irq();      
-//   VERA.irq_enable = 0;
    set_keyboard_irq();
-
-     //init_PCM();  
-
-  VERA.irq_enable = 0;
-  
-
-
+   
+   VERA.irq_enable = 0;
   
    while(mGame.bRunning){
         	

@@ -885,8 +885,6 @@ void reload_audio();
 
 void init_audio();
 
-void init_PCM();
-
 void start_audio();
 
 void stop_audio();
