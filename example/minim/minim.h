@@ -71,6 +71,7 @@ char randidx;
 #define VRAM_boom_hi    0x9
 #define VRAM_boom_lo 0x60
 #define VRAM_textcd         0x13C00
+#define VRAM_texttrk	 0x17400
 
 #define VRAM_intro    0x00000
 #define VRAM_texti   0x12C00
@@ -88,6 +89,21 @@ char randidx;
 #define TEXTW_3 (TEXTISIZEW * 8)
 #define TEXTW_4 (TEXTISIZEW * 9)
 
+#define MLAPSCOUNTX 20
+#define MLAPSCOUNTY 20
+#define MLAPSCOUNTSPACE 28
+
+#define TEXTISIZET 512
+
+#define TEXTT_1 0
+#define TEXTT_2 TEXTISIZET
+#define TEXTT_3 (TEXTISIZET * 2)
+#define TEXTT_4 (TEXTISIZET * 3)
+#define TEXTT_5 (TEXTISIZET * 4)
+#define TEXTT_L (TEXTISIZET * 5)
+#define TEXTT_A (TEXTISIZET * 6)
+#define TEXTT_P (TEXTISIZET * 7)
+#define TEXTT_S (TEXTISIZET * 8)
 
 
 #define TEXTISIZECD 2048
@@ -256,6 +272,8 @@ char mtxcdpath[9] = "dat/txcd";
 
 char mtxwnpath[9] = "dat/txwn";
 char mwinpath[8] = "dat/win";
+
+char mtxtrpath[9] = "dat/txtr";
 
 char msndpath[9] = "dat/snd1";
 #define MSNDPOS 7
@@ -578,6 +596,7 @@ typedef struct Game {
    struct Player* mLeader;
    
    struct WText mWText;
+   struct PSprite mLapsCount[5];
 
    struct SBeep mCBeep;
    struct SCrash mCrash;
@@ -679,6 +698,8 @@ void load_debug();
 #endif
 
 void setTextSprite(struct PSprite* cMenu, int cChar, int mx, int my);
+
+void setTrackSprite(struct PSprite* cMenu, int cChar, int mx, int my);
 
 void init_lmenu(char cline, char ccnum, int cchars[], int mspace, struct PSprite* cH1, struct PSprite* cH2, int mx, int my);
 

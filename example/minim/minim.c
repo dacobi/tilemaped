@@ -17,6 +17,23 @@ void setTextSprite(struct PSprite* cMenu, int cChar, int mx, int my){
 
 }
 
+void setTrackSprite(struct PSprite* cMenu, int cChar, int mx, int my){
+
+   cMenu->blocklo = SPRITE_BLOCKLO(VRAM_texttrk + cChar);
+   cMenu->blockhi = SPRITE_BLOCKHI(VRAM_texttrk + cChar);   
+   cMenu->mode = SPRITE_MODE_4BPP;
+   cMenu->mPos.x = mx;
+   cMenu->mPos.y = my;
+   cMenu->z = SPRITE_LAYER_1;
+   cMenu->flipx = 0;
+   cMenu->flipy = 0;   
+   cMenu->colmask = 0;
+   cMenu->dimensions = SPRITE_32_BY_32;
+   cMenu->palette_offset = 0;
+
+
+}
+
 void init_wtext(struct WText* wText, int cNR){
 	int cx, cy, cdelta,pi,pv,pd;
 	cy = 50;
@@ -214,16 +231,24 @@ void clear_chan(struct SChan* cChan){
 
 void clear_channels(){
 	int ci;
-	
+		
 	for(ci = 0; ci < 16; ci++){
 		clear_chan(&mGame.mChannels[ci]);
 	}
 
-	/*
+	
+	
 	for(ci = 0; ci < 16; ci++){
 		clearpsg(ci);		
 	}
-	*/
+	
+	mMenu.mMClick.mOn = 0;
+	mGame.mCBeep.mOn = 0;
+	mGame.mBump.mOn = 0;
+	mGame.mCrash.mOn = 0;
+	mGame.Player1.mEngine.mOn = 0;
+	mGame.Player2.mEngine.mOn = 0;
+	mGame.Player3.mEngine.mOn = 0;
 }
 
 void clear_control(struct Control* cCon){
@@ -714,6 +739,7 @@ void check_quit(){
 	  mGame.bRacing = 0;
 	  mGame.bGamePaused = 0;
 	  mGame.bCountDown = 0;
+	  mGame.bFrameReady = 0;
       }
    }
 }
@@ -1548,8 +1574,21 @@ void process_player(struct Player *cPlayer){
 	
 	if(cPlayer->bCheckFinish){
 		if(cPlayer->mPos.y < mGame.mFinishLine){
-			//mGame.bRacing = 0;
+
 			cPlayer->mLaps--;
+			
+			if(cPlayer->mLaps < mGame.mLaps){
+			
+				mGame.mLaps--;
+				
+				if(mGame.mLaps > 0){
+				
+			   		   setTrackSprite(&mGame.mLapsCount[4], (mGame.mLaps - 1) * TEXTISIZET , MLAPSCOUNTX + (MLAPSCOUNTSPACE >> 1) + (MLAPSCOUNTSPACE * 4), MLAPSCOUNTY);
+
+			   		mMenu.bDoUpdate = 4;
+			   }
+			 }
+			
 			cPlayer->bCheckFinish = 0;
 			
 			if(cPlayer->mLaps < 1){
@@ -1608,7 +1647,7 @@ void process_player(struct Player *cPlayer){
 			}
 		}
 		
-		cPlayer->PPlace.mPFactor = cPlayer->mControl->mNextWay + ((mGame.mWaypointNum + 2) * (mGame.mLaps - cPlayer->mLaps));
+		cPlayer->PPlace.mPFactor = cPlayer->mControl->mNextWay + (((mGame.mWaypointNum + 2) * 2) * (mMenu.mLaps - cPlayer->mLaps));
 		if(cPlayer->bCheckFinish){
 			cPlayer->PPlace.mPFactor += mGame.mWaypointNum + 1;
 		}
@@ -2377,7 +2416,7 @@ void process_sound(){
 	}
 
 	if(mGame.mCBeep.mOn){
-	
+		
 		mGame.mCBeep.mLength--;
 		
 		if(mGame.mCBeep.mLength < 1){
@@ -2401,7 +2440,7 @@ void process_sound(){
 			mGame.mChannels[mGame.mCrash.mChan - 1].mVol = 0;					
 		}
 	}
-	
+		
 	if(mGame.mBump.mOn){
 		mGame.mBump.mLength--;
 		
@@ -2432,6 +2471,7 @@ void process_sound(){
 	if(mGame.Player4.mEngine.mOn){
 		process_engine(&mGame.Player4.mEngine, mGame.Player4.mVel);
 	} */
+	
 
 }
 
@@ -2483,20 +2523,22 @@ void render_cdmenu(){
 	    		   
 		if(cdelay < 1){
 			mGame.bCountDown--;
-			check_quit();
 			if(mGame.bCountDown == 0){
 				play_beep(2000, mGame.mBeepLength * 3);
 				set_menucd(mGame.bCountDown);
-				waitvsync();
-				load_sprite(&mGame.mCDown1, 4);
-				load_sprite(&mGame.mCDown2, 5);
+				mMenu.bDoUpdate = 2;
+				//waitvsync();
+				//load_sprite(&mGame.mCDown1, 4);
+				//load_sprite(&mGame.mCDown2, 5);
 			} else {
 				play_beep(1000, mGame.mBeepLength);
 				set_menucd(mGame.bCountDown);
+				mMenu.bDoUpdate = 1;
 				waitvsync();
-				load_sprite(&mGame.mCDown1, 4);
+				//load_sprite(&mGame.mCDown1, 4);
+				cdelay = 30000;	
 			}
-			cdelay = 30000;			
+
 		}
 		cdelay--;
 	}
@@ -2563,6 +2605,13 @@ void init_game(){
     //mGame.bCountDown = 0;
     
     mGame.mWinner = 0;
+    	     	 
+    setTrackSprite(&mGame.mLapsCount[0], TEXTT_L, MLAPSCOUNTX, MLAPSCOUNTY);
+    setTrackSprite(&mGame.mLapsCount[1], TEXTT_A, MLAPSCOUNTX + MLAPSCOUNTSPACE, MLAPSCOUNTY);
+    setTrackSprite(&mGame.mLapsCount[2], TEXTT_P, MLAPSCOUNTX + (MLAPSCOUNTSPACE * 2), MLAPSCOUNTY);
+    setTrackSprite(&mGame.mLapsCount[3], TEXTT_S, MLAPSCOUNTX + (MLAPSCOUNTSPACE * 3), MLAPSCOUNTY);
+    setTrackSprite(&mGame.mLapsCount[4], TEXTT_1, MLAPSCOUNTX + (MLAPSCOUNTSPACE * 4), MLAPSCOUNTY);        
+            
 }
 
 void mscol(void){
@@ -2652,15 +2701,39 @@ void mblank(void){
 	
 		if(mGame.bCountDown){
 
+			if(mMenu.bDoUpdate == 1){				
+				load_sprite(&mGame.mCDown1, 4);
+				mMenu.bDoUpdate = 0;
+			}									
+											
 			process_sound();
 			update_sound();
 			
+			check_quit();		
+			
 		} else if(mGame.bFrameReady){
 		
+			if(mMenu.bDoUpdate){
+				if(mMenu.bDoUpdate == 2){				
+					load_sprite(&mGame.mCDown1, 4);
+					load_sprite(&mGame.mCDown2, 5);						
+					mMenu.bDoUpdate = 0;
+				}									
+				
+				if(mMenu.bDoUpdate == 3){							
+					clear_sprite(4);
+					clear_sprite(5);
+					mMenu.bDoUpdate = 0;
+				}
+				
+				if(mMenu.bDoUpdate == 4){							
+				    load_sprite(&mGame.mLapsCount[4], 10);    
+				    mMenu.bDoUpdate = 0;
+				}
+			}
+		
 			update_sound();
-		
-			//calc_viewport();    
-		
+				
 			mScrollX = mGame.mViewport.x - (320);
 			mScrollY = mGame.mViewport.y - (240);
                        
@@ -2696,6 +2769,7 @@ void load_level(){
    VERA.control = 0x80;
    VERA.display.video = 0;
    reset_vera();
+   VERA.control = 0x0;      
    
    RAM_BANK = 1; 
    
@@ -2744,7 +2818,9 @@ void load_level(){
    loadVera(mtlsbgpath, VRAM_tilesbg , 2);
            
    loadVera(mtxcdpath, VRAM_textcd, 3);   
-
+   
+   loadVera(mtxtrpath, VRAM_texttrk, 3);   
+      
    SETPATHNUM(mtrkpath, 1, MTRKPOS);
    loadVera(mtrkpath, VRAM_layer1_map, 2);
     
@@ -2757,6 +2833,12 @@ void load_level(){
    load_sprite(&mGame.PSprite2,2);
    load_sprite(&mGame.PSprite3,3);
 //   load_sprite(&mGame.PSprite4,4);			
+
+    load_sprite(&mGame.mLapsCount[0], 6);
+    load_sprite(&mGame.mLapsCount[1], 7);
+    load_sprite(&mGame.mLapsCount[2], 8);
+    load_sprite(&mGame.mLapsCount[3], 9);
+    load_sprite(&mGame.mLapsCount[4], 10);    
 }
 
 char getPlItem(int cPl, int nIdx, int cDir){
@@ -2975,7 +3057,6 @@ void load_audio(char cstream){
 	}
 	
 	RAM_BANK = 1;
-//	sample_point = BANK_RAM;
 	
 	aload = sample_point;
 
@@ -2984,12 +3065,13 @@ void load_audio(char cstream){
 		mLo = (unsigned char)((unsigned short)aload & 0x00ff);
 		mHi = (unsigned char)(((unsigned short)aload & 0xff00) >> 8);	
 
-		RAM_BANK = 1;
-
+		__asm__("sei");
+		RAM_BANK = 1;		
 		__asm__("lda #255");
 	       	__asm__("ldx _mLo");
 		__asm__("ldy _mHi");
 		__asm__("jsr $ff44");
+		__asm__("cli");	
 	       	
 	       	aload += 255;			
 	}
@@ -2997,12 +3079,14 @@ void load_audio(char cstream){
 	mLo = (unsigned char)((unsigned short)aload & 0x00ff);
 	mHi = (unsigned char)(((unsigned short)aload & 0xff00) >> 8);	
 
-	RAM_BANK = 1;
-	
+	__asm__("sei");
+	RAM_BANK = 1;		
 	__asm__("lda #16");
        	__asm__("ldx _mLo");
 	__asm__("ldy _mHi");
 	__asm__("jsr $ff44");
+	__asm__("cli");	
+
 	
 	RAM_BANK = 1;	
 		       	
@@ -3303,6 +3387,7 @@ void load_menu(){
    VERA.control = 0x80;	
    VERA.display.video = 0;
    reset_vera();
+   VERA.control = 0x0;      
    
    init_menulines();
     
@@ -3419,6 +3504,7 @@ void load_wmenu(){
    VERA.control = 0x80;	
    VERA.display.video = 0;
    reset_vera();
+   VERA.control = 0x0;      
    
    SETPATHNUM(mwpalpath, mGame.mWinner, MWPALPOS);
 
@@ -3572,6 +3658,8 @@ void setup_race(){
    mGame.mLaps = mMenu.mLaps;
    mGame.mLevel = mMenu.mLevel;
    
+   setTrackSprite(&mGame.mLapsCount[4], (mGame.mLaps - 1) * TEXTISIZET , MLAPSCOUNTX + (MLAPSCOUNTSPACE >> 1) + (MLAPSCOUNTSPACE * 4), MLAPSCOUNTY);
+   
    calc_way();
    
 #ifdef MDEBUG      
@@ -3665,6 +3753,8 @@ void setup_race(){
    
    mGame.mLeader = mGame.Players[0];
    
+   mMenu.bDoUpdate = 0;
+   
    mGame.bFrameReady = 0;
    
    mGame.bCountDown = 4;
@@ -3754,8 +3844,7 @@ void main(void) {
 		if(mGame.bCountDelay){
 			mGame.bCountDelay--;
 			if(mGame.bCountDelay < 1){
-				clear_sprite(4);
-				clear_sprite(5);
+				mMenu.bDoUpdate = 3;
 			}
 		}
 				
@@ -3776,12 +3865,18 @@ void main(void) {
 		
 		process_sprites();
 		
-		mGame.bFrameReady = 1;
+		if(mGame.bRacing){
+			mGame.bFrameReady = 1;
+		}
 		    
 		waitvsync();
 		
 		while(mGame.bGamePaused){
-		   stop_sound();
+
+		   if(mGame.bFrameReady == 0){
+		   	stop_sound();
+		   }
+		   
 		   if(getkey(KEY_ENTER) > 0){
        			mGame.bGamePaused = 0;
       			mGame.bRacing = 0;	  
@@ -3811,19 +3906,18 @@ void main(void) {
 	
 	if(mGame.bIRQ){
 	
+		waitvsync();
+	
+		VERA.irq_enable = 0;
 		VERA.display.video = 0;
 
-		clear_sprites(1,5);
-
+		clear_sprites(1,10);
+		
 		clear_channels();
-		//if(mGame.bCountDelay){
+		
 		mGame.bCountDelay = 0;		
 		
-		//clear_sprite(4);
-		//clear_sprite(5);
-		//}
-
-	        VERA.irq_enable = 1;
+	        //VERA.irq_enable = 1;
 	        mGame.bIRQ = 0;
 	        
 	        if(mGame.mWinner){
