@@ -3034,12 +3034,12 @@ void load_audio(char cstream){
 	mPCM.mFile = 2;
 	
 	open_audio();
-	
-	PCMCTRL = 0x80;	
-	
+		
 	//reload_audio();
 	//RAM_BANK = 1;
 	
+	
+	/*
 	for(bi = 0; bi < 16; bi++){				
 	//	RAM_BANK = 1;
 		__asm__("lda #255");
@@ -3047,15 +3047,9 @@ void load_audio(char cstream){
 		__asm__("ldy #$9f");
 		__asm__("sec");
 		__asm__("jsr $ff44");
-	}	
-		  	
-	while(!(PCMCTRL & 0x80)){
-	//	RAM_BANK = 1;
-		sample_load = cbm_k_acptr();
-        	__asm__("lda %v",sample_load); // sample_load is already in Reg A
-        	__asm__("sta $9f3d");
-	}
+	}	*/
 	
+	/*
 	RAM_BANK = 1;
 	
 	aload = sample_point;
@@ -3063,7 +3057,7 @@ void load_audio(char cstream){
 	for(bi = 0; bi < 16; bi++){		
 	
 		mLo = (unsigned char)((unsigned short)aload & 0x00ff);
-		mHi = (unsigned char)(((unsigned short)aload & 0xff00) >> 8);	
+		mHi = (unsigned char)((unsigned short)aload >> 8);	
 
 		__asm__("sei");
 		RAM_BANK = 1;		
@@ -3077,7 +3071,7 @@ void load_audio(char cstream){
 	}
 	
 	mLo = (unsigned char)((unsigned short)aload & 0x00ff);
-	mHi = (unsigned char)(((unsigned short)aload & 0xff00) >> 8);	
+	mHi = (unsigned char)((unsigned short)aload >> 8);	
 
 	__asm__("sei");
 	RAM_BANK = 1;		
@@ -3087,6 +3081,28 @@ void load_audio(char cstream){
 	__asm__("jsr $ff44");
 	__asm__("cli");	
 
+
+
+	load_index = sample_point; 
+	sample_index = sample_point; 
+	sample_max = sample_point + 4096; 
+	
+	RAM_BANK = 1;	*/
+
+
+
+
+
+
+
+	PCMCTRL = 0x80;	
+
+	while(!(PCMCTRL & 0x80)){
+		sample_load = cbm_k_acptr();
+        	//__asm__("lda %v",sample_load); // sample_load is already in Reg A
+        	__asm__("sta $9f3d");
+        	sample_index++;
+	}
 	
 	RAM_BANK = 1;	
 		       	
@@ -3095,6 +3111,14 @@ void load_audio(char cstream){
 	load_index = sample_point; 
 	sample_index = sample_point; 
 	sample_max = sample_point + 4096; 
+
+	while(load_index < sample_max){
+		//RAM_BANK = 1;	
+		*load_index = cbm_k_acptr();
+		load_index++;
+	}
+
+	load_index = sample_point; 
 	
 	mPCM.mFrames = 0;
 	mPCM.mChunks = 0;
@@ -3776,7 +3800,7 @@ void main(void) {
 //   VERA.irq_enable = 0;
    set_keyboard_irq();
 
-     init_PCM();  
+     //init_PCM();  
 
   VERA.irq_enable = 0;
   
