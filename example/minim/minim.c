@@ -29,7 +29,7 @@ void load_game(char clvl){
 	while(li < (clvl - 1)){
 		sload = 0;
 		
-		while(sload < 16){
+		while(sload < 12){
 			cload = cbm_k_acptr();
 			sload++;
 		}
@@ -72,6 +72,7 @@ void load_game(char clvl){
 	
 
 	//Load TXTCD Sprite Addrs
+	/*
 	cload = cbm_k_acptr();
 	mGame.mTXTCDAddr = cload;
 	mGame.mTXTCDAddr = mGame.mTXTCDAddr << 8;
@@ -86,7 +87,7 @@ void load_game(char clvl){
 	cload = cbm_k_acptr();
 	mGame.mTXTCDHi += cload;
 	mGame.mTXTCDLo = cload;
-	
+	*/
 	
 	//Load TXTLaps Sprite Addrs
 	cload = cbm_k_acptr();
@@ -2256,7 +2257,7 @@ void setMenuOffset(int cLine, int cOffset){
 void init_menulines(){
 
     int mPLine[7] = {TEXTI_P, TEXTI_L, TEXTI_A, TEXTI_Y, TEXTI_E, TEXTI_R, TEXTI_1 };
-    int mTLine[5] = {TEXTI_L, TEXTI_E, TEXTI_V, TEXTI_E, TEXTI_L};
+    int mTLine[5] = {TEXTI_T, TEXTI_R, TEXTI_A, TEXTI_C, TEXTI_K};
     int mLLine[4] = {TEXTI_L, TEXTI_A, TEXTI_P, TEXTI_S};    
     int mSLine[5] = {TEXTI_S, TEXTI_T, TEXTI_A, TEXTI_R, TEXTI_T};    
     int mELine[4] = {TEXTI_E, TEXTI_X, TEXTI_I, TEXTI_T};        
@@ -2317,7 +2318,7 @@ void init_menu(){
 
     setTextSprite(&mMenu.mMenuLVL, TEXTI_1, 287,67);
 
-    setTextSprite(&mMenu.mMenuLABS, TEXTI_5, 279,77);
+    setTextSprite(&mMenu.mMenuLABS, TEXTI_3, 279,77);
     
     setTextSprite(&mMenu.mMenuAI, TEXTI_3, MAILEVELPOS, 97);
  
@@ -2363,7 +2364,7 @@ void init_menu(){
     mMenu.mNumbers[9] = 0;
     
     mMenu.mLevel = 1;
-    mMenu.mLaps = 5;
+    mMenu.mLaps = 3;
     
     mMenu.mAISpeed = 3;
     
@@ -2657,21 +2658,21 @@ void set_menucd(int cNR){
 	switch(cNR){
 		case 3:
 			//setCDSprite(&mGame.mCDown1, TEXTCD_3, 320-32, 140);
-			set_text_sprite(&mGame.mCDown1, mGame.mTXTCDHi, mGame.mTXTCDLo, SPRITE_64_BY_64, 0, TEXTCD_3, 320-32, 140);
+			set_text_sprite(&mGame.mCDown1, mGame.mTXTLapsHi, mGame.mTXTLapsLo, SPRITE_32_BY_32, 0, TEXTT_3, 320-16, 150);
 			break;
 		case 2:
 			//setCDSprite(&mGame.mCDown1, TEXTCD_2, 320-32, 140);
-			set_text_sprite(&mGame.mCDown1, mGame.mTXTCDHi, mGame.mTXTCDLo, SPRITE_64_BY_64, 0, TEXTCD_2, 320-32, 140);
+			set_text_sprite(&mGame.mCDown1, mGame.mTXTLapsHi, mGame.mTXTLapsLo, SPRITE_32_BY_32, 0, TEXTT_2, 320-16, 150);
 			break;
 		case 1:
 			//setCDSprite(&mGame.mCDown1, TEXTCD_1, 320-32, 140);
-			set_text_sprite(&mGame.mCDown1, mGame.mTXTCDHi, mGame.mTXTCDLo, SPRITE_64_BY_64, 0, TEXTCD_1, 320-32, 140);
+			set_text_sprite(&mGame.mCDown1, mGame.mTXTLapsHi, mGame.mTXTLapsLo, SPRITE_32_BY_32, 0, TEXTT_1, 320-16, 150);
 			break;
 		case 0:
 			//setCDSprite(&mGame.mCDown1, TEXTCD_G, 320 - 64 + 8, 140);
 			//setCDSprite(&mGame.mCDown2, TEXTCD_O, 320 - 8, 140);			
-			set_text_sprite(&mGame.mCDown1, mGame.mTXTCDHi, mGame.mTXTCDLo, SPRITE_64_BY_64, 0, TEXTCD_G, 320 - 64 + 8, 140);
-			set_text_sprite(&mGame.mCDown2, mGame.mTXTCDHi, mGame.mTXTCDLo, SPRITE_64_BY_64, 0, TEXTCD_O, 320 - 8, 140);
+			set_text_sprite(&mGame.mCDown1, mGame.mTXTLapsHi, mGame.mTXTLapsLo, SPRITE_32_BY_32, 0, TEXTT_G, 320 - 32 + 3, 150);
+			set_text_sprite(&mGame.mCDown2, mGame.mTXTLapsHi, mGame.mTXTLapsLo, SPRITE_32_BY_32, 0, TEXTT_O, 320 - 3 , 150);
 			break;
 	}
 }
@@ -2964,7 +2965,7 @@ void load_level(){
    loadVera(mtlsbgpath, VRAM_tilesbg , 2);
            
    //loadVera(mtxcdpath, VRAM_textcd, 3);
-   loadVera(mtxcdpath, mGame.mTXTCDAddr, 3);      
+//   loadVera(mtxcdpath, mGame.mTXTCDAddr, 3);      
    
    //loadVera(mtxtrpath, VRAM_texttrk, 3);
    loadVera(mtxtrpath, mGame.mTXTLapsAddr, 3);      

@@ -104,6 +104,7 @@ int main(int argc, char *argv[]){
 
 		
 		//CD TXT Sprite	
+		/*
 		unsigned int mCDAddr = VRAM_offset + tSize + CARS_size + BOOM_size;
 		
 		unsigned char mCDLo,mCDHi;
@@ -131,9 +132,11 @@ int main(int argc, char *argv[]){
 	
 		obuffer.push_back(mCDHi);
 		obuffer.push_back(mCDLo);		
+		
+		*/
 
 		//LAPS TXT Sprite	
-		unsigned int mLPAddr = VRAM_offset + tSize + CARS_size + BOOM_size + CDTXT_size;
+		unsigned int mLPAddr = VRAM_offset + tSize + CARS_size + BOOM_size;
 		
 		std::cout << "TXT Laps Addr: " << mLPAddr << std::endl;
 		

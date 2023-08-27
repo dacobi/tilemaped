@@ -104,6 +104,8 @@ char randidx;
 #define TEXTT_A (TEXTISIZET * 6)
 #define TEXTT_P (TEXTISIZET * 7)
 #define TEXTT_S (TEXTISIZET * 8)
+#define TEXTT_O (TEXTISIZET * 9)
+#define TEXTT_G (TEXTISIZET * 10)
 
 
 #define TEXTISIZECD 2048
@@ -136,6 +138,7 @@ char randidx;
 #define TEXTI_V (TEXTISIZE * 16)
 #define TEXTI_T (TEXTISIZE * 17)
 #define TEXTI_X (TEXTISIZE * 18)
+#define TEXTI_C (TEXTISIZE * 19)
 
 #define MAILEVELPOS 85
 
@@ -597,7 +600,7 @@ typedef struct Game {
    
    unsigned short mCarsAddr;
    unsigned short mBoomAddr;
-   unsigned short mTXTCDAddr;
+//   unsigned short mTXTCDAddr;
    unsigned short mTXTLapsAddr;
    
    unsigned short mCarsHi;
@@ -606,8 +609,8 @@ typedef struct Game {
    unsigned short mBoomHi;
    char mBoomLo;
    
-   unsigned short mTXTCDHi;
-   char mTXTCDLo;
+//   unsigned short mTXTCDHi;
+//   char mTXTCDLo;
 
    unsigned short mTXTLapsHi;
    char mTXTLapsLo;
