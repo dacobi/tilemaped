@@ -796,6 +796,8 @@ void loadVera(char *fname, unsigned int address, int flag);
 
 void loadFile(char *fname, unsigned int address);
 
+void openFile(char *fname, char file);
+
 int rangechk(int dir);
 
 int rangechkcar(int dir);

@@ -837,11 +837,15 @@ void calc_way(){
  	int nX, nY;
  	char nC;
  	
+ 	/*
  	cbm_k_setnam(mwaypath);
 	cbm_k_setlfs(3,8,0);
 	cbm_k_open();
 	
 	cbm_k_ckout(3);
+	*/
+	
+	openFile(mwaypath, 3);
 	
 	wi = cbm_k_acptr();
 	
@@ -873,6 +877,15 @@ void loadFile(char *fname, unsigned int address){
    cbm_k_setnam(fname);
    cbm_k_setlfs(1,8,0);
    cbm_k_load(0, address);    
+}
+
+void openFile(char *fname, char file){
+
+ 	cbm_k_setnam(fname);
+	cbm_k_setlfs(file,8,0);
+	cbm_k_open();
+	
+	cbm_k_ckout(file);
 }
 
 int rangechk(int dir){
@@ -2978,12 +2991,16 @@ void stop_audio(){
 void open_audio(){
 		
 	SETPATHNUM(msndpath, mPCM.mStream, MSNDPOS);			
-
+	
+	/*
 	cbm_k_setnam(msndpath);
 	cbm_k_setlfs(mPCM.mFile,8,0);
 	cbm_k_open();
 	
 	cbm_k_ckout(mPCM.mFile);
+	*/
+	
+	openFile(msndpath, mPCM.mFile);
 }
 
 void close_audio(){
@@ -3065,13 +3082,30 @@ void load_audio(char cstream){
 		load_index += 255;
 	}
 	
-	RAM_BANK = 1;	
+/*
+	mLo = (unsigned char)((unsigned short)load_index & 0x00ff);
+	mHi = (unsigned char)((unsigned short)load_index >> 8);	
+
+	RAM_BANK = 1;
+
+	//Causes Pop	
+	__asm__("lda #16");
+	__asm__("ldx _mLo");
+	__asm__("ldy _mHi");
+	__asm__("jsr $ff44");
+
+*/
+	RAM_BANK = 1;
+
+	//bi = 0;
 		
 	while(load_index < sample_max){
+	//while(bi < 16){
 		*load_index = cbm_k_acptr();
 		load_index++;
+	//	bi++;
 	}
-	
+		
 	load_index = sample_point; 
 	
 	mPCM.mFrames = 0;
