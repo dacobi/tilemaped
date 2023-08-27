@@ -1,26 +1,131 @@
 #include "minim.h"
 
-void load_game(){
-	mGame.mLevels = 2;
+char get_game_levels(){
+	char clevels;
+	
+	openFile(mgamepath, 1);
+	
+	clevels = cbm_k_acptr();
+	
+	cbm_k_close(1);
+	
+	if(clevels > GAME_LEVELS){
+		clevels = GAME_LEVELS;
+	}
+	
+	return clevels;
+}
 
+void load_game(char clvl){
 
+	char cload, sload;
+	char li = 0;
+	
+	
+	openFile(mgamepath, 1);
+
+	cload = cbm_k_acptr();
+
+	while(li < (clvl - 1)){
+		sload = 0;
+		
+		while(sload < 16){
+			cload = cbm_k_acptr();
+			sload++;
+		}
+						
+		li++;														
+	}
+
+	//Load Car Sprite Addrs
+	cload = cbm_k_acptr();
+	mGame.mCarsAddr = cload;
+	mGame.mCarsAddr = mGame.mCarsAddr << 8;
+	
+	cload = cbm_k_acptr();
+	mGame.mCarsAddr += cload;
+	
+	cload = cbm_k_acptr();
+	mGame.mCarsHi = cload;
+	mGame.mCarsHi = mGame.mCarsHi << 8;
+	
+	cload = cbm_k_acptr();
+	mGame.mCarsHi += cload;
+	mGame.mCarsLo = cload;
+	
+
+	//Load Boom Sprite Addrs
+	cload = cbm_k_acptr();
+	mGame.mBoomAddr = cload;
+	mGame.mBoomAddr = mGame.mBoomAddr << 8;
+	
+	cload = cbm_k_acptr();
+	mGame.mBoomAddr += cload;
+	
+	cload = cbm_k_acptr();
+	mGame.mBoomHi = cload;
+	mGame.mBoomHi = mGame.mBoomHi << 8;
+	
+	cload = cbm_k_acptr();
+	mGame.mBoomHi += cload;
+	mGame.mBoomLo = cload;
+	
+
+	//Load TXTCD Sprite Addrs
+	cload = cbm_k_acptr();
+	mGame.mTXTCDAddr = cload;
+	mGame.mTXTCDAddr = mGame.mTXTCDAddr << 8;
+	
+	cload = cbm_k_acptr();
+	mGame.mTXTCDAddr += cload;
+	
+	cload = cbm_k_acptr();
+	mGame.mTXTCDHi = cload;
+	mGame.mTXTCDHi = mGame.mTXTCDHi << 8;
+	
+	cload = cbm_k_acptr();
+	mGame.mTXTCDHi += cload;
+	mGame.mTXTCDLo = cload;
+	
+	
+	//Load TXTLaps Sprite Addrs
+	cload = cbm_k_acptr();
+	mGame.mTXTLapsAddr = cload;
+	mGame.mTXTLapsAddr = mGame.mTXTLapsAddr << 8;
+	
+	cload = cbm_k_acptr();
+	mGame.mTXTLapsAddr += cload;
+	
+	cload = cbm_k_acptr();
+	mGame.mTXTLapsHi = cload;
+	mGame.mTXTLapsHi = mGame.mTXTLapsHi << 8;
+	
+	cload = cbm_k_acptr();
+	mGame.mTXTLapsHi += cload;
+	mGame.mTXTLapsLo = cload;
+	
+	cbm_k_close(1); //Close "GAME" file
+		
+
+	/*
    	mGame.mCarsAddr = VRAM_sprites;
    	mGame.mBoomAddr = VRAM_boom;
    	mGame.mTXTCDAddr = VRAM_textcd;
    	mGame.mTXTLapsAddr = VRAM_texttrk;     
-   	mGame.mTXTLapsAddrShort = 0xBA0;    
    
-   	mGame.mCarsHi = VRAM_sprites_hi;
+   	mGame.mCarsHi = 0x820; //VRAM_sprites_hi;
    	mGame.mCarsLo = VRAM_sprites_lo;
 
-   	mGame.mBoomHi = VRAM_boom_hi;
+   	mGame.mBoomHi = 0x960; //VRAM_boom_hi;
    	mGame.mBoomLo = VRAM_boom_lo;
    
-   	mGame.mTXTCDHi = SPRITE_BLOCKHI(VRAM_textcd);
-	mGame.mTXTCDLo = SPRITE_BLOCKLO(VRAM_textcd);
+   	mGame.mTXTCDHi = 0x9E0; //SPRITE_BLOCKHI(VRAM_textcd);
+	mGame.mTXTCDLo = 0xE0; //SPRITE_BLOCKLO(VRAM_textcd);
 
-   	mGame.mTXTLapsHi = 0x0B; //SPRITE_BLOCKHI(VRAM_texttrk);
-	mGame.mTXTLapsLo = 0xA0; //SPRITE_BLOCKLO(VRAM_texttrk);
+   	mGame.mTXTLapsHi = 0xB20; //0xBA0;    
+   	//mGame.mTXTLapsHi = 0x0B; //SPRITE_BLOCKHI(VRAM_texttrk);
+	mGame.mTXTLapsLo = 0x20; //SPRITE_BLOCKLO(VRAM_texttrk);
+	*/
 }
 
 void set_text_sprite(struct PSprite* cMenu, unsigned short cHi, char cLo, char cSize, char cOff, unsigned short cChar, int mx, int my){
@@ -1022,7 +1127,7 @@ void set_boom_sprite(struct PSprite *cSprite, struct Player *cPlayer){
  	cPlayer->mBoomDelay--;
     	
     	cSprite->blocklo = mGame.mBoomLo + (SPRITE_BLOCKLO(cPlayer->mBoomCount * SPRITE_SIZE) & 0x00ff); // SPRITE_BLOCKLO(VRAM_boom + (cPlayer->mBoomCount * SPRITE_SIZE));
-    	cSprite->blockhi = mGame.mBoomHi; // SPRITE_BLOCKHI(VRAM_boom + (cPlayer->mBoomCount * SPRITE_SIZE));    	
+    	cSprite->blockhi = ((mGame.mBoomHi + SPRITE_BLOCKLO((cPlayer->mBoomCount * SPRITE_SIZE))) >> 8) & 0x00ff;// mGame.mBoomHi; // SPRITE_BLOCKHI(VRAM_boom + (cPlayer->mBoomCount * SPRITE_SIZE));    	
     	cSprite->palette_offset = 10;
     	
     	cSprite->mPos.x = (320-16) + ( cPlayer->mPos.x - mGame.mViewport.x);
@@ -1250,7 +1355,7 @@ void calc_sprite_pos(struct PSprite *cSprite, struct Player *cPlayer){
 	
 
     cSprite->blocklo = mGame.mCarsLo + (SPRITE_BLOCKLO(blockoff) & 0x00ff); //SPRITE_BLOCKLO(VRAM_sprites+blockoff);
-    cSprite->blockhi = mGame.mCarsHi; // SPRITE_BLOCKHI(VRAM_sprites+blockoff);    
+    cSprite->blockhi = ((mGame.mCarsHi + SPRITE_BLOCKLO(blockoff)) >> 8) & 0x00ff;    
     
     cSprite->mPos.x = (320-16) + ( cPlayer->mPos.x - mGame.mViewport.x);
     cSprite->mPos.y = (240-16) + ( cPlayer->mPos.y - mGame.mViewport.y);
@@ -1636,7 +1741,7 @@ void process_player(struct Player *cPlayer){
 				
 				if(mGame.mLaps > 0){
 				
-			   		   set_text_sprite(&mGame.mLapsCount[4], mGame.mTXTLapsAddrShort, mGame.mTXTLapsLo, SPRITE_32_BY_32, 0, (mGame.mLaps - 1) * TEXTISIZET , MLAPSCOUNTX + (MLAPSCOUNTSPACE >> 1) + (MLAPSCOUNTSPACE * 4), MLAPSCOUNTY);
+			   		   set_text_sprite(&mGame.mLapsCount[4], mGame.mTXTLapsHi, mGame.mTXTLapsLo, SPRITE_32_BY_32, 0, (mGame.mLaps - 1) * TEXTISIZET , MLAPSCOUNTX + (MLAPSCOUNTSPACE >> 1) + (MLAPSCOUNTSPACE * 4), MLAPSCOUNTY);
 
 			   		mMenu.bDoUpdate = 4;
 			   }
@@ -2528,6 +2633,7 @@ void process_sound(){
 
 }
 
+/*
 void setCDSprite(struct PSprite* cMenu, int cChar, int mx, int my){
 
    cMenu->blocklo = SPRITE_BLOCKLO(VRAM_textcd + cChar);
@@ -2544,22 +2650,28 @@ void setCDSprite(struct PSprite* cMenu, int cChar, int mx, int my){
 
 
 }
+*/
 
 void set_menucd(int cNR){
 
 	switch(cNR){
 		case 3:
-			setCDSprite(&mGame.mCDown1, TEXTCD_3, 320-32, 140);
+			//setCDSprite(&mGame.mCDown1, TEXTCD_3, 320-32, 140);
+			set_text_sprite(&mGame.mCDown1, mGame.mTXTCDHi, mGame.mTXTCDLo, SPRITE_64_BY_64, 0, TEXTCD_3, 320-32, 140);
 			break;
 		case 2:
-			setCDSprite(&mGame.mCDown1, TEXTCD_2, 320-32, 140);
+			//setCDSprite(&mGame.mCDown1, TEXTCD_2, 320-32, 140);
+			set_text_sprite(&mGame.mCDown1, mGame.mTXTCDHi, mGame.mTXTCDLo, SPRITE_64_BY_64, 0, TEXTCD_2, 320-32, 140);
 			break;
 		case 1:
-			setCDSprite(&mGame.mCDown1, TEXTCD_1, 320-32, 140);
+			//setCDSprite(&mGame.mCDown1, TEXTCD_1, 320-32, 140);
+			set_text_sprite(&mGame.mCDown1, mGame.mTXTCDHi, mGame.mTXTCDLo, SPRITE_64_BY_64, 0, TEXTCD_1, 320-32, 140);
 			break;
 		case 0:
-			setCDSprite(&mGame.mCDown1, TEXTCD_G, 320 - 64 + 8, 140);
-			setCDSprite(&mGame.mCDown2, TEXTCD_O, 320 - 8, 140);			
+			//setCDSprite(&mGame.mCDown1, TEXTCD_G, 320 - 64 + 8, 140);
+			//setCDSprite(&mGame.mCDown2, TEXTCD_O, 320 - 8, 140);			
+			set_text_sprite(&mGame.mCDown1, mGame.mTXTCDHi, mGame.mTXTCDLo, SPRITE_64_BY_64, 0, TEXTCD_G, 320 - 64 + 8, 140);
+			set_text_sprite(&mGame.mCDown2, mGame.mTXTCDHi, mGame.mTXTCDLo, SPRITE_64_BY_64, 0, TEXTCD_O, 320 - 8, 140);
 			break;
 	}
 }
@@ -2602,6 +2714,8 @@ void render_cdmenu(){
 }
 
 void init_game(){
+
+    mGame.mLevels = get_game_levels();
 
     mGame.Joysticks[0] = &mGame.Joy1;
     mGame.Joysticks[1] = &mGame.Joy2;    
@@ -3105,7 +3219,8 @@ void load_audio(char cstream){
 		load_index++;
 	//	bi++;
 	}
-		
+	
+	
 	load_index = sample_point; 
 	
 	mPCM.mFrames = 0;
@@ -3561,7 +3676,7 @@ void init_debug(){
 
 	for(di = 0; di < 12; di++){
 		mGame.mDebug[di].blocklo = mGame.mBoomLo; //SPRITE_BLOCKLO(VRAM_sprites);
-   		mGame.mDebug[di].blockhi = mGame.mBoomHi; // SPRITE_BLOCKHI(VRAM_sprites);   
+   		mGame.mDebug[di].blockhi = mGame.mBoomHi >> 8; // SPRITE_BLOCKHI(VRAM_sprites);   
 		mGame.mDebug[di].mode = SPRITE_MODE_4BPP;
 		mGame.mDebug[di].z = SPRITE_LAYER_1;
 		mGame.mDebug[di].colmask = 0x0;
@@ -3605,10 +3720,15 @@ void load_debug(){
 void setup_race(){
    char cplc, botc;
    
+   mGame.mLaps = mMenu.mLaps;
+   mGame.mLevel = mMenu.mLevel;
+
+   load_game(mGame.mLevel);
+   
    RANDINIT();
 
    mGame.PSprite1.blocklo = mGame.mCarsLo; //SPRITE_BLOCKLO(VRAM_sprites);
-   mGame.PSprite1.blockhi = mGame.mCarsHi; // SPRITE_BLOCKHI(VRAM_sprites);   
+   mGame.PSprite1.blockhi = mGame.mCarsHi >> 8; // SPRITE_BLOCKHI(VRAM_sprites);   
    mGame.PSprite1.mode = SPRITE_MODE_4BPP;
    mGame.PSprite1.mPos.x = 320 - 16;// - 16;//playerX - 16;//* (playerX);
    mGame.PSprite1.mPos.y = 240 - 16;//playerY - 16; // * (playerY);
@@ -3620,7 +3740,7 @@ void setup_race(){
    mGame.PSprite1.flipy = 0;
 
    mGame.PSprite2.blocklo = mGame.mCarsLo; //SPRITE_BLOCKLO(VRAM_sprites);
-   mGame.PSprite2.blockhi = mGame.mCarsHi; // SPRITE_BLOCKHI(VRAM_sprites);   
+   mGame.PSprite2.blockhi = mGame.mCarsHi >> 8; // SPRITE_BLOCKHI(VRAM_sprites);   
    mGame.PSprite2.mode = SPRITE_MODE_4BPP;
    mGame.PSprite2.mPos.x = 320 - 16 + 32;//playerX - 16;//* (playerX);
    mGame.PSprite2.mPos.y = 240 - 16;//playerY - 16; // * (playerY);
@@ -3633,7 +3753,7 @@ void setup_race(){
    
 
    mGame.PSprite3.blocklo = mGame.mCarsLo; //SPRITE_BLOCKLO(VRAM_sprites);
-   mGame.PSprite3.blockhi = mGame.mCarsHi; // SPRITE_BLOCKHI(VRAM_sprites);   
+   mGame.PSprite3.blockhi = mGame.mCarsHi >> 8; // SPRITE_BLOCKHI(VRAM_sprites);   
    mGame.PSprite3.mode = SPRITE_MODE_4BPP;
    mGame.PSprite3.mPos.x = 320 - 16 - 32;//+ 16 + 32;//playerX - 16;//* (playerX);
    mGame.PSprite3.mPos.y = 240 - 16;//playerY - 16; // * (playerY);
@@ -3657,16 +3777,13 @@ void setup_race(){
    mGame.PSprite4.flipx = 0;
    mGame.PSprite4.flipy = 0;
 */
-
-   mGame.mLaps = mMenu.mLaps;
-   mGame.mLevel = mMenu.mLevel;
    
-       set_text_sprite(&mGame.mLapsCount[0], mGame.mTXTLapsAddrShort, mGame.mTXTLapsLo, SPRITE_32_BY_32, 0, TEXTT_L, MLAPSCOUNTX, MLAPSCOUNTY);
-    set_text_sprite(&mGame.mLapsCount[1], mGame.mTXTLapsAddrShort, mGame.mTXTLapsLo, SPRITE_32_BY_32, 0, TEXTT_A, MLAPSCOUNTX + MLAPSCOUNTSPACE , MLAPSCOUNTY);
-    set_text_sprite(&mGame.mLapsCount[2], mGame.mTXTLapsAddrShort, mGame.mTXTLapsLo, SPRITE_32_BY_32, 0,  TEXTT_P, MLAPSCOUNTX + (MLAPSCOUNTSPACE * 2), MLAPSCOUNTY);
-    set_text_sprite(&mGame.mLapsCount[3], mGame.mTXTLapsAddrShort, mGame.mTXTLapsLo, SPRITE_32_BY_32, 0,  TEXTT_S, MLAPSCOUNTX + (MLAPSCOUNTSPACE * 3), MLAPSCOUNTY);
+       set_text_sprite(&mGame.mLapsCount[0], mGame.mTXTLapsHi, mGame.mTXTLapsLo, SPRITE_32_BY_32, 0, TEXTT_L, MLAPSCOUNTX, MLAPSCOUNTY);
+    set_text_sprite(&mGame.mLapsCount[1], mGame.mTXTLapsHi, mGame.mTXTLapsLo, SPRITE_32_BY_32, 0, TEXTT_A, MLAPSCOUNTX + MLAPSCOUNTSPACE , MLAPSCOUNTY);
+    set_text_sprite(&mGame.mLapsCount[2], mGame.mTXTLapsHi, mGame.mTXTLapsLo, SPRITE_32_BY_32, 0,  TEXTT_P, MLAPSCOUNTX + (MLAPSCOUNTSPACE * 2), MLAPSCOUNTY);
+    set_text_sprite(&mGame.mLapsCount[3], mGame.mTXTLapsHi, mGame.mTXTLapsLo, SPRITE_32_BY_32, 0,  TEXTT_S, MLAPSCOUNTX + (MLAPSCOUNTSPACE * 3), MLAPSCOUNTY);
    
-   set_text_sprite(&mGame.mLapsCount[4], mGame.mTXTLapsAddrShort, mGame.mTXTLapsLo, SPRITE_32_BY_32, 0, (mGame.mLaps - 1) * TEXTISIZET, MLAPSCOUNTX + (MLAPSCOUNTSPACE >> 1) + (MLAPSCOUNTSPACE * 4), MLAPSCOUNTY);
+   set_text_sprite(&mGame.mLapsCount[4], mGame.mTXTLapsHi, mGame.mTXTLapsLo, SPRITE_32_BY_32, 0, (mGame.mLaps - 1) * TEXTISIZET, MLAPSCOUNTX + (MLAPSCOUNTSPACE >> 1) + (MLAPSCOUNTSPACE * 4), MLAPSCOUNTY);
    
    calc_way();
    
@@ -3770,7 +3887,6 @@ void setup_race(){
 
 void main(void) {
 
-   load_game();
    init_menu(); 
    init_game();  
   

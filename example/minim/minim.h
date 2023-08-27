@@ -71,7 +71,7 @@ char randidx;
 #define VRAM_boom_hi    0x9
 #define VRAM_boom_lo 0x60
 #define VRAM_textcd         0x13C00
-#define VRAM_texttrk	 0x17400
+#define VRAM_texttrk	 0x16400
 
 #define VRAM_intro    0x00000
 #define VRAM_texti   0x12C00
@@ -261,6 +261,8 @@ unsigned short mBankStack;
 char mNumbers[10] = "0123456789";
 
 #define SETPATHNUM(PATH, NUM, INDEX) PATH[INDEX] = mNumbers[NUM]
+
+char mgamepath[9] = "dat/game";
 
 char mtxintpath[10] = "dat/txint";
 char mintropath[10] = "dat/intro";
@@ -596,20 +598,18 @@ typedef struct Game {
    unsigned short mCarsAddr;
    unsigned short mBoomAddr;
    unsigned short mTXTCDAddr;
-   unsigned short mTXTCDAddrShort;
    unsigned short mTXTLapsAddr;
-   unsigned short mTXTLapsAddrShort;                  
    
-   char mCarsHi;
+   unsigned short mCarsHi;
    char mCarsLo;
 
-   char mBoomHi;
+   unsigned short mBoomHi;
    char mBoomLo;
    
-   char mTXTCDHi;
+   unsigned short mTXTCDHi;
    char mTXTCDLo;
 
-   char mTXTLapsHi;
+   unsigned short mTXTLapsHi;
    char mTXTLapsLo;
    
    struct Player* mLeader;
@@ -706,7 +706,9 @@ typedef struct Game {
 
 struct Game mGame;
 
-void load_game();
+void load_game(char clvl);
+
+char get_game_levels();
 
 #ifdef MDEBUG   
 
@@ -872,7 +874,7 @@ void process_engine(struct SThrottle* cEngine, int mvel);
 
 void process_sound();
 
-void setCDSprite(struct PSprite* cMenu, int cChar, int mx, int my);
+//void setCDSprite(struct PSprite* cMenu, int cChar, int mx, int my);
 
 void set_menucd(int cNR);
 
