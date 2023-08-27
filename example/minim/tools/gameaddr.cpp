@@ -44,7 +44,12 @@ int main(int argc, char *argv[]){
 		conv >> tSize;
 		tSize -= 2;
 
-		std::cout << "Tiles Size Track" << (ti+1) << " Is : " << tSize << std::endl << std::endl;
+		if((tSize + VRAM_offset) < 0x10000){
+			tSize = 0x10000 - VRAM_offset;
+			std::cout << "Tiles Size Track" << (ti+1) << " Padded for min Sprite address of 0x10000" << std::endl << std::endl;
+		} else {
+			std::cout << "Tiles Size Track" << (ti+1) << " Is : " << tSize << std::endl << std::endl;
+		}
 
 		//Car Sprite		
 		unsigned int mCarsAddr = VRAM_offset + tSize;
