@@ -2358,10 +2358,10 @@ void init_menu(){
     mMenu.mNumbers[3] = TEXTI_3;
     mMenu.mNumbers[4] = TEXTI_4;
     mMenu.mNumbers[5] = TEXTI_5;
-    mMenu.mNumbers[6] = 0;
-    mMenu.mNumbers[7] = 0;
-    mMenu.mNumbers[8] = 0;
-    mMenu.mNumbers[9] = 0;
+    mMenu.mNumbers[6] = TEXTI_6;
+    mMenu.mNumbers[7] = TEXTI_7;
+    mMenu.mNumbers[8] = TEXTI_8;
+    mMenu.mNumbers[9] = TEXTI_9;
     
     mMenu.mLevel = 1;
     mMenu.mLaps = 3;

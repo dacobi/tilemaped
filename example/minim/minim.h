@@ -139,6 +139,10 @@ char randidx;
 #define TEXTI_T (TEXTISIZE * 17)
 #define TEXTI_X (TEXTISIZE * 18)
 #define TEXTI_C (TEXTISIZE * 19)
+#define TEXTI_6 (TEXTISIZE * 20)
+#define TEXTI_7 (TEXTISIZE * 21)
+#define TEXTI_8 (TEXTISIZE * 22)
+#define TEXTI_9 (TEXTISIZE * 23)
 
 #define MAILEVELPOS 85
 
@@ -253,7 +257,7 @@ char randidx;
 #define JOY_PAD_L 0b00000010
 #define JOY_PAD_R 0b00000001
 
-#define GAME_LEVELS 5
+#define GAME_LEVELS 9
 #define MMAXWAYPOINTS 12
 
 unsigned short mBankStack;

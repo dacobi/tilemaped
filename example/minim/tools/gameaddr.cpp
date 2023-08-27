@@ -14,9 +14,9 @@
 int main(int argc, char *argv[]){
 
 
-	if( (argc < 2) || (argc > 6) ){
+	if( (argc < 2) || (argc > 10) ){
 	
-		std::cout << "Usage: " << std::string(argv[0]) << " <tiles size track1> [ <tiles size track2> ... <tiles size track5> ]" << std::endl;
+		std::cout << "Usage: " << std::string(argv[0]) << " <tiles size track1> [ <tiles size track2> ... <tiles size track9> ]" << std::endl;
 		std::cout << "Where <tiles size #> is the size of the main track tiles file in bytes in decimal, including the 2 byte header" << 	std::endl;
 		return 0;
 	
