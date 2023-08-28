@@ -375,6 +375,8 @@ int TSettings::initSettings(){
 	
 	mio->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	mio->ConfigFlags |= ImGuiConfigFlags_NavNoCaptureKeyboard;
+
+	TFont =  TTF_OpenFont(NERDFONT,12);
 	
 	return 0;	
 }

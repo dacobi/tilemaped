@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <SDL.h> 
 #include <SDL_image.h>
-//#include <SDL_ttf.h>
+#include <SDL_ttf.h>
 #include <string>
 #include <iostream>
 #include <vector>
@@ -318,6 +318,7 @@ class TSettings{
 		bool bShowHelpDialog = false;		
 		int mSelectedTile = 0;
 		int mBrushPosition = 0;
+		TTF_Font *TFont = NULL;
 		ImFont* DFont;
 		ImFont* SFont;
 		ImFont* LFont;
