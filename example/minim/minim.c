@@ -3019,8 +3019,13 @@ char getPlItem(int cPl, int nIdx, int cDir){
 
 	
 	do{
+		
+		
+		do{
+		
 		used = 0;
-		for(pi = 0; pi < 3; pi++){
+		
+		for(pi = 0; pi < MPLAYERS; pi++){
 			if(pi != cPl){
 				if(nItem == mMenu.mPCtrl[pi]){
 					used = 1;
@@ -3031,7 +3036,7 @@ char getPlItem(int cPl, int nIdx, int cDir){
 		if(used){
 			nItem += cDir;
 		}
-				
+								
 		if(nItem < 0){
 			nItem = 6;
 		}
@@ -3041,8 +3046,12 @@ char getPlItem(int cPl, int nIdx, int cDir){
 		}
 		
 		if(nItem == 0){
-			used = 0;
+			if(cPl > 0){	
+				used = 0;
+			}
 		}
+		
+		} while(used);
 
 		
 	} while(used);
@@ -3404,7 +3413,7 @@ void render_menu(){
     			//load_lmenu(mMenu.mMenuItemLast);
     			break;   		
     		case CKEY_LEFT:
-    			if(mMenu.mMenuItem < 3){
+    			if(mMenu.mMenuItem < MPLAYERS){
   				play_click(1500, mMenu.mClickLengthShort, 800);
     				mMenu.mPCtrl[mMenu.mMenuItem] = getPlItem(mMenu.mMenuItem, mMenu.mPCtrl[mMenu.mMenuItem] - 1, -1);
     				setPlCtrl(mMenu.mMenuItem, mMenu.mPCtrl[mMenu.mMenuItem]);
@@ -3442,7 +3451,7 @@ void render_menu(){
     			}    	
     			break ;   		
     		case CKEY_RIGHT:
-    		    	if(mMenu.mMenuItem < 3){
+    		    	if(mMenu.mMenuItem < MPLAYERS){
     		    		play_click(1500, mMenu.mClickLengthShort, 800);
     				mMenu.mPCtrl[mMenu.mMenuItem] = getPlItem(mMenu.mMenuItem, mMenu.mPCtrl[mMenu.mMenuItem] + 1, +1);
     				setPlCtrl(mMenu.mMenuItem, mMenu.mPCtrl[mMenu.mMenuItem]);

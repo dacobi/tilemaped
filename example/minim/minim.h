@@ -257,6 +257,8 @@ char randidx;
 #define JOY_PAD_L 0b00000010
 #define JOY_PAD_R 0b00000001
 
+#define MPLAYERS 3
+
 #define GAME_LEVELS 9
 #define MMAXWAYPOINTS 12
 
