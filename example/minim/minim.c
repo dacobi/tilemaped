@@ -3021,7 +3021,7 @@ char getPlItem(int cPl, int nIdx, int cDir){
 	do{
 		
 		
-		do{
+		//do{
 		
 		used = 0;
 		
@@ -3051,7 +3051,7 @@ char getPlItem(int cPl, int nIdx, int cDir){
 			}
 		}
 		
-		} while(used);
+		//} while(used);
 
 		
 	} while(used);
