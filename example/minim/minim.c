@@ -1129,7 +1129,7 @@ void set_boom_sprite(struct PSprite *cSprite, struct Player *cPlayer){
     	
     	cSprite->blocklo = mGame.mBoomLo + (SPRITE_BLOCKLO(cPlayer->mBoomCount * SPRITE_SIZE) & 0x00ff); // SPRITE_BLOCKLO(VRAM_boom + (cPlayer->mBoomCount * SPRITE_SIZE));
     	cSprite->blockhi = ((mGame.mBoomHi + SPRITE_BLOCKLO((cPlayer->mBoomCount * SPRITE_SIZE))) >> 8) & 0x00ff;// mGame.mBoomHi; // SPRITE_BLOCKHI(VRAM_boom + (cPlayer->mBoomCount * SPRITE_SIZE));    	
-    	cSprite->palette_offset = 10;
+    	cSprite->palette_offset = 8;
     	
     	cSprite->mPos.x = (320-16) + ( cPlayer->mPos.x - mGame.mViewport.x);
 	cSprite->mPos.y = (240-16) + ( cPlayer->mPos.y - mGame.mViewport.y);
@@ -2956,7 +2956,7 @@ void load_level(){
    loadVera(mboompath, mGame.mBoomAddr, 3);
       
      
-   SETPATHNUM(mtlstpath, 1, MTLSTPOS);
+   SETPATHNUM(mtlstpath, mGame.mLevel, MTLSTPOS);
       
    loadVera(mtlstpath, VRAM_tiles , 2);
    
@@ -2970,7 +2970,7 @@ void load_level(){
    //loadVera(mtxtrpath, VRAM_texttrk, 3);
    loadVera(mtxtrpath, mGame.mTXTLapsAddr, 3);      
       
-   SETPATHNUM(mtrkpath, 1, MTRKPOS);
+   SETPATHNUM(mtrkpath, mGame.mLevel, MTRKPOS);
    loadVera(mtrkpath, VRAM_layer1_map, 2);
     
    SETPATHNUM(mmbgpath, 1, MMBGPOS);    
@@ -3006,13 +3006,21 @@ char getPlItem(int cPl, int nIdx, int cDir){
 	}
 	
 	if(nItem == 0){
-		return 0;
+		if(cPl > 0){
+			return 0;
+		} else {
+			if(cDir == 1){
+				nItem = 1;	
+			} else {
+				nItem = 6;	
+			}
+		}
 	}
 
 	
 	do{
 		used = 0;
-		for(pi = 0; pi < 4; pi++){
+		for(pi = 0; pi < 3; pi++){
 			if(pi != cPl){
 				if(nItem == mMenu.mPCtrl[pi]){
 					used = 1;
@@ -3192,28 +3200,29 @@ void load_audio(char cstream){
 		__asm__("lda #255");
        		__asm__("ldx _mLo");
 		__asm__("ldy _mHi");
+		__asm__("clc");		
 		__asm__("jsr $ff44");
 		      						       	
 		load_index += 255;
 	}
 	
-/*
+
 	mLo = (unsigned char)((unsigned short)load_index & 0x00ff);
 	mHi = (unsigned char)((unsigned short)load_index >> 8);	
 
 	RAM_BANK = 1;
 
-	//Causes Pop	
 	__asm__("lda #16");
 	__asm__("ldx _mLo");
 	__asm__("ldy _mHi");
+	__asm__("clc");
 	__asm__("jsr $ff44");
 
-*/
+
 	RAM_BANK = 1;
 
 	//bi = 0;
-		
+/*		
 	while(load_index < sample_max){
 	//while(bi < 16){
 		*load_index = cbm_k_acptr();
@@ -3221,7 +3230,7 @@ void load_audio(char cstream){
 	//	bi++;
 	}
 	
-	
+*/	
 	load_index = sample_point; 
 	
 	mPCM.mFrames = 0;
@@ -3242,6 +3251,7 @@ void update_audio(){
 		       	__asm__("lda #255");
        			__asm__("ldx _mLo");
 		       	__asm__("ldy _mHi");
+			__asm__("clc");				       	
 		       	__asm__("jsr $ff44");
 		       						       	
 		       	load_index += 255;
@@ -3275,6 +3285,7 @@ void update_audio(){
 		       	__asm__("lda _mLoad");
        			__asm__("ldx _mLo");
 		       	__asm__("ldy _mHi");
+			__asm__("clc");				       	
 		       	__asm__("jsr $ff44");
 	       	
 			load_index = sample_point;
@@ -3289,6 +3300,7 @@ void update_audio(){
 		       	__asm__("lda _mLoad");
        			__asm__("ldx _mLo");
 		       	__asm__("ldy _mHi");
+			__asm__("clc");				       	
 		       	__asm__("jsr $ff44");
 	       	
 		       	load_index += mLoad;
@@ -3682,7 +3694,7 @@ void init_debug(){
 		mGame.mDebug[di].z = SPRITE_LAYER_1;
 		mGame.mDebug[di].colmask = 0x0;
 		mGame.mDebug[di].dimensions = SPRITE_32_BY_32;
-		mGame.mDebug[di].palette_offset = 10;
+		mGame.mDebug[di].palette_offset = 8;
 		mGame.mDebug[di].flipx = 0;
 		mGame.mDebug[di].flipy = 0;
 	}
