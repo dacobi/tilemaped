@@ -131,6 +131,61 @@ int TCollisionMap::saveToFolder(std::string tpath, std::string tprefix){
         }
     }
 
+    if(mMapFormat == 2){        
+        unsigned char tVal;
+        for(int ii = 0; ii < mTileMap->TileMapHeight; ii++){
+            for(int jj = 0; jj < mTileMap->TileMapWidth; jj++){                
+                    tVal = mTileMap->getFlip((ii * mTileMap->TileMapWidth) + jj) << 6;
+                    tVal += (MapData[mTileMap->getTile((ii * mTileMap->TileMapWidth) + jj)] & 0x3f);
+                    FileData.push_back(tVal);                  
+            }
+        }
+    }
+
+    if(mMapFormat == 3){
+        bool bNewByte = false;
+        unsigned char tVal;
+        for(int ii = 0; ii < mTileMap->TileMapHeight; ii++){
+            for(int jj = 0; jj < mTileMap->TileMapWidth; jj++){
+                if(bNewByte){                    
+                    tVal += mTileMap->getFlip((ii * mTileMap->TileMapWidth) + jj) << 2;                    
+                    tVal += (MapData[mTileMap->getTile((ii * mTileMap->TileMapWidth) + jj)] & 0x03);                    
+                    FileData.push_back(tVal);
+                    bNewByte = false;
+                } else {
+                    tVal = mTileMap->getFlip((ii * mTileMap->TileMapWidth) + jj) << 2;                    
+                    tVal += (MapData[mTileMap->getTile((ii * mTileMap->TileMapWidth) + jj)] & 0x03);
+                    tVal = tVal << 4;
+                    bNewByte = true;                    
+                }
+            }
+        }
+    }
+
+    if(mMapFormat == 4){        
+        unsigned char tVal;
+        for(int ii = 0; ii < mTileMap->TileMapHeight; ii++){
+            for(int jj = 0; jj < mTileMap->TileMapWidth; jj++){                
+                    tVal = mTileMap->getOffset((ii * mTileMap->TileMapWidth) + jj) << 4;
+                    tVal += (MapData[mTileMap->getTile((ii * mTileMap->TileMapWidth) + jj)] & 0x0f);
+                    FileData.push_back(tVal);                  
+            }
+        }
+    }
+
+    if(mMapFormat == 5){        
+        unsigned char tVal;
+        for(int ii = 0; ii < mTileMap->TileMapHeight; ii++){
+            for(int jj = 0; jj < mTileMap->TileMapWidth; jj++){  
+                    tVal = mTileMap->getFlip((ii * mTileMap->TileMapWidth) + jj) << 6;              
+                    tVal += mTileMap->getOffset((ii * mTileMap->TileMapWidth) + jj) << 2;
+                    tVal += (MapData[mTileMap->getTile((ii * mTileMap->TileMapWidth) + jj)] & 0x03);
+                    FileData.push_back(tVal);                  
+            }
+        }
+    }
+
+
     outfile.write((char*)FileData.data(),FileData.size());
 	outfile.close();
 
@@ -206,7 +261,7 @@ int TCollisionMapEditor::render(){
 		ImGui::SetNextWindowPos(cNewPos, ImGuiCond_Once, ImVec2(0.5f, 0.5f));
 	}
 
-    ImGui::Begin("Collision Map", &mGlobalSettings.mEditor->bShowCollisionEditor, ImGuiWindowFlags_NoNav); 
+    ImGui::Begin(std::string("Collision Map: " + mTileMap->mColMap.mFormatStrings[mTileMap->mColMap.mMapFormat]).c_str(), &mGlobalSettings.mEditor->bShowCollisionEditor, ImGuiWindowFlags_NoNav); 
 
     std::stringstream convert;
     std::string sTile;

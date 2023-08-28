@@ -14,6 +14,7 @@ class TCollisionMap {
         void swapTileValues(int tVal1, int tVal2);
         int removeTile(int cDropTile);
         int checkSize();
+        std::map<int, std::string> mFormatStrings = {{0,"8 Bits"},{1,"4 Bits"},{2,"Flip + 6 Bits"},{3,"Flip + 2 Bits"},{4,"Palette Offset + 4 Bits"},{5,"Flip + Palette Offset + 2 Bits"}};
         std::map<int, int> mFormatSizes = {{0,1},{1,2},{2,1},{3,2},{4,1},{5,1}};
         std::map<int, int> mFormatMax = {{0,255},{1,15},{2,63},{3,3},{4,15},{5,3}};
 };

@@ -708,22 +708,22 @@ int TBDialog::render(){
 							if(ImGui::MenuItem((std::string("4 Bits")).c_str())){											
 								mEditor->activateColMapDialog(true, 1);
 							}
-							/*
+							
 							if(ImGui::MenuItem((std::string("Flip + 6 Bits")).c_str())){											
-								
+								mEditor->activateColMapDialog(true, 2);
 							}
 
 							if(ImGui::MenuItem((std::string("Flip + 2 Bits")).c_str())){											
-								
+								mEditor->activateColMapDialog(true, 3);
 							}
 
 							if(ImGui::MenuItem((std::string("Palette Offset + 4 Bits")).c_str())){											
-								
+								mEditor->activateColMapDialog(true, 4);
 							}
 
 							if(ImGui::MenuItem((std::string("Flip + Palette Offset + 2 Bits")).c_str())){											
-								
-							}*/
+								mEditor->activateColMapDialog(true, 5);
+							}
 
 							ImGui::EndMenu();		
 							//mEditor->activateColMapDialog(true);
