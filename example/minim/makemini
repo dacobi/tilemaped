@@ -1,5 +1,0 @@
-rm MINIM.PRG
-rm irq.o
-ca65 irq.asm
-cl65 -O -t cx16 minim.c irq.o -o MINIM.PRG
-./x16emu -joy1 -joy2 -prg MINIM.PRG -run
