@@ -8,6 +8,8 @@ class TCollisionMap {
         std::vector<unsigned char> MapData;
         TileMap *mTileMap;
         int mMapFormat = 0;
+        TOverlay mOverlay;	
+	    void initoverlay();
         int createNew(TileMap *cTileMap, int cFormat);
         int loadFromFile(std::string filename, TileMap *cTileMap);
         int saveToFolder(std::string tpath, std::string tprefix);

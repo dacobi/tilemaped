@@ -10,6 +10,8 @@ void TOverlayText::init(){
     addText("X");
     addText("Y");    
     addText("XY");    
+
+    addText("C");
 }
 
 void TOverlayText::addNumber(int nnum){
@@ -61,9 +63,10 @@ void TOverlayText::renderText(std::string ctext, int cx, int cy){
 
     if(cText == NULL){
         addText(ctext);        
-    }
-
-    mText[ctext]->render(cx, cy);
+        mText[ctext]->render(cx, cy);
+    } else {
+        cText->render(cx, cy);
+    }    
 }
 
 void TOverlay::setGrid(int gx, int gy){
@@ -85,15 +88,24 @@ void TOverlay::setRects(std::vector<SDL_Rect> *cGrid){
 }
         
 void TOverlay::render(){
+
+    if((*mGrid)[0].w  < mScale){
+        return;
+    }
+
     for(int ii = 0; ii < mGridY; ii++){
         for(int jj = 0; jj < mGridX; jj++){
             mIndex = (ii * mGridX) + jj;
-            mX = (*mGrid)[mIndex].x;
-            mY = (*mGrid)[mIndex].y;
 
-            if( (mX >= 0) && (mY >= 0) && (mX <= mGlobalSettings.WindowWidth) && (mY <= mGlobalSettings.WindowHeight) ){
-                mRender();
-            }           
+            if(mIndex < (*mGrid).size()){
+
+                mX = (*mGrid)[mIndex].x + 3;
+                mY = (*mGrid)[mIndex].y + 3;
+
+                if( (mX >= 0) && (mY >= 0) && (mX <= mGlobalSettings.WindowWidth) && (mY <= mGlobalSettings.WindowHeight) ){
+                    mRender();
+                }
+            }
         }
     }
 }

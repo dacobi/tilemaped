@@ -231,6 +231,7 @@ public:
 	void init();
 	void initoverlay();
 	bool bRenderOverlay = false;
+	bool bRenderOverlayColMap = false;
 	std::string getMapSize();
 	std::string getSize(){return getMapSize();};
 	std::vector<unsigned char> FileData;

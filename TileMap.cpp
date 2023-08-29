@@ -3308,9 +3308,59 @@ void TileMap::initoverlay(){
 	mOverlay.setRects(&TileAreas);
 	mOverlay.setGrid(TileMapWidth, TileMapHeight);
 	mOverlay.setSize(mGlobalSettings.mGlobalTexParam.TexSizeX, mGlobalSettings.mGlobalTexParam.TexSizeY);
-	mOverlay.setScale(1); //TODO
+	mOverlay.setScale(12 * 4);
 
-	mOverlay.mRender = [this]{mGlobalSettings.mOverlayText.renderNum(getTile(mOverlay.mIndex) , mOverlay.mX , mOverlay.mY);};
+	if(mGlobalSettings.mGlobalTexParam.TexBPP < 8){
+
+		mOverlay.mRender = [this]{
+			mGlobalSettings.mOverlayText.renderNum(getTile(mOverlay.mIndex) , mOverlay.mX , mOverlay.mY);
+						
+			mGlobalSettings.mOverlayText.renderNum(getOffset(mOverlay.mIndex) , mOverlay.mX , mOverlay.mY + 14);
+			
+			unsigned char cflip = getFlip(mOverlay.mIndex);
+			
+			if(cflip > 0){
+				switch (cflip){
+					case 1:
+						mGlobalSettings.mOverlayText.renderText("X" , mOverlay.mX + 24 , mOverlay.mY + 14);		
+						break;				
+					case 2:
+						mGlobalSettings.mOverlayText.renderText("Y" , mOverlay.mX + 24 , mOverlay.mY + 14);		
+						break;				
+					case 3:
+						mGlobalSettings.mOverlayText.renderText("XY" , mOverlay.mX + 24 , mOverlay.mY + 14);												
+						break;				
+					default:
+						break;
+					}
+				}			
+		};		
+
+
+	} else {
+
+		mOverlay.mRender = [this]{
+			mGlobalSettings.mOverlayText.renderNum(getTile(mOverlay.mIndex) , mOverlay.mX , mOverlay.mY);
+			unsigned char cflip = getFlip(mOverlay.mIndex);
+			
+			if(cflip > 0){
+				switch (cflip){
+					case 1:
+						mGlobalSettings.mOverlayText.renderText("X" , mOverlay.mX , mOverlay.mY + 14);		
+						break;				
+					case 2:
+						mGlobalSettings.mOverlayText.renderText("Y" , mOverlay.mX , mOverlay.mY + 14);		
+						break;				
+					case 3:
+						mGlobalSettings.mOverlayText.renderText("XY" , mOverlay.mX , mOverlay.mY + 14);												
+						break;				
+					default:
+						break;
+					}
+				}			
+		};
+
+	}
 }
 
 void TileMap::init(){
@@ -3680,6 +3730,14 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 	if(bRenderOverlay){
 		mOverlay.render();
 	}
+
+	if(bHasCollisionMap){
+		if(bRenderOverlayColMap){
+			mColMap.mOverlay.render();
+		}
+	}
+
+
 
 	return 0;
 }

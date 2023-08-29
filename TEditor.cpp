@@ -3156,7 +3156,22 @@ int TEditor::cancelActiveDialog(){
 void TEditor::toggleOverlay(){
 
 		if(mCurMode == EMODE_MAP){
-			mTileMap->bRenderOverlay = !mTileMap->bRenderOverlay;
+			if(mTileMap->bHasCollisionMap){
+				if(mTileMap->bRenderOverlay){
+					mTileMap->bRenderOverlay = false;
+					mTileMap->bRenderOverlayColMap = true;
+				} else if(mTileMap->bRenderOverlayColMap){
+					mTileMap->bRenderOverlay = false;
+					mTileMap->bRenderOverlayColMap = false;
+				} else {
+					mTileMap->bRenderOverlay = true;
+					mTileMap->bRenderOverlayColMap = false;
+				}
+
+
+			} else {
+				mTileMap->bRenderOverlay = !mTileMap->bRenderOverlay;
+			}			
 		}	
 
 }

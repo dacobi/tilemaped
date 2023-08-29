@@ -4,10 +4,27 @@
 
 extern TSettings mGlobalSettings;
 
+void TCollisionMap::initoverlay(){
+    mOverlay.setRects(&mTileMap->TileAreas);
+	mOverlay.setGrid(mTileMap->TileMapWidth, mTileMap->TileMapHeight);
+	mOverlay.setSize(mGlobalSettings.mGlobalTexParam.TexSizeX, mGlobalSettings.mGlobalTexParam.TexSizeY);
+	mOverlay.setScale(12 * 4);
+
+    mOverlay.mRender = [this]{
+            int ccolval = MapData[mTileMap->getTile(mOverlay.mIndex)];
+
+            if(ccolval > 0){
+                mGlobalSettings.mOverlayText.renderText("C", mOverlay.mX , mOverlay.mY);
+			    mGlobalSettings.mOverlayText.renderNum(ccolval, mOverlay.mX + 10, mOverlay.mY);
+            }
+    };
+}
+
 int TCollisionMap::createNew(TileMap *cTileMap, int cFormat){
     mTileMap = cTileMap;
     mMapFormat = cFormat;
     MapData.resize(mGlobalSettings.mEditor->mTileSet.TTiles.size(), 0);
+    initoverlay();
     return 0;
 }
 
@@ -53,6 +70,7 @@ int TCollisionMap::loadFromFile(std::string filename, TileMap *cTileMap){
         }        
         mTileMap = cTileMap;
         mMapFormat = tmpIntF;
+        initoverlay();
         return 0;
     }
 
