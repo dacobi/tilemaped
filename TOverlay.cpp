@@ -25,10 +25,19 @@ void TOverlayText::reloadColors(){
         mNumbers[ci]->loadTTFFromString(snum, mGlobalSettings.OverlayTextColor);
     }
 
+    auto ti = mText.begin();
+
+    while(ti != mText.end()){
+        ti->second->loadTTFFromString(ti->first, mGlobalSettings.OverlayTextColor);
+        ti++;
+    }
+
+    /*
     mText["C"]->loadTTFFromString("C", mGlobalSettings.OverlayTextColor);
     mText["X"]->loadTTFFromString("X", mGlobalSettings.OverlayTextColor);
     mText["Y"]->loadTTFFromString("Y", mGlobalSettings.OverlayTextColor);
     mText["XY"]->loadTTFFromString("XY", mGlobalSettings.OverlayTextColor);
+    */
 }
 
 void TOverlayText::addNumber(int nnum){

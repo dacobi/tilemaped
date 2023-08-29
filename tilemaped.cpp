@@ -635,26 +635,6 @@ void TSettings::settingsMenu(){
 		
 			ImGui::EndMenu();
 		}
-
-		if(ImGui::BeginMenu(std::string(mGlobalSettings.mGear + " Overlay Text Color").c_str())){
-
-				if(ImGui::MenuItem("White")){
-					mGlobalSettings.OverlayTextColor.r = 0xff;
-					mGlobalSettings.OverlayTextColor.g = 0xff;
-					mGlobalSettings.OverlayTextColor.b = 0xff;
-					mGlobalSettings.mOverlayText.reloadColors();
-					
-				}
-
-				if(ImGui::MenuItem("Black")){
-					mGlobalSettings.OverlayTextColor.r = 0x0;
-					mGlobalSettings.OverlayTextColor.g = 0x0;
-					mGlobalSettings.OverlayTextColor.b = 0x0;
-					mGlobalSettings.mOverlayText.reloadColors();
-				}
-				
-				ImGui::EndMenu();
-		}
 		
 		ImGui::EndMenu();
 	}
