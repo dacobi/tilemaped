@@ -196,6 +196,8 @@ class TEditor{
 		
 		PODialog mPaletteOffset;
 
+		void toggleOverlay();
+
 		TCollisionMapEditor mColMapEdit;
 		int importTileMap(std::string cNewTileMap);
 		int createTileMap(int nMapX, int nMapy, int nTileValue);

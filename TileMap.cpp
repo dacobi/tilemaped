@@ -3304,9 +3304,18 @@ int TileSet::renderIm(int ypos, int mScroll){
 
 return 0;
 }
+void TileMap::initoverlay(){
+	mOverlay.setRects(&TileAreas);
+	mOverlay.setGrid(TileMapWidth, TileMapHeight);
+	mOverlay.setSize(mGlobalSettings.mGlobalTexParam.TexSizeX, mGlobalSettings.mGlobalTexParam.TexSizeY);
+	mOverlay.setScale(1); //TODO
+
+	mOverlay.mRender = [this]{mGlobalSettings.mOverlayText.renderNum(getTile(mOverlay.mIndex) , mOverlay.mX , mOverlay.mY);};
+}
 
 void TileMap::init(){
 	mSelection.init(TileMapWidth, TileMapHeight, &mGlobalSettings.mGlobalTexParam.TexSizeX, &mGlobalSettings.mGlobalTexParam.TexSizeY, &mGlobalSettings.TileMapScale);
+	initoverlay();
 }
 
 
@@ -3666,6 +3675,10 @@ int TileMap::render(int xpos, int ypos, TileSet* mTiles){
 
 	if(mGlobalSettings.mEditor->mTileMap->mSelection.bHasSelection){
 		mGlobalSettings.mEditor->mTileMap->mSelection.renderSelection(xpos, ypos);
+	}
+
+	if(bRenderOverlay){
+		mOverlay.render();
 	}
 
 	return 0;

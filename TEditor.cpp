@@ -3153,6 +3153,14 @@ int TEditor::cancelActiveDialog(){
 	return 0;
 }
 
+void TEditor::toggleOverlay(){
+
+		if(mCurMode == EMODE_MAP){
+			mTileMap->bRenderOverlay = !mTileMap->bRenderOverlay;
+		}	
+
+}
+
 int TEditor::toggleSelectedTile(){
 	if(mCurMode == EMODE_MAP){
 		if(mGlobalSettings.mSelectedTile > -1){
@@ -4768,6 +4776,11 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			if(cEvent->key.keysym.sym == SDLK_t){
 		  			toggleSelectedTile();
 	  			}				
+
+				if(cEvent->key.keysym.sym == SDLK_TAB){
+					toggleOverlay();
+				}
+
 				if(cEvent->key.keysym.sym == SDLK_a){
 					handleSelection(SELMODE_ALL);
 				}

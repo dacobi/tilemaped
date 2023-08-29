@@ -27,8 +27,11 @@
 #include <libxml/parser.h>
 #include <libxml/xmlmemory.h>
 
+#include "TOverlay.h"
 
 class TTexture;
+class TTFTexture;
+//class TOverlayText;
 class TPixel; 
 class TPalette;
 class Tile;
@@ -219,6 +222,8 @@ class TSettings{
 		ProjectSettings mProjectSettings;		
 		TextureParameters mGlobalTexParam;
 
+		TOverlayText mOverlayText;
+
 		std::string mProgramMessage;
 
 		void windowResizeHighDPI(int cWidth, int cHeight);
@@ -326,6 +331,7 @@ class TSettings{
 		SDL_Color DefaultDarkBGColor = {0xb0,0xb0,0xb0,0xff};
 		SDL_Color DefaultTextColor = {0xff,0xff,0xff,0xff};
 		SDL_Color AltTextColor = {0x0,0x0,0xff,0xff};
+		SDL_Color OverlayTextColor = {0x0,0x0,0x0,0xff};
 		SDL_Color DefaultBorderColor = {0x00,0x00,0xff,0xff};
 		SDL_Color DefaultButtonColor = {0x90,0x90,0x90,0xff};
 		SDL_Color DefaultButtonBorderColor = {0x20,0x20,0x20,0xff};

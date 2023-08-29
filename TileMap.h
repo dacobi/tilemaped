@@ -227,7 +227,10 @@ public:
 	int TileMapScale = 3;
 	int mTileMapScrollX = 0;
 	int mTileMapScrollY = 0;
+	TOverlay mOverlay;
 	void init();
+	void initoverlay();
+	bool bRenderOverlay = false;
 	std::string getMapSize();
 	std::string getSize(){return getMapSize();};
 	std::vector<unsigned char> FileData;

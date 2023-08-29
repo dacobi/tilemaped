@@ -71,6 +71,7 @@ class MEDialog;
 #include "TileMap.h"
 #include "TEditor.h"
 #include "TDialogs.h"
+#include "TOverlay.h"
 
 
 TSettings mGlobalSettings;
@@ -376,7 +377,11 @@ int TSettings::initSettings(){
 	mio->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	mio->ConfigFlags |= ImGuiConfigFlags_NavNoCaptureKeyboard;
 
+	TTF_Init();
+
 	TFont =  TTF_OpenFont(NERDFONT,12);
+
+	mOverlayText.init();
 	
 	return 0;	
 }
