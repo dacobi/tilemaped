@@ -161,8 +161,9 @@ int TEditor::createNewProject(){
 	}
 
 	mTileSet.mMaxColumns = 4;
-	mTileSet.resizeEdit();		
-
+	mTileSet.resizeEdit();
+	
+	mTileSet.initoverlay();
 	mTileSet.mClipboardTiles.init("Tiles","Pixel", TBRUSH_PIXEL, &mTileSet.bShowClipboardTiles, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mEditor->mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
 	mTileSet.mClipboardTileSet.init("TileSet","Pixel", TBRUSH_PIXEL, &mTileSet.bShowClipboardTileSet, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mEditor->mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
 
@@ -968,6 +969,7 @@ int TEditor::loadFromFolder(std::string path){
 
 	mTileSet.mClipboardTiles.init("Tiles","Pixel", TBRUSH_PIXEL, &mTileSet.bShowClipboardTiles, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mEditor->mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
 	mTileSet.mClipboardTileSet.init("TileSet","Pixel", TBRUSH_PIXEL, &mTileSet.bShowClipboardTileSet, mGlobalSettings.mGlobalTexParam.TexPixelSize, mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam.TexEditScale, mGlobalSettings.mGlobalTexParam.TexEditScale, &mGlobalSettings.mEditor->mCurrentBrushPixel, &mGlobalSettings.mGlobalTexParam);
+	mTileSet.initoverlay();
 
 	//TODO maybe
 
@@ -3172,6 +3174,11 @@ void TEditor::toggleOverlay(){
 			} else {
 				mTileMap->bRenderOverlay = !mTileMap->bRenderOverlay;
 			}			
+		}
+
+		if(mCurMode == EMODE_TILESET){		
+			mTileSet.bRenderOverlay = !mTileSet.bRenderOverlay;
+			//std::cout << "TileSet Overlay: " <<  (int)mTileSet.bRenderOverlay << std::endl;
 		}	
 
 }

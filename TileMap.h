@@ -151,11 +151,16 @@ public:
 	std::vector<Tile*> TTiles;
 	std::vector<SDL_Rect> TileAreas;
 	std::vector<SDL_Rect> EditPixelAreas;
+	std::vector<SDL_Rect> TileSetAreas;
 	void resizeEdit();
 	void resizeScale();
 	void updateEditAreas(std::vector<SDL_Rect>& cTile, int xpos, int ypos);
 	int getXY(int xpos, int ypos, int cxpos, int cypos);
 	std::vector<int> getPadding();
+	TOverlay mOverlay;	
+	void initoverlay();
+	void setoverlay();
+	bool bRenderOverlay = false;
 	int mCurTileScale = 15;
 	int mCurColumns = 1;
 	int mColSpace = 10;

@@ -2905,6 +2905,38 @@ std::vector<int> TileSet::getPadding(){
 }
 
 
+void TileSet::initoverlay(){
+
+	//mOverlay.setRects(&EditPixelAreas);
+	mOverlay.setRects(&TileSetAreas);
+	
+	int isOdd = TTiles.size() % mSelEdWidth;
+
+	if(isOdd > 0){isOdd = 1;}
+
+	mOverlay.setGrid(mSelEdWidth, (TTiles.size() / mSelEdWidth) + isOdd);
+
+	mOverlay.setSize(mGlobalSettings.mGlobalTexParam.TexSizeX, mGlobalSettings.mGlobalTexParam.TexSizeY);
+	
+	mOverlay.setScale(12 * 4);
+
+    mOverlay.mRender = [this]{
+		mGlobalSettings.mOverlayText.renderNum(mOverlay.mIndex, mOverlay.mX, mOverlay.mY);
+		//std::cout << "TileSet Overlay Render: " << mOverlay.mIndex << std::endl;
+	};
+
+
+	//std::cout << "TileSet Overlay Init: " << mSelEdWidth << std::endl;
+}
+
+void TileSet::setoverlay(){
+	int isOdd = TTiles.size() % mSelEdWidth;
+
+	if(isOdd > 0){isOdd = 1;}
+
+	mOverlay.setGrid(mSelEdWidth, (TTiles.size() / mSelEdWidth) + isOdd);
+}
+
 void TileSet::resizeScale(){
 	updateWinPos = true;
 	mCurColumns = 1;
@@ -2936,6 +2968,8 @@ void TileSet::resizeEdit(){
 	
 	EditPixelAreas.resize(mSelectionAreaX*mSelectionAreaY);
 
+	TileSetAreas.resize(TTiles.size());
+
 	for(int i = 0; i <  EditPixelAreas.size(); i++){
 		EditPixelAreas[i].x = rEmpty.x;
 		EditPixelAreas[i].y = rEmpty.y;
@@ -2944,7 +2978,8 @@ void TileSet::resizeEdit(){
 	}
 	
 	mSelection.clearSelection();	
-	mSelection.init(mSelectionAreaX , mSelectionAreaY, &mPixelScale, &mPixelScale, &mCurEdScale);	
+	mSelection.init(mSelectionAreaX , mSelectionAreaY, &mPixelScale, &mPixelScale, &mCurEdScale);
+	setoverlay();
 }
 
 int TileSet::getXY(int xpos, int ypos, int cxpos, int cypos){
@@ -3001,11 +3036,14 @@ int TileSet::renderEd(int xpos, int ypos){
 					}
 				}
 			
-				if(mGlobalSettings.bShowTileGrid){				
-					cBorder.x = xpos + ((mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX)*i);
-					cBorder.y = ypos + ((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurEdScale)*j);
-					cBorder.w = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX);
-					cBorder.h = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeY);
+				cBorder.x = xpos + ((mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX)*i);
+				cBorder.y = ypos + ((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurEdScale)*j);
+				cBorder.w = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX);
+				cBorder.h = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeY);
+
+				TileSetAreas[(j*mSelEdWidth)+i] = cBorder;
+
+				if(mGlobalSettings.bShowTileGrid){									
 					Tile::renderSelection(cBorder, mGlobalSettings.DefaultHighlightColor);
 				}				
 			}								
@@ -3022,13 +3060,31 @@ int TileSet::renderEd(int xpos, int ypos){
 					}
 				}
 
+				/*
+				cBorder.x = xpos + ((mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX)*i);
+				cBorder.y = ypos + ((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurEdScale)*j);
+				cBorder.w = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX);
+				cBorder.h = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeY);*/
+
+				cBorder.x = xpos + ((mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX)*j);
+				cBorder.y = ypos + ((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurEdScale)*cRowNum);
+				cBorder.w = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX);
+				cBorder.h = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeY);
+
+				TileSetAreas[(i*cRowNum)+j] = cBorder;
+
+				if(mGlobalSettings.bShowTileGrid){									
+					Tile::renderSelection(cBorder, mGlobalSettings.DefaultHighlightColor);
+				}	
+
+				/*
 				if(mGlobalSettings.bShowTileGrid){	
 					cBorder.x = xpos + ((mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX)*j);
 					cBorder.y = ypos + ((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurEdScale)*cRowNum);
 					cBorder.w = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX);
 					cBorder.h = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeY);
 					Tile::renderSelection(cBorder, mGlobalSettings.DefaultHighlightColor);
-				}
+				}*/
 			}
 		}
 
@@ -3077,6 +3133,10 @@ int TileSet::renderEd(int xpos, int ypos){
 	if(mSelection.bHasSelection){
 		mSelection.renderSelection(xpos, ypos);
 	}		
+
+	if(bRenderOverlay){		
+		mOverlay.render();
+	}
 
 	return 0;
 }
