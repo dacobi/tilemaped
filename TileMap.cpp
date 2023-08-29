@@ -3372,13 +3372,13 @@ void TileMap::initoverlay(){
 			if(cflip > 0){
 				switch (cflip){
 					case 1:
-						mGlobalSettings.mOverlayText.renderText("X" , mOverlay.mX + 24 , mOverlay.mY + 14);		
+						mGlobalSettings.mOverlayText.renderText("X" , mOverlay.mX + 18 , mOverlay.mY + 14);		
 						break;				
 					case 2:
-						mGlobalSettings.mOverlayText.renderText("Y" , mOverlay.mX + 24 , mOverlay.mY + 14);		
+						mGlobalSettings.mOverlayText.renderText("Y" , mOverlay.mX + 18 , mOverlay.mY + 14);		
 						break;				
 					case 3:
-						mGlobalSettings.mOverlayText.renderText("XY" , mOverlay.mX + 24 , mOverlay.mY + 14);												
+						mGlobalSettings.mOverlayText.renderText("XY" , mOverlay.mX + 18 , mOverlay.mY + 14);												
 						break;				
 					default:
 						break;

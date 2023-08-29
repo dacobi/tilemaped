@@ -14,7 +14,8 @@ class TOverlayText{
         void addNumbers(int nmax);
         void addText(std::string ntext);
         void renderNum(int cnum, int cx, int cy);
-        void renderText(std::string ctext, int cx, int cy);        
+        void renderText(std::string ctext, int cx, int cy);
+        void reloadColors();   
 };
 
 class TOverlay{
