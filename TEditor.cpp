@@ -3178,7 +3178,6 @@ void TEditor::toggleOverlay(){
 
 		if(mCurMode == EMODE_TILESET){		
 			mTileSet.bRenderOverlay = !mTileSet.bRenderOverlay;
-			//std::cout << "TileSet Overlay: " <<  (int)mTileSet.bRenderOverlay << std::endl;
 		}	
 
 }

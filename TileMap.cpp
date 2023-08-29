@@ -2906,8 +2906,7 @@ std::vector<int> TileSet::getPadding(){
 
 
 void TileSet::initoverlay(){
-
-	//mOverlay.setRects(&EditPixelAreas);
+	
 	mOverlay.setRects(&TileSetAreas);
 	
 	int isOdd = TTiles.size() % mSelEdWidth;
@@ -2921,12 +2920,9 @@ void TileSet::initoverlay(){
 	mOverlay.setScale(12 * 4);
 
     mOverlay.mRender = [this]{
-		mGlobalSettings.mOverlayText.renderNum(mOverlay.mIndex, mOverlay.mX, mOverlay.mY);
-		//std::cout << "TileSet Overlay Render: " << mOverlay.mIndex << std::endl;
+		mGlobalSettings.mOverlayText.renderNum(mOverlay.mIndex, mOverlay.mX, mOverlay.mY);		
 	};
-
-
-	//std::cout << "TileSet Overlay Init: " << mSelEdWidth << std::endl;
+	
 }
 
 void TileSet::setoverlay(){
@@ -3059,12 +3055,6 @@ int TileSet::renderEd(int xpos, int ypos){
 						EditPixelAreas[getXY(jj,ii, j, cRowNum)] = mGlobalSettings.mEditor->mPalette.renderTileEd(cxpos + (mCurEdScale)*jj, cypos + (mCurEdScale)*ii, TTiles[(i*cRowNum)+j]->getPixel(jj+(ii*mGlobalSettings.mGlobalTexParam.TexSizeX)), mCurEdScale, &mGlobalSettings.mGlobalTexParam); 			//mGlobalSettings.TilePixelSize * 
 					}
 				}
-
-				/*
-				cBorder.x = xpos + ((mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX)*i);
-				cBorder.y = ypos + ((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurEdScale)*j);
-				cBorder.w = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX);
-				cBorder.h = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeY);*/
 
 				cBorder.x = xpos + ((mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX)*j);
 				cBorder.y = ypos + ((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurEdScale)*cRowNum);
@@ -3484,6 +3474,7 @@ int TileMap::createCollisionMap(int cFormat){
 int TileMap::removeCollisionMap(){
 	if(bHasCollisionMap){
 		bHasCollisionMap = false;
+		bRenderOverlayColMap = false;
 		mColMap.MapData.clear();
 		return 0;
 	}

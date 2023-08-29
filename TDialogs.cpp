@@ -379,7 +379,23 @@ int TBDialog::render(){
 				if(ImGui::MenuItem("Selected Tile (T)", NULL , &mGlobalSettings.bShowSelectedTile)){										
 				}
 
-				
+				if(ImGui::BeginMenu("Overlay (TAB)")){
+
+					if(ImGui::MenuItem("Tile Values", NULL , &mEditor->mTileMap->bRenderOverlay)){										
+						if(mEditor->mTileMap->bRenderOverlay){
+								mEditor->mTileMap->bRenderOverlayColMap = false;
+						}
+					}
+
+					if(ImGui::MenuItem("Collision Values", NULL , &mEditor->mTileMap->bRenderOverlayColMap, mEditor->mTileMap->bHasCollisionMap)){										
+						if(mEditor->mTileMap->bRenderOverlayColMap){
+								mEditor->mTileMap->bRenderOverlay = false;
+						}
+					}
+
+					ImGui::EndMenu();
+				}
+
 			}
 			if(mEditor->mCurMode == EMODE_TILE){
 				if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Clipboard (F7)").c_str(), NULL , &mEditor->mTileSet.bShowClipboardTiles)){		
@@ -445,6 +461,14 @@ int TBDialog::render(){
 				if(ImGui::MenuItem("Pixel Grid (P)", NULL , &mGlobalSettings.bShowTilePixelGrid)){										
 				}
 				if(ImGui::MenuItem("Selected Color (S)", NULL , &mGlobalSettings.bShowPixelType)){										
+				}
+
+				if(ImGui::BeginMenu("Overlay (TAB)")){
+
+					if(ImGui::MenuItem("Tile Index", NULL , &mEditor->mTileSet.bRenderOverlay)){																
+					}
+
+					ImGui::EndMenu();
 				}
 			}
 
