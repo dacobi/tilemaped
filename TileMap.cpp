@@ -2250,8 +2250,9 @@ SDL_Rect Tile::renderImCol(int xpos, int ypos, int mIndex, int tscale, bool bCol
 		elmax.y++;
 		tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor); //ImAltHighLightColor
 	} else {
-		tList->AddRect(elmin, elmax, mGlobalSettings.ImHighLightColor);
+		tList->AddRect(elmin, elmax, mGlobalSettings.ImHighLightColor);		
 	}
+	
 
 	return tmpRect;
 }
@@ -2312,6 +2313,20 @@ SDL_Rect Tile::renderIm(int xpos, int ypos, int mIndex, int &mDragAndDropped, in
 		tList->AddRect(elmin, elmax, mGlobalSettings.ImAltHighLightColor); //ImAltHighLightColor
 	} else {
 		tList->AddRect(elmin, elmax, mGlobalSettings.ImHighLightColor);
+	}
+
+	if( (mGlobalSettings.mEditor->mTileMap->bRenderOverlay) || (mGlobalSettings.mEditor->mTileSet.bImRenderOverlay)){
+		
+		if((elmax.x - elmin.x) > 40){
+		
+			std::stringstream conv;
+			std::string tidx;
+
+			conv << mIndex << std::endl;
+			conv >> tidx;
+
+			tList->AddText(ImVec2((float) elmin.x + 3, (float) elmin.y + 3), mGlobalSettings.mEditor->mPalette.getImColor(mGlobalSettings.OverlayTextColor), tidx.c_str());
+		}
 	}
 
 	return tmpRect;

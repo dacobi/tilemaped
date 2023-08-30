@@ -198,39 +198,45 @@ int TBDialog::render(){
 
 				if(ImGui::BeginMenu(std::string(mGlobalSettings.mGear + " Overlay Text Color").c_str())){
 
-				if(ImGui::MenuItem("White")){					
+				bool bColor;
+
+				bColor = (mGlobalSettings.mProjectSettings.Editor_OverlayTextColor->ivalue == 0);
+				if(ImGui::MenuItem("White", NULL, &bColor)){					
 					mGlobalSettings.mOverlayText.setColor(0);					
 				}
 
-				if(ImGui::MenuItem("Black")){
+				bColor = (mGlobalSettings.mProjectSettings.Editor_OverlayTextColor->ivalue == 1);
+				if(ImGui::MenuItem("Black", NULL, &bColor)){
 					mGlobalSettings.mOverlayText.setColor(1);
 				}
 
-				if(ImGui::MenuItem("Red")){
+				bColor = (mGlobalSettings.mProjectSettings.Editor_OverlayTextColor->ivalue == 2);
+				if(ImGui::MenuItem("Red", NULL, &bColor)){
 					mGlobalSettings.mOverlayText.setColor(2);
 				}
 
-				if(ImGui::MenuItem("Green")){
+				bColor = (mGlobalSettings.mProjectSettings.Editor_OverlayTextColor->ivalue == 3);
+				if(ImGui::MenuItem("Green", NULL, &bColor)){
 					mGlobalSettings.mOverlayText.setColor(3);
 				}
 
-
-				if(ImGui::MenuItem("Blue")){
+				bColor = (mGlobalSettings.mProjectSettings.Editor_OverlayTextColor->ivalue == 4);
+				if(ImGui::MenuItem("Blue", NULL, &bColor)){
 					mGlobalSettings.mOverlayText.setColor(4);
 				}
 
-
-				if(ImGui::MenuItem("Magenta")){
+				bColor = (mGlobalSettings.mProjectSettings.Editor_OverlayTextColor->ivalue == 5);
+				if(ImGui::MenuItem("Magenta", NULL, &bColor)){
 					mGlobalSettings.mOverlayText.setColor(5);
 				}
 
-
-				if(ImGui::MenuItem("Cyan")){
+				bColor = (mGlobalSettings.mProjectSettings.Editor_OverlayTextColor->ivalue == 6);
+				if(ImGui::MenuItem("Cyan", NULL, &bColor)){
 					mGlobalSettings.mOverlayText.setColor(6);
 				}
 
-
-				if(ImGui::MenuItem("Yellow")){
+				bColor = (mGlobalSettings.mProjectSettings.Editor_OverlayTextColor->ivalue == 7);
+				if(ImGui::MenuItem("Yellow", NULL, &bColor)){
 					mGlobalSettings.mOverlayText.setColor(7);
 				}
 
@@ -435,7 +441,11 @@ int TBDialog::render(){
 								mEditor->mTileMap->bRenderOverlay = false;
 						}
 					}
+					
+					if(ImGui::MenuItem("TileSet Index", NULL , &mEditor->mTileSet.bImRenderOverlay)){
 
+					}
+				
 					ImGui::EndMenu();
 				}
 

@@ -162,6 +162,7 @@ public:
 	void initoverlay();
 	void setoverlay();
 	bool bRenderOverlay = false;
+	bool bImRenderOverlay = false;
 	int mCurTileScale = 15;
 	int mCurColumns = 1;
 	int mColSpace = 10;
