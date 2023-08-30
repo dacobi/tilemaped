@@ -1,4 +1,5 @@
-std::string TilemapEd_Version = "1.8.108"; // 767
+std::string TilemapEd_Version = "1.8.110"; // 769
+//std::string TilemapEd_Version = "1.8.108"; // 767
 //std::string TilemapEd_Version = "1.8.105"; // 764
 //std::string TilemapEd_Version = "1.8.99"; // 758
 //std::string TilemapEd_Version = "1.8.92"; // 751

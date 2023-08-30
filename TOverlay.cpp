@@ -42,11 +42,21 @@ void TOverlayText::unreg(TOverlay* cOverlay){
 void TOverlayText::setFontSize(int cFontSize){
 
     if(cFontSize != mFontSize){
-        mFontSize = cFontSize;
+
+        if( (cFontSize < 8) || (cFontSize > 22) ){
+            mFontSize = 14;
+        } else {
+            mFontSize = cFontSize;
+        }
+
         mGlobalSettings.mProjectSettings.Editor_OverlayTextSize->ivalue = mFontSize;
 
-        TFont =  TTF_OpenFont(mFontFile.c_str(), mFontSize);
+        if(TFont != NULL){
+            TTF_CloseFont(TFont);
+        }
 
+        TFont =  TTF_OpenFont(mFontFile.c_str(), mFontSize);
+        
         reloadColors();
 
         for(int oi = 0; oi < mOverlays.size(); oi++){

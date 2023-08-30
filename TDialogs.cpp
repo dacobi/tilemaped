@@ -248,6 +248,10 @@ int TBDialog::render(){
 
 					bool bTextSize = false;
 
+					bTextSize = (mGlobalSettings.mProjectSettings.Editor_OverlayTextSize->ivalue == 8);
+					if(ImGui::MenuItem("8", NULL, &bTextSize)){
+						mGlobalSettings.mOverlayText.setFontSize(8);
+					}
 
 					bTextSize = (mGlobalSettings.mProjectSettings.Editor_OverlayTextSize->ivalue == 10);
 					if(ImGui::MenuItem("10", NULL, &bTextSize)){
@@ -277,6 +281,11 @@ int TBDialog::render(){
 					bTextSize = (mGlobalSettings.mProjectSettings.Editor_OverlayTextSize->ivalue == 20);
 					if(ImGui::MenuItem("20", NULL, &bTextSize)){
 						mGlobalSettings.mOverlayText.setFontSize(20);
+					}
+
+					bTextSize = (mGlobalSettings.mProjectSettings.Editor_OverlayTextSize->ivalue == 22);
+					if(ImGui::MenuItem("22", NULL, &bTextSize)){
+						mGlobalSettings.mOverlayText.setFontSize(22);
 					}
 					
 					ImGui::EndMenu();
