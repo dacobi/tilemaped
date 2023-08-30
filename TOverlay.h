@@ -4,10 +4,13 @@
 #include "TTFTexture.h"
 #include <functional>
 
+#define MOVERLAYMAXCOL 8
+
 class TOverlayText{
     public:
         std::vector<TTFTexture*> mNumbers;
         std::map<std::string, TTFTexture*> mText;
+        SDL_Color mColors[MOVERLAYMAXCOL] = {{0xff, 0xff, 0xff, 0xff},{0x0, 0x0, 0x0, 0xff},{0xff, 0x0, 0x0, 0xff},{0x0, 0xff, 0x0, 0xff},{0x0, 0x0, 0xff, 0xff},{0xff, 0x0, 0xff, 0xff},{0x0, 0xff, 0xff, 0xff},{0xff, 0xff, 0x0, 0xff}};
         int mMaxNum = -1;
         void init();
         void addNumber(int nnum);
@@ -15,6 +18,8 @@ class TOverlayText{
         void addText(std::string ntext);
         void renderNum(int cnum, int cx, int cy);
         void renderText(std::string ctext, int cx, int cy);
+        void setColor(int cnewcol);
+        void nextColor();
         void reloadColors();   
 };
 

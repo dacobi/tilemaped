@@ -316,6 +316,19 @@ ImVec4 TPalette::getIm4ColorIm(ImU32 cColor){
 	return tColor;
 }
 
+SDL_Color TPalette::getSDLColorIm(ImU32 cCol){
+
+	SDL_Color tColor;
+
+	tColor.a = 0xff;
+	tColor.r = (cCol & 0x000000FF);
+	tColor.g = (cCol & 0x0000FF00);
+	tColor.b = (cCol & 0x00FF0000);
+
+	return tColor;
+
+}
+
 ImU32 TPalette::getImColorVec4(ImVec4 cColor){
 	ImU32 tColor;
 	tColor = (int)(cColor.w * 255.0);

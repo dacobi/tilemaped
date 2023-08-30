@@ -14,6 +14,29 @@ void TOverlayText::init(){
     addText("C");
 }
 
+void TOverlayText::setColor(int cnewcol){
+
+    if( (cnewcol < 0) || (cnewcol >= MOVERLAYMAXCOL)){
+        cnewcol = 1;
+    }
+
+    mGlobalSettings.OverlayTextColor = mColors[cnewcol];
+
+    mGlobalSettings.mProjectSettings.Editor_OverlayTextColor->ivalue = cnewcol;
+
+    reloadColors();
+}
+
+void TOverlayText::nextColor(){
+    mGlobalSettings.mProjectSettings.Editor_OverlayTextColor->ivalue++;
+
+    if(mGlobalSettings.mProjectSettings.Editor_OverlayTextColor->ivalue >= MOVERLAYMAXCOL){
+        mGlobalSettings.mProjectSettings.Editor_OverlayTextColor->ivalue = 0;
+    }
+
+    setColor(mGlobalSettings.mProjectSettings.Editor_OverlayTextColor->ivalue);
+}
+
 void TOverlayText::reloadColors(){
     std::stringstream conv;
     std::string snum;
@@ -31,13 +54,7 @@ void TOverlayText::reloadColors(){
         ti->second->loadTTFFromString(ti->first, mGlobalSettings.OverlayTextColor);
         ti++;
     }
-
-    /*
-    mText["C"]->loadTTFFromString("C", mGlobalSettings.OverlayTextColor);
-    mText["X"]->loadTTFFromString("X", mGlobalSettings.OverlayTextColor);
-    mText["Y"]->loadTTFFromString("Y", mGlobalSettings.OverlayTextColor);
-    mText["XY"]->loadTTFFromString("XY", mGlobalSettings.OverlayTextColor);
-    */
+    
 }
 
 void TOverlayText::addNumber(int nnum){

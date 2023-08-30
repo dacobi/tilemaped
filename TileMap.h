@@ -91,6 +91,7 @@ public:
 	ImVec4 getIm4Color(SDL_Color cColor);
 	ImVec4 getIm4ColorIm(ImU32 cColor);
 	SDL_Color getSDLColor(ImVec4 cCol);
+	SDL_Color getSDLColorIm(ImU32 cCol);
 	SDL_Color getSDLColor4Bit(int cR, int cG, int cB);
 	int getClosest4Bit(int cCol);
 	void setSelectedColor(SDL_Color cColor);

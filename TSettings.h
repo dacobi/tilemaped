@@ -159,6 +159,7 @@ public:
 	sKey *Editor_SelectionAppend;
 	sKey *Editor_UseTextureFiltering;
 	sKey *Editor_PixelScale;	
+	sKey *Editor_OverlayTextColor;
 	sKey *Tile_ShowPixelGrid;
 	sKey *TileSet_ShowPixelGrid;
 	sKey *TileSet_ShowTileGrid;	

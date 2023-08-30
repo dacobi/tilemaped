@@ -198,65 +198,40 @@ int TBDialog::render(){
 
 				if(ImGui::BeginMenu(std::string(mGlobalSettings.mGear + " Overlay Text Color").c_str())){
 
-				if(ImGui::MenuItem("White")){
-					mGlobalSettings.OverlayTextColor.r = 0xff;
-					mGlobalSettings.OverlayTextColor.g = 0xff;
-					mGlobalSettings.OverlayTextColor.b = 0xff;
-					mGlobalSettings.mOverlayText.reloadColors();
-					
+				if(ImGui::MenuItem("White")){					
+					mGlobalSettings.mOverlayText.setColor(0);					
 				}
 
 				if(ImGui::MenuItem("Black")){
-					mGlobalSettings.OverlayTextColor.r = 0x0;
-					mGlobalSettings.OverlayTextColor.g = 0x0;
-					mGlobalSettings.OverlayTextColor.b = 0x0;
-					mGlobalSettings.mOverlayText.reloadColors();
+					mGlobalSettings.mOverlayText.setColor(1);
 				}
 
 				if(ImGui::MenuItem("Red")){
-					mGlobalSettings.OverlayTextColor.r = 0xff;
-					mGlobalSettings.OverlayTextColor.g = 0x0;
-					mGlobalSettings.OverlayTextColor.b = 0x0;
-					mGlobalSettings.mOverlayText.reloadColors();
+					mGlobalSettings.mOverlayText.setColor(2);
 				}
 
 				if(ImGui::MenuItem("Green")){
-					mGlobalSettings.OverlayTextColor.r = 0x0;
-					mGlobalSettings.OverlayTextColor.g = 0xff;
-					mGlobalSettings.OverlayTextColor.b = 0x0;
-					mGlobalSettings.mOverlayText.reloadColors();
+					mGlobalSettings.mOverlayText.setColor(3);
 				}
 
 
 				if(ImGui::MenuItem("Blue")){
-					mGlobalSettings.OverlayTextColor.r = 0x0;
-					mGlobalSettings.OverlayTextColor.g = 0x0;
-					mGlobalSettings.OverlayTextColor.b = 0xff;
-					mGlobalSettings.mOverlayText.reloadColors();
+					mGlobalSettings.mOverlayText.setColor(4);
 				}
 
 
 				if(ImGui::MenuItem("Magenta")){
-					mGlobalSettings.OverlayTextColor.r = 0xff;
-					mGlobalSettings.OverlayTextColor.g = 0x0;
-					mGlobalSettings.OverlayTextColor.b = 0xff;
-					mGlobalSettings.mOverlayText.reloadColors();
+					mGlobalSettings.mOverlayText.setColor(5);
 				}
 
 
 				if(ImGui::MenuItem("Cyan")){
-					mGlobalSettings.OverlayTextColor.r = 0x0;
-					mGlobalSettings.OverlayTextColor.g = 0xff;
-					mGlobalSettings.OverlayTextColor.b = 0xff;
-					mGlobalSettings.mOverlayText.reloadColors();
+					mGlobalSettings.mOverlayText.setColor(6);
 				}
 
 
 				if(ImGui::MenuItem("Yellow")){
-					mGlobalSettings.OverlayTextColor.r = 0xff;
-					mGlobalSettings.OverlayTextColor.g = 0xff;
-					mGlobalSettings.OverlayTextColor.b = 0x0;
-					mGlobalSettings.mOverlayText.reloadColors();
+					mGlobalSettings.mOverlayText.setColor(7);
 				}
 
 

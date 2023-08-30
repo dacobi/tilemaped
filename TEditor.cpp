@@ -1047,6 +1047,7 @@ int TEditor::loadFromFolder(std::string path){
 
 			mGlobalSettings.mGlobalTexParam.TexPixelSize = mGlobalSettings.mProjectSettings.Editor_PixelScale->getInteger();
 			
+			mGlobalSettings.mOverlayText.setColor(mGlobalSettings.mProjectSettings.Editor_OverlayTextColor->ivalue);
 		}
 	}
 
@@ -1423,6 +1424,8 @@ int TEditor::saveToFolder(std::string path){
 	mGlobalSettings.mProjectSettings.Editor_UseTextureFiltering->ivalue = mGlobalSettings.mUseTextureFiltering;
 
 	mGlobalSettings.mProjectSettings.Editor_PixelScale->ivalue = mGlobalSettings.mGlobalTexParam.TexPixelSize;
+
+	//mGlobalSettings.mProjectSettings.Editor_OverlayTextColor->ivalue = (ImU32)mPalette.getImColor(mGlobalSettings.OverlayTextColor);
 
 	mGlobalSettings.mProjectSettings.writedefault(path + DIRDEL + "settings.ini");
 

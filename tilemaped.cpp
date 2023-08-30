@@ -342,7 +342,7 @@ int TSettings::initSettings(){
 	mio->Fonts->Build();
 
     // Setup Dear ImGui style
-
+	
 	switch (mINIFile.Win_Theme->ivalue)
 	{
 	case 0:
