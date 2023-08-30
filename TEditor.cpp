@@ -1047,6 +1047,8 @@ int TEditor::loadFromFolder(std::string path){
 
 			mGlobalSettings.mGlobalTexParam.TexPixelSize = mGlobalSettings.mProjectSettings.Editor_PixelScale->getInteger();
 			
+			mTileSet.bImRenderOverlay = mGlobalSettings.mProjectSettings.TileSet_ShowOverlay->bvalue;
+
 			mGlobalSettings.mOverlayText.setColor(mGlobalSettings.mProjectSettings.Editor_OverlayTextColor->ivalue);
 		}
 	}
@@ -1413,6 +1415,8 @@ int TEditor::saveToFolder(std::string path){
 
 	mGlobalSettings.mProjectSettings.TileSet_MaxGridWidth->ivalue = mTileSet.mMaxColumns;
 	mGlobalSettings.mProjectSettings.TileSet_MinTileScale->ivalue = mTileSet.mMinTileScale;
+
+	mGlobalSettings.mProjectSettings.TileSet_ShowOverlay->bvalue = mTileSet.bImRenderOverlay;
 
 	mGlobalSettings.mProjectSettings.SelectionEdit_ShowPixelGrid->bvalue = mGlobalSettings.bShowTilePixelSelGrid;
 	mGlobalSettings.mProjectSettings.SelectionEdit_ShowTileGrid->bvalue = mGlobalSettings.bShowTileSelGrid;

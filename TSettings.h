@@ -169,6 +169,7 @@ public:
 	sKey *TileSet_PixelScale;	
 	sKey *TileSet_MaxGridWidth;	
 	sKey *TileSet_MinTileScale;	
+	sKey *TileSet_ShowOverlay;
 	sKey *SelectionEdit_ShowPixelGrid;
 	sKey *SelectionEdit_ShowTileGrid;
 	sKey *SelectionEdit_PixelScale;	
