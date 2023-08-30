@@ -3,7 +3,7 @@ TilemapEd is a tilemap editor for the Commander X16 retro computer.
 
 For more information checkout this link [https://cx16forum.com/forum/viewtopic.php?t=6365](https://cx16forum.com/forum/viewtopic.php?t=6365)
 
-It uses C++17, SDL2 and SDL2_image.
+It uses C++17, SDL2, SDL2_image and SDL2_ttf.
 
 TilemapEd uses Dear ImGui for UI. A copy of the license is included in the repo [LICENSE.ImGui](https://raw.githubusercontent.com/ocornut/imgui/master/LICENSE.txt)     
 [LICENSE.ImGuiFileDialog](https://raw.githubusercontent.com/aiekick/ImGuiFileDialog/Lib_Only/LICENSE)
