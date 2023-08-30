@@ -41,6 +41,8 @@ void TOverlayText::reloadColors(){
     std::stringstream conv;
     std::string snum;
 
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
+
     for(int ci = 0; ci <= mMaxNum; ci++){
         conv << ci << std::endl;
         conv >> snum;
@@ -54,6 +56,8 @@ void TOverlayText::reloadColors(){
         ti->second->loadTTFFromString(ti->first, mGlobalSettings.OverlayTextColor);
         ti++;
     }
+
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
     
 }
 
@@ -77,16 +81,24 @@ void TOverlayText::addNumbers(int nmax){
 
     int cMax = mMaxNum + 1;
 
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
+
     for(int ni = cMax; ni <= nmax; ni++){
         addNumber(ni);
     }
+
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
 }
 
 void TOverlayText::addText(std::string ntext){
 
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
+
     TTFTexture* newText = new TTFTexture;
         
     newText->loadTTFFromString(ntext, mGlobalSettings.OverlayTextColor);
+
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
 
     mText[ntext] = newText;
 }

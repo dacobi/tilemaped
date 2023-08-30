@@ -4,6 +4,7 @@
 extern TSettings mGlobalSettings;
 
 int TTFTexture::loadTTFFromUTF8(std::string cTexText, SDL_Color textColor, TTF_Font *cFont){
+	
 	if(TTFTex){
 		SDL_DestroyTexture(TTFTex);
 		TTFTex = NULL;
@@ -18,7 +19,7 @@ int TTFTexture::loadTTFFromUTF8(std::string cTexText, SDL_Color textColor, TTF_F
 
 	mTexText = cTexText;
 
-	SDL_Surface* textSurf =  TTF_RenderUTF8_Solid(cFont, cTexText.c_str(), textColor);
+	SDL_Surface* textSurf =  TTF_RenderUTF8_Blended(cFont, cTexText.c_str(), textColor);
 	if( textSurf != NULL ){
         	TTFTex = SDL_CreateTextureFromSurface(mGlobalSettings.TRenderer, textSurf);
 		if(TTFTex == NULL){
@@ -27,7 +28,6 @@ int TTFTexture::loadTTFFromUTF8(std::string cTexText, SDL_Color textColor, TTF_F
 		} else {
 			mTexWidth = textSurf->w;
 			mTexHeight = textSurf->h;
-			//std::cout << "(" << mTexWidth << "," << mTexHeight << ")" << std::endl;
 		}
 		SDL_FreeSurface(textSurf);
 	}
@@ -57,7 +57,7 @@ int TTFTexture::loadTTFFromString(std::string cTexText, SDL_Color textColor)
 	
 	mTexText = cTexText;
 
-	SDL_Surface* textSurf = TTF_RenderText_Solid(mGlobalSettings.TFont, cTexText.c_str(), textColor);
+	SDL_Surface* textSurf = TTF_RenderText_Blended(mGlobalSettings.TFont, cTexText.c_str(), textColor);
 	if( textSurf != NULL ){
         	TTFTex = SDL_CreateTextureFromSurface(mGlobalSettings.TRenderer, textSurf);
 		if(TTFTex == NULL){

@@ -445,6 +445,11 @@ int TBDialog::render(){
 					if(ImGui::MenuItem("TileSet Index", NULL , &mEditor->mTileSet.bImRenderOverlay)){
 
 					}
+
+					if(ImGui::MenuItem("Next Color (CTRL + T)")){																
+						mGlobalSettings.mOverlayText.nextColor();
+					}
+
 				
 					ImGui::EndMenu();
 				}
@@ -520,6 +525,11 @@ int TBDialog::render(){
 
 					if(ImGui::MenuItem("Tile Index", NULL , &mEditor->mTileSet.bRenderOverlay)){																
 					}
+
+					if(ImGui::MenuItem("Next Color (CTRL + T)")){																
+						mGlobalSettings.mOverlayText.nextColor();
+					}
+
 
 					ImGui::EndMenu();
 				}
