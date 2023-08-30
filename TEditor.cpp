@@ -4798,7 +4798,13 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 					}
 				}
 	  			if(cEvent->key.keysym.sym == SDLK_t){
-		  			toggleSelectedTile();
+					if(bLCTRLisDown){
+						if( (mCurMode == EMODE_MAP) || (mCurMode == EMODE_TILESET ) ){
+							mGlobalSettings.mOverlayText.nextColor();
+						}
+					} else {
+		  				toggleSelectedTile();
+					}
 	  			}				
 
 				if(cEvent->key.keysym.sym == SDLK_TAB){
