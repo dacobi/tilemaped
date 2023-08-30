@@ -2945,7 +2945,7 @@ void TileSet::initoverlay(){
 
 	mOverlay.setSize(mGlobalSettings.mGlobalTexParam.TexSizeX, mGlobalSettings.mGlobalTexParam.TexSizeY);
 	
-	mOverlay.setScale(12 * 4);
+	mOverlay.setScale("1023", 1);
 
     mOverlay.mRender = [this]{
 		mGlobalSettings.mOverlayText.renderNum(mOverlay.mIndex, mOverlay.mX, mOverlay.mY);		
@@ -3386,27 +3386,27 @@ void TileMap::initoverlay(){
 	mOverlay.setRects(&TileAreas);
 	mOverlay.setGrid(TileMapWidth, TileMapHeight);
 	mOverlay.setSize(mGlobalSettings.mGlobalTexParam.TexSizeX, mGlobalSettings.mGlobalTexParam.TexSizeY);
-	mOverlay.setScale(12 * 4);
+	mOverlay.setScale("1023", 2);
 
 	if(mGlobalSettings.mGlobalTexParam.TexBPP < 8){
 
 		mOverlay.mRender = [this]{
 			mGlobalSettings.mOverlayText.renderNum(getTile(mOverlay.mIndex) , mOverlay.mX , mOverlay.mY);
 						
-			mGlobalSettings.mOverlayText.renderNum(getOffset(mOverlay.mIndex) , mOverlay.mX , mOverlay.mY + 14);
+			mGlobalSettings.mOverlayText.renderNum(getOffset(mOverlay.mIndex) , mOverlay.mX , mOverlay.mY + mGlobalSettings.mOverlayText.mLastHeight);
 			
 			unsigned char cflip = getFlip(mOverlay.mIndex);
 			
 			if(cflip > 0){
 				switch (cflip){
 					case 1:
-						mGlobalSettings.mOverlayText.renderText("X" , mOverlay.mX + 18 , mOverlay.mY + 14);		
+						mGlobalSettings.mOverlayText.renderText("X" , mOverlay.mX + mGlobalSettings.mOverlayText.mLastWidth, mOverlay.mY + mGlobalSettings.mOverlayText.mLastHeight);		
 						break;				
 					case 2:
-						mGlobalSettings.mOverlayText.renderText("Y" , mOverlay.mX + 18 , mOverlay.mY + 14);		
+						mGlobalSettings.mOverlayText.renderText("Y" , mOverlay.mX + mGlobalSettings.mOverlayText.mLastWidth , mOverlay.mY + mGlobalSettings.mOverlayText.mLastHeight);		
 						break;				
 					case 3:
-						mGlobalSettings.mOverlayText.renderText("XY" , mOverlay.mX + 18 , mOverlay.mY + 14);												
+						mGlobalSettings.mOverlayText.renderText("XY" , mOverlay.mX + mGlobalSettings.mOverlayText.mLastWidth , mOverlay.mY + mGlobalSettings.mOverlayText.mLastHeight);												
 						break;				
 					default:
 						break;
@@ -3424,13 +3424,13 @@ void TileMap::initoverlay(){
 			if(cflip > 0){
 				switch (cflip){
 					case 1:
-						mGlobalSettings.mOverlayText.renderText("X" , mOverlay.mX , mOverlay.mY + 14);		
+						mGlobalSettings.mOverlayText.renderText("X" , mOverlay.mX , mOverlay.mY + mGlobalSettings.mOverlayText.mLastHeight);		
 						break;				
 					case 2:
-						mGlobalSettings.mOverlayText.renderText("Y" , mOverlay.mX , mOverlay.mY + 14);		
+						mGlobalSettings.mOverlayText.renderText("Y" , mOverlay.mX , mOverlay.mY + mGlobalSettings.mOverlayText.mLastHeight);		
 						break;				
 					case 3:
-						mGlobalSettings.mOverlayText.renderText("XY" , mOverlay.mX , mOverlay.mY + 14);												
+						mGlobalSettings.mOverlayText.renderText("XY" , mOverlay.mX , mOverlay.mY + mGlobalSettings.mOverlayText.mLastHeight);												
 						break;				
 					default:
 						break;

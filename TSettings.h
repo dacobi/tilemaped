@@ -160,6 +160,7 @@ public:
 	sKey *Editor_UseTextureFiltering;
 	sKey *Editor_PixelScale;	
 	sKey *Editor_OverlayTextColor;
+	sKey *Editor_OverlayTextSize;
 	sKey *Tile_ShowPixelGrid;
 	sKey *TileSet_ShowPixelGrid;
 	sKey *TileSet_ShowTileGrid;	
@@ -324,8 +325,7 @@ class TSettings{
 		bool bShowProjectInfo = false;		
 		bool bShowHelpDialog = false;		
 		int mSelectedTile = 0;
-		int mBrushPosition = 0;
-		TTF_Font *TFont = NULL;
+		int mBrushPosition = 0;		
 		ImFont* DFont;
 		ImFont* SFont;
 		ImFont* LFont;

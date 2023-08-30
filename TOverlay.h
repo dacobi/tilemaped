@@ -6,13 +6,24 @@
 
 #define MOVERLAYMAXCOL 8
 
+class TOverlay;
+
 class TOverlayText{
     public:
+        std::string mFontFile;
+        int mFontSize = 14;
+        TTF_Font *TFont = NULL;
         std::vector<TTFTexture*> mNumbers;
         std::map<std::string, TTFTexture*> mText;
+        std::vector<TOverlay*> mOverlays;
         SDL_Color mColors[MOVERLAYMAXCOL] = {{0xff, 0xff, 0xff, 0xff},{0x0, 0x0, 0x0, 0xff},{0xff, 0x0, 0x0, 0xff},{0x0, 0xff, 0x0, 0xff},{0x0, 0x0, 0xff, 0xff},{0xff, 0x0, 0xff, 0xff},{0x0, 0xff, 0xff, 0xff},{0xff, 0xff, 0x0, 0xff}};
         int mMaxNum = -1;
-        void init();
+        int mLastWidth = 0;
+        int mLastHeight = 0;
+        void init(std::string cFontFile);
+        void setFontSize(int cFontSize);
+        void reg(TOverlay* cOverlay);
+        void unreg(TOverlay* cOverlay);
         void addNumber(int nnum);
         void addNumbers(int nmax);
         void addText(std::string ntext);
@@ -29,16 +40,24 @@ class TOverlay{
         int mGridY;        
         int mSizeX;
         int mSizeY;        
-        int mScale;
+        
+        int mScaleX;
+        int mScaleY;
+        int mScaleLines;
+
+        std::string mScaleText;
 
         int mX;
         int mY;
 
         int mIndex;
 
+        ~TOverlay();
+
         void setGrid(int gx, int gy);
         void setSize(int sx, int sy);        
-        void setScale(int mscale);
+        void setScale(std::string cscale, int cLines);
+        void updateScale();
         void setRects(std::vector<SDL_Rect> *cGrid);
 
         std::vector<SDL_Rect> *mGrid;

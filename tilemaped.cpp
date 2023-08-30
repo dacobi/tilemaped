@@ -379,9 +379,7 @@ int TSettings::initSettings(){
 
 	TTF_Init();
 
-	TFont =  TTF_OpenFont(NERDFONT,14);
-
-	mOverlayText.init();
+	mOverlayText.init(NERDFONT);
 	
 	return 0;	
 }

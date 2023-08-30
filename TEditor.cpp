@@ -1049,6 +1049,8 @@ int TEditor::loadFromFolder(std::string path){
 			
 			mTileSet.bImRenderOverlay = mGlobalSettings.mProjectSettings.TileSet_ShowOverlay->bvalue;
 
+			mGlobalSettings.mOverlayText.setFontSize(mGlobalSettings.mProjectSettings.Editor_OverlayTextSize->ivalue);
+
 			mGlobalSettings.mOverlayText.setColor(mGlobalSettings.mProjectSettings.Editor_OverlayTextColor->ivalue);
 		}
 	}

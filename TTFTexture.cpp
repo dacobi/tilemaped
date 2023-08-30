@@ -40,7 +40,7 @@ int TTFTexture::loadTTFFromUTF8(std::string cTexText, SDL_Color textColor, TTF_F
 }
 
 int TTFTexture::loadTTFFromUTF8(std::string cTexText, SDL_Color textColor){
-	return loadTTFFromUTF8(cTexText, textColor, mGlobalSettings.TFont);
+	return loadTTFFromUTF8(cTexText, textColor, mGlobalSettings.mOverlayText.TFont);
 }
 
 int TTFTexture::loadTTFFromString(std::string cTexText, SDL_Color textColor)
@@ -57,7 +57,7 @@ int TTFTexture::loadTTFFromString(std::string cTexText, SDL_Color textColor)
 	
 	mTexText = cTexText;
 
-	SDL_Surface* textSurf = TTF_RenderText_Blended(mGlobalSettings.TFont, cTexText.c_str(), textColor);
+	SDL_Surface* textSurf = TTF_RenderText_Blended(mGlobalSettings.mOverlayText.TFont, cTexText.c_str(), textColor);
 	if( textSurf != NULL ){
         	TTFTex = SDL_CreateTextureFromSurface(mGlobalSettings.TRenderer, textSurf);
 		if(TTFTex == NULL){

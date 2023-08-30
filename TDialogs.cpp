@@ -242,7 +242,46 @@ int TBDialog::render(){
 
 
 				ImGui::EndMenu();
-		}
+				}
+
+				if(ImGui::BeginMenu(std::string(mGlobalSettings.mGear + " Overlay Text Size").c_str())){
+
+					bool bTextSize = false;
+
+
+					bTextSize = (mGlobalSettings.mProjectSettings.Editor_OverlayTextSize->ivalue == 10);
+					if(ImGui::MenuItem("10", NULL, &bTextSize)){
+						mGlobalSettings.mOverlayText.setFontSize(10);
+					}
+
+					bTextSize = (mGlobalSettings.mProjectSettings.Editor_OverlayTextSize->ivalue == 12);
+					if(ImGui::MenuItem("12", NULL, &bTextSize)){
+						mGlobalSettings.mOverlayText.setFontSize(12);
+					}
+
+					bTextSize = (mGlobalSettings.mProjectSettings.Editor_OverlayTextSize->ivalue == 14);
+					if(ImGui::MenuItem("14", NULL, &bTextSize)){
+						mGlobalSettings.mOverlayText.setFontSize(14);
+					}
+
+					bTextSize = (mGlobalSettings.mProjectSettings.Editor_OverlayTextSize->ivalue == 16);
+					if(ImGui::MenuItem("16", NULL, &bTextSize)){
+						mGlobalSettings.mOverlayText.setFontSize(16);
+					}
+
+					bTextSize = (mGlobalSettings.mProjectSettings.Editor_OverlayTextSize->ivalue == 18);
+					if(ImGui::MenuItem("18", NULL, &bTextSize)){
+						mGlobalSettings.mOverlayText.setFontSize(18);
+					}
+
+					bTextSize = (mGlobalSettings.mProjectSettings.Editor_OverlayTextSize->ivalue == 20);
+					if(ImGui::MenuItem("20", NULL, &bTextSize)){
+						mGlobalSettings.mOverlayText.setFontSize(20);
+					}
+					
+					ImGui::EndMenu();
+
+				}
 
 
 				ImGui::EndMenu();

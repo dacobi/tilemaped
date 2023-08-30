@@ -4,7 +4,12 @@
 
 extern TSettings mGlobalSettings;
         
-void TOverlayText::init(){
+void TOverlayText::init(std::string cFontFile){
+
+    mFontFile = cFontFile;
+
+    TFont =  TTF_OpenFont(mFontFile.c_str(), mFontSize);
+
     addNumbers(255);
 
     addText("X");
@@ -12,6 +17,42 @@ void TOverlayText::init(){
     addText("XY");    
 
     addText("C");
+}
+
+void TOverlayText::reg(TOverlay* cOverlay){
+
+    auto oi = std::find(mOverlays.begin(), mOverlays.end(), cOverlay);
+
+    if(oi == mOverlays.end()){
+        mOverlays.push_back(cOverlay);
+    }
+
+
+}
+void TOverlayText::unreg(TOverlay* cOverlay){
+
+    auto oi = std::find(mOverlays.begin(), mOverlays.end(), cOverlay);
+
+    if(oi != mOverlays.end()){
+        mOverlays.erase(oi);
+    }
+
+}
+
+void TOverlayText::setFontSize(int cFontSize){
+
+    if(cFontSize != mFontSize){
+        mFontSize = cFontSize;
+        mGlobalSettings.mProjectSettings.Editor_OverlayTextSize->ivalue = mFontSize;
+
+        TFont =  TTF_OpenFont(mFontFile.c_str(), mFontSize);
+
+        reloadColors();
+
+        for(int oi = 0; oi < mOverlays.size(); oi++){
+            mOverlays[oi]->updateScale();
+        }
+    }
 }
 
 void TOverlayText::setColor(int cnewcol){
@@ -110,6 +151,8 @@ void TOverlayText::renderNum(int cnum, int cx, int cy){
     }
 
     mNumbers[cnum]->render(cx, cy);
+    mLastWidth = mNumbers[cnum]->mTexWidth;
+    mLastHeight = mNumbers[cnum]->mTexHeight;
 }
 
 void TOverlayText::renderText(std::string ctext, int cx, int cy){
@@ -119,9 +162,17 @@ void TOverlayText::renderText(std::string ctext, int cx, int cy){
     if(cText == NULL){
         addText(ctext);        
         mText[ctext]->render(cx, cy);
+        mLastWidth = mText[ctext]->mTexWidth;
+        mLastHeight = mText[ctext]->mTexHeight;
     } else {
         cText->render(cx, cy);
+        mLastWidth = cText->mTexWidth;
+        mLastHeight = cText->mTexHeight;
     }    
+}
+
+TOverlay::~TOverlay(){
+    mGlobalSettings.mOverlayText.unreg(this);
 }
 
 void TOverlay::setGrid(int gx, int gy){
@@ -134,8 +185,25 @@ void TOverlay::setSize(int sx, int sy){
     mSizeY = sy;    
 }       
 
-void TOverlay::setScale(int mscale){
-    mScale = mscale;
+void TOverlay::updateScale(){
+
+    TTFTexture sScale;
+
+    sScale.loadTTFFromString(mScaleText, {0xff, 0xff, 0xff, 0xff});
+
+    mScaleX = sScale.mTexWidth + 3;
+    mScaleY = (sScale.mTexHeight * mScaleLines) + 3;
+
+}
+
+void TOverlay::setScale(std::string cscale, int cLines){
+
+    mScaleText = cscale;
+    mScaleLines = cLines;
+
+    updateScale();
+
+    mGlobalSettings.mOverlayText.reg(this);
 }
 
 void TOverlay::setRects(std::vector<SDL_Rect> *cGrid){
@@ -144,7 +212,7 @@ void TOverlay::setRects(std::vector<SDL_Rect> *cGrid){
         
 void TOverlay::render(){
 
-    if((*mGrid)[0].w  < mScale){
+    if( ((*mGrid)[0].w  < mScaleX) || ((*mGrid)[0].h  < mScaleY) ){
         return;
     }
 
