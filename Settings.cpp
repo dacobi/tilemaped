@@ -114,6 +114,7 @@ ProjectSettings::ProjectSettings(){
 	Editor_PixelScale = new sKey("Editor_PixelScale", type_int, 16);
 	Editor_OverlayTextColor = new sKey("Editor_OverlayTextColor", type_int, 1);
 	Editor_OverlayTextSize = new sKey("Editor_OverlayTextSize", type_int, 14);
+	Editor_OverlayToggleColVals = new sKey("Editor_OverlayToggleColVals", type_bool, true);
 	Tile_ShowPixelGrid = new sKey("Tile_ShowPixelGrid", type_bool, true);
 	TileSet_ShowPixelGrid = new sKey("TileSet_ShowPixelGrid", type_bool, true);
 	TileSet_ShowTileGrid = new sKey("TileSet_ShowTileGrid", type_bool, true);
@@ -178,6 +179,7 @@ void ProjectSettings::init(){
 	keys.push_back(Editor_PixelScale);
 	keys.push_back(Editor_OverlayTextColor);
 	keys.push_back(Editor_OverlayTextSize);
+	keys.push_back(Editor_OverlayToggleColVals);
 	keys.push_back(Tile_ShowPixelGrid);
 	keys.push_back(TileSet_ShowPixelGrid);
 	keys.push_back(TileSet_ShowTileGrid);
@@ -226,8 +228,9 @@ void ProjectSettings::close(){
 	Sprite_WarnBeforeDelete->bvalue = true;
 	Editor_UseTextureFiltering->ivalue = 0;
 	Editor_PixelScale->ivalue = 16;
-	Editor_OverlayTextColor->ivalue = (int)0xFF000000;
+	Editor_OverlayTextColor->ivalue = 1;
 	Editor_OverlayTextSize->ivalue = 14;
+	Editor_OverlayToggleColVals->bvalue = true;
 	Clipboard_SaveToProject->bvalue = false;
 	
 	bLoaded = false;

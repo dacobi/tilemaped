@@ -2317,7 +2317,7 @@ SDL_Rect Tile::renderIm(int xpos, int ypos, int mIndex, int &mDragAndDropped, in
 
 	if( (mGlobalSettings.mEditor->mTileMap->bRenderOverlay) || (mGlobalSettings.mEditor->mTileSet.bImRenderOverlay)){
 		
-		if((elmax.x - elmin.x) > 40){
+		if((elmax.x - elmin.x) > mGlobalSettings.mEditor->mTileSet.mOverlayScale){
 		
 			std::stringstream conv;
 			std::string tidx;
@@ -2950,7 +2950,7 @@ void TileSet::initoverlay(){
     mOverlay.mRender = [this]{
 		mGlobalSettings.mOverlayText.renderNum(mOverlay.mIndex, mOverlay.mX, mOverlay.mY);		
 	};
-	
+		
 }
 
 void TileSet::setoverlay(){
@@ -3265,6 +3265,8 @@ int TileSet::renderIm(int ypos, int mScroll){
 	mTileSetBackGround.x = mGlobalSettings.WindowWidth - mGlobalSettings.TileSetWidth;
 	mTileSetBackGround.y = ypos;
 	mTileSetBackGround.w = mGlobalSettings.TileSetWidth; 
+
+	mOverlayScale = (ImGui::CalcTextSize("1023")).x;
 
 	ImVec2 cWinPos;
 	cWinPos.x = mTileSetBackGround.x;

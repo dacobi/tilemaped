@@ -31,7 +31,7 @@ class TOverlayText{
         void renderText(std::string ctext, int cx, int cy);
         void setColor(int cnewcol);
         void nextColor();
-        void reloadColors();   
+        void reloadTextures();   
 };
 
 class TOverlay{

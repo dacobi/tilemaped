@@ -57,10 +57,10 @@ void TOverlayText::setFontSize(int cFontSize){
 
         TFont =  TTF_OpenFont(mFontFile.c_str(), mFontSize);
         
-        reloadColors();
+        reloadTextures();
 
-        for(int oi = 0; oi < mOverlays.size(); oi++){
-            mOverlays[oi]->updateScale();
+        for(auto cOverlay : mOverlays){
+            cOverlay->updateScale();
         }
     }
 }
@@ -75,7 +75,7 @@ void TOverlayText::setColor(int cnewcol){
 
     mGlobalSettings.mProjectSettings.Editor_OverlayTextColor->ivalue = cnewcol;
 
-    reloadColors();
+    reloadTextures();
 }
 
 void TOverlayText::nextColor(){
@@ -88,7 +88,7 @@ void TOverlayText::nextColor(){
     setColor(mGlobalSettings.mProjectSettings.Editor_OverlayTextColor->ivalue);
 }
 
-void TOverlayText::reloadColors(){
+void TOverlayText::reloadTextures(){
     std::stringstream conv;
     std::string snum;
 
@@ -162,7 +162,7 @@ void TOverlayText::renderNum(int cnum, int cx, int cy){
 
     mNumbers[cnum]->render(cx, cy);
     mLastWidth = mNumbers[cnum]->mTexWidth;
-    mLastHeight = mNumbers[cnum]->mTexHeight;
+    mLastHeight = mNumbers[cnum]->mTexHeight - (mFontSize / 4);
 }
 
 void TOverlayText::renderText(std::string ctext, int cx, int cy){
@@ -173,11 +173,11 @@ void TOverlayText::renderText(std::string ctext, int cx, int cy){
         addText(ctext);        
         mText[ctext]->render(cx, cy);
         mLastWidth = mText[ctext]->mTexWidth;
-        mLastHeight = mText[ctext]->mTexHeight;
+        mLastHeight = mText[ctext]->mTexHeight - (mFontSize / 4);
     } else {
         cText->render(cx, cy);
         mLastWidth = cText->mTexWidth;
-        mLastHeight = cText->mTexHeight;
+        mLastHeight = cText->mTexHeight - (mFontSize / 4);
     }    
 }
 
@@ -202,7 +202,7 @@ void TOverlay::updateScale(){
     sScale.loadTTFFromString(mScaleText, {0xff, 0xff, 0xff, 0xff});
 
     mScaleX = sScale.mTexWidth + 3;
-    mScaleY = (sScale.mTexHeight * mScaleLines) + 3;
+    mScaleY = (sScale.mTexHeight * mScaleLines) - (mGlobalSettings.mOverlayText.mFontSize / 4);
 
 }
 
@@ -233,7 +233,7 @@ void TOverlay::render(){
             if(mIndex < (*mGrid).size()){
 
                 mX = (*mGrid)[mIndex].x + 3;
-                mY = (*mGrid)[mIndex].y + 3;
+                mY = (*mGrid)[mIndex].y;// + 3;
 
                 if( (mX >= 0) && (mY >= 0) && (mX <= mGlobalSettings.WindowWidth) && (mY <= mGlobalSettings.WindowHeight) ){
                     mRender();

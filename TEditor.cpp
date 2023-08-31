@@ -3166,18 +3166,25 @@ void TEditor::toggleOverlay(){
 
 		if(mCurMode == EMODE_MAP){
 			if(mTileMap->bHasCollisionMap){
-				if(mTileMap->bRenderOverlay){
-					mTileMap->bRenderOverlay = false;
-					mTileMap->bRenderOverlayColMap = true;
-				} else if(mTileMap->bRenderOverlayColMap){
-					mTileMap->bRenderOverlay = false;
-					mTileMap->bRenderOverlayColMap = false;
+				if(mGlobalSettings.mProjectSettings.Editor_OverlayToggleColVals->bvalue){
+					if(mTileMap->bRenderOverlay){
+						mTileMap->bRenderOverlay = false;
+						mTileMap->bRenderOverlayColMap = true;
+					} else if(mTileMap->bRenderOverlayColMap){
+						mTileMap->bRenderOverlay = false;
+						mTileMap->bRenderOverlayColMap = false;
+					} else {
+						mTileMap->bRenderOverlay = true;
+						mTileMap->bRenderOverlayColMap = false;
+					}
 				} else {
-					mTileMap->bRenderOverlay = true;
-					mTileMap->bRenderOverlayColMap = false;
+					if(mTileMap->bRenderOverlayColMap){
+						mTileMap->bRenderOverlay = false;
+						mTileMap->bRenderOverlayColMap = false;
+					} else {
+						mTileMap->bRenderOverlay = !mTileMap->bRenderOverlay;		
+					}
 				}
-
-
 			} else {
 				mTileMap->bRenderOverlay = !mTileMap->bRenderOverlay;
 			}			

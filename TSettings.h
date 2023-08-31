@@ -161,6 +161,7 @@ public:
 	sKey *Editor_PixelScale;	
 	sKey *Editor_OverlayTextColor;
 	sKey *Editor_OverlayTextSize;
+	sKey *Editor_OverlayToggleColVals;
 	sKey *Tile_ShowPixelGrid;
 	sKey *TileSet_ShowPixelGrid;
 	sKey *TileSet_ShowTileGrid;	

@@ -485,6 +485,9 @@ void TSettings::close(){
 	mUseTextureFiltering = 0;
 
 	mProjectSettings.close();
+
+	mOverlayText.setColor(mProjectSettings.Editor_OverlayTextColor->ivalue);
+	mOverlayText.setFontSize(mProjectSettings.Editor_OverlayTextSize->ivalue);
 }
 
 void TSettings::shutdown(){	

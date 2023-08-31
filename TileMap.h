@@ -161,6 +161,7 @@ public:
 	TOverlay mOverlay;	
 	void initoverlay();
 	void setoverlay();
+	int mOverlayScale;
 	bool bRenderOverlay = false;
 	bool bImRenderOverlay = false;
 	int mCurTileScale = 15;

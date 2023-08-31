@@ -489,10 +489,18 @@ int TBDialog::render(){
 								mEditor->mTileMap->bRenderOverlay = false;
 						}
 					}
+
+					ImGui::Separator();
 					
-					if(ImGui::MenuItem("TileSet Index", NULL , &mEditor->mTileSet.bImRenderOverlay)){
+					if(ImGui::MenuItem("Show TileSet Index", NULL , &mEditor->mTileSet.bImRenderOverlay)){
 
 					}
+
+					if(ImGui::MenuItem("Toggle Collision Values", NULL , &mGlobalSettings.mProjectSettings.Editor_OverlayToggleColVals->bvalue)){
+
+					}
+					
+					ImGui::Separator();
 
 					if(ImGui::MenuItem("Next Color (CTRL + T)")){																
 						mGlobalSettings.mOverlayText.nextColor();
@@ -573,6 +581,8 @@ int TBDialog::render(){
 
 					if(ImGui::MenuItem("Tile Index", NULL , &mEditor->mTileSet.bRenderOverlay)){																
 					}
+
+					ImGui::Separator();
 
 					if(ImGui::MenuItem("Next Color (CTRL + T)")){																
 						mGlobalSettings.mOverlayText.nextColor();
