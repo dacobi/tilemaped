@@ -233,7 +233,7 @@ void TOverlay::render(){
             if(mIndex < (*mGrid).size()){
 
                 mX = (*mGrid)[mIndex].x + 3;
-                mY = (*mGrid)[mIndex].y;// + 3;
+                mY = (*mGrid)[mIndex].y;
 
                 if( (mX >= 0) && (mY >= 0) && (mX <= mGlobalSettings.WindowWidth) && (mY <= mGlobalSettings.WindowHeight) ){
                     mRender();
