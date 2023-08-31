@@ -4819,7 +4819,9 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			}				
 
 				if(cEvent->key.keysym.sym == SDLK_TAB){
-					toggleOverlay();
+					if(!mTopBar.bIsMenuOpen){
+						toggleOverlay();
+					}
 				}
 
 				if(cEvent->key.keysym.sym == SDLK_a){
