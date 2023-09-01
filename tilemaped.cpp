@@ -25,8 +25,6 @@
 
 #ifdef _WIN64
 #define MWIN64
-#define VARNAME TEXT("%PROGRAMDATA%")
-#define BUFSIZE 4096
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
@@ -84,26 +82,18 @@ TSettings mGlobalSettings;
 #ifdef MNIXHOME
 	std::string mINIPath = "~/.tilemaped/tilemaped.ini";
 #else
-	int dwRet, dwErr;
+	void getWinIniPath(){
+	
+	char envinipath[150]
 
-	LPTSTR pszOldVal[BUFSIZE];
-
-	/*
-	pszOldVal = (LPTSTR) malloc(BUFSIZE*sizeof(TCHAR));
-    if(NULL == pszOldVal)
-    {
-        printf("Out of memory\n");
-        return 1;
-    }
-	*/
-
-	dwRet = GetEnvironmentVariable(VARNAME, &pszOldVal, BUFSIZE);
+	int retval = GetEnvironmentVariable("PROGRAMDATA", envinipath, 150);
 
 	std::string minipath = pszOldVal;
 
 	std::cout << "INI Path: " << minipath << std::endl;
-
-	std::string mINIPath = "tilemaped.ini";
+	
+	std::string mINIPath = minipath + DIRDEL + "tilemaped.ini";
+	}
 #endif
 
 bool TSettings::getSpriteFileHeader(std::string sPath, int &cSpriteX, int &cSpriteY, int &cSpriteBPP, std::vector<unsigned char> &sBuf){
