@@ -25,6 +25,9 @@
 
 #ifdef _WIN64
 #define MWIN64
+#include <windows.h>
+#include <tchar.h>
+#include <stdio.h>
 #endif
 
 
@@ -79,6 +82,24 @@ TSettings mGlobalSettings;
 #ifdef MNIXHOME
 	std::string mINIPath = "~/.tilemaped/tilemaped.ini";
 #else
+	#define VARNAME TEXT("%PROGRAMDATA%")
+	#define BUFSIZE 4096
+
+	DWORD dwRet, dwErr;
+
+	pszOldVal = (LPTSTR) malloc(BUFSIZE*sizeof(TCHAR));
+    if(NULL == pszOldVal)
+    {
+        printf("Out of memory\n");
+        return 1;
+    }
+
+	dwRet = GetEnvironmentVariable(VARNAME, pszOldVal, BUFSIZE);
+
+	std::string minipath = pszOldVal;
+
+	std::cout << "INI Path: " << minipath << std::endl;
+
 	std::string mINIPath = "tilemaped.ini";
 #endif
 
