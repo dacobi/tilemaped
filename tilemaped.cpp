@@ -87,6 +87,8 @@ TSettings mGlobalSettings;
 
 	DWORD dwRet, dwErr;
 
+	LPTSTR pszOldVal;
+
 	pszOldVal = (LPTSTR) malloc(BUFSIZE*sizeof(TCHAR));
     if(NULL == pszOldVal)
     {
