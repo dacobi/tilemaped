@@ -90,7 +90,7 @@ TSettings mGlobalSettings;
 
 		int retval = GetEnvironmentVariable("PROGRAMDATA", envinipath, 150);
 
-		std::string minipath = pszOldVal;
+		std::string minipath = envinipath;
 
 		std::cout << "INI Path: " << minipath << std::endl;
 	
