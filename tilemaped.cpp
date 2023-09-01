@@ -82,17 +82,19 @@ TSettings mGlobalSettings;
 #ifdef MNIXHOME
 	std::string mINIPath = "~/.tilemaped/tilemaped.ini";
 #else
-	void getWinIniPath(){
+	std::string mINIPath;
+
+		void getWinIniPath(){
 	
-	char envinipath[150]
+		char envinipath[150];
 
-	int retval = GetEnvironmentVariable("PROGRAMDATA", envinipath, 150);
+		int retval = GetEnvironmentVariable("PROGRAMDATA", envinipath, 150);
 
-	std::string minipath = pszOldVal;
+		std::string minipath = pszOldVal;
 
-	std::cout << "INI Path: " << minipath << std::endl;
+		std::cout << "INI Path: " << minipath << std::endl;
 	
-	std::string mINIPath = minipath + DIRDEL + "tilemaped.ini";
+		mINIPath = minipath + DIRDEL + "tilemaped.ini";
 	}
 #endif
 
@@ -1216,6 +1218,7 @@ int main( int argc, char* args[] )
 		mGlobalSettings.mINIFile.load(inipath.string()+DIRDEL+"tilemaped.ini");		
 	}
 #else
+	getWinIniPath();
 	if(fs::exists(fs::status(mINIPath))){
 		mGlobalSettings.mINIFile.load(mINIPath);		
 	}
