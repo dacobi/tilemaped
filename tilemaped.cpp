@@ -84,7 +84,7 @@ TSettings mGlobalSettings;
 #else
 	std::string mINIPath;
 
-		void getWinIniPath(){
+	int getWinIniPath(){
 	
 		char envinipath[150];
 
@@ -92,9 +92,21 @@ TSettings mGlobalSettings;
 
 		std::string minipath = envinipath;
 
-		std::cout << "INI Path: " << minipath << std::endl;
-	
-		mINIPath = minipath + DIRDEL + "tilemaped.ini";
+		minipath = minipath + DIRDEL + "tilemaped";
+
+		if(!fs::is_directory(fs::status(minipath))){		
+			try{
+				fs::create_directory(minipath);			
+			} catch(...){
+				std::cout << "Error Creating Folder: " << minipath << std::endl;
+				return 1;
+			}
+			std::cout << "INI Path Created: " << minipath << std::endl;
+		}
+			
+		mINIPath = minipath + DIRDEL + "tilemaped.ini";			
+
+		return 0;
 	}
 #endif
 
@@ -1218,7 +1230,9 @@ int main( int argc, char* args[] )
 		mGlobalSettings.mINIFile.load(inipath.string()+DIRDEL+"tilemaped.ini");		
 	}
 #else
-	getWinIniPath();
+	if(getWinIniPath()){
+		return 1;
+	}
 	if(fs::exists(fs::status(mINIPath))){
 		mGlobalSettings.mINIFile.load(mINIPath);		
 	}
