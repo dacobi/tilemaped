@@ -31,6 +31,7 @@ sKey::sKey(std::string _kname, TKeyType _ktype, std::string _value){
 	kname = _kname;
 	ktype = _ktype;
 	svalue = _value;
+	//std::cout << "Setting Key Value: " << svalue << std::endl;
 }
 
 void sKey::addOption(std::string text, int value){
@@ -138,6 +139,7 @@ ProjectSettings::ProjectSettings(){
 ProgramSettings::ProgramSettings(){	
 	Sys_Renderer = new sKey("Sys_Renderer", type_int, 0);
 	Sys_VSYNC = new sKey("Sys_VSYNC", type_bool, true);
+	Sys_FontPath = new sKey("Sys_FontPath", type_string, std::string("NONE"));
 	Win_Restore = new sKey("Win_Restore", type_bool, true);
 	Win_Width = new sKey("Win_Width", type_int, 1900);
 	Win_Height = new sKey("Win_Height", type_int, 1000);
@@ -154,6 +156,7 @@ ProgramSettings::ProgramSettings(){
 
 	keys.push_back(Sys_Renderer);
 	keys.push_back(Sys_VSYNC);
+	keys.push_back(Sys_FontPath);
 	keys.push_back(Win_Restore);
 	keys.push_back(Win_Width);
 	keys.push_back(Win_Height);	
@@ -507,9 +510,12 @@ int Settings::load(std::string filename){
 				keys[key]->ivalue = (int)value;
 				keys[key]->fvalue = value;
 				keys[key]->bvalue = keys[key]->ivalue ? true : false;
+			} else {
+				//std::cout << "Setting Key Value: " << tmpStr << std::endl;
 			}
 			keys[key]->ktype = (TKeyType)type;
 			keys[key]->svalue = tmpStr;
+			
 						
 		}
 		
@@ -548,6 +554,7 @@ int Settings::writedefault(std::string filename){
 		
 		if(keys[i]->ktype == type_string){
 			tmpStr = keys[i]->svalue;
+			//std::cout << "Writing Key Value: " << tmpStr << std::endl;
 		}else{
 			if(keys[i]->ktype == type_int){
 				convert << keys[i]->ivalue << std::endl;

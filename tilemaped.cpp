@@ -216,11 +216,22 @@ int TSettings::initSettings(){
 	std::cout << "ENV: " << TTFPATH << std::endl;
 	TTFPATH += "/opt/tilemaped/nerdfont.ttf";
 	std::cout << "ADD: " << TTFPATH << std::endl;
-	#define NERDFONT TTFPATH.c_str()
+	std::string NERDFONT = TTFPATH;
 #else
-#define NERDFONT "nerdfont.ttf"
+std::string NERDFONT = "nerdfont.ttf";
 #endif
 
+#ifndef MAPPIMAGE
+	if(mINIFile.Sys_FontPath->svalue == "NONE"){
+		if(fs::exists(fs::status(NERDFONT))){
+			mINIFile.Sys_FontPath->svalue = std::string(fs::current_path().string() + DIRDEL + NERDFONT);
+			std::cout << "Setting New Font Path: " << mINIFile.Sys_FontPath->svalue << std::endl;
+		}
+	} else {
+		NERDFONT = mINIFile.Sys_FontPath->svalue;
+		std::cout << "Using Font Path: " << mINIFile.Sys_FontPath->svalue << std::endl;;
+	}
+#endif	
 	
 	if( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER ) < 0 ){
 		std::cout << "SDL Error: " << SDL_GetError() << std::endl;
@@ -360,13 +371,13 @@ int TSettings::initSettings(){
 	builder.AddRanges(io.Fonts->GetGlyphRangesDefault()); // Add one of the default ranges
 	builder.BuildRanges(&ranges);       
 
-	DFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 20.0,  NULL, ranges.Data);
+	DFont = mio->Fonts->AddFontFromFileTTF(NERDFONT.c_str(), 20.0,  NULL, ranges.Data);
 	mio->Fonts->Build();
 
-	SFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 18.0,  NULL, ranges.Data);
+	SFont = mio->Fonts->AddFontFromFileTTF(NERDFONT.c_str(), 18.0,  NULL, ranges.Data);
 	mio->Fonts->Build();
 
-	LFont = mio->Fonts->AddFontFromFileTTF(NERDFONT, 25.0,  NULL, ranges.Data);
+	LFont = mio->Fonts->AddFontFromFileTTF(NERDFONT.c_str(), 25.0,  NULL, ranges.Data);
 	mio->Fonts->Build();
 
     // Setup Dear ImGui style
