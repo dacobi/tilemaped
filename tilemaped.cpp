@@ -226,10 +226,21 @@ std::string NERDFONT = "nerdfont.ttf";
 		if(fs::exists(fs::status(NERDFONT))){
 			mINIFile.Sys_FontPath->svalue = std::string(fs::current_path().string() + DIRDEL + NERDFONT);
 			std::cout << "Setting New Font Path: " << mINIFile.Sys_FontPath->svalue << std::endl;
+		} else {
+			std::cout << "Error: Font File Not Found!" << std::endl;
+			return 1;
 		}
 	} else {
-		NERDFONT = mINIFile.Sys_FontPath->svalue;
-		std::cout << "Using Font Path: " << mINIFile.Sys_FontPath->svalue << std::endl;;
+		if(fs::exists(fs::status(mINIFile.Sys_FontPath->svalue))){
+			NERDFONT = mINIFile.Sys_FontPath->svalue;
+			std::cout << "Using Font Path: " << mINIFile.Sys_FontPath->svalue << std::endl;;
+		} else if (fs::exists(fs::status(NERDFONT))){
+			mINIFile.Sys_FontPath->svalue = std::string(fs::current_path().string() + DIRDEL + NERDFONT);
+			std::cout << "Setting New Font Path: " << mINIFile.Sys_FontPath->svalue << std::endl;
+		} else {
+			std::cout << "Error: Font File Not Found!" << std::endl;
+			return 1;
+		}				
 	}
 #endif	
 	
