@@ -863,11 +863,11 @@ void TSettings::initHelpText(){
 	mHelpTextSprite.push_back("TEXTURE FILTERING: When using Sprite Scale/Rotate functions Texture Filtering can be\nenabled in \"Edit->Texture Filtering\". The Options are: \"None\", \"Some\", \"All\".");
 
 	mHelpTextAbout.push_back("VERSION: TilemapEd Version " + TilemapEd_Version);
-#ifdef MWIN64
-	mHelpTextAbout.push_back("INI PATH: " + fs::current_path().string() + DIRDEL + mINIPath);
-#else
+//#ifdef MWIN64
+//	mHelpTextAbout.push_back("INI PATH: " + mINIPath);
+//#else
 	mHelpTextAbout.push_back("INI PATH: " + mINIPath);	
-#endif
+//#endif
 	mHelpTextAbout.push_back("WEB SITE: https://github.com/dacobi/tilemaped");
 	mHelpTextAbout.push_back("LICENSE: BSD 3-Clause");
 	
