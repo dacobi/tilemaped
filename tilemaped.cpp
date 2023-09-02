@@ -86,9 +86,9 @@ TSettings mGlobalSettings;
 
 	int getWinIniPath(){
 	
-		char envinipath[150];
+		char envinipath[350];
 
-		int retval = GetEnvironmentVariable("APPDATA", envinipath, 150);
+		int retval = GetEnvironmentVariable("APPDATA", envinipath, 350);
 
 		if(retval == 0){
 				std::cout << "Error: \%AppData\% Not Found! "  << std::endl;
