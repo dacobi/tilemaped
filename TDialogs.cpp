@@ -111,10 +111,10 @@ int TBDialog::render(){
 		{
 			bIsMenuOpen = true;
 
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Save (F12)")).c_str())){
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Save")).c_str(), "F12")){
 				mEditor->activateSaveDialog();
 			}
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Save As (F11)")).c_str())){				
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mFloppy + " Save As")).c_str(), "F11")){				
 				mEditor->activateDTDialog(EDIALOG_PROJECTSAVEAS);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Open")).c_str())){
@@ -300,7 +300,7 @@ int TBDialog::render(){
 
 			ImGui::Separator();
 
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mExit + " Quit")).c_str())){
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mExit + " Quit")).c_str(), "ESC")){
 				mEditor->activateDTDialog(EDIALOG_PROGRAMQUIT);
 			}
 
@@ -443,10 +443,10 @@ int TBDialog::render(){
 				}
 			}
 
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Help Dialog (F1)")).c_str())){								
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Help Dialog")).c_str(), "F1")){								
 				mEditor->activateDTDialog(EDIALOG_HELPMENU);
 			}
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Project Info (F2)")).c_str() ,NULL,  &mGlobalSettings.bShowProjectInfo)){
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Project Info")).c_str() ,"F2" ,  &mGlobalSettings.bShowProjectInfo)){
 				
 			}
 			
@@ -456,35 +456,41 @@ int TBDialog::render(){
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Palette Offset")).c_str(), NULL, &mGlobalSettings.bShowPaletteOffset) ){ 
 					}
 				}
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Clipboard (F7)").c_str(), NULL , &mEditor->bShowClipboardMap)){		
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Clipboard").c_str(), "F7" , &mEditor->bShowClipboardMap)){		
 					mEditor->activateClipboard(false);
 				}
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mEditor->bShowBrushesTile)){										
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes").c_str(), "F8" , &mEditor->bShowBrushesTile)){										
 					mEditor->activateBrushes(false);
 				}
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush (F9)").c_str())){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush").c_str(), "F9")){     
 					mEditor->activateBrush();
                 }
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Drop Brush (F10) (ESC)").c_str())){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Drop Brush").c_str(), "F10 or ESC")){     
 					mEditor->dropBrush();
                 }
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos (B)").c_str())){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos").c_str(), "B")){     
 					mEditor->nextBrushPos();
                 }
-				if(ImGui::MenuItem("Selected Tile Type (S)", NULL , &mGlobalSettings.bShowTypeSelection)){										
+				if(ImGui::MenuItem("Selected Tile Type", "S" , &mGlobalSettings.bShowTypeSelection)){										
 				}
-				if(ImGui::MenuItem("Selected Tile (T)", NULL , &mGlobalSettings.bShowSelectedTile)){										
+				if(ImGui::MenuItem("Selected Tile", "T" , &mGlobalSettings.bShowSelectedTile)){										
 				}
 
-				if(ImGui::BeginMenu("Overlay (TAB)")){
+				if(ImGui::BeginMenu("Overlay")){
 
-					if(ImGui::MenuItem("Tile Values", NULL , &mEditor->mTileMap->bRenderOverlay)){										
+					const char *overcut = "TAB";
+
+					if(ImGui::MenuItem("Tile Values", overcut , &mEditor->mTileMap->bRenderOverlay)){										
 						if(mEditor->mTileMap->bRenderOverlay){
 								mEditor->mTileMap->bRenderOverlayColMap = false;
 						}
 					}
 
-					if(ImGui::MenuItem("Collision Values", NULL , &mEditor->mTileMap->bRenderOverlayColMap, mEditor->mTileMap->bHasCollisionMap)){										
+					if(!mGlobalSettings.mProjectSettings.Editor_OverlayToggleColVals->bvalue){
+						overcut = NULL;
+					}
+
+					if(ImGui::MenuItem("Collision Values", overcut , &mEditor->mTileMap->bRenderOverlayColMap, mEditor->mTileMap->bHasCollisionMap)){										
 						if(mEditor->mTileMap->bRenderOverlayColMap){
 								mEditor->mTileMap->bRenderOverlay = false;
 						}
@@ -502,7 +508,7 @@ int TBDialog::render(){
 					
 					ImGui::Separator();
 
-					if(ImGui::MenuItem("Next Color (CTRL + T)")){																
+					if(ImGui::MenuItem("Next Color", "CTRL+T")){																
 						mGlobalSettings.mOverlayText.nextColor();
 					}
 
@@ -512,79 +518,79 @@ int TBDialog::render(){
 
 			}
 			if(mEditor->mCurMode == EMODE_TILE){
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Clipboard (F7)").c_str(), NULL , &mEditor->mTileSet.bShowClipboardTiles)){		
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Clipboard").c_str(), "F7" , &mEditor->mTileSet.bShowClipboardTiles)){		
 					mEditor->activateClipboard(false);
 				}
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mEditor->bShowBrushesPixel)){										
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes").c_str(), "F8" , &mEditor->bShowBrushesPixel)){										
 					mEditor->activateBrushes(false);
 				}
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush (F9)").c_str())){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush").c_str(), "F9")){     
 					mEditor->activateBrush();
                 }
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Drop Brush (F10) (ESC)").c_str())){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Drop Brush").c_str(), "F10 or ESC")){     
 					mEditor->dropBrush();
                 }
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos (B)").c_str())){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos").c_str(), "B")){     
 					mEditor->nextBrushPos();
                 }
-				if(ImGui::MenuItem("Selected Color (S)", NULL , &mGlobalSettings.bShowPixelType)){										
+				if(ImGui::MenuItem("Selected Color", "S", &mGlobalSettings.bShowPixelType)){										
 				}
-				if(ImGui::MenuItem("Pixel Grid (P)", NULL , &mGlobalSettings.bShowPixelGrid)){										
+				if(ImGui::MenuItem("Pixel Grid", "P", &mGlobalSettings.bShowPixelGrid)){										
 				}
 			}
 			if(mEditor->mCurMode == EMODE_SPRITE){
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Clipboard (F7)").c_str(), NULL , &mEditor->mSprite->bShowClipboard)){
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Clipboard").c_str(), "F7" , &mEditor->mSprite->bShowClipboard)){
 					mEditor->activateClipboard(false);									
 				}
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mEditor->mSprite->bShowBrushesPixel)){										
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes").c_str(), "F8" , &mEditor->mSprite->bShowBrushesPixel)){										
 					mEditor->activateBrushes(false);
 				}
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush (F9)").c_str())){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush").c_str(), "F9")){     
 					mEditor->activateBrush();
                 }
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Drop Brush (F10) (ESC)").c_str())){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Drop Brush").c_str(), "F10 or ESC")){     
 					mEditor->dropBrush();
                 }
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos (B)").c_str())){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos").c_str(), "B")){     
 					mEditor->nextBrushPos();
                 }				
-				if(ImGui::MenuItem("Selected Color (S)", NULL , &mGlobalSettings.bShowPixelTypeSprite)){										
+				if(ImGui::MenuItem("Selected Color", "S" , &mGlobalSettings.bShowPixelTypeSprite)){										
 				}
-				if(ImGui::MenuItem("Pixel Grid (P)", NULL , &mGlobalSettings.bShowPixelGridSprite)){										
+				if(ImGui::MenuItem("Pixel Grid", "P" , &mGlobalSettings.bShowPixelGridSprite)){										
 				}
 			}
 
 			if(mEditor->mCurMode == EMODE_TILESET){
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Clipboard (F7)").c_str(), NULL , &mEditor->mTileSet.bShowClipboardTileSet)){		
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Clipboard").c_str(), "F7" , &mEditor->mTileSet.bShowClipboardTileSet)){		
 					mEditor->activateClipboard(false);
 				}
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mEditor->bShowBrushesPixelTileSet)){                                                                         
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes").c_str(), "F8" , &mEditor->bShowBrushesPixelTileSet)){                                                                         
 					mEditor->activateBrushes(false);
                 }
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush (F9)").c_str())){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush").c_str(), "F9")){     
 					mEditor->activateBrush();
                 }
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Drop Brush (F10) (ESC)").c_str())){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Drop Brush").c_str(), "F10 or ESC")){     
 					mEditor->dropBrush();
                 }
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos (B)").c_str())){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos").c_str(), "B")){     
 					mEditor->nextBrushPos();
                 }			
-				if(ImGui::MenuItem("Tile Grid (T)", NULL , &mGlobalSettings.bShowTileGrid)){										
+				if(ImGui::MenuItem("Tile Grid", "T" , &mGlobalSettings.bShowTileGrid)){										
 				}
-				if(ImGui::MenuItem("Pixel Grid (P)", NULL , &mGlobalSettings.bShowTilePixelGrid)){										
+				if(ImGui::MenuItem("Pixel Grid", "P" , &mGlobalSettings.bShowTilePixelGrid)){										
 				}
-				if(ImGui::MenuItem("Selected Color (S)", NULL , &mGlobalSettings.bShowPixelType)){										
+				if(ImGui::MenuItem("Selected Color", "S" , &mGlobalSettings.bShowPixelType)){										
 				}
 
-				if(ImGui::BeginMenu("Overlay (TAB)")){
+				if(ImGui::BeginMenu("Overlay")){
 
-					if(ImGui::MenuItem("Tile Index", NULL , &mEditor->mTileSet.bRenderOverlay)){																
+					if(ImGui::MenuItem("Tile Index", "TAB" , &mEditor->mTileSet.bRenderOverlay)){																
 					}
 
 					ImGui::Separator();
 
-					if(ImGui::MenuItem("Next Color (CTRL + T)")){																
+					if(ImGui::MenuItem("Next Color", "CTRL+T")){																
 						mGlobalSettings.mOverlayText.nextColor();
 					}
 
@@ -594,23 +600,23 @@ int TBDialog::render(){
 			}
 
 			if(mEditor->mCurMode == EMODE_SELEDIT){	
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes (F8)").c_str(), NULL , &mEditor->bShowBrushesPixelSelEdit)){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Brushes").c_str(), "F8" , &mEditor->bShowBrushesPixelSelEdit)){     
 					mEditor->activateBrushes(false);
                 }
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush (F9)").c_str())){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Next Brush").c_str(), "F9")){     
 					mEditor->activateBrush();
                 }
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Drop Brush (F10) (ESC)").c_str())){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mBrush + " Drop Brush").c_str(), "F10 or ESC")){     
 					mEditor->dropBrush();
                 }
-				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos (B)").c_str())){     
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mPoint + " Next Brush Pos").c_str(), "B")){     
 					mEditor->nextBrushPos();
                 }
-				if(ImGui::MenuItem("Tile Grid (T)", NULL , &mGlobalSettings.bShowTileSelGrid)){										
+				if(ImGui::MenuItem("Tile Grid", "T", &mGlobalSettings.bShowTileSelGrid)){										
 				}
-				if(ImGui::MenuItem("Pixel Grid (P)", NULL , &mGlobalSettings.bShowTilePixelSelGrid)){										
+				if(ImGui::MenuItem("Pixel Grid", "P", &mGlobalSettings.bShowTilePixelSelGrid)){										
 				}
-				if(ImGui::MenuItem("Selected Color (S)", NULL , &mGlobalSettings.bShowPixelType)){										
+				if(ImGui::MenuItem("Selected Color", "S", &mGlobalSettings.bShowPixelType)){										
 				}
 			}
 
@@ -622,17 +628,17 @@ int TBDialog::render(){
 			bIsMenuOpen = true;
 
 			if(mEditor->mCurMode == EMODE_SPRITE){				
-				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " New Sprite Frame (F3)")).c_str())){
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " New Sprite Frame")).c_str(), "F3")){
 					mEditor->createNewFrame();
 				}
-				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Sprite Frame (F4)")).c_str())){
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Sprite Frame")).c_str(), "F4")){
 					mEditor->createNewFrameCopy(mEditor->mSprite->mFrame);
 				}
 				if(mEditor->mSprite->mTexParam.TexSizeX == mEditor->mSprite->mTexParam.TexSizeY){					
-					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Frame Left (F5)")).c_str())){
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Frame Left")).c_str(), "F5")){
 						mEditor->rotateFrameLeft();
 					}
-					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Frame Right (F6)")).c_str())){
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Frame Right")).c_str(), "F6")){
 						mEditor->rotateFrameRight();
 					}
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Selected Frame")).c_str())){
@@ -642,7 +648,7 @@ int TBDialog::render(){
 						mEditor->activateDTDialog(EDIALOG_FRAMESCALE);
 					}
 				}				
-				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Selected Frame (DEL)")).c_str())){
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Selected Frame")).c_str(), "DEL")){
 					if(mEditor->mSprite->mFrames.size() > 1){
 						mEditor->activateRemoveFrame();
 					} else {
@@ -807,26 +813,26 @@ int TBDialog::render(){
 			}
 
 			if(mEditor->mCurMode == EMODE_MAP){
-				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Flip Tile (F) (X) (Y)")).c_str())){
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Flip Tile")).c_str(), "F/X/Y")){
 					mEditor->flipSelectedTile(0);
 				}
-				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " New Tile (F3)")).c_str())){
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " New Tile")).c_str(), "F3")){
 					mEditor->createNewTile();
 				}				
-				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Tile (F4)")).c_str())){
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Tile")).c_str(), "F4")){
 					mEditor->createNewTileCopy(mEditor->mTileSelectedTile);
 				}
 
 				if(mGlobalSettings.mGlobalTexParam.TexSizeX == mGlobalSettings.mGlobalTexParam.TexSizeY){					
-					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Tile Left (F5)")).c_str())){
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Tile Left")).c_str(), "F5")){
 						mEditor->rotateTileLeft();
 					}
-					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Tile Right (F6)")).c_str())){
+					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Rotate Tile Right")).c_str(), "F6")){
 						mEditor->rotateTile();
 					}
 				}
 
-				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Selected Tile (DEL)")).c_str())){
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Remove Selected Tile")).c_str(), "DEL")){
 					mEditor->activateDropUnusedTile();
 				}
 
@@ -946,30 +952,30 @@ int TBDialog::render(){
 			if((mEditor->mCurMode != EMODE_PALED) && (mEditor->mCurMode != EMODE_SELEDIT)){
 				
 				if( (mEditor->mCurMode == EMODE_SPRITE) || (mEditor->mCurMode == EMODE_TILE) ||(mEditor->mCurMode == EMODE_TILESET) || (mEditor->mCurMode == EMODE_MAP) ){
-					if(ImGui::MenuItem(std::string(mGlobalSettings.mCopy + " Copy Selection (C)").c_str())){						
+					if(ImGui::MenuItem(std::string(mGlobalSettings.mCopy + " Copy Selection").c_str(), "C")){						
 						mEditor->handleCopyPaste();		
 					}
-					if(ImGui::MenuItem(std::string(mGlobalSettings.mCut + " Move/Cut Selection (M)").c_str())){						
+					if(ImGui::MenuItem(std::string(mGlobalSettings.mCut + " Move/Cut Selection").c_str(), "M")){						
 						mEditor->handleCopyPaste(true);		
 					}
-					if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Paste Selection (V)").c_str())){						
+					if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Paste Selection").c_str(), "V")){						
 						mEditor->handleClipboardPaste();
 					}
-					if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Next Selection (CTRL + V)").c_str())){						
+					if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Next Selection").c_str(), "CTRL+V")){						
 						mEditor->handleClipboardPaste(true);
 					}
-					if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Drop Selection (F10) (ESC)").c_str())){						
+					if(ImGui::MenuItem(std::string(mGlobalSettings.mClip + " Drop Selection").c_str(), "F10 or ESC")){						
 						mEditor->dropBrush();
 					}
 				}				
 
-				if(ImGui::MenuItem("Select All (A)")){
+				if(ImGui::MenuItem("Select All", "A")){
 					mEditor->handleSelection(SELMODE_ALL);
 				}
-				if(ImGui::MenuItem("Select None (N)")){
+				if(ImGui::MenuItem("Select None", "N")){
 					mEditor->handleSelection(SELMODE_NONE);
 				}
-				if(ImGui::MenuItem("Invert Selection (I)")){
+				if(ImGui::MenuItem("Invert Selection", "I")){
 					mEditor->handleSelection(SELMODE_INVERT);
 				}
 			}
@@ -990,10 +996,10 @@ int TBDialog::render(){
 				}
 			}
 		
-			if(ImGui::MenuItem("Undo (U) (CTRL + Z)")){
+			if(ImGui::MenuItem("Undo", "U or CTRL+Z")){
 				mEditor->undoLastActionGroup();	  		
 			}
-			if(ImGui::MenuItem("Redo (R)")){
+			if(ImGui::MenuItem("Redo","R")){
 				mEditor->redoLastActionGroup();	  		
 			}
 						

@@ -900,7 +900,7 @@ void printUsage(){
 		std::cout << "TilemapEd Version: " << TilemapEd_Version  << std::endl;
 		std::cout << std::endl;	
 		std::cout << "Command Line Usage:" << std::endl;
-		std::cout << "tilemaped [ --opengl, --d3d, --software, --window, --maximize, --highdpi <uiscaleinpercent>, --nohighdpi, --vsync, --novsync ] (options are saved to \""+mINIPath+"\")" << std::endl;
+		std::cout << "tilemaped [ --opengl, --d3d, --software, --window, --maximize, --highdpi <uiscaleinpercent>, --nohighdpi, --vsync, --novsync ]" << std::endl; std::cout <<  "(options are saved to \""+mINIPath+"\")" << std::endl;
 		std::cout << "tilemaped -o <folder>" << std::endl;		
 		std::cout << "tilemaped -n <mapwidth> <mapheight> <tilewidth> <tileheight> <folder> [ -p <palette file> ]" << std::endl;
 		std::cout << "tilemaped -c <Gimp Palette> <palfile.bin>" << std::endl;		
