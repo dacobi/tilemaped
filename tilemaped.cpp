@@ -88,7 +88,12 @@ TSettings mGlobalSettings;
 	
 		char envinipath[150];
 
-		int retval = GetEnvironmentVariable("PROGRAMDATA", envinipath, 150);
+		int retval = GetEnvironmentVariable("APPDATA", envinipath, 150);
+
+		if(retval == 0){
+				std::cout << "Error: \%AppData\% Not Found! "  << std::endl;
+				return 1;
+		}
 
 		std::string minipath = envinipath;
 
