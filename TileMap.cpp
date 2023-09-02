@@ -117,7 +117,7 @@ SDL_Rect TPixel::renderImDisabled(int xpos, int ypos, int tscale, bool updateRec
 		ImDrawList *tList = ImGui::GetWindowDrawList();
 
 		int dCol = PixelColor.r + PixelColor.g + PixelColor.b;
-		dCol /= 0xf;
+		dCol /= 0x6;
 		ImU32 tCol = 0xff;
 		tCol = (tCol << 8) + dCol;
 		tCol = (tCol << 8) + dCol;
@@ -177,7 +177,7 @@ SDL_Rect TPixel::renderEdSel(int xpos, int ypos, int tscale, bool drawGrid){
 	
 	SDL_RenderFillRect(mGlobalSettings.TRenderer, &CurrentArea);
     
-	if(drawGrid){
+	if(drawGrid && !bPixelSelected){
 		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.PixelGridColor.r ,mGlobalSettings.PixelGridColor.g ,mGlobalSettings.PixelGridColor.b ,0xff);
 		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &CurrentArea);
 	}
@@ -185,13 +185,13 @@ SDL_Rect TPixel::renderEdSel(int xpos, int ypos, int tscale, bool drawGrid){
 	if(bPixelSelected){
 		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.AltHighlightColor.r, mGlobalSettings.AltHighlightColor.g, mGlobalSettings.AltHighlightColor.b, 0xff); 
 		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &CurrentArea);
-		SDL_Rect sndRect = CurrentArea;
-		sndRect.x = sndRect.x-1;
-		sndRect.y = sndRect.y-1;
-		sndRect.w = sndRect.w+2;
-		sndRect.h = sndRect.h+2;
+		/*SDL_Rect sndRect = CurrentArea;
+		sndRect.x = sndRect.x+1;
+		sndRect.y = sndRect.y+1;
+		sndRect.w = sndRect.w-2;
+		sndRect.h = sndRect.h-2;
 
-		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &sndRect);
+		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &sndRect);*/
     }
 
     return CurrentArea;
@@ -200,26 +200,27 @@ SDL_Rect TPixel::renderEdSel(int xpos, int ypos, int tscale, bool drawGrid){
 
 SDL_Rect TPixel::renderEd(int xpos, int ypos, TextureParameters *mTexParam, int tscale, bool updateRect ,bool drawGrid){
 	CurrentArea = { xpos, ypos, mTexParam->TexPixelSize*tscale, mTexParam->TexPixelSize*tscale};
-
+	
 	SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, PixelColor.r,PixelColor.g,PixelColor.b,PixelColor.a);
 	
 	SDL_RenderFillRect(mGlobalSettings.TRenderer, &CurrentArea);
     
-	if(drawGrid){
+	if(drawGrid && !bPixelSelected){
 		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.PixelGridColor.r ,mGlobalSettings.PixelGridColor.g ,mGlobalSettings.PixelGridColor.b ,0xff);
 		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &CurrentArea);
 	}
 
-    if(bPixelSelected){
-		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.AltHighlightColor.r, mGlobalSettings.AltHighlightColor.g, mGlobalSettings.AltHighlightColor.b, 0xff); 
-		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &CurrentArea);
+    if(bPixelSelected){						
+		SDL_SetRenderDrawColor(mGlobalSettings.TRenderer, mGlobalSettings.AltHighlightColor.r, mGlobalSettings.AltHighlightColor.g, mGlobalSettings.AltHighlightColor.b, 0xff); 		
+		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &CurrentArea);				
 		SDL_Rect sndRect = CurrentArea;
-		sndRect.x = sndRect.x-1;
-		sndRect.y = sndRect.y-1;
-		sndRect.w = sndRect.w+2;
-		sndRect.h = sndRect.h+2;
+		sndRect.x = sndRect.x+1;
+		sndRect.y = sndRect.y+1;
+		sndRect.w = sndRect.w-2;
+		sndRect.h = sndRect.h-2;
 
 		SDL_RenderDrawRect(mGlobalSettings.TRenderer, &sndRect);
+		
     }
     return CurrentArea;
 }
@@ -322,8 +323,8 @@ SDL_Color TPalette::getSDLColorIm(ImU32 cCol){
 
 	tColor.a = 0xff;
 	tColor.r = (cCol & 0x000000FF);
-	tColor.g = (cCol & 0x0000FF00);
-	tColor.b = (cCol & 0x00FF0000);
+	tColor.g = (cCol & 0x0000FF00) >> 8;
+	tColor.b = (cCol & 0x00FF0000) >> 16;
 
 	return tColor;
 
@@ -1190,30 +1191,86 @@ int TPalette::initTPixels(){
 
 SDL_Rect TPalette::renderSelEd(int xpos,int ypos, int tcolor, int cScale){
 	SDL_SetRenderDrawBlendMode(mGlobalSettings.TRenderer, SDL_BLENDMODE_BLEND);
+	
 	int ccolor=0;
-	if(tcolor != 0) ccolor = tcolor;
-	return TPixels[ccolor]->renderEdSel(xpos, ypos, cScale,mGlobalSettings.bShowTilePixelSelGrid);	
+
+	bool bColZero = false;	
+
+	if(tcolor != 0) {ccolor = tcolor;} else { if(mGlobalSettings.mGlobalTexParam.PaletteOffset > 0){if(mGlobalSettings.mEditor->mColorSelectedTile->bPixelSelected){ if((mGlobalSettings.mEditor->mColorSelected % 16) == 0){ bColZero = true;}}}}
+	
+	if(bColZero){		
+		TPixels[ccolor]->bPixelSelected = true;
+	}
+
+	SDL_Rect retval = TPixels[ccolor]->renderEdSel(xpos, ypos, cScale,mGlobalSettings.bShowTilePixelSelGrid);	
+
+	if(bColZero){
+		TPixels[ccolor]->bPixelSelected = false;
+	}
+
+	return retval;
 }
 
 SDL_Rect TPalette::renderTileEd(int xpos,int ypos, int tcolor, int cScale, TextureParameters *mTexParam){
 	SDL_SetRenderDrawBlendMode(mGlobalSettings.TRenderer, SDL_BLENDMODE_BLEND);
 	int ccolor=0;
-	if(tcolor != 0) ccolor = tcolor + (mTexParam->PaletteOffset*16);
-	return TPixels[ccolor]->renderEdSel(xpos, ypos, cScale,mGlobalSettings.bShowTilePixelGrid);	
+	//if(tcolor != 0) ccolor = tcolor + (mTexParam->PaletteOffset*16);
+
+	bool bColZero = false;	
+	if(tcolor != 0){ccolor = tcolor + (mTexParam->PaletteOffset*16);} else { if(mTexParam->PaletteOffset > 0){if(mGlobalSettings.mEditor->mColorSelectedTile->bPixelSelected){ if((mGlobalSettings.mEditor->mColorSelected % 16) == 0){ bColZero = true;}}}}
+
+	if(bColZero){
+		TPixels[ccolor]->bPixelSelected = true;
+	}
+
+	SDL_Rect retval = TPixels[ccolor]->renderEdSel(xpos, ypos, cScale,mGlobalSettings.bShowTilePixelGrid);	
+
+	if(bColZero){
+		TPixels[ccolor]->bPixelSelected = false;
+	}
+
+	return retval;
 }
 
 SDL_Rect TPalette::renderTileEd(int xpos,int ypos, int tcolor, TextureParameters *mTexParam){
 	SDL_SetRenderDrawBlendMode(mGlobalSettings.TRenderer, SDL_BLENDMODE_BLEND);
 	int ccolor=0;
-	if(tcolor != 0) ccolor = tcolor + (mTexParam->PaletteOffset*16);
-	return TPixels[ccolor]->renderEd(xpos, ypos, mTexParam, mTexParam->TexEditScale,false,mGlobalSettings.bShowPixelGrid);	
+	bool bColZero = false;	
+	if(tcolor != 0){ccolor = tcolor + (mTexParam->PaletteOffset*16);} else { if(mTexParam->PaletteOffset > 0){if(mGlobalSettings.mEditor->mColorSelectedTile->bPixelSelected){ if((mGlobalSettings.mEditor->mColorSelected % 16) == 0){ bColZero = true;}}}}
+
+	if(bColZero){
+		TPixels[ccolor]->bPixelSelected = true;
+	}
+
+	SDL_Rect retval = TPixels[ccolor]->renderEd(xpos, ypos, mTexParam, mTexParam->TexEditScale,false,mGlobalSettings.bShowPixelGrid);
+
+	if(bColZero){
+		TPixels[ccolor]->bPixelSelected = false;	
+	}
+
+	return retval;
 }
 
 SDL_Rect TPalette::renderSpriteEd(int xpos,int ypos, int tcolor, TextureParameters *mTexParam){
 	SDL_SetRenderDrawBlendMode(mGlobalSettings.TRenderer, SDL_BLENDMODE_BLEND);
 	int ccolor=0;
-	if(tcolor != 0) ccolor = tcolor + (mTexParam->PaletteOffset*16);
-	return TPixels[ccolor]->renderEd(xpos, ypos, mTexParam, mTexParam->TexEditScale,false,mGlobalSettings.bShowPixelGridSprite);	
+	
+	bool bColZero = false;	
+	if(tcolor != 0){ccolor = tcolor + (mTexParam->PaletteOffset*16);} else { if(mTexParam->PaletteOffset > 0){if(mGlobalSettings.mEditor->mColorSelectedTile->bPixelSelected){ if((mGlobalSettings.mEditor->mColorSelected % 16) == 0){ bColZero = true;}}}}
+
+	if(bColZero){
+		TPixels[ccolor]->bPixelSelected = true;
+	}
+	
+	//if(tcolor != 0) ccolor = tcolor + (mTexParam->PaletteOffset*16);
+	SDL_Rect retval = TPixels[ccolor]->renderEd(xpos, ypos, mTexParam, mTexParam->TexEditScale,false,mGlobalSettings.bShowPixelGridSprite);	
+
+	if(bColZero){
+		TPixels[ccolor]->bPixelSelected = false;
+	}
+
+
+	return retval;
 }
 
 int TPalette::renderIm(int xpos,int ypos, TextureParameters *mTexParam){

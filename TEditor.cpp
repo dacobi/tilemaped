@@ -3744,7 +3744,7 @@ int TEditor::findSelTile(){
 		tSel = searchRectsXY(mTileSelectedTile->PixelAreas, cx, cy);
 		if(tSel >-1){
 			mColorSelectedTile->bPixelSelected = false;
-			mColorSelected = (mTileSelectedTile->getPixel(tSel)+(mGlobalSettings.mGlobalTexParam.PaletteOffset*16));
+			mColorSelected = (mTileSelectedTile->getPixel(tSel)+(mGlobalSettings.mGlobalTexParam.PaletteOffset*16));			
 			mColorSelectedTile = mPalette.TPixels[mColorSelected];
 			mColorSelectedTile->bPixelSelected = true;
 			mTileSelectedTile->mSelection.cancelSelection();
