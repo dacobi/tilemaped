@@ -618,6 +618,21 @@ int TBDialog::render(){
 				}
 				if(ImGui::MenuItem("Selected Color", "S", &mGlobalSettings.bShowPixelType)){										
 				}
+
+				if(ImGui::BeginMenu("Overlay")){
+
+					if(ImGui::MenuItem("Tile Values", "TAB" , &mEditor->mSelEdit.bRenderOverlay)){																
+					}
+
+					ImGui::Separator();
+
+					if(ImGui::MenuItem("Next Color", "CTRL+T")){																
+						mGlobalSettings.mOverlayText.nextColor();
+					}
+
+
+					ImGui::EndMenu();
+				}
 			}
 
 			ImGui::EndMenu();

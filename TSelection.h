@@ -147,13 +147,20 @@ class TBrushList{
         int MaxScale = 16;
 };
 
+//class TOverlay;
+
 class TSelectionEditor{
     public:
         TSelection* mCurrentSelection;
         TSelection mSelection;
         int mSelectionWidth = 0;
         int mSelectionHeight = 0;
+        TOverlay mOverlay;
+        void initoverlay();
+        void setoverlay();
         std::vector<SDL_Rect> EditPixelAreas;	        
+        std::vector<SDL_Rect> TilesAreas;
+        bool bRenderOverlay = false;
         int renderEd(int xpos, int ypos);
         int setSelection(TSelection* cNewSelection, int nWidth, int nHeight);
         void resizeEdit();

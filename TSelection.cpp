@@ -1,5 +1,6 @@
 #include "TSelection.h"
 #include "TEditor.h"
+#include "TOverlay.h"
 
 extern TSettings mGlobalSettings;
 
@@ -1387,6 +1388,69 @@ int TSelectionEditor::getXY(int xpos, int ypos, int cxpos, int cypos){
 	return index;
 }
 
+void TSelectionEditor::initoverlay(){
+    mOverlay.setRects(&TilesAreas);
+	mOverlay.setGrid(mSelectionWidth, mSelectionHeight);
+	mOverlay.setSize(mGlobalSettings.mGlobalTexParam.TexSizeX, mGlobalSettings.mGlobalTexParam.TexSizeY);
+	mOverlay.setScale("1023", 2);
+
+    if(mGlobalSettings.mGlobalTexParam.TexBPP < 8){
+
+		mOverlay.mRender = [this]{
+			mGlobalSettings.mOverlayText.renderNum(mGlobalSettings.mEditor->mTileMap->getTile(mCurrentSelection->mSelected[mOverlay.mIndex]) , mOverlay.mX , mOverlay.mY);
+						
+			mGlobalSettings.mOverlayText.renderNum(mGlobalSettings.mEditor->mTileMap->getOffset(mCurrentSelection->mSelected[mOverlay.mIndex]) , mOverlay.mX , mOverlay.mY + mGlobalSettings.mOverlayText.mLastHeight);
+			
+			unsigned char cflip = mGlobalSettings.mEditor->mTileMap->getFlip(mCurrentSelection->mSelected[mOverlay.mIndex]);
+			
+			if(cflip > 0){
+				switch (cflip){
+					case 1:
+						mGlobalSettings.mOverlayText.renderText("X" , mOverlay.mX + mGlobalSettings.mOverlayText.mLastWidth, mOverlay.mY + mGlobalSettings.mOverlayText.mLastHeight);		
+						break;				
+					case 2:
+						mGlobalSettings.mOverlayText.renderText("Y" , mOverlay.mX + mGlobalSettings.mOverlayText.mLastWidth , mOverlay.mY + mGlobalSettings.mOverlayText.mLastHeight);		
+						break;				
+					case 3:
+						mGlobalSettings.mOverlayText.renderText("XY" , mOverlay.mX + mGlobalSettings.mOverlayText.mLastWidth , mOverlay.mY + mGlobalSettings.mOverlayText.mLastHeight);												
+						break;				
+					default:
+						break;
+					}
+				}			
+		};		
+
+
+	} else {
+
+		mOverlay.mRender = [this]{
+			mGlobalSettings.mOverlayText.renderNum(mGlobalSettings.mEditor->mTileMap->getTile(mCurrentSelection->mSelected[mOverlay.mIndex]) , mOverlay.mX , mOverlay.mY);
+			unsigned char cflip = mGlobalSettings.mEditor->mTileMap->getFlip(mCurrentSelection->mSelected[mOverlay.mIndex]);
+			
+			if(cflip > 0){
+				switch (cflip){
+					case 1:
+						mGlobalSettings.mOverlayText.renderText("X" , mOverlay.mX , mOverlay.mY + mGlobalSettings.mOverlayText.mLastHeight);		
+						break;				
+					case 2:
+						mGlobalSettings.mOverlayText.renderText("Y" , mOverlay.mX , mOverlay.mY + mGlobalSettings.mOverlayText.mLastHeight);		
+						break;				
+					case 3:
+						mGlobalSettings.mOverlayText.renderText("XY" , mOverlay.mX , mOverlay.mY + mGlobalSettings.mOverlayText.mLastHeight);												
+						break;				
+					default:
+						break;
+					}
+				}			
+		};
+
+	}
+
+}
+
+void TSelectionEditor::setoverlay(){
+    mOverlay.setGrid(mSelectionWidth, mSelectionHeight);
+}
 
 int TSelectionEditor::renderEd(int xpos, int ypos){
 
@@ -1412,11 +1476,14 @@ int TSelectionEditor::renderEd(int xpos, int ypos){
 				}
 			}
 			
-			if(mGlobalSettings.bShowTileSelGrid){				
-				cBorder.x = xpos + ((mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX)*i);
-				cBorder.y = ypos + ((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurEdScale)*j);
-				cBorder.w = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX);
-				cBorder.h = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeY);
+            cBorder.x = xpos + ((mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX)*i);
+			cBorder.y = ypos + ((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurEdScale)*j);
+			cBorder.w = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeX);
+			cBorder.h = (mCurEdScale*mGlobalSettings.mGlobalTexParam.TexSizeY);
+
+            TilesAreas[(j*mSelectionWidth)+i] = cBorder;
+
+			if(mGlobalSettings.bShowTileSelGrid){								
 				Tile::renderSelection(cBorder, mGlobalSettings.DefaultHighlightColor);
 			}
 
@@ -1446,6 +1513,10 @@ int TSelectionEditor::renderEd(int xpos, int ypos){
 		}								
 	}
 
+    if(bRenderOverlay){
+        mOverlay.render();        
+    }
+
     return 0;
 }
 
@@ -1474,6 +1545,7 @@ SDL_Rect rEmpty;
 	mSelectionAreaY = mGlobalSettings.mGlobalTexParam.TexSizeY * mSelectionHeight;
 	
 	EditPixelAreas.resize(mSelectionAreaX*mSelectionAreaY);
+    TilesAreas.resize(mSelectionWidth * mSelectionHeight);
 
 	for(int i = 0; i <  EditPixelAreas.size(); i++){
 		EditPixelAreas[i].x = rEmpty.x;

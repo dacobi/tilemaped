@@ -832,6 +832,8 @@ void TEditor::initDialogs(){
         mBrushesPixelSelEd.mMaxY = 8;        
     }
 
+	mSelEdit.initoverlay();
+
 	mClipboardMap.init("Maps","Tile", TBRUSH_TILE, &bShowClipboardMap,mGlobalSettings.mGlobalTexParam.TexSizeX, mGlobalSettings.mGlobalTexParam.TexSizeY, &mGlobalSettings.TileMapScale, mGlobalSettings.TileMapScale, &mCurrentBrushTile, &mGlobalSettings.mGlobalTexParam);
 	mClipboardMap.bUseTileOffset = true;
 	mClipboardMap.MinScale = 4;
@@ -1901,7 +1903,8 @@ int TEditor::setMode(int newMode){
 					return 1;		
 				}
 
-				mSelEdit.setSelection(&mTileMap->mSelection, width+1, height+1);				
+				mSelEdit.setSelection(&mTileMap->mSelection, width+1, height+1);
+				mSelEdit.setoverlay();			
 			}        		        	
 
 			mBrushesPixelSelEd.setBrushDeltas(1, 1, &mSelEdit.mCurEdScale, mGlobalSettings.mGlobalTexParam.TexEditScale * mGlobalSettings.mGlobalTexParam.TexPixelSize, &mGlobalSettings.mGlobalTexParam);
@@ -3192,6 +3195,10 @@ void TEditor::toggleOverlay(){
 
 		if(mCurMode == EMODE_TILESET){		
 			mTileSet.bRenderOverlay = !mTileSet.bRenderOverlay;
+		}	
+
+		if(mCurMode == EMODE_SELEDIT){		
+			mSelEdit.bRenderOverlay = !mSelEdit.bRenderOverlay;
 		}	
 
 }
@@ -4810,7 +4817,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 				}
 	  			if(cEvent->key.keysym.sym == SDLK_t){
 					if(bLCTRLisDown){
-						if( (mCurMode == EMODE_MAP) || (mCurMode == EMODE_TILESET ) ){
+						if( (mCurMode == EMODE_MAP) || (mCurMode == EMODE_TILESET )|| (mCurMode == EMODE_SELEDIT ) ){
 							mGlobalSettings.mOverlayText.nextColor();
 						}
 					} else {
