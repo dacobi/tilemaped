@@ -294,7 +294,7 @@ int TCollisionMapEditor::render(){
 
     ImGuiStyle& style3 = ImGui::GetStyle();
 
-    float size3 = ImGui::CalcTextSize("Show Tile Index").x + style3.FramePadding.x * 4.0f;
+    float size3 = ImGui::CalcTextSize("Show Overlay").x * 1.3; //+ style3.FramePadding.x * 4.0f;
     float avail3 = ImGui::GetContentRegionAvail().x / 2;
 
     float off3 = (avail3 - size3) - 10;
@@ -303,7 +303,7 @@ int TCollisionMapEditor::render(){
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off3);
 	}
      
-    ImGui::Checkbox("Show Tile Index", &mGlobalSettings.mProjectSettings.ColMap_ShowOverlay->bvalue);
+    ImGui::Checkbox("Show Overlay", &mGlobalSettings.mProjectSettings.ColMap_ShowOverlay->bvalue);
 
      
     ImGui::SameLine();
@@ -363,7 +363,7 @@ int TCollisionMapEditor::render(){
 			ImGui::SetCursorPos(cpos);            
 
 			for(int j = 0; j < mCurColumns; j++){
-				TileAreas[(i * mCurColumns) + j] = mGlobalSettings.mEditor->mTileSet.TTiles[(i*mCurColumns) + j]->renderImCol((cWinPos.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),cWinPos.y + mScroll + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*i), (i*mCurColumns) + j,  mCurTileScale, (((i*mCurColumns) + j) == mSelectedTile));												
+				TileAreas[(i * mCurColumns) + j] = mGlobalSettings.mEditor->mTileSet.TTiles[(i*mCurColumns) + j]->renderImCol((cWinPos.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),cWinPos.y + mScroll + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*i), (i*mCurColumns) + j, mTileMap->mColMap.MapData[(i*mCurColumns) + j],  mCurTileScale, (((i*mCurColumns) + j) == mSelectedTile));												
 				if((mCurColumns > 1) && (j < (mCurColumns-1))){					
 					ImGui::SameLine();
 				} 
@@ -381,7 +381,7 @@ int TCollisionMapEditor::render(){
             
 			int i = mCurColumns;
 			for(int j = 0; j < isOdd; j++){
-				TileAreas[(i * cRowNum) + j] = mGlobalSettings.mEditor->mTileSet.TTiles[(i*cRowNum)+j]->renderImCol((cWinPos.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),cWinPos.y + mScroll + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*cRowNum), (i*cRowNum)+j,  mCurTileScale, (((i * cRowNum) + j) == mSelectedTile));															
+				TileAreas[(i * cRowNum) + j] = mGlobalSettings.mEditor->mTileSet.TTiles[(i*cRowNum)+j]->renderImCol((cWinPos.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),cWinPos.y + mScroll + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*cRowNum), (i*cRowNum)+j , mTileMap->mColMap.MapData[(i*cRowNum)+j] ,  mCurTileScale, (((i * cRowNum) + j) == mSelectedTile));															
                 if((j < (isOdd-1))){
 					ImGui::SameLine();
 				}

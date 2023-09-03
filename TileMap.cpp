@@ -2274,7 +2274,7 @@ int Tile::initTile(){
 }
 
 
-SDL_Rect Tile::renderImCol(int xpos, int ypos, int mIndex, int tscale, bool bColEditSelected){
+SDL_Rect Tile::renderImCol(int xpos, int ypos, int mIndex, int mColVal, int tscale, bool bColEditSelected){
 	
 	SDL_Rect tmpRect;
 
@@ -2310,9 +2310,9 @@ SDL_Rect Tile::renderImCol(int xpos, int ypos, int mIndex, int tscale, bool bCol
 		tList->AddRect(elmin, elmax, mGlobalSettings.ImHighLightColor);		
 	}
 	
-	if( mGlobalSettings.mProjectSettings.ColMap_ShowOverlay->bvalue ){
+	if( mGlobalSettings.mEditor->mTileMap->bRenderOverlay ||mGlobalSettings.mEditor->mTileMap->bRenderOverlayColMap || mGlobalSettings.mProjectSettings.ColMap_ShowOverlay->bvalue ){
 		
-		if((elmax.x - elmin.x) > mGlobalSettings.mEditor->mTileSet.mOverlayScale){
+		if( ((elmax.x - elmin.x) > mGlobalSettings.mEditor->mTileSet.mOverlayScaleX) && ((elmax.y - elmin.y) > (mGlobalSettings.mEditor->mTileSet.mOverlayScaleY * 2 ))){
 		
 			std::stringstream conv;
 			std::string tidx;
@@ -2320,7 +2320,14 @@ SDL_Rect Tile::renderImCol(int xpos, int ypos, int mIndex, int tscale, bool bCol
 			conv << mIndex << std::endl;
 			conv >> tidx;
 
-			tList->AddText(ImVec2((float) elmin.x + 3, (float) elmin.y + 3), mGlobalSettings.mEditor->mPalette.getImColor(mGlobalSettings.OverlayTextColor), tidx.c_str());
+			tList->AddText(ImVec2((float) elmin.x + 3, (float) elmin.y), mGlobalSettings.mEditor->mPalette.getImColor(mGlobalSettings.OverlayTextColor), tidx.c_str());
+
+			conv << mColVal << std::endl;
+			conv >> tidx;
+
+			tidx = "C" + tidx;
+
+			tList->AddText(ImVec2((float) elmin.x + 3, (float) elmin.y + mGlobalSettings.mEditor->mTileSet.mOverlayScaleY), mGlobalSettings.mEditor->mPalette.getImColor(mGlobalSettings.OverlayTextColor), tidx.c_str());
 		}
 	}
 
@@ -2387,7 +2394,7 @@ SDL_Rect Tile::renderIm(int xpos, int ypos, int mIndex, int &mDragAndDropped, in
 
 	if( (mGlobalSettings.mEditor->mTileMap->bRenderOverlay) || (mGlobalSettings.mEditor->mTileSet.bImRenderOverlay)){
 		
-		if((elmax.x - elmin.x) > mGlobalSettings.mEditor->mTileSet.mOverlayScale){
+		if((elmax.x - elmin.x) > mGlobalSettings.mEditor->mTileSet.mOverlayScaleX){
 		
 			std::stringstream conv;
 			std::string tidx;
@@ -3336,7 +3343,10 @@ int TileSet::renderIm(int ypos, int mScroll){
 	mTileSetBackGround.y = ypos;
 	mTileSetBackGround.w = mGlobalSettings.TileSetWidth; 
 
-	mOverlayScale = (ImGui::CalcTextSize("1023")).x;
+	ImVec2 cOverSize = ImGui::CalcTextSize("1023");
+
+	mOverlayScaleX = cOverSize.x;
+	mOverlayScaleY = cOverSize.y - (cOverSize.y / 4);
 
 	ImVec2 cWinPos;
 	cWinPos.x = mTileSetBackGround.x;

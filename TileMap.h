@@ -118,7 +118,7 @@ public:
 	std::vector<SDL_Rect> PixelAreas;
 	// SDL_Rect render(int xpos, int ypos, int tscale=1, bool updateRect=false ,bool drawGrid=false);
 	SDL_Rect renderIm(int xpos, int ypos, int mIndex, int& mDragAndDropped, int tscale = 1, bool updateRect = false, bool drawGrid = false);
-	SDL_Rect renderImCol(int xpos, int ypos, int mIndex, int tscale, bool bColEditSelected);
+	SDL_Rect renderImCol(int xpos, int ypos, int mIndex, int mColVal, int tscale, bool bColEditSelected);
 	SDL_Rect render(int xpos, int ypos, int tscale, TileProperties tProps);
 	void renderEd(int xpos, int ypos, TPalette* tpal);
 	void renderEdSel(int xpos, int ypos, TPalette* tpal, int cScale);
@@ -161,7 +161,8 @@ public:
 	TOverlay mOverlay;	
 	void initoverlay();
 	void setoverlay();
-	int mOverlayScale;
+	int mOverlayScaleX;
+	int mOverlayScaleY;
 	bool bRenderOverlay = false;
 	bool bImRenderOverlay = false;
 	int mCurTileScale = 15;
