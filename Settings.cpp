@@ -126,6 +126,7 @@ ProjectSettings::ProjectSettings(){
 	TileSet_MaxGridWidth = new sKey("TileSet_MaxGridWidth", type_int, 4);	
 	TileSet_MinTileScale = new sKey("TileSet_MinTileScale", type_int, 7);
 	TileSet_ShowOverlay = new sKey("TileSet_ShowOverlay", type_bool, false);
+	ColMap_ShowOverlay = new sKey("ColMap_ShowOverlay", type_bool, false);
 	SelectionEdit_ShowPixelGrid = new sKey("SelectionEdit_ShowPixelGrid", type_bool, true);
 	SelectionEdit_ShowTileGrid = new sKey("SelectionEdit_ShowTileGrid", type_bool, true);
 	SelectionEdit_PixelScale = new sKey("SelectionEdit_PixelScale", type_int, 10);	
@@ -193,6 +194,7 @@ void ProjectSettings::init(){
 	keys.push_back(TileSet_MaxGridWidth);
 	keys.push_back(TileSet_MinTileScale);
 	keys.push_back(TileSet_ShowOverlay);
+	keys.push_back(ColMap_ShowOverlay);
 	keys.push_back(SelectionEdit_ShowPixelGrid);
 	keys.push_back(SelectionEdit_ShowTileGrid);
 	keys.push_back(SelectionEdit_PixelScale);
@@ -224,6 +226,7 @@ void ProjectSettings::close(){
 	TileSet_MaxGridWidth->ivalue = 4;
 	TileSet_MinTileScale->ivalue = 7;
 	TileSet_ShowOverlay->bvalue = false;
+	ColMap_ShowOverlay->bvalue = false;
 	SelectionEdit_ShowPixelGrid->bvalue = true;
 	SelectionEdit_ShowTileGrid->bvalue = true;
 	SelectionEdit_PixelScale->ivalue = 10;

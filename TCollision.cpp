@@ -291,7 +291,23 @@ int TCollisionMapEditor::render(){
     ImGui::Text("%s",cCurTile.c_str());
 
     ImGui::SameLine();
+
+    ImGuiStyle& style3 = ImGui::GetStyle();
+
+    float size3 = ImGui::CalcTextSize("Show Tile Index").x + style3.FramePadding.x * 2.0f;
+    float avail3 = ImGui::GetContentRegionAvail().x / 2;
+
+    float off3 = (avail3 - size3) - 10;
+
+    if(off3 > 0.0f){
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off3);
+	}
      
+    ImGui::Checkbox("Show Tile Index", &mGlobalSettings.mProjectSettings.ColMap_ShowOverlay->bvalue);
+
+     
+    ImGui::SameLine();
+
 
     ImGuiStyle& style2 = ImGui::GetStyle();
 

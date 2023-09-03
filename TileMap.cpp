@@ -2310,6 +2310,19 @@ SDL_Rect Tile::renderImCol(int xpos, int ypos, int mIndex, int tscale, bool bCol
 		tList->AddRect(elmin, elmax, mGlobalSettings.ImHighLightColor);		
 	}
 	
+	if( mGlobalSettings.mProjectSettings.ColMap_ShowOverlay->bvalue ){
+		
+		if((elmax.x - elmin.x) > mGlobalSettings.mEditor->mTileSet.mOverlayScale){
+		
+			std::stringstream conv;
+			std::string tidx;
+
+			conv << mIndex << std::endl;
+			conv >> tidx;
+
+			tList->AddText(ImVec2((float) elmin.x + 3, (float) elmin.y + 3), mGlobalSettings.mEditor->mPalette.getImColor(mGlobalSettings.OverlayTextColor), tidx.c_str());
+		}
+	}
 
 	return tmpRect;
 }

@@ -555,11 +555,13 @@ void TSettings::setColors(bool cLightMode){
 	if(cLightMode){
 		ImAltHighLightColor = mINIFile.Theme_SelectionLight->ivalue;	
 		ImHighLightColor = mINIFile.Theme_HighlightLight->ivalue;
-		ImPixelGridColor = mINIFile.Theme_PixelGridLight->ivalue;		
+		ImPixelGridColor = mINIFile.Theme_PixelGridLight->ivalue;
+		mGlobalSettings.DefaultTextColor = {0x0, 0x0, 0x0, 0xff};	
 	} else {			
 		ImAltHighLightColor = mINIFile.Theme_SelectionDark->ivalue;	
 		ImHighLightColor = mINIFile.Theme_HighlightDark->ivalue;
-		ImPixelGridColor = mINIFile.Theme_PixelGridDark->ivalue;		
+		ImPixelGridColor = mINIFile.Theme_PixelGridDark->ivalue;	
+		mGlobalSettings.DefaultTextColor = {0xff, 0xff, 0xff, 0xff};	
 	}
 
 }
