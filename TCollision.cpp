@@ -294,7 +294,7 @@ int TCollisionMapEditor::render(){
 
     ImGuiStyle& style3 = ImGui::GetStyle();
 
-    float size3 = ImGui::CalcTextSize("Show Tile Index").x + style3.FramePadding.x * 2.0f;
+    float size3 = ImGui::CalcTextSize("Show Tile Index").x + style3.FramePadding.x * 4.0f;
     float avail3 = ImGui::GetContentRegionAvail().x / 2;
 
     float off3 = (avail3 - size3) - 10;
