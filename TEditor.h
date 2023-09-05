@@ -272,6 +272,7 @@ class TEditor{
 		void stateTileDelete();
 		void stateTileDeleteAll();
 		void stateTileSetImport();
+		void stateTileSetOffset();
 		void stateTileMapImport();
 		void stateTileMapCreate();
 		void stateTileMapDelete();
