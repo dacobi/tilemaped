@@ -971,6 +971,14 @@ int TBDialog::render(){
 											
 					ImGui::EndMenu();
 				}
+
+				if(mGlobalSettings.mGlobalTexParam.TexBPP > 2){
+
+					if(ImGui::MenuItem(std::string(mGlobalSettings.mImage + " Color Offset").c_str())){
+						mEditor->activateDTDialog(EDIALOG_TILEOFFSET, mGlobalSettings.mGlobalTexParam.TexBPP);
+					}
+
+				}
 			}
 
 			if((mEditor->mCurMode != EMODE_PALED) && (mEditor->mCurMode != EMODE_SELEDIT)){
@@ -2680,6 +2688,39 @@ DTDialog* DTDialog::createTileSetOffsetDialog(){
 
 	return newDialog;
 }
+
+DTDialog* DTDialog::createTileOffsetDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Color Offset Tile");
+
+	newDialog->setTarget(ESTATE_TILEOFFSET);
+
+	newDialog->addText(mGlobalSettings.mImage + " Apply Color Offset to Current Tile?");
+
+	newDialog->addText(mGlobalSettings.mInfo + " Select Value to Offset Pixel Values");
+	newDialog->addRadioGroup(1, &mGlobalSettings.mNewTileOffsetType);
+	newDialog->addRadioButton("Add Offset", 1);
+	newDialog->addRadioButton("Subtract Offset", 2, true);
+
+	newDialog->setRequiredCondition(8);
+	newDialog->addInt("Color Offset", 1, &mGlobalSettings.mNewTileColorOffset, 1, 255);	
+	newDialog->setRequiredCondition(4);
+	newDialog->addInt("Color Offset", 1, &mGlobalSettings.mNewTileColorOffset, 1, 15);	
+
+	newDialog->clearRequiredCondition();
+	newDialog->addBool("Replace Pixels with Value \'0\'", false, &mGlobalSettings.bNewTileOffsetZero);
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Apply", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+
+	return newDialog;
+}
+
 
 DTDialog* DTDialog::createTileSetImportDialog(){
 	DTDialog* newDialog = new DTDialog();

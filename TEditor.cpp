@@ -236,6 +236,7 @@ void TEditor::initStates(){
 	mStates[ESTATE_PALETTEIMPORT] = &TEditor::statePaletteImport;
 	mStates[ESTATE_PALETTEEXPORT] = &TEditor::statePaletteExport;
 	mStates[ESTATE_TILESETOFFSET] = &TEditor::stateTileSetOffset;
+	mStates[ESTATE_TILEOFFSET] = &TEditor::stateTileOffset;
 }
 
 void TEditor::stateNone(){std::cout << "ESTATE_NONE"  << std::endl;}
@@ -287,6 +288,32 @@ void TEditor::stateTileDelete(){
 
 void TEditor::stateTileDeleteAll(){
 	dropUnusedTiles();
+}
+
+void TEditor::stateTileOffset(){
+
+	int poffset = mGlobalSettings.mNewTileColorOffset;
+
+	if(mGlobalSettings.mNewTileOffsetType == 2){
+		poffset = -poffset;
+	}
+
+	mTileSelectedTile->mActionStack.newActionGroup();	
+							
+	Tile* newTile = new Tile(); 
+	newTile->loadFromBuffer(mTileSelectedTile->FileData, &mPalette);
+	newTile->applyOffset(poffset, mGlobalSettings.bNewTileOffsetZero);
+	TEActionReplaceTileSet* newAction = new TEActionReplaceTileSet();				
+	newAction->doAction(mTileSelectedTile, newTile->FileData, this, &mTileSet);
+      					
+   	mTileSelectedTile->mActionStack.addAction(newAction);
+
+	mTileSelectedTile->mActionStack.mLastAction = newAction;       		
+	
+	mTileSelectedTile->mActionStack.redoClearStack();
+	
+	showMessage("Color Offset Applied to Tile");		
+
 }
 
 void TEditor::stateTileSetOffset(){
@@ -818,6 +845,7 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_PALETTEIMPORT] = DTDialog::createPaletteImportDialog();
 	mDTDialogs[EDIALOG_PALETTEEXPORT] = DTDCDialog::createPaletteExportDialog();
 	mDTDialogs[EDIALOG_TILESETOFFSET] = DTDCDialog::createTileSetOffsetDialog();
+	mDTDialogs[EDIALOG_TILEOFFSET] = DTDCDialog::createTileOffsetDialog();
 	
 	
 	mDTDialogs[EDIALOG_HELPMENU] = &mHelpDialog;
