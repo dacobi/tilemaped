@@ -2502,11 +2502,7 @@ void Tile::renderEd(int xpos, int ypos, TPalette* tpal){
 
 int Tile::applyOffset(int poffset, bool bReplaceZero){
 	unsigned char pixval;
-
-	if(bReplaceZero){
-		std::cout << "Replacing Pixel Zero Values" << std::endl;
-	}
-
+	
 	if(mTexParam->TexBPP == 8){
 		for(int pi = 0; pi < (mTexParam->TexSizeX * mTexParam->TexSizeY); pi++){
 			pixval = FileData[pi];
@@ -2533,10 +2529,11 @@ int Tile::applyOffset(int poffset, bool bReplaceZero){
 	if(mTexParam->TexBPP == 4){
 		for(int pi = 0; pi < (mTexParam->TexSizeX * mTexParam->TexSizeY); pi++){
 			pixval = getPixel(pi);
-
+			
 			if((pixval > 0) || bReplaceZero){
+				
 				pixval += poffset;				
-
+				
 				if(pixval > 15){
 					pixval = pixval % 16;
 				}

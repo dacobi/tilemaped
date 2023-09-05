@@ -797,6 +797,19 @@ void TEditor::stateFramesImport(){
 	}
 
 	if(bFramesImportSuccess){
+
+		if(mGlobalSettings.bNewSpriteHasOffset){
+
+			int poffset = mGlobalSettings.mNewSpriteColorOffset;
+
+			if(mGlobalSettings.mNewSpriteOffsetType == 2){
+				poffset = -poffset;
+			}
+			
+			for(auto cFrame : cNewFrames){				
+				cFrame->applyOffset(poffset, mGlobalSettings.bNewSpriteOffsetZero);
+			}
+		}
 					
 		mSprite->mActionStack.newActionGroup();
 				
@@ -804,7 +817,7 @@ void TEditor::stateFramesImport(){
 			TEActionAddFrames* newActionTile = new TEActionAddFrames();
 			newActionTile->doAction(cFrame, this, mSprite);	       			
 			mSprite->mActionStack.addAction(newActionTile);
-	       	mSprite->mActionStack.mLastAction = newActionTile;	       			
+	       	mSprite->mActionStack.mLastAction = newActionTile;	       						
 		}
 					
 		mSprite->mActionStack.redoClearStack();

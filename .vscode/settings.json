@@ -77,7 +77,8 @@
         "__split_buffer": "cpp",
         "__tree": "cpp",
         "queue": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "ranges": "cpp"
     },
     "editor.autoClosingQuotes": "never",
     "editor.autoSurround": "never",

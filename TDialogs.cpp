@@ -163,7 +163,7 @@ int TBDialog::render(){
 
 					if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Sprite Frame(s)")).c_str())){
 						//mEditor->activateOpenFramesDialog();		  			
-						mEditor->activateDTDialog(EDIALOG_SPRITEFRAMESIMPORT);
+						mEditor->activateDTDialog(EDIALOG_SPRITEFRAMESIMPORT, mEditor->mSprite->mTexParam.TexBPP);
 					}
 
 					ImGui::EndMenu();
@@ -1093,7 +1093,7 @@ int OCDialog::render(){
 			ImGui::Separator();
 
 
-			if(ImGui::MenuItem((std::string(mGlobalSettings.mExit + " Quit")).c_str())){
+			if(ImGui::MenuItem((std::string(mGlobalSettings.mExit + " Quit")).c_str(), "ESC")){
 				mGlobalSettings.bRunningOCD = false;
 				mGlobalSettings.mEditorState = ESTATE_NONE;
 			}
@@ -2872,6 +2872,11 @@ DTDialog* DTDialog::createSpriteFrameImportDialog(){
 DTDialog* DTDialog::createSpriteFramesImportDialog(){
 	DTDialog* newDialog = new DTDialog();
 
+	newDialog->createLocalValues(2);
+
+	newDialog->setLocalValue(0,1);
+	newDialog->setLocalValue(1,15);
+
 	newDialog->setLabel("Import Frame(s)");
 
 	newDialog->setTarget(ESTATE_FRAMESIMPORT);
@@ -2879,6 +2884,29 @@ DTDialog* DTDialog::createSpriteFramesImportDialog(){
 	newDialog->addText(mGlobalSettings.mImage + " Import Sprite Frame(s) from File?");
 
 	newDialog->addFile("Choose Frame(s) File", "Filename", ".png,.bin,.data,.raw", "SFrames", "", &mGlobalSettings.mNewFramesPath);
+
+	newDialog->setRequiredCondition(8);
+	newDialog->addSetLocalValue(1, 255);
+
+	newDialog->setRequiredCondition(4);
+	newDialog->addSetLocalValue(1, 15);
+
+	newDialog->clearRequiredCondition();
+
+	newDialog->addSeperator();
+	newDialog->addBoolCondition("Use Color Offset", false, &mGlobalSettings.bNewSpriteHasOffset, 18);
+
+	newDialog->setRequiredCondition(18);
+	
+	newDialog->addText(mGlobalSettings.mInfo + " Select Value to Offset Pixel Values");
+	newDialog->addRadioGroup(1, &mGlobalSettings.mNewSpriteOffsetType);
+	newDialog->addRadioButton("Add Offset", 1);
+	newDialog->addRadioButton("Subtract Offset", 2, true);
+	newDialog->addIntMinMax("Color Offset", 1, &mGlobalSettings.mNewSpriteColorOffset, newDialog->getLocalValue(0), newDialog->getLocalValue(1));
+	newDialog->addBool("Replace Pixels with Value \'0\'", false, &mGlobalSettings.bNewSpriteOffsetZero);
+
+	newDialog->clearRequiredCondition();
+	newDialog->addConditionRestore();
 
 	newDialog->addSeperator();
 
