@@ -154,6 +154,8 @@ class DTDialog : public Dialog{
 		static DTDialog* createPaletteImportDialog();
 		static DTDialog* createTileSetOffsetDialog();
 		static DTDialog* createTileOffsetDialog();
+		static DTDialog* createSpriteOffsetDialog();
+		static DTDialog* createFrameOffsetDialog();
 
 };
 

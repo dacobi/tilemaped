@@ -274,6 +274,8 @@ class TEditor{
 		void stateTileSetImport();
 		void stateTileSetOffset();
 		void stateTileOffset();
+		void stateSpriteOffset();
+		void stateFrameOffset();
 		void stateTileMapImport();
 		void stateTileMapCreate();
 		void stateTileMapDelete();

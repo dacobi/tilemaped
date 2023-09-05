@@ -237,6 +237,8 @@ void TEditor::initStates(){
 	mStates[ESTATE_PALETTEEXPORT] = &TEditor::statePaletteExport;
 	mStates[ESTATE_TILESETOFFSET] = &TEditor::stateTileSetOffset;
 	mStates[ESTATE_TILEOFFSET] = &TEditor::stateTileOffset;
+	mStates[ESTATE_SPRITEOFFSET] = &TEditor::stateSpriteOffset;
+	mStates[ESTATE_FRAMEOFFSET] = &TEditor::stateFrameOffset;
 }
 
 void TEditor::stateNone(){std::cout << "ESTATE_NONE"  << std::endl;}
@@ -288,6 +290,61 @@ void TEditor::stateTileDelete(){
 
 void TEditor::stateTileDeleteAll(){
 	dropUnusedTiles();
+}
+
+void TEditor::stateSpriteOffset(){
+
+	int poffset = mGlobalSettings.mNewSpriteColorOffset;
+
+	if(mGlobalSettings.mNewSpriteOffsetType == 2){
+		poffset = -poffset;
+	}
+
+	mSprite->mActionStack.newActionGroup();	
+
+	for(auto cFrame : mSprite->mFrames){
+						
+		TSFrame* newFrame = new TSFrame(&mSprite->mTexParam);
+		newFrame->loadFromBuffer(cFrame->FileData, &mPalette);
+		newFrame->applyOffset(poffset, mGlobalSettings.bNewSpriteOffsetZero);
+		TEActionReplaceFrame * newAction = new TEActionReplaceFrame();				
+		newAction->doAction(cFrame, newFrame->FileData, this, mSprite);
+      					
+    	mSprite->mActionStack.addAction(newAction);
+
+		mSprite->mActionStack.mLastAction = newAction;       		
+	}
+
+	mSprite->mActionStack.redoClearStack();
+	
+	showMessage("Color Offset Applied to Sprite");		
+
+}
+
+void TEditor::stateFrameOffset(){
+
+	int poffset = mGlobalSettings.mNewSpriteColorOffset;
+
+	if(mGlobalSettings.mNewSpriteOffsetType == 2){
+		poffset = -poffset;
+	}
+
+	mSprite->mActionStack.newActionGroup();	
+						
+	TSFrame* newFrame = new TSFrame(&mSprite->mTexParam);
+	newFrame->loadFromBuffer(mSprite->mFrame->FileData, &mPalette);
+	newFrame->applyOffset(poffset, mGlobalSettings.bNewSpriteOffsetZero);
+	TEActionReplaceFrame * newAction = new TEActionReplaceFrame();				
+	newAction->doAction(mSprite->mFrame, newFrame->FileData, this, mSprite);
+      					
+    mSprite->mActionStack.addAction(newAction);
+
+	mSprite->mActionStack.mLastAction = newAction;       			
+
+	mSprite->mActionStack.redoClearStack();
+	
+	showMessage("Color Offset Applied to Frame");		
+
 }
 
 void TEditor::stateTileOffset(){
@@ -846,6 +903,8 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_PALETTEEXPORT] = DTDCDialog::createPaletteExportDialog();
 	mDTDialogs[EDIALOG_TILESETOFFSET] = DTDCDialog::createTileSetOffsetDialog();
 	mDTDialogs[EDIALOG_TILEOFFSET] = DTDCDialog::createTileOffsetDialog();
+	mDTDialogs[EDIALOG_SPRITEOFFSET] = DTDCDialog::createSpriteOffsetDialog();
+	mDTDialogs[EDIALOG_FRAMEOFFSET] = DTDCDialog::createFrameOffsetDialog();
 	
 	
 	mDTDialogs[EDIALOG_HELPMENU] = &mHelpDialog;

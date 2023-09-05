@@ -678,6 +678,14 @@ int TBDialog::render(){
 					}
 				}
 
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mImage + " Color Offset Frame").c_str())){
+						mEditor->activateDTDialog(EDIALOG_FRAMEOFFSET, mEditor->mSprite->mTexParam.TexBPP);
+				}
+
+				if(ImGui::MenuItem(std::string(mGlobalSettings.mImage + " Color Offset All").c_str())){
+						mEditor->activateDTDialog(EDIALOG_SPRITEOFFSET, mEditor->mSprite->mTexParam.TexBPP);
+				}
+
 				/*  */
 
 				if(ImGui::BeginMenu(std::string(mGlobalSettings.mTool + " Sprite Tools").c_str())){
@@ -2719,6 +2727,73 @@ DTDialog* DTDialog::createTileOffsetDialog(){
 
 
 	return newDialog;
+}
+
+DTDialog* DTDialog::createSpriteOffsetDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Color Offset Sprite");
+
+	newDialog->setTarget(ESTATE_SPRITEOFFSET);
+
+	newDialog->addText(mGlobalSettings.mImage + " Apply Color Offset to All Frames in Sprite?");
+
+	newDialog->addText(mGlobalSettings.mInfo + " Select Value to Offset Pixel Values");
+	newDialog->addRadioGroup(1, &mGlobalSettings.mNewSpriteOffsetType);
+	newDialog->addRadioButton("Add Offset", 1);
+	newDialog->addRadioButton("Subtract Offset", 2, true);
+
+	newDialog->setRequiredCondition(8);
+	newDialog->addInt("Color Offset", 1, &mGlobalSettings.mNewSpriteColorOffset, 1, 255);	
+	newDialog->setRequiredCondition(4);
+	newDialog->addInt("Color Offset", 1, &mGlobalSettings.mNewSpriteColorOffset, 1, 15);	
+
+	newDialog->clearRequiredCondition();
+	newDialog->addBool("Replace Pixels with Value \'0\'", false, &mGlobalSettings.bNewSpriteOffsetZero);
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Apply", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+
+	return newDialog;
+
+}
+
+DTDialog* DTDialog::createFrameOffsetDialog(){
+
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Color Offset Sprite Frame");
+
+	newDialog->setTarget(ESTATE_FRAMEOFFSET);
+
+	newDialog->addText(mGlobalSettings.mImage + " Apply Color Offset to Current Sprite Frame?");
+
+	newDialog->addText(mGlobalSettings.mInfo + " Select Value to Offset Pixel Values");
+	newDialog->addRadioGroup(1, &mGlobalSettings.mNewSpriteOffsetType);
+	newDialog->addRadioButton("Add Offset", 1);
+	newDialog->addRadioButton("Subtract Offset", 2, true);
+
+	newDialog->setRequiredCondition(8);
+	newDialog->addInt("Color Offset", 1, &mGlobalSettings.mNewSpriteColorOffset, 1, 255);	
+	newDialog->setRequiredCondition(4);
+	newDialog->addInt("Color Offset", 1, &mGlobalSettings.mNewSpriteColorOffset, 1, 15);	
+
+	newDialog->clearRequiredCondition();
+	newDialog->addBool("Replace Pixels with Value \'0\'", false, &mGlobalSettings.bNewSpriteOffsetZero);
+
+	newDialog->addSeperator();
+
+	newDialog->addButton("Apply", SDLK_y);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+
+	return newDialog;
+
 }
 
 
