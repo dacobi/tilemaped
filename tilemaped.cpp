@@ -492,6 +492,11 @@ void TSettings::close(){
 	mNewSpriteY = 0;
 	mNewSpriteBPP = 8;
 
+	bNewSpriteHasOffset = false;
+	mNewSpriteOffsetType = 1;
+	mNewSpriteColorOffset = 1;
+	bNewSpriteOffsetZero = false;
+
 	mNewPalettePath = "";
 	mNewPaletteStartExtern = 0;
 	mNewPaletteRangeExtern = 0;

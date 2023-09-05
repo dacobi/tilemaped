@@ -596,6 +596,20 @@ void TEditor::stateSpriteImport(){
 	};
 
 	if(bSpriteImportSuccess){
+
+		if(mGlobalSettings.bNewSpriteHasOffset){
+
+			int poffset = mGlobalSettings.mNewSpriteColorOffset;
+
+			if(mGlobalSettings.mNewSpriteOffsetType == 2){
+				poffset = -poffset;
+			}
+
+			for(auto cFrame : mSprite->mFrames){
+				cFrame->applyOffset(poffset, mGlobalSettings.bNewSpriteOffsetZero);
+			}
+		}
+
 		if(mCurMode == EMODE_SPRITE){
 			switchSprite(mSprites.size()-1);			
 		} else {

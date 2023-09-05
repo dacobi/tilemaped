@@ -293,6 +293,10 @@ class TSettings{
 		bool bNewTileOffsetZero = false;
 		int mNewTileOffsetType = 1;
 		int mNewTileColorOffset = 1;
+		bool bNewSpriteHasOffset = false;
+		int mNewSpriteOffsetType = 1;
+		int mNewSpriteColorOffset = 1;
+		bool bNewSpriteOffsetZero = false;
 		int mNewSpriteType = 0;
 		int mNewSpriteX = 0;
 		int mNewSpriteY = 0;

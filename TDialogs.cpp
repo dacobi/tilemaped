@@ -1701,6 +1701,18 @@ void DTDialog::addConditionRestore(){
 	mValues.push_back(nCondRes);
 }
 
+void DTDialog::addConditionPush(){
+	DialogConditionPush *nCondRes = new DialogConditionPush(this);
+	mElements.push_back(nCondRes);
+	mValues.push_back(nCondRes);
+}
+
+void DTDialog::addConditionPop(){
+	DialogConditionPop *nCondRes = new DialogConditionPop(this);
+	mElements.push_back(nCondRes);
+	mValues.push_back(nCondRes);
+}
+
 void DTDialog::addConditionSetIf(int cTarget, int cState){
 	DialogConditionSetIf *nCondSet = new DialogConditionSetIf(this, cTarget, cState);
 	mElements.push_back(nCondSet);
@@ -1711,6 +1723,13 @@ void DTDialog::addConditionSetIfInt(int *cTarget, int cValue, int cCond){
 	DialogConditionSetIfInt *nCondSet = new DialogConditionSetIfInt(this, mRequiredCondition, cTarget, cValue, cCond);
 	mElements.push_back(nCondSet);
 	mValues.push_back(nCondSet);
+}
+
+void DTDialog::addSetLocalValue(int cTarget, int cTargetValue){
+	DialogSetLocalValue *nVal = new DialogSetLocalValue(this, mRequiredCondition, cTarget, cTargetValue);
+
+	mElements.push_back(nVal);
+	mValues.push_back(nVal);
 }
 
 void DTDialog::addConditionSetIfBool(bool *cTarget, bool cValue, int cCond){
@@ -3081,6 +3100,11 @@ DTDialog* DTDialog::createSpriteCreateDialog(){
 DTDialog* DTDialog::createSpriteImportDialog(){
 	DTDialog* newDialog = new DTDialog();
 
+	newDialog->createLocalValues(3);
+	newDialog->setLocalValue(0, 1);
+	newDialog->setLocalValue(1, 15);
+	newDialog->setLocalValue(2, 15);
+	
 	newDialog->setLabel("Import Sprite");
 
 	newDialog->setTarget(ESTATE_SPRITEIMPORT);
@@ -3098,6 +3122,7 @@ DTDialog* DTDialog::createSpriteImportDialog(){
 	newDialog->addSeperator();
 	newDialog->addFile("Choose Sprite Project File", "Project File", ".bin", "SprImpPrjFile", "", &mGlobalSettings.mNewSpritePath);
 
+	//PNG
 	newDialog->setRequiredCondition(1);
 	newDialog->addSeperator();
 	newDialog->addText("Sprite Width & Height");
@@ -3123,6 +3148,39 @@ DTDialog* DTDialog::createSpriteImportDialog(){
 	newDialog->addSeperator();
 	newDialog->addFile("Choose Sprite PNG File", "PNG File", ".png", "SprImpPNGFile", "", &mGlobalSettings.mNewSpritePath);
 
+	newDialog->addConditionPush();
+
+	newDialog->clearRequiredCondition();
+	newDialog->addConditionSetIfInt(newDialog->getIntValueRadio(3), 8, 28);
+	newDialog->setRequiredCondition(28);
+	newDialog->addSetLocalValue(1, 255);
+
+	newDialog->clearRequiredCondition();
+	newDialog->addConditionSetIfInt(newDialog->getIntValueRadio(3), 4, 24);
+	newDialog->setRequiredCondition(24);
+	newDialog->addSetLocalValue(1, 15);
+
+	newDialog->addConditionPop();
+
+	/*
+	newDialog->clearRequiredCondition();
+	newDialog->addConditionSetIfInt(newDialog->getIntValueRadio(0), 1, 1);
+	newDialog->addConditionSetIfInt(newDialog->getIntValueRadio(0), 2, 2);*/
+	newDialog->setRequiredCondition(1);
+	
+	newDialog->addSeperator();
+	newDialog->addBoolCondition("Use Color Offset", false, &mGlobalSettings.bNewSpriteHasOffset, 18);
+
+	newDialog->setRequiredCondition(18);
+	
+	newDialog->addText(mGlobalSettings.mInfo + " Select Value to Offset Pixel Values");
+	newDialog->addRadioGroup(1, &mGlobalSettings.mNewSpriteOffsetType);
+	newDialog->addRadioButton("Add Offset", 1);
+	newDialog->addRadioButton("Subtract Offset", 2, true);
+	newDialog->addIntMinMax("Color Offset", 1, &mGlobalSettings.mNewSpriteColorOffset, newDialog->getLocalValue(0), newDialog->getLocalValue(1));	
+	newDialog->addBool("Replace Pixels with Value \'0\'", false, &mGlobalSettings.bNewSpriteOffsetZero);
+	
+	//RAW
 	newDialog->setRequiredCondition(2);
 	newDialog->addSeperator();
 	newDialog->addText("Sprite Width & Height");
@@ -3147,6 +3205,37 @@ DTDialog* DTDialog::createSpriteImportDialog(){
 
 	newDialog->addSeperator();
 	newDialog->addFile("Choose Sprite RAW File", "RAW File", ".bin,.raw,.data", "SprImpRAWFile", "", &mGlobalSettings.mNewSpritePath);
+	
+	newDialog->addConditionPush();
+
+	newDialog->clearRequiredCondition();
+	newDialog->addConditionSetIfInt(newDialog->getIntValueRadio(7), 8, 38);
+	newDialog->setRequiredCondition(38);
+	newDialog->addSetLocalValue(2, 255);
+
+	newDialog->clearRequiredCondition();
+	newDialog->addConditionSetIfInt(newDialog->getIntValueRadio(7), 4, 34);
+	newDialog->setRequiredCondition(34);
+	newDialog->addSetLocalValue(2, 15);
+
+	newDialog->addConditionPop();
+
+	/*
+	newDialog->clearRequiredCondition();	
+	newDialog->addConditionSetIfInt(newDialog->getIntValueRadio(0), 2, 2);*/
+	newDialog->setRequiredCondition(2);
+	
+	newDialog->addSeperator();
+	newDialog->addBoolCondition("Use Color Offset", false, &mGlobalSettings.bNewSpriteHasOffset, 48);
+
+	newDialog->setRequiredCondition(48);
+	
+	newDialog->addText(mGlobalSettings.mInfo + " Select Value to Offset Pixel Values");
+	newDialog->addRadioGroup(1, &mGlobalSettings.mNewSpriteOffsetType);
+	newDialog->addRadioButton("Add Offset", 1);
+	newDialog->addRadioButton("Subtract Offset", 2, true);
+	newDialog->addIntMinMax("Color Offset", 1, &mGlobalSettings.mNewSpriteColorOffset, newDialog->getLocalValue(0), newDialog->getLocalValue(2));	
+	newDialog->addBool("Replace Pixels with Value \'0\'", false, &mGlobalSettings.bNewSpriteOffsetZero);
 
 	newDialog->clearRequiredCondition();
 	newDialog->addConditionRestore();

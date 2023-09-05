@@ -81,6 +81,7 @@
     },
     "editor.autoClosingQuotes": "never",
     "editor.autoSurround": "never",
-    "editor.autoClosingBrackets": "never"
+    "editor.autoClosingBrackets": "never",
+    "git.ignoreLimitWarning": true
 
 }

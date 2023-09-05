@@ -52,6 +52,7 @@ class DTDialog : public Dialog{
 		std::vector<DialogValueFile*> mFiles;
 		std::vector<DialogValueOptionInt> mOptionValues;
 		std::vector<DialogValueOptionInt> mOptionValuesLocal;
+		std::vector<int> mConditionStack;
 		int mDefaultValue = 0;
 		TIDialog* mActiveInput = NULL;
 		int mCondition = -1;
@@ -86,11 +87,14 @@ class DTDialog : public Dialog{
 		void addSeperator();
 		void addSameLine();
 		void addConditionRestore();
+		void addConditionPush();
+		void addConditionPop();
 		void addConditionSetIf(int cTarget, int cState);
 		void addConditionSetIfInt(int *cTarget, int cValue, int cCond);
 		void addConditionSetIfBool(bool *cTarget, bool cValue, int cCond);
 		void addBool(std::string cLabel, bool cDefault, bool *cTarget, bool bSameline = false);
 		void addBoolCondition(std::string cLabel, bool cDefault, bool *cTarget, int cTargCond, bool bSameline = false);
+		void addSetLocalValue(int cTarget, int cTargetValue);
 		void addInt(std::string cLabel, int cDefault, int *cTarget, int cMin, int cMax, bool bSameline = false);
 		void addIntMinMax(std::string cLabel, int cDefault, int *cTarget, int *cMin, int *cMax, bool bSameline = false);
 		void addIntStrings(std::string cLabel, int cDefault, int *cTarget, std::vector<std::string> &cStrings, bool bSameline = false);
@@ -372,6 +376,21 @@ class DialogConditionRestore : public DialogValueBase{
 		virtual void apply(){mParent->restoreContition();};		
 };
 
+class DialogConditionPush : public DialogValueBase{
+	public:
+		DialogConditionPush(DTDialog *cParent){mParent = cParent;};		
+		virtual void render(){mParent->mConditionStack.push_back(mParent->mCondition);};
+		virtual void apply(){mParent->mConditionStack.push_back(mParent->mCondition);};		
+};
+
+class DialogConditionPop : public DialogValueBase{
+	public:
+		DialogConditionPop(DTDialog *cParent){mParent = cParent;};		
+		virtual void render(){if(mParent->mConditionStack.size()){mParent->mCondition = mParent->mConditionStack[mParent->mConditionStack.size()-1]; mParent->mConditionStack.pop_back();}};
+		virtual void apply(){if(mParent->mConditionStack.size()){mParent->mCondition = mParent->mConditionStack[mParent->mConditionStack.size()-1]; mParent->mConditionStack.pop_back();}};
+};
+
+
 class DialogConditionSetIf : public DialogValueBase{
 	public:
 		int mTargetCondifion;
@@ -390,6 +409,16 @@ class DialogConditionSetIfInt : public DialogValueBase{
 		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(*mTarget == mTargetValue){mParent->setCurrentCondition(mTargetCondifion);}};
 		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} if(*mTarget == mTargetValue){mParent->setCurrentCondition(mTargetCondifion);}};			
 };
+
+class DialogSetLocalValue : public DialogValueBase{
+	public:
+		int mTarget;
+		int mTargetValue;			
+		DialogSetLocalValue(DTDialog *cParent, int cCond, int cTarget, int cValue){mParent = cParent; mTarget = cTarget; mTargetValue = cValue; mCondition = cCond;};		
+		virtual void render(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} mParent->setLocalValue(mTarget, mTargetValue);};
+		virtual void apply(){if(mCondition > -1){if(mParent->mCondition != mCondition){return;}} mParent->setLocalValue(mTarget, mTargetValue);};			
+};
+
 
 class DialogConditionSetIfBool : public DialogValueBase{
 	public:
