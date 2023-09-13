@@ -848,6 +848,16 @@ int TBrush::readFromFile(std::ifstream &infile){
     return 0;
 }
 
+void TBrush::removeBrushElement(int cDropTile){
+    for(int i = 0; i < mBrushElements.size(); i++){
+        if(mBrushElements[i] == cDropTile){
+			mBrushElements[i] = -1;
+		} else if(mBrushElements[i] > cDropTile) {
+			mBrushElements[i]--;
+		}			
+    }
+}
+
 void TBrush::swapBrushElements(int eVal1, int eVal2){
     for(int i = 0; i < mBrushElements.size(); i++){
         if(mBrushElements[i] == eVal1){
@@ -861,6 +871,12 @@ void TBrush::swapBrushElements(int eVal1, int eVal2){
 void TBrushList::swapBrushElements(int eVal1, int eVal2){
     for(int i = 0; i < mBrushes.size(); i++){
         mBrushes[i]->swapBrushElements(eVal1, eVal2);
+    }
+}
+
+void TBrushList::removeBrushElement(int cDropTile){
+    for(int i = 0; i < mBrushes.size(); i++){
+        mBrushes[i]->removeBrushElement(cDropTile);
     }
 }
 

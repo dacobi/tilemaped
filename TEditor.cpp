@@ -2448,7 +2448,11 @@ int TEditor::dropUnusedTile(int cDropTile){
 	for(auto * cTileMap : mTileMaps){
 		cTileMap->removeTile(cDropTile);
 	}
+	
 	mTileSet.deleteTile(cDropTile);
+
+	mBrushesTile.removeBrushElement(cDropTile);
+	mClipboardMap.removeBrushElement(cDropTile);
 
 	return 0;
 }

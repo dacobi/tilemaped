@@ -480,6 +480,7 @@ void TEActionSwapTiles::undo(){
 			cMap->swapTileValues(mTarget, mSource);
 		}
 		mEditor->mBrushesTile.swapBrushElements(mTarget, mSource);
+		mEditor->mClipboardMap.swapBrushElements(mTarget, mSource);
 	}
 }
 
@@ -493,6 +494,7 @@ void TEActionSwapTiles::redo(){
 			cMap->swapTileValues(mSource, mTarget);
 		}
 		mEditor->mBrushesTile.swapBrushElements(mSource, mTarget);
+		mEditor->mClipboardMap.swapBrushElements(mSource, mTarget);
 	}	
 }
 
@@ -517,6 +519,7 @@ void TEActionSwapTiles::doAction(TEditor* cEditor, TileSet *cTiles, int cSource,
 			cMap->swapTileValues(mSource, mTarget);
 		}
 		mEditor->mBrushesTile.swapBrushElements(mSource, mTarget);
+		mEditor->mClipboardMap.swapBrushElements(mSource, mTarget);
 	}
 
 }

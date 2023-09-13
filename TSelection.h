@@ -100,6 +100,7 @@ class TBrush: public TSelection{
         int setElementFlip(int element, int cFlip);
         int setElementOffset(int element, int cOffset);
         void swapBrushElements(int eVal1, int eVal2);        
+        void removeBrushElement(int cDropTile);
 };
 
 class TBrushList{
@@ -135,6 +136,7 @@ class TBrushList{
         TBrush* getBrush();
         TBrush* getNextBrush();
         void swapBrushElements(int eVal1, int eVal2);
+        void removeBrushElement(int cDropTile);
         int addBrush(int sizex, int sizey);
         int addBrushElement(int element);
         int removeBrush();        
