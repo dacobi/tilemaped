@@ -3063,7 +3063,7 @@ DTDialog* DTDialog::createProjectCreateDialog(){
 
 	newDialog->addSeperator();
 
-	newDialog->addBoolCondition("Create/Import TileSet?", false, NULL, 1);
+	newDialog->addBoolCondition("Create/Import TileSet?", false, &mGlobalSettings.bNewTileSetCreate, 1);
 	
 	newDialog->setRequiredCondition(1);
 

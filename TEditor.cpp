@@ -122,39 +122,42 @@ int TEditor::createNewProject(){
 	//mTileSet.mSelEdWidth = 4;
 
 	
-	
+	if(mGlobalSettings.bNewTileSetCreate){
 
-	if(fs::exists(fs::status(mGlobalSettings.mNewTilePath))){
-		std::vector<Tile*> cNewTiles;
-		if(mTileSet.importTileSet(mGlobalSettings.mNewTilePath, cNewTiles)){
-			std::cout << "Error in TileSet File! Using empty" << std::endl;
-			mTileSet.createNew(&mPalette);
-			retval += 1;
-		} else {
-			if(mGlobalSettings.bNewTileHasOffset){				
-				if(mGlobalSettings.bNewTileOffsetZero){
-					std::cout << "Replace Pixel Zero Values" << std::endl;
+		if(fs::exists(fs::status(mGlobalSettings.mNewTilePath))){
+			std::vector<Tile*> cNewTiles;
+			if(mTileSet.importTileSet(mGlobalSettings.mNewTilePath, cNewTiles)){
+				std::cout << "Error in TileSet File! Using empty" << std::endl;
+				mTileSet.createNew(&mPalette);
+				retval += 1;
+			} else {
+				if(mGlobalSettings.bNewTileHasOffset){				
+					if(mGlobalSettings.bNewTileOffsetZero){
+						std::cout << "Replace Pixel Zero Values" << std::endl;
+					}
+					if(mGlobalSettings.mNewTileOffsetType == 1){
+						std::cout << "Apply TileSet Pixel Offset: " << mGlobalSettings.mNewTileColorOffset << std::endl;
+						mTileSet.applyOffset(mGlobalSettings.mNewTileColorOffset, mGlobalSettings.bNewTileOffsetZero);
+					} else {
+						std::cout << "Apply TileSet Pixel Offset: -" << mGlobalSettings.mNewTileColorOffset << std::endl;
+						mTileSet.applyOffset(-mGlobalSettings.mNewTileColorOffset, mGlobalSettings.bNewTileOffsetZero);
+					}				
 				}
-				if(mGlobalSettings.mNewTileOffsetType == 1){
-					std::cout << "Apply TileSet Pixel Offset: " << mGlobalSettings.mNewTileColorOffset << std::endl;
-					mTileSet.applyOffset(mGlobalSettings.mNewTileColorOffset, mGlobalSettings.bNewTileOffsetZero);
-				} else {
-					std::cout << "Apply TileSet Pixel Offset: -" << mGlobalSettings.mNewTileColorOffset << std::endl;
-					mTileSet.applyOffset(-mGlobalSettings.mNewTileColorOffset, mGlobalSettings.bNewTileOffsetZero);
-				}				
 			}
-		}
-	} else if(mGlobalSettings.mNewTileSize){
-		if((mGlobalSettings.mNewTileSize == 4) || (mGlobalSettings.mNewTileSize == 8) || (mGlobalSettings.mNewTileSize == 16)){
-			mTileSet.mSelEdWidth = mGlobalSettings.mNewTileSize;
-			mGlobalSettings.mTileSetEditWidth = mGlobalSettings.mNewTileSize;
-			for(int i = 0; i < (mGlobalSettings.mNewTileSize*mGlobalSettings.mNewTileSize); i++){
-				mTileSet.createNew(&mPalette);		
-			}			
+			} else if(mGlobalSettings.mNewTileSize){
+				if((mGlobalSettings.mNewTileSize == 4) || (mGlobalSettings.mNewTileSize == 8) || (mGlobalSettings.mNewTileSize == 16)){
+					mTileSet.mSelEdWidth = mGlobalSettings.mNewTileSize;
+					mGlobalSettings.mTileSetEditWidth = mGlobalSettings.mNewTileSize;
+					for(int i = 0; i < (mGlobalSettings.mNewTileSize*mGlobalSettings.mNewTileSize); i++){
+					mTileSet.createNew(&mPalette);		
+				}			
+			} else {
+				std::cout << "Unknown TileSet Error! Using empty" << std::endl;
+				mTileSet.createNew(&mPalette);
+				retval += 4;
+			}
 		} else {
-			std::cout << "Unknown TileSet Error! Using empty" << std::endl;
 			mTileSet.createNew(&mPalette);
-			retval += 4;
 		}
 	} else {
 		mTileSet.createNew(&mPalette);

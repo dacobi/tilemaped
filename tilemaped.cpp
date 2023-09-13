@@ -492,6 +492,8 @@ void TSettings::close(){
 	mNewSpriteY = 0;
 	mNewSpriteBPP = 8;
 
+	bNewTileSetCreate = false;
+
 	bNewSpriteHasOffset = false;
 	mNewSpriteOffsetType = 1;
 	mNewSpriteColorOffset = 1;
