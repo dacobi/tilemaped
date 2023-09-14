@@ -3036,7 +3036,9 @@ void TileSet::setoverlay(){
 }
 
 void TileSet::resizeScale(){
-	updateWinPos = true;
+	if(!mGlobalSettings.mProjectSettings.Editor_TileSetMaximized->bvalue){
+		updateWinPos = true;
+	}
 	mCurColumns = 1;
 	mCurTileScale = TileSet::MaxTile;
 }
@@ -3307,7 +3309,216 @@ return 0;
 }
 */
 
-int TileSet::renderIm(int ypos, int mScroll){
+int TileSet::renderImMax(int ypos){
+
+	//mTileSetBackGround.h = mGlobalSettings.WindowHeight- mGlobalSettings.TopBarHeight;
+	
+	/*
+
+	if(mCurColumns < mMaxColumns){
+		while( (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeY ) +mColSpace ) * TTiles.size() )  / mCurColumns ) ) > (mTileSetBackGround.h - mChildTop)){	
+			mCurTileScale--;
+			updateWinPos = true;
+
+			if(mCurTileScale == 0){
+				mCurTileScale = 1;
+			}
+
+			if(mCurTileScale < mMinTileScale){
+				if(mCurColumns < mMaxColumns){
+					mCurColumns++;					
+				} else {
+					mCurTileScale++;
+					break;
+				}				
+			}
+		}
+	}
+
+	mGlobalSettings.TileSetWidth = (((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*mCurColumns)+(mColSpace*3);
+
+	int isOdd = TTiles.size() % mCurColumns;
+	int cRowNum = TTiles.size() / mCurColumns;
+
+	*/
+
+	mTileSetBackGround.x = 10;
+	mTileSetBackGround.y = ypos + 10;
+	mTileSetBackGround.w = mGlobalSettings.WindowWidth - 20;
+	mTileSetBackGround.h = mGlobalSettings.WindowHeight - mGlobalSettings.TopBarHeight - 20;
+
+	ImVec2 cOverSize = ImGui::CalcTextSize("1023");
+
+	mOverlayScaleX = cOverSize.x;
+	mOverlayScaleY = cOverSize.y - (cOverSize.y / 4);
+
+	ImVec2 cWinPos;
+	cWinPos.x = mTileSetBackGround.x;
+	cWinPos.y = mTileSetBackGround.y;
+	
+
+	ImVec2 cWinSize;
+	cWinSize.x = mTileSetBackGround.w;
+	cWinSize.y = mTileSetBackGround.h;
+
+	if(updateWinPos){
+		ImGui::SetNextWindowPos(cWinPos, ImGuiCond_Always);
+		ImGui::SetNextWindowSize(cWinSize, ImGuiCond_Always);
+		updateWinPos = false;
+	//} else {
+		//ImGui::SetNextWindowPos(cWinPos, ImGuiCond_Once);
+		//ImGui::SetNextWindowSize(cWinSize, ImGuiCond_Once);
+	}
+
+	ImGui::Begin("TileSet", NULL, ImGuiWindowFlags_NoNav);
+
+	cWinPos = ImGui::GetWindowPos();
+	cWinSize = ImGui::GetWindowSize();
+
+	mTileSetBackGround.x = cWinPos.x;
+	mTileSetBackGround.y = cWinPos.y;
+	mTileSetBackGround.w = cWinSize.x;
+	mTileSetBackGround.h = cWinSize.y;
+
+	if(ImGui::Button("Move Up")){
+		mGlobalSettings.mEditor->moveTileUp();
+	}
+
+	ImGui::SameLine();
+
+	if(ImGui::Button("Move Down")){
+		mGlobalSettings.mEditor->moveTileDown();
+	}
+
+	ImGui::BeginChild("TTiles", ImVec2(0,0), false, ImGuiWindowFlags_NoNav);
+
+	ImVec2 cChildPos = ImGui::GetWindowPos();
+	mChildTop = cChildPos.y;
+
+	bool bIsDragged = false;
+	int mDragged = -1;
+	int mDragSource = 0;
+	int mDragTarget = 0;
+
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(ImColor(mGlobalSettings.DefaultBGColor.r,mGlobalSettings.DefaultBGColor.g,mGlobalSettings.DefaultBGColor.b)));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(ImColor(mGlobalSettings.DefaultBGColor.r,mGlobalSettings.DefaultBGColor.g,mGlobalSettings.DefaultBGColor.b)));
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(ImColor(mGlobalSettings.DefaultBGColor.r,mGlobalSettings.DefaultBGColor.g,mGlobalSettings.DefaultBGColor.b)));
+	
+	ImVec2 cpos = ImGui::GetCursorPos();
+
+	cpos.x += 5;
+	cpos.y += 5;
+
+	ImGui::SetCursorPos(cpos);
+
+	bool bCurserUpdate = false;
+
+	for(int ti = 0; ti < TTiles.size(); ti++){
+
+		if(bCurserUpdate){
+			cpos = ImGui::GetCursorPos();
+
+			cpos.x += 5;
+			cpos.y += 5;
+
+			ImGui::SetCursorPos(cpos);
+
+			bCurserUpdate = false;
+		}
+
+		TileAreas[ti] = TTiles[ti]->renderIm(0,0, ti, mDragged, mMaxTileScale,true,true);								
+		
+		if((mDragged > -1) && !bIsDragged){
+				bIsDragged = true;
+				mDragSource = mDragged;
+				mDragTarget = ti;
+		}
+
+		if((TileAreas[ti].x + TileAreas[ti].w) < (mTileSetBackGround.x + mTileSetBackGround.w - TileAreas[ti].w - 5)){
+			ImGui::SameLine();
+		} else {
+			bCurserUpdate = true;			
+		}
+	}
+	
+/*
+	if(mCurColumns > 0){
+		for(int i = 0; i < cRowNum; i++){
+
+			ImVec2 cpos = ImGui::GetCursorPos();
+
+			cpos.x += 5;
+			cpos.y += 5;
+
+			ImGui::SetCursorPos(cpos);
+
+			for(int j = 0; j < mCurColumns; j++){
+				TileAreas[(i * mCurColumns) + j] = TTiles[(i*mCurColumns) + j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),mTileSetBackGround.y  + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*i), (i*mCurColumns) + j, mDragged, mCurTileScale,true,true);								
+				if((mDragged > -1) && !bIsDragged){
+					bIsDragged = true;
+					mDragSource = mDragged;
+					mDragTarget = (i*mCurColumns) + j;
+				}
+				if((mCurColumns > 1) && (j < (mCurColumns-1))){					
+					ImGui::SameLine();
+				} 
+			}										
+		}	
+		
+		if(isOdd){			
+
+			ImVec2 cpos = ImGui::GetCursorPos();
+
+			cpos.x += 5;
+			cpos.y += 5;
+
+			ImGui::SetCursorPos(cpos);
+
+			int i = mCurColumns;
+			for(int j = 0; j < isOdd; j++){
+				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),mTileSetBackGround.y  + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*cRowNum), (i*cRowNum)+j, mDragged,  mCurTileScale,true,true);				
+				if((mDragged > -1) && !bIsDragged){
+					bIsDragged = true;
+					mDragSource = mDragged;
+					mDragTarget = (i*cRowNum)+j;
+				}				
+				if((j < (isOdd-1))){
+					ImGui::SameLine();
+				}
+			}
+
+		}		
+	}
+	
+	*/
+
+	ImGui::PopStyleColor(3);
+
+	if(bIsDragged){		
+		mGlobalSettings.mEditor->swapTiles(mDragSource, mDragTarget, true);
+	}
+
+	mGlobalSettings.mEditor->ImButtonsTileSet.updateButtonStates();
+
+	ImGui::Spacing();
+
+	ImGui::EndChild();
+	
+    ImGui::End();
+
+
+	int cMax = (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeY ) +mColSpace ) * TTiles.size() )  / mCurColumns )) + (4 * mGlobalSettings.mGlobalTexParam.TexSizeY);
+	if((cMax - mTileSetBackGround.h) > 0 ){
+		mMaxScrollY = -(cMax - mTileSetBackGround.h);
+	} else {
+		mMaxScrollY = 0;
+	}
+
+	return 0;
+
+}
+
+int TileSet::renderIm(int ypos){
 	
 	mTileSetBackGround.h = mGlobalSettings.WindowHeight- mGlobalSettings.TopBarHeight;
 	
@@ -3400,7 +3611,7 @@ int TileSet::renderIm(int ypos, int mScroll){
 			ImGui::SetCursorPos(cpos);
 
 			for(int j = 0; j < mCurColumns; j++){
-				TileAreas[(i * mCurColumns) + j] = TTiles[(i*mCurColumns) + j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*i), (i*mCurColumns) + j, mDragged, mCurTileScale,true,true);								
+				TileAreas[(i * mCurColumns) + j] = TTiles[(i*mCurColumns) + j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),mTileSetBackGround.y  + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*i), (i*mCurColumns) + j, mDragged, mCurTileScale,true,true);								
 				if((mDragged > -1) && !bIsDragged){
 					bIsDragged = true;
 					mDragSource = mDragged;
@@ -3423,7 +3634,7 @@ int TileSet::renderIm(int ypos, int mScroll){
 
 			int i = mCurColumns;
 			for(int j = 0; j < isOdd; j++){
-				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),mTileSetBackGround.y + mScroll + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*cRowNum), (i*cRowNum)+j, mDragged,  mCurTileScale,true,true);				
+				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),mTileSetBackGround.y  + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*cRowNum), (i*cRowNum)+j, mDragged,  mCurTileScale,true,true);				
 				if((mDragged > -1) && !bIsDragged){
 					bIsDragged = true;
 					mDragSource = mDragged;

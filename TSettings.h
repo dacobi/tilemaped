@@ -162,6 +162,7 @@ public:
 	sKey *Editor_OverlayTextColor;
 	sKey *Editor_OverlayTextSize;
 	sKey *Editor_OverlayToggleColVals;
+	sKey *Editor_TileSetMaximized;
 	sKey *Tile_ShowPixelGrid;
 	sKey *TileSet_ShowPixelGrid;
 	sKey *TileSet_ShowTileGrid;	
@@ -171,6 +172,7 @@ public:
 	sKey *TileSet_PixelScale;	
 	sKey *TileSet_MaxGridWidth;	
 	sKey *TileSet_MinTileScale;	
+	sKey *TileSet_TileScale;	
 	sKey *TileSet_ShowOverlay;
 	sKey *ColMap_ShowOverlay;
 	sKey *SelectionEdit_ShowPixelGrid;

@@ -116,6 +116,7 @@ ProjectSettings::ProjectSettings(){
 	Editor_OverlayTextColor = new sKey("Editor_OverlayTextColor", type_int, 1);
 	Editor_OverlayTextSize = new sKey("Editor_OverlayTextSize", type_int, 14);
 	Editor_OverlayToggleColVals = new sKey("Editor_OverlayToggleColVals", type_bool, true);
+	Editor_TileSetMaximized = new sKey("Editor_TileSetMaximized", type_bool, false);
 	Tile_ShowPixelGrid = new sKey("Tile_ShowPixelGrid", type_bool, true);
 	TileSet_ShowPixelGrid = new sKey("TileSet_ShowPixelGrid", type_bool, true);
 	TileSet_ShowTileGrid = new sKey("TileSet_ShowTileGrid", type_bool, true);
@@ -125,6 +126,7 @@ ProjectSettings::ProjectSettings(){
 	TileSet_PixelScale = new sKey("TileSet_PixelScale", type_int, 10);	
 	TileSet_MaxGridWidth = new sKey("TileSet_MaxGridWidth", type_int, 4);	
 	TileSet_MinTileScale = new sKey("TileSet_MinTileScale", type_int, 7);
+	TileSet_TileScale = new sKey("TileSet_TileScale", type_int, 7);
 	TileSet_ShowOverlay = new sKey("TileSet_ShowOverlay", type_bool, false);
 	ColMap_ShowOverlay = new sKey("ColMap_ShowOverlay", type_bool, false);
 	SelectionEdit_ShowPixelGrid = new sKey("SelectionEdit_ShowPixelGrid", type_bool, true);
@@ -184,6 +186,7 @@ void ProjectSettings::init(){
 	keys.push_back(Editor_OverlayTextColor);
 	keys.push_back(Editor_OverlayTextSize);
 	keys.push_back(Editor_OverlayToggleColVals);
+	keys.push_back(Editor_TileSetMaximized);
 	keys.push_back(Tile_ShowPixelGrid);
 	keys.push_back(TileSet_ShowPixelGrid);
 	keys.push_back(TileSet_ShowTileGrid);
@@ -193,6 +196,7 @@ void ProjectSettings::init(){
 	keys.push_back(TileSet_PixelScale);
 	keys.push_back(TileSet_MaxGridWidth);
 	keys.push_back(TileSet_MinTileScale);
+	keys.push_back(TileSet_TileScale);
 	keys.push_back(TileSet_ShowOverlay);
 	keys.push_back(ColMap_ShowOverlay);
 	keys.push_back(SelectionEdit_ShowPixelGrid);
@@ -225,6 +229,7 @@ void ProjectSettings::close(){
 	TileSet_PixelScale->ivalue = 10;
 	TileSet_MaxGridWidth->ivalue = 4;
 	TileSet_MinTileScale->ivalue = 7;
+	TileSet_TileScale->ivalue = 7;
 	TileSet_ShowOverlay->bvalue = false;
 	ColMap_ShowOverlay->bvalue = false;
 	SelectionEdit_ShowPixelGrid->bvalue = true;
@@ -237,6 +242,7 @@ void ProjectSettings::close(){
 	Editor_OverlayTextColor->ivalue = 1;
 	Editor_OverlayTextSize->ivalue = 14;
 	Editor_OverlayToggleColVals->bvalue = true;
+	Editor_TileSetMaximized->bvalue = false;
 	Clipboard_SaveToProject->bvalue = false;
 	
 	bLoaded = false;

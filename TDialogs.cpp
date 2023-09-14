@@ -443,6 +443,15 @@ int TBDialog::render(){
 				}
 			}
 
+			if(mEditor->mCurMode == EMODE_MAP){
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " TileSet Maximize")).c_str(), NULL, &mGlobalSettings.mProjectSettings.Editor_TileSetMaximized->bvalue)){
+					mEditor->mTileSet.updateWinPos = true;
+					if(mGlobalSettings.mProjectSettings.Editor_TileSetMaximized->bvalue){
+						mEditor->mTileSet.mMaxTileScale = mGlobalSettings.mProjectSettings.TileSet_TileScale->ivalue;
+					}					
+				}
+			}
+
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mInfo + " Help Dialog")).c_str(), "F1")){								
 				mEditor->activateDTDialog(EDIALOG_HELPMENU);
 			}
@@ -908,11 +917,18 @@ int TBDialog::render(){
 				}
 
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " TileSet Edit").c_str()))){
-					if(ImGui::SliderInt("Max Grid Width", &mEditor->mTileSet.mMaxColumns, TileSet::MinCol, TileSet::MaxCol,"%d", ImGuiSliderFlags_NoInput)){
-						mEditor->mTileSet.resizeScale();						
-					}
-					if(ImGui::SliderInt("Min Tile Scale", &mEditor->mTileSet.mMinTileScale, TileSet::MinTile, TileSet::MaxTile, "%d", ImGuiSliderFlags_NoInput)){
-						mEditor->mTileSet.resizeScale();						
+					if(mGlobalSettings.mProjectSettings.Editor_TileSetMaximized->bvalue){
+						if(ImGui::SliderInt("Tile Scale", &mEditor->mTileSet.mMaxTileScale, 2, TileSet::MaxTile, "%d", ImGuiSliderFlags_NoInput)){
+							mGlobalSettings.mProjectSettings.TileSet_TileScale->ivalue = mEditor->mTileSet.mMaxTileScale;
+						}
+					} else {
+
+						if(ImGui::SliderInt("Max Grid Width", &mEditor->mTileSet.mMaxColumns, TileSet::MinCol, TileSet::MaxCol,"%d", ImGuiSliderFlags_NoInput)){
+							mEditor->mTileSet.resizeScale();						
+						}
+						if(ImGui::SliderInt("Min Tile Scale", &mEditor->mTileSet.mMinTileScale, TileSet::MinTile, TileSet::MaxTile, "%d", ImGuiSliderFlags_NoInput)){
+							mEditor->mTileSet.resizeScale();						
+						}
 					}
 					ImGui::EndMenu();
 				}

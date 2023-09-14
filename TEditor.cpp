@@ -1183,7 +1183,12 @@ int TEditor::loadFromFolder(std::string path){
 			mTileSet.mMaxColumns = mGlobalSettings.mProjectSettings.TileSet_MaxGridWidth->getInteger();
 			mTileSet.mMinTileScale = mGlobalSettings.mProjectSettings.TileSet_MinTileScale->getInteger();
 
-			mTileSet.resizeEdit();		
+			mTileSet.resizeEdit();	
+
+			if(mGlobalSettings.mProjectSettings.Editor_TileSetMaximized->bvalue){
+				mTileSet.mMaxTileScale = mGlobalSettings.mProjectSettings.TileSet_TileScale->ivalue;
+				mTileSet.updateWinPos = false;
+			}	
 
 			mGlobalSettings.bShowTilePixelSelGrid = mGlobalSettings.mProjectSettings.SelectionEdit_ShowPixelGrid->getBool();
 			mGlobalSettings.bShowTileSelGrid = mGlobalSettings.mProjectSettings.SelectionEdit_ShowTileGrid->getBool();
@@ -1664,7 +1669,14 @@ int TEditor::render(){
 			mActiveMessage->render();
 		}
 		mTopBar.render();
-		mTileSet.renderIm(mGlobalSettings.TopBarHeight, 0);//mTileSetScrollY);
+
+		if(mGlobalSettings.mProjectSettings.Editor_TileSetMaximized->bvalue){
+			mTileSet.renderImMax(mGlobalSettings.TopBarHeight);	
+		} else {
+			mTileSet.renderIm(mGlobalSettings.TopBarHeight);	
+		}
+
+		
 		if(mGlobalSettings.bShowProjectInfo){			
 			showProjectInfo();
 		}

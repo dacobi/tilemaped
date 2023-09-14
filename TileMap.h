@@ -166,6 +166,7 @@ public:
 	bool bRenderOverlay = false;
 	bool bImRenderOverlay = false;
 	int mCurTileScale = 15;
+	int mMaxTileScale = 7;
 	int mCurColumns = 1;
 	int mColSpace = 10;
 	int mMaxScrollY = 0;
@@ -203,7 +204,8 @@ public:
 	void appendTile(Tile* addTile);
 	// int render(int ypos, int mScroll);
 	int renderEd(int xpos, int ypos);
-	int renderIm(int ypos, int mScroll);
+	int renderIm(int ypos);//, int mScroll);
+	int renderImMax(int ypos);
 	bool updateWinPos = false;
 	bool bUpdateEditSelection = false;
 	bool bUpdateEditSelectionScale = false;
