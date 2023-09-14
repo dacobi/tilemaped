@@ -358,7 +358,7 @@ std::string NERDFONT = "nerdfont.ttf";
     ImGuiIO &io = ImGui::GetIO(); (void)io;
 	mio = &io;
 
-	
+	mio->IniFilename = NULL;
 
 	mg->ConfigNavWindowingKeyNext = 0; //ImGuiMod_Ctrl | ImGuiKey_Tab;
 	mg->ConfigNavWindowingKeyPrev = 0; //ImGuiMod_Ctrl | ImGuiMod_Shift | ImGuiKey_Tab;

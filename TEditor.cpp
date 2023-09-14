@@ -1204,6 +1204,12 @@ int TEditor::loadFromFolder(std::string path){
 		}
 	}
 
+	ImGui::ClearIniSettings();
+	
+	if(fs::exists(fs::status(path + DIRDEL + "imgui.ini"))){
+		ImGui::LoadIniSettingsFromDisk(std::string(path + DIRDEL + "imgui.ini").c_str());
+	}
+
 	/* Sprites */
 
 	fs::path cSprites;
@@ -1581,6 +1587,8 @@ int TEditor::saveToFolder(std::string path){
 	mGlobalSettings.mProjectSettings.Editor_PixelScale->ivalue = mGlobalSettings.mGlobalTexParam.TexPixelSize;
 	
 	mGlobalSettings.mProjectSettings.writedefault(path + DIRDEL + "settings.ini");
+
+	ImGui::SaveIniSettingsToDisk(std::string(path + DIRDEL + "imgui.ini").c_str());
 
 	return 0;
 }
