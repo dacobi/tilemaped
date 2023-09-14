@@ -166,7 +166,7 @@ public:
 	bool bRenderOverlay = false;
 	bool bImRenderOverlay = false;
 	int mCurTileScale = 15;
-	int mMaxTileScale = 7;
+	int mMaxTileScale = 5;
 	int mCurColumns = 1;
 	int mColSpace = 10;
 	int mMaxScrollY = 0;
@@ -206,7 +206,8 @@ public:
 	int renderEd(int xpos, int ypos);
 	int renderIm(int ypos);//, int mScroll);
 	int renderImMax(int ypos);
-	bool updateWinPos = false;
+	bool bUpdateWinPos = false;
+	bool bUpdateWinPosMax = false;
 	bool bUpdateEditSelection = false;
 	bool bUpdateEditSelectionScale = false;
     bool bShowClipboardTiles = false;

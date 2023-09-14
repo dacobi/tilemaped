@@ -445,7 +445,7 @@ int TBDialog::render(){
 
 			if(mEditor->mCurMode == EMODE_MAP){
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mWindow + " TileSet Maximize")).c_str(), NULL, &mGlobalSettings.mProjectSettings.Editor_TileSetMaximized->bvalue)){
-					mEditor->mTileSet.updateWinPos = true;
+					mEditor->mTileSet.bUpdateWinPos = true;
 					if(mGlobalSettings.mProjectSettings.Editor_TileSetMaximized->bvalue){
 						mEditor->mTileSet.mMaxTileScale = mGlobalSettings.mProjectSettings.TileSet_TileScale->ivalue;
 					}					

@@ -2586,6 +2586,8 @@ void TileSet::close(){
 	mSelEdWidth = 4;
 	mCurEdScale = 10;	
 	mMaxColumns = 4;
+
+	mMaxTileScale = 5;
 	
 	mCurTileScale = TileSet::MaxTile;
 
@@ -3037,7 +3039,7 @@ void TileSet::setoverlay(){
 
 void TileSet::resizeScale(){
 	if(!mGlobalSettings.mProjectSettings.Editor_TileSetMaximized->bvalue){
-		updateWinPos = true;
+		bUpdateWinPos = true;
 	}
 	mCurColumns = 1;
 	mCurTileScale = TileSet::MaxTile;
@@ -3342,32 +3344,76 @@ int TileSet::renderImMax(int ypos){
 
 	*/
 
-	mTileSetBackGround.x = 10;
-	mTileSetBackGround.y = ypos + 10;
-	mTileSetBackGround.w = mGlobalSettings.WindowWidth - 20;
-	mTileSetBackGround.h = mGlobalSettings.WindowHeight - mGlobalSettings.TopBarHeight - 20;
 
 	ImVec2 cOverSize = ImGui::CalcTextSize("1023");
 
 	mOverlayScaleX = cOverSize.x;
 	mOverlayScaleY = cOverSize.y - (cOverSize.y / 4);
 
-	ImVec2 cWinPos;
-	cWinPos.x = mTileSetBackGround.x;
-	cWinPos.y = mTileSetBackGround.y;
-	
+	ImVec2 cWinPos;	
+	ImVec2 cWinSize;	
 
-	ImVec2 cWinSize;
-	cWinSize.x = mTileSetBackGround.w;
-	cWinSize.y = mTileSetBackGround.h;
+	if(bUpdateWinPos){
+		mTileSetBackGround.x = 10;
+		mTileSetBackGround.y = ypos + 10;
+		mTileSetBackGround.w = mGlobalSettings.WindowWidth - 20;
+		mTileSetBackGround.h = mGlobalSettings.WindowHeight - mGlobalSettings.TopBarHeight - 20;
 
-	if(updateWinPos){
+		cWinPos.x = mTileSetBackGround.x;
+		cWinPos.y = mTileSetBackGround.y;
+
+		cWinSize.x = mTileSetBackGround.w;
+		cWinSize.y = mTileSetBackGround.h;
+
+
 		ImGui::SetNextWindowPos(cWinPos, ImGuiCond_Always);
 		ImGui::SetNextWindowSize(cWinSize, ImGuiCond_Always);
-		updateWinPos = false;
+		bUpdateWinPos = false;
 	//} else {
 		//ImGui::SetNextWindowPos(cWinPos, ImGuiCond_Once);
 		//ImGui::SetNextWindowSize(cWinSize, ImGuiCond_Once);
+	}
+
+	if(bUpdateWinPosMax){
+		int cOldWidth = mTileSetBackGround.w;
+		
+		if(cOldWidth > (mGlobalSettings.WindowWidth - 20)){
+			mTileSetBackGround.x = 10;
+			mTileSetBackGround.y = ypos + 10;
+			mTileSetBackGround.w = mGlobalSettings.WindowWidth - 20;
+			mTileSetBackGround.h = mGlobalSettings.WindowHeight - mGlobalSettings.TopBarHeight - 20;
+
+			cWinPos.x = mTileSetBackGround.x;
+			cWinPos.y = mTileSetBackGround.y;
+
+			cWinSize.x = mTileSetBackGround.w;
+			cWinSize.y = mTileSetBackGround.h;
+
+
+			ImGui::SetNextWindowPos(cWinPos, ImGuiCond_Always);
+			ImGui::SetNextWindowSize(cWinSize, ImGuiCond_Always);
+			
+			bUpdateWinPosMax = false;
+		} else {
+
+			mTileSetBackGround.x = mGlobalSettings.WindowWidth - cOldWidth - 10;
+			mTileSetBackGround.y = ypos + 10;
+			mTileSetBackGround.w = cOldWidth;
+			mTileSetBackGround.h = mGlobalSettings.WindowHeight - mGlobalSettings.TopBarHeight - 20;
+
+			cWinPos.x = mTileSetBackGround.x;
+			cWinPos.y = mTileSetBackGround.y;
+
+			cWinSize.x = mTileSetBackGround.w;
+			cWinSize.y = mTileSetBackGround.h;
+
+
+			ImGui::SetNextWindowPos(cWinPos, ImGuiCond_Always);
+			ImGui::SetNextWindowSize(cWinSize, ImGuiCond_Always);
+			
+			bUpdateWinPosMax = false;
+		}
+
 	}
 
 	ImGui::Begin("TileSet", NULL, ImGuiWindowFlags_NoNav);
@@ -3525,7 +3571,7 @@ int TileSet::renderIm(int ypos){
 	if(mCurColumns < mMaxColumns){
 		while( (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeY ) +mColSpace ) * TTiles.size() )  / mCurColumns ) ) > (mTileSetBackGround.h - mChildTop)){	
 			mCurTileScale--;
-			updateWinPos = true;
+			bUpdateWinPos = true;
 
 			if(mCurTileScale == 0){
 				mCurTileScale = 1;
@@ -3565,10 +3611,10 @@ int TileSet::renderIm(int ypos){
 	cWinSize.x = mTileSetBackGround.w;
 	cWinSize.y = mTileSetBackGround.h;
 
-	if(updateWinPos){
+	if(bUpdateWinPos){
 		ImGui::SetNextWindowPos(cWinPos, ImGuiCond_Always);
 		ImGui::SetNextWindowSize(cWinSize, ImGuiCond_Always);
-		updateWinPos = false;
+		bUpdateWinPos = false;
 	} else {
 		ImGui::SetNextWindowPos(cWinPos, ImGuiCond_Once);
 		ImGui::SetNextWindowSize(cWinSize, ImGuiCond_Once);

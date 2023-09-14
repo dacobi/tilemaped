@@ -1187,7 +1187,7 @@ int TEditor::loadFromFolder(std::string path){
 
 			if(mGlobalSettings.mProjectSettings.Editor_TileSetMaximized->bvalue){
 				mTileSet.mMaxTileScale = mGlobalSettings.mProjectSettings.TileSet_TileScale->ivalue;
-				mTileSet.updateWinPos = false;
+				mTileSet.bUpdateWinPos = false;
 			}	
 
 			mGlobalSettings.bShowTilePixelSelGrid = mGlobalSettings.mProjectSettings.SelectionEdit_ShowPixelGrid->getBool();
@@ -5146,7 +5146,11 @@ int TEditor::resizeWindowEvent(SDL_Event* event){
  		mGlobalSettings.WindowHeight = newHeight; 		
 	}
 		
-	mTileSet.updateWinPos = true;
+	if(mGlobalSettings.mProjectSettings.Editor_TileSetMaximized->bvalue){	
+		mTileSet.bUpdateWinPosMax = true;
+	} else {
+		mTileSet.bUpdateWinPos = true;
+	}
 	mTileSet.reCalculateScale();
 
 	mPaletteOffset.bUpdateWinPos = true;
