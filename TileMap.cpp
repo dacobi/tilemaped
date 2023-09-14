@@ -3313,38 +3313,6 @@ return 0;
 
 int TileSet::renderImMax(int ypos){
 
-	//mTileSetBackGround.h = mGlobalSettings.WindowHeight- mGlobalSettings.TopBarHeight;
-	
-	/*
-
-	if(mCurColumns < mMaxColumns){
-		while( (int)( (float)( ( ( (mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeY ) +mColSpace ) * TTiles.size() )  / mCurColumns ) ) > (mTileSetBackGround.h - mChildTop)){	
-			mCurTileScale--;
-			updateWinPos = true;
-
-			if(mCurTileScale == 0){
-				mCurTileScale = 1;
-			}
-
-			if(mCurTileScale < mMinTileScale){
-				if(mCurColumns < mMaxColumns){
-					mCurColumns++;					
-				} else {
-					mCurTileScale++;
-					break;
-				}				
-			}
-		}
-	}
-
-	mGlobalSettings.TileSetWidth = (((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*mCurColumns)+(mColSpace*3);
-
-	int isOdd = TTiles.size() % mCurColumns;
-	int cRowNum = TTiles.size() / mCurColumns;
-
-	*/
-
-
 	ImVec2 cOverSize = ImGui::CalcTextSize("1023");
 
 	mOverlayScaleX = cOverSize.x;
@@ -3369,9 +3337,6 @@ int TileSet::renderImMax(int ypos){
 		ImGui::SetNextWindowPos(cWinPos, ImGuiCond_Always);
 		ImGui::SetNextWindowSize(cWinSize, ImGuiCond_Always);
 		bUpdateWinPos = false;
-	//} else {
-		//ImGui::SetNextWindowPos(cWinPos, ImGuiCond_Once);
-		//ImGui::SetNextWindowSize(cWinSize, ImGuiCond_Once);
 	}
 
 	if(bUpdateWinPosMax){
@@ -3406,7 +3371,6 @@ int TileSet::renderImMax(int ypos){
 
 			cWinSize.x = mTileSetBackGround.w;
 			cWinSize.y = mTileSetBackGround.h;
-
 
 			ImGui::SetNextWindowPos(cWinPos, ImGuiCond_Always);
 			ImGui::SetNextWindowSize(cWinSize, ImGuiCond_Always);
