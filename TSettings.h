@@ -247,6 +247,8 @@ class TSettings{
 		int WindowWidthActual=1900;
 		int WindowHeightActual=1000;
 
+		int TileSetMaxSize = 1024;
+
 		int TopBarHeight = 50;
 		int TileSetWidth=200;		
 		int TileSetDefaultScale=10;

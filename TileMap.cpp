@@ -2663,22 +2663,33 @@ int TileSet::importTileSet(std::string cTilePath, std::vector<Tile*> &cNewTiles)
 
 		SDL_Surface *newSurf = IMG_Load(cTilePath.c_str());
 		if(newSurf && (mGlobalSettings.mGlobalTexParam.TexBPP > 0x2)){
-			if(importPNG(newSurf,  &mGlobalSettings.mEditor->mPalette)){
+			int retval = importPNG(newSurf,  &mGlobalSettings.mEditor->mPalette);
+			if(retval == 1){				
+					std::cout << "Error Importing TileSet: " << cTilePath << std::endl;
+					return 1;								
+			} else {
+				for(int i = mTileNum; i < TTiles.size(); i++){
+					cNewTiles.push_back(TTiles[i]);
+				}
+				if(retval == 2){
+					std::cout << "TileSet Size Overflow" << std::endl;
+					return 2;
+				}
+			}
+	
+		} else {
+			fs::path cNewPath = cTilePath;			
+			int retval = importFile(cNewPath.parent_path().string(), cNewPath.filename().string(), &mGlobalSettings.mEditor->mPalette);
+			if(retval == 1){
 				std::cout << "Error Importing TileSet: " << cTilePath << std::endl;
 				return 1;
 			} else {
 				for(int i = mTileNum; i < TTiles.size(); i++){
 					cNewTiles.push_back(TTiles[i]);
 				}
-			}
-		} else {
-			fs::path cNewPath = cTilePath;			
-			if(importFile(cNewPath.parent_path().string(), cNewPath.filename().string(), &mGlobalSettings.mEditor->mPalette)){
-				std::cout << "Error Importing TileSet: " << cTilePath << std::endl;
-				return 1;
-			} else {
-				for(int i = mTileNum; i < TTiles.size(); i++){
-					cNewTiles.push_back(TTiles[i]);
+				if(retval == 2){
+					std::cout << "TileSet Size Overflow" << std::endl;
+					return 2;
 				}
 			}
 		}
@@ -2716,8 +2727,14 @@ int TileSet::importPNG(SDL_Surface *newSurf, TPalette* tpal){
 				}
 			}
 
+			bool bTileSetOverflow = false;
+
 			for(auto &tbufl : tbuffers){
-				createNewFromBuffer(tbufl, tpal);
+				if(TTiles.size() < mGlobalSettings.TileSetMaxSize){
+					createNewFromBuffer(tbufl, tpal);
+				} else {
+					bTileSetOverflow = true;
+				}
 			}
 
 			TileAreas.resize(TTiles.size());
@@ -2725,6 +2742,11 @@ int TileSet::importPNG(SDL_Surface *newSurf, TPalette* tpal){
 			resizeEdit();
 			
 			SDL_FreeSurface(newSurf);
+
+			if(bTileSetOverflow){
+				return 2;
+			}
+
 			return 0;
 		}
 	}
@@ -2864,17 +2886,27 @@ int TileSet::importFile(std::string tpath,std::string tfile, TPalette* tpal){
 
 	Tile *mTile;
 
+	bool bTileSetOverflow = false;
+
 	for(int tCount = 0; tCount < ntiles; tCount++){
-		mTile = new Tile();
-		std::vector<unsigned char>::const_iterator first = tbuffer.begin() + (tCount * tmpTileSize);
-		std::vector<unsigned char>::const_iterator last = tbuffer.begin() + ((tCount * tmpTileSize) + (tmpTileSize));
-		std::vector<unsigned char> tbuffer2(first, last);
-		mTile->loadFromBuffer(tbuffer2 ,tpal);
-		TTiles.push_back(mTile);
+		if(TTiles.size() < mGlobalSettings.TileSetMaxSize){
+			mTile = new Tile();
+			std::vector<unsigned char>::const_iterator first = tbuffer.begin() + (tCount * tmpTileSize);
+			std::vector<unsigned char>::const_iterator last = tbuffer.begin() + ((tCount * tmpTileSize) + (tmpTileSize));
+			std::vector<unsigned char> tbuffer2(first, last);
+			mTile->loadFromBuffer(tbuffer2 ,tpal);
+			TTiles.push_back(mTile);
+		} else {
+			bTileSetOverflow = true;
+		}
 	}
 
 	TileAreas.resize(TTiles.size());
 	resizeEdit();
+
+	if(bTileSetOverflow){
+		return 2;
+	}
 
 	return 0;
 }
@@ -3459,6 +3491,8 @@ int TileSet::renderImMax(int ypos){
 
 	mGlobalSettings.mEditor->ImButtonsTileSet.updateButtonStates();
 
+	ImGui::Spacing();
+	ImGui::Spacing();
 	ImGui::Spacing();
 
 	ImGui::EndChild();

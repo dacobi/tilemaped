@@ -128,10 +128,10 @@ int TBDialog::render(){
 			if(mEditor->mCurMode == EMODE_MAP){
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mFile + " Import")).c_str())){
 					if(mGlobalSettings.mGlobalTexParam.TexBPP > 0x2){
-						if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Tile")).c_str())){
+						if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Import Tile")).c_str(), NULL, false, mEditor->bTileSetMax)){
 							mEditor->activateDTDialog(EDIALOG_TILEIMPORT);
 						}
-						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import TileSet")).c_str())){
+						if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Import TileSet")).c_str(), NULL, false, mEditor->bTileSetMax)){
 							mEditor->activateDTDialog(EDIALOG_TILESETIMPORT, mGlobalSettings.mGlobalTexParam.TexBPP);		  			
 						}
 					}
@@ -848,10 +848,10 @@ int TBDialog::render(){
 				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Flip Tile")).c_str(), "F/X/Y")){
 					mEditor->flipSelectedTile(0);
 				}
-				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " New Tile")).c_str(), "F3")){
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " New Tile")).c_str(), "F3", false, mEditor->bTileSetMax)){
 					mEditor->createNewTile();
 				}				
-				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Tile")).c_str(), "F4")){
+				if(ImGui::MenuItem((std::string(mGlobalSettings.mImage + " Copy Tile")).c_str(), "F4", false, mEditor->bTileSetMax)){
 					mEditor->createNewTileCopy(mEditor->mTileSelectedTile);
 				}
 

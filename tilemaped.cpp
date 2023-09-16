@@ -461,7 +461,9 @@ void TSettings::close(){
 	TileSetDefaultScale=10;
 	TileMapScale=3;
 	TileMapHeight=128;
-	TileMapWidth=128;		
+	TileMapWidth=128;
+
+	TileSetMaxSize = 1024;		
 	
 	mGlobalTexParam.TexSizeX=16;
 	mGlobalTexParam.TexSizeY=16;

@@ -126,7 +126,8 @@ int TEditor::createNewProject(){
 
 		if(fs::exists(fs::status(mGlobalSettings.mNewTilePath))){
 			std::vector<Tile*> cNewTiles;
-			if(mTileSet.importTileSet(mGlobalSettings.mNewTilePath, cNewTiles)){
+			int retval = mTileSet.importTileSet(mGlobalSettings.mNewTilePath, cNewTiles);
+			if(retval == 1){
 				std::cout << "Error in TileSet File! Using empty" << std::endl;
 				mTileSet.createNew(&mPalette);
 				retval += 1;
@@ -406,7 +407,10 @@ void TEditor::stateTileSetOffset(){
 
 void TEditor::stateTileSetImport(){
 	std::vector<Tile*> cNewTiles;
-	if(mTileSet.importTileSet(mGlobalSettings.mNewTilePath, cNewTiles)){		
+
+	int retval = mTileSet.importTileSet(mGlobalSettings.mNewTilePath, cNewTiles);
+
+	if(retval == 1){		
 		showMessage("Error Importing TileSet", true);		
 	} else {
 
@@ -424,17 +428,27 @@ void TEditor::stateTileSetImport(){
 		}
 
 		mActionStack.newActionGroup();
-				
-		for(auto cTile : cNewTiles){
-			TEActionAddTiles* newActionTile = new TEActionAddTiles();
-			newActionTile->doAction(cTile, this, &mTileSet);	       			
-	    	mActionStack.addAction(newActionTile);
-	    	mActionStack.mLastAction = newActionTile;	       			
+						
+		bool bTileSetOverflow = false;
+
+		if(retval == 2){
+			bTileSetOverflow = true;
+		}
+
+		for(auto cTile : cNewTiles){			
+				TEActionAddTiles* newActionTile = new TEActionAddTiles();
+				newActionTile->doAction(cTile, this, &mTileSet);	       			
+	    		mActionStack.addAction(newActionTile);
+	    		mActionStack.mLastAction = newActionTile;			
 		}
 				
 		mActionStack.redoClearStack();
 					
-		showMessage("TileSet Imported Successfully");
+		if(bTileSetOverflow){
+			showMessage("Warning! TileSet Max Size reached\n  All Tiles were not imported", true);
+		} else {
+			showMessage("TileSet Imported Successfully");
+		}
 	}
 }
 
@@ -1651,6 +1665,12 @@ int TEditor::switchTileMap(int cTileMap){
 
 int TEditor::render(){
 	mGlobalSettings.updateTicks();
+
+	if(mTileSet.TTiles.size() < mGlobalSettings.TileSetMaxSize){
+		bTileSetMax = true;
+	} else {
+		bTileSetMax = false;
+	}
 
 	if(mCurMode == EMODE_MAP){
 										
@@ -5020,15 +5040,19 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_F3){	  
 					if(mCurMode == EMODE_MAP){				
-		  				createNewTile();
+						if(bTileSetMax){
+		  					createNewTile();
+						}
 					}
 					if(mCurMode == EMODE_SPRITE){				
 		  				createNewFrame();
 					}
 	  			}
 				if(cEvent->key.keysym.sym == SDLK_F4){
-					if(mCurMode == EMODE_MAP){								
-						createNewTileCopy(mGlobalSettings.mEditor->mTileSelectedTile);
+					if(mCurMode == EMODE_MAP){
+						if(bTileSetMax){
+							createNewTileCopy(mGlobalSettings.mEditor->mTileSelectedTile);
+						}
 					}
 					if(mCurMode == EMODE_SPRITE){				
 		  				createNewFrameCopy(mSprite->mFrame);

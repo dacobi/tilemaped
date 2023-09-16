@@ -70,6 +70,7 @@ class TEditor{
 		int mLastSelEditWidth=0;
 		int mLastSelEditHeight=0;
 		bool bTileMapWasChanged = true;
+		bool bTileSetMax = true;
 		std::vector<TileMap*> mTileMaps;
 		TSprite *mSprite = NULL;
 		std::vector<TSprite*> mSprites;
