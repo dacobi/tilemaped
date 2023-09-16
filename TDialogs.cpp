@@ -918,7 +918,7 @@ int TBDialog::render(){
 
 				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " TileSet Edit").c_str()))){
 					if(mGlobalSettings.mProjectSettings.Editor_TileSetMaximized->bvalue){
-						if(ImGui::SliderInt("Tile Scale", &mEditor->mTileSet.mMaxTileScale, 2, TileSet::MaxTile, "%d", ImGuiSliderFlags_NoInput)){
+						if(ImGui::SliderInt("Tile Scale", &mEditor->mTileSet.mMaxTileScale, TileSet::MaxMin, TileSet::MaxMax, "%d", ImGuiSliderFlags_NoInput)){
 							mGlobalSettings.mProjectSettings.TileSet_TileScale->ivalue = mEditor->mTileSet.mMaxTileScale;
 						}
 

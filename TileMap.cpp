@@ -2587,7 +2587,7 @@ void TileSet::close(){
 	mCurEdScale = 10;	
 	mMaxColumns = 4;
 
-	mMaxTileScale = 5;
+	mMaxTileScale = 4;
 	
 	mCurTileScale = TileSet::MaxTile;
 

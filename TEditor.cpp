@@ -17,6 +17,8 @@ void TEditor::closeProject(){
 	mBrushesPixel.close();
 	mBrushesPixelSelEd.close();
 	mBrushesTile.close();
+
+	bTileSetMax = true;
 	
 	for(auto *cMap : mTileMaps){
 		delete cMap;

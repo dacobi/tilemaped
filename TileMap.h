@@ -167,7 +167,7 @@ public:
 	bool bImRenderOverlay = false;
 	bool bCheckMaxSize = true;
 	int mCurTileScale = 15;
-	int mMaxTileScale = 5;
+	int mMaxTileScale = 4;
 	int mCurColumns = 1;
 	int mColSpace = 10;
 	int mMaxScrollY = 0;
@@ -185,6 +185,8 @@ public:
     const static int MinCol = 2;
 	const static int MaxTile = 15;
 	const static int MinTile = 4;
+	const static int MaxMin = 1;
+	const static int MaxMax = 10;
 	int mSelectionAreaX;
 	int mSelectionAreaY;
 	int reCalculateScale();
