@@ -64,7 +64,7 @@ class TEditor{
 		TPalette mPalette;
 		TileSet mTileSet;
 		TileMap *mTileMap;
-		TSelectionEditor mSelEdit;
+		TSelectionEditor mSelEdit;		
 		int mLastSelEditX=0;
 		int mLastSelEditY=0;
 		int mLastSelEditWidth=0;

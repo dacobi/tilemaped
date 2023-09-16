@@ -3320,7 +3320,7 @@ int TileSet::renderImMax(int ypos){
 
 	ImVec2 cWinPos;	
 	ImVec2 cWinSize;	
-
+	
 	if(bUpdateWinPos){
 		mTileSetBackGround.x = 10;
 		mTileSetBackGround.y = ypos + 10;
@@ -3451,57 +3451,6 @@ int TileSet::renderImMax(int ypos){
 		}
 	}
 	
-/*
-	if(mCurColumns > 0){
-		for(int i = 0; i < cRowNum; i++){
-
-			ImVec2 cpos = ImGui::GetCursorPos();
-
-			cpos.x += 5;
-			cpos.y += 5;
-
-			ImGui::SetCursorPos(cpos);
-
-			for(int j = 0; j < mCurColumns; j++){
-				TileAreas[(i * mCurColumns) + j] = TTiles[(i*mCurColumns) + j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),mTileSetBackGround.y  + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*i), (i*mCurColumns) + j, mDragged, mCurTileScale,true,true);								
-				if((mDragged > -1) && !bIsDragged){
-					bIsDragged = true;
-					mDragSource = mDragged;
-					mDragTarget = (i*mCurColumns) + j;
-				}
-				if((mCurColumns > 1) && (j < (mCurColumns-1))){					
-					ImGui::SameLine();
-				} 
-			}										
-		}	
-		
-		if(isOdd){			
-
-			ImVec2 cpos = ImGui::GetCursorPos();
-
-			cpos.x += 5;
-			cpos.y += 5;
-
-			ImGui::SetCursorPos(cpos);
-
-			int i = mCurColumns;
-			for(int j = 0; j < isOdd; j++){
-				TileAreas[(i * cRowNum) + j] = TTiles[(i*cRowNum)+j]->renderIm((mTileSetBackGround.x+ (mColSpace*2) +  ((mCurTileScale*mGlobalSettings.mGlobalTexParam.TexSizeX)+mColSpace)*j),mTileSetBackGround.y  + (mColSpace*2) + (((mGlobalSettings.mGlobalTexParam.TexSizeY*mCurTileScale)+mColSpace)*cRowNum), (i*cRowNum)+j, mDragged,  mCurTileScale,true,true);				
-				if((mDragged > -1) && !bIsDragged){
-					bIsDragged = true;
-					mDragSource = mDragged;
-					mDragTarget = (i*cRowNum)+j;
-				}				
-				if((j < (isOdd-1))){
-					ImGui::SameLine();
-				}
-			}
-
-		}		
-	}
-	
-	*/
-
 	ImGui::PopStyleColor(3);
 
 	if(bIsDragged){		
@@ -3522,6 +3471,13 @@ int TileSet::renderImMax(int ypos){
 		mMaxScrollY = -(cMax - mTileSetBackGround.h);
 	} else {
 		mMaxScrollY = 0;
+	}
+
+	if(bCheckMaxSize){		
+		if((mTileSetBackGround.w > (mGlobalSettings.WindowWidth - 20)) || (mTileSetBackGround.h > (mGlobalSettings.WindowHeight - 20))){
+			bUpdateWinPosMax = true;		
+		}						
+		bCheckMaxSize = false;
 	}
 
 	return 0;

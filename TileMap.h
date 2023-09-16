@@ -165,6 +165,7 @@ public:
 	int mOverlayScaleY;
 	bool bRenderOverlay = false;
 	bool bImRenderOverlay = false;
+	bool bCheckMaxSize = true;
 	int mCurTileScale = 15;
 	int mMaxTileScale = 5;
 	int mCurColumns = 1;

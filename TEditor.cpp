@@ -1187,9 +1187,10 @@ int TEditor::loadFromFolder(std::string path){
 
 			if(mGlobalSettings.mProjectSettings.Editor_TileSetMaximized->bvalue){
 				mTileSet.mMaxTileScale = mGlobalSettings.mProjectSettings.TileSet_TileScale->ivalue;
-				mTileSet.bUpdateWinPos = false;
-			}	
-
+				mTileSet.bUpdateWinPos = false;			
+				mTileSet.bCheckMaxSize = true;
+			}
+				
 			mGlobalSettings.bShowTilePixelSelGrid = mGlobalSettings.mProjectSettings.SelectionEdit_ShowPixelGrid->getBool();
 			mGlobalSettings.bShowTileSelGrid = mGlobalSettings.mProjectSettings.SelectionEdit_ShowTileGrid->getBool();
 			mGlobalSettings.mSelectionEditScale = mGlobalSettings.mProjectSettings.SelectionEdit_PixelScale->getInteger();
@@ -1214,7 +1215,7 @@ int TEditor::loadFromFolder(std::string path){
 	if(fs::exists(fs::status(path + DIRDEL + "imgui.ini"))){
 		ImGui::LoadIniSettingsFromDisk(std::string(path + DIRDEL + "imgui.ini").c_str());
 	}
-
+	
 	/* Sprites */
 
 	fs::path cSprites;
@@ -1652,8 +1653,7 @@ int TEditor::render(){
 	mGlobalSettings.updateTicks();
 
 	if(mCurMode == EMODE_MAP){
-
-		
+										
  		if(!mGlobalSettings.bShowTypeSelection) mTileSelectedTile->bIsSelected = false;		
 		mTileMap->render(mTileMapScrollX,mGlobalSettings.TopBarHeight+mTileMapScrollY,&mTileSet);
 		mTileSelectedTile->bIsSelected = true;
@@ -1703,6 +1703,7 @@ int TEditor::render(){
 		if(bShowCollisionEditor){
 			mColMapEdit.render();
 		}
+		
 	}
 	
 	if(mCurMode == EMODE_TILE){

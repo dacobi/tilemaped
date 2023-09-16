@@ -921,6 +921,12 @@ int TBDialog::render(){
 						if(ImGui::SliderInt("Tile Scale", &mEditor->mTileSet.mMaxTileScale, 2, TileSet::MaxTile, "%d", ImGuiSliderFlags_NoInput)){
 							mGlobalSettings.mProjectSettings.TileSet_TileScale->ivalue = mEditor->mTileSet.mMaxTileScale;
 						}
+
+						ImGui::Separator();
+
+						if(ImGui::MenuItem(std::string(mGlobalSettings.mWindow + " Reset Window").c_str())){
+							mEditor->mTileSet.bUpdateWinPos = true;
+						}
 					} else {
 
 						if(ImGui::SliderInt("Max Grid Width", &mEditor->mTileSet.mMaxColumns, TileSet::MinCol, TileSet::MaxCol,"%d", ImGuiSliderFlags_NoInput)){
