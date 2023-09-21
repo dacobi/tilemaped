@@ -206,15 +206,26 @@ public:
 	sKey *Theme_PixelGridLight;
 };
 
+#define MTEXSIZEX 16
+#define MTEXSIZEY 16
+#define MTEXBPP 8
+#define MTEXPIXELSIZE 16
+#define MTEXPALETTEOFFSET 0
+#define MTEXEDITSCALE 4
+#define MTEXRENDERSIZE 16
+
+
 struct TextureParameters{
-	int TexSizeX=16;
-	int TexSizeY=16;
-	int TexBPP=8;
-	int TexPixelSize=16;
-	int PaletteOffset=0;
-	int TexEditScale = 4;
-	int TexRenderSize=16;	
+	int TexSizeX = MTEXSIZEX;
+	int TexSizeY = MTEXSIZEY;
+	int TexBPP = MTEXBPP;
+	int TexPixelSize = MTEXPIXELSIZE;
+	int PaletteOffset = MTEXPALETTEOFFSET;
+	int TexEditScale = MTEXEDITSCALE;
+	int TexRenderSize = MTEXRENDERSIZE;	
 };
+
+void texParamReset(TextureParameters &mTexParam);
 
 class TSettings{
 	public:		
@@ -523,7 +534,8 @@ enum {
 	ACTION_FRAMENEW,
 	ACTION_FRAMESNEW,
 	ACTION_FRAMEREPLACE,
-	ACTION_SWAPFRAMES
+	ACTION_SWAPFRAMES,
+	ACTION_MOVETILES
 	
 } actions;
 

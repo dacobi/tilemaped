@@ -260,6 +260,7 @@ public:
 	TileProperties getTileProp(int cTile);
 	std::vector<SDL_Rect> TileAreas;
 	int removeTile(int cDropTile);
+	int moveTile(int cSource, int cTarget);
 	int loadFromFile(std::string path, std::string filename, bool bLoadColMap = false);
 	int loadFromFileOffset(std::string path, std::string filename, int cTileOffset);
 	int loadFromFileOffset(std::string path, std::string filename, int cTileOffset, int cPaletteOffset);

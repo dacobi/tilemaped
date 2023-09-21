@@ -323,6 +323,29 @@ class TEActionSwapTiles: public TEAction{
 		}
 };
 
+class TEActionMoveTile: public TEAction{
+	public:
+		~TEActionMoveTile();
+		int mSource;
+		int mTarget;
+		int mOldSelTile;
+		TileSet *mTiles;
+		TEditor *mEditor;
+		bool bUpdateTileMaps;		
+		void doAction(TEditor* cEditor, TileSet *cTiles, int cSource, int cTarget, bool cUpdate);	
+		virtual void undo();
+		virtual void redo();
+		virtual bool doCompare(const TEAction& rhs){
+			const TEActionMoveTile* mrhs =  dynamic_cast<const TEActionMoveTile*>(&rhs); 
+			if(mrhs){
+				if((mSource == mrhs->mSource) && (mTarget == mrhs->mTarget) && (bUpdateTileMaps == mrhs->bUpdateTileMaps)){ // Not testing mOldValue
+					return true;
+				}
+			}
+			 return false;
+		}
+};
+
 class TEActionReplaceTileSet: public TEAction{
 	public:
 		~TEActionReplaceTileSet();

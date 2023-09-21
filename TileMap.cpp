@@ -2349,10 +2349,13 @@ SDL_Rect Tile::renderIm(int xpos, int ypos, int mIndex, int &mDragAndDropped, in
 
 	if(mGlobalSettings.mEditor->bLCTRLisDown){
 		mode = 1;
+	} else if(mGlobalSettings.mEditor->bLShiftIsDown){
+		mode = 2;				
 	}
 
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)){                    
         ImGui::SetDragDropPayload("DND_TILE", &n, sizeof(int));
+		if (mode == 2) { ImGui::Text("Move"); }                    
         if (mode == 1) { ImGui::Text("Replace"); }                    
         if (mode == 0) { ImGui::Text("Swap"); }
         ImGui::EndDragDropSource();
@@ -3969,6 +3972,43 @@ std::string TileMap::getMapSize(){
 	return cMapSize;
 }
 
+int TileMap::moveTile(int cSource, int cTarget){
+	if(cSource == cTarget){
+		return 1;
+	}
+
+	for(int i = 0; i < (mGlobalSettings.TileMapHeight*mGlobalSettings.TileMapWidth); i++){
+			
+		int cTile = getTile(i);
+
+		if(cSource < cTarget){
+
+			if(cTile == cSource){
+				setTile(i, cTarget);				
+			} else {
+				if((cTile <= cTarget) && (cTile > cSource)){
+					setTile(i, cTile - 1);
+				}
+			}
+
+		} else {
+			if(cTile == cSource){
+				setTile(i, cTarget);				
+			} else {
+				if((cTile >= cTarget) && (cTile < cSource)){
+					setTile(i, cTile + 1);
+				}
+			}
+
+		}		
+	}	
+
+	if(bHasCollisionMap){
+		mColMap.moveTile(cSource, cTarget);
+	}
+
+	return 0;
+}
 
 int TileMap::removeTile(int cDropTile){
 	for(int i = 0; i < (mGlobalSettings.TileMapHeight*mGlobalSettings.TileMapWidth); i++){

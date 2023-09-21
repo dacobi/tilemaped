@@ -848,6 +848,30 @@ int TBrush::readFromFile(std::ifstream &infile){
     return 0;
 }
 
+void TBrush::moveBrushElement(int cSource, int cTarget){
+
+    if(cSource == cTarget){
+		return;
+	}
+
+    for(int i = 0; i < mBrushElements.size(); i++){
+        if(mBrushElements[i] == cSource){
+			mBrushElements[i] = cTarget;
+		} else {
+            if(cSource < cTarget){
+                if((mBrushElements[i] <= cTarget) && (mBrushElements[i] > cSource)){
+                    mBrushElements[i]--;
+                } 
+            } else {
+                if((mBrushElements[i] >= cTarget) && (mBrushElements[i] < cSource)){
+                    mBrushElements[i]++;
+                }
+            }            			
+		}			
+    }
+
+}
+
 void TBrush::removeBrushElement(int cDropTile){
     for(int i = 0; i < mBrushElements.size(); i++){
         if(mBrushElements[i] == cDropTile){
@@ -877,6 +901,12 @@ void TBrushList::swapBrushElements(int eVal1, int eVal2){
 void TBrushList::removeBrushElement(int cDropTile){
     for(int i = 0; i < mBrushes.size(); i++){
         mBrushes[i]->removeBrushElement(cDropTile);
+    }
+}
+
+void TBrushList::moveBrushElement(int cSource, int cTarget){
+    for(int i = 0; i < mBrushes.size(); i++){
+        mBrushes[i]->moveBrushElement(cSource, cTarget);
     }
 }
 
@@ -1345,6 +1375,8 @@ void TBrushList::close(){
     while(mBrushes.size()){
 		removeBrush();
 	}
+
+    texParamReset(mLocalTexParam);
 }
 
 void TBrushList::closeEdit(){

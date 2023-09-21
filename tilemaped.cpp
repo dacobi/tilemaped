@@ -79,6 +79,16 @@ class MEDialog;
 
 TSettings mGlobalSettings;
 
+void texParamReset(TextureParameters &mTexParam){
+	mTexParam.TexSizeX = MTEXSIZEX;
+	mTexParam.TexSizeY = MTEXSIZEY;
+	mTexParam.TexBPP = MTEXBPP;
+	mTexParam.TexPixelSize = MTEXPIXELSIZE;
+	mTexParam.PaletteOffset = MTEXPALETTEOFFSET;
+	mTexParam.TexEditScale = MTEXEDITSCALE;
+	mTexParam.TexRenderSize = MTEXRENDERSIZE;	
+}
+
 #ifdef MNIXHOME
 	std::string mINIPath = "~/.tilemaped/tilemaped.ini";
 #else
@@ -465,6 +475,9 @@ void TSettings::close(){
 
 	TileSetMaxSize = 1024;		
 	
+	texParamReset(mGlobalTexParam);
+
+	/*
 	mGlobalTexParam.TexSizeX=16;
 	mGlobalTexParam.TexSizeY=16;
 	mGlobalTexParam.TexBPP=8;
@@ -472,7 +485,8 @@ void TSettings::close(){
 	mGlobalTexParam.PaletteOffset=0;
 	mGlobalTexParam.TexEditScale = 4;
 	mGlobalTexParam.TexRenderSize=16;
-	
+	*/
+
 	bShowPaletteOffset = false;
 	
 	PaletteScale = 2;

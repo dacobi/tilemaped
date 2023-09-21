@@ -222,6 +222,17 @@ int TCollisionMap::removeTile(int cDropTile){
     return 0;
 }
 
+int TCollisionMap::moveTile(int cSource, int cTarget){
+    checkSize();
+        
+    int tmpValS = MapData[cSource];
+        
+    MapData.erase(MapData.begin() + cSource);
+
+    MapData.insert(MapData.begin() + cTarget, tmpValS);
+		    
+    return 0;
+}
 
 int TCollisionMapEditor::startEdit(TileMap *cTileMap){
 

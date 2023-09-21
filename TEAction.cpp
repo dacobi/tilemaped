@@ -465,7 +465,77 @@ int TEActionReplaceFrame::getFrame(){
 	return cFrame;
 }
 
+void TEActionMoveTile::undo(){
+	Tile* tmpTile = mTiles->TTiles[mTarget];
+
+	mTiles->TTiles.erase(mTiles->TTiles.begin() + mTarget);
+
+	mTiles->TTiles.insert(mTiles->TTiles.begin() + mSource, tmpTile);
+
+	mEditor->mMapSelectedTile = mSource;
+
+	if(bUpdateTileMaps){
+		for(auto *cMap : mEditor->mTileMaps){
+			cMap->moveTile(mTarget, mSource);
+		}
+		mEditor->mBrushesTile.moveBrushElement(mTarget, mSource);
+		mEditor->mClipboardMap.moveBrushElement(mTarget, mSource);
+	}
+}
+
+void TEActionMoveTile::redo(){
+	
+	Tile* tmpTile = mTiles->TTiles[mSource];
+
+	mTiles->TTiles.erase(mTiles->TTiles.begin()+ mSource);
+
+	mTiles->TTiles.insert(mTiles->TTiles.begin() + mTarget, tmpTile);
+
+	mEditor->mMapSelectedTile = mTarget;
+
+	if(bUpdateTileMaps){
+		for(auto *cMap : mEditor->mTileMaps){
+			cMap->moveTile(mSource, mTarget);
+		}
+		mEditor->mBrushesTile.moveBrushElement(mSource, mTarget);
+		mEditor->mClipboardMap.moveBrushElement(mSource, mTarget);
+	}
+
+}
+
+void TEActionMoveTile::doAction(TEditor* cEditor, TileSet *cTiles, int cSource, int cTarget, bool cUpdate){
+	mEditor = cEditor;
+	mTiles = cTiles;
+	mSource = cSource;
+	mTarget = cTarget;
+	bUpdateTileMaps = cUpdate;
+
+	TEActionType = ACTION_MOVETILES;
+
+	Tile* tmpTile = mTiles->TTiles[mSource];
+
+	mTiles->TTiles.erase(mTiles->TTiles.begin()+ mSource);
+
+	mTiles->TTiles.insert(mTiles->TTiles.begin()+ mTarget, tmpTile);
+	
+	mEditor->mMapSelectedTile = mTarget;
+
+	if(bUpdateTileMaps){
+		for(auto *cMap : mEditor->mTileMaps){
+			cMap->moveTile(mSource, mTarget);
+		}
+		mEditor->mBrushesTile.moveBrushElement(mSource, mTarget);
+		mEditor->mClipboardMap.moveBrushElement(mSource, mTarget);
+	}
+
+}
+
+
 TEActionSwapTiles::~TEActionSwapTiles(){	
+
+}
+
+TEActionMoveTile::~TEActionMoveTile(){	
 
 }
 
