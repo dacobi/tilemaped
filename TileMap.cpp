@@ -1395,6 +1395,7 @@ int TPalette::renderEditor(int xpos,int ypos){
 		ImGui::SetNextWindowSize(ImVec2(800, 600));
     	ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKeyPal", "Choose Palette File", ".gpl,.bin", ".");	
 		bImportingPalette = false;
+		bImportingOpen = true;
 	}
 
 	// display
@@ -1408,6 +1409,7 @@ int TPalette::renderEditor(int xpos,int ypos){
     	}    
     // close
     	ImGuiFileDialog::Instance()->Close();
+		bImportingOpen = false;
   	}
 
 	static ImVec4 backup_color;

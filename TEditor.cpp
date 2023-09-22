@@ -1,6 +1,7 @@
 #include "TSettings.h"
 #include "TEditor.h"
 #include "imgui_internal.h"
+#include "ImGuiFileDialog.h"
 
 extern TSettings mGlobalSettings;
 
@@ -959,6 +960,7 @@ int TEditor::activateDTDialog(int cOpenDialog, int cCond, int cVal0, int cVal1){
 		cDialog->setValue(0, cVal0);
 		cDialog->setValue(1, cVal1);
 		cDialog->update();
+		cDialog->bUpdateWinPos = true;
 		mActiveDialog = cDialog;
 		return 0;
 	}
@@ -3064,6 +3066,16 @@ bool TEditor::checkQuit(){
 
 	if(mCurMode == EMODE_PALED){
 		if(mPalette.bIsPickerOpen) return true;	
+
+		if(mPalette.bImportingOpen){
+
+			ImGuiFileDialog::Instance()->Close();
+
+			mPalette.bImportingOpen = false;
+
+			return true;	
+		}
+		 
 	}
 
 	return false;
