@@ -1025,9 +1025,9 @@ int parseArgs(int argc, char *argv[]){
 			return 0;
 		}
 
-		if(fs::is_directory(fs::status(std::string(argv[1])))){					
-			if(mGlobalSettings.testProjectFolder(std::string(argv[1]))){
-				mGlobalSettings.ProjectPath = std::string(argv[1]); 						
+		if(fs::is_directory(fs::status(std::string(argv[argpos])))){					
+			if(mGlobalSettings.testProjectFolder(std::string(argv[argpos]))){
+				mGlobalSettings.ProjectPath = std::string(argv[argpos]); 						
 				return 2;		
 			}
 		}		

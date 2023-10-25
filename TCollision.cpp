@@ -32,7 +32,7 @@ int TCollisionMap::checkSize(){
     int retval = 0;
 
     while(MapData.size() < mGlobalSettings.mEditor->mTileSet.TTiles.size()){
-        MapData.push_back(0);
+        MapData.push_back(0);        
         retval++;
     }
     

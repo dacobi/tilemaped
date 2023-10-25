@@ -814,7 +814,7 @@ int TBDialog::render(){
 					ImGui::EndMenu();		
 				}
 
-				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Sprite Frame Reordering").c_str()))){										
+				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " Sprite Frame Options").c_str()))){										
 					if(ImGui::MenuItem("Warn Before Frame Removal", NULL, &mGlobalSettings.bSpriteWarnBeforeDelete)){
 						
 					}
@@ -941,12 +941,12 @@ int TBDialog::render(){
 
 				
 
-				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " TileSet Reordering").c_str()))){
+				if(ImGui::BeginMenu((std::string(mGlobalSettings.mGear + " TileSet Options").c_str()))){
 					
-					if(ImGui::MenuItem("Update TileMap(s)", NULL, &mGlobalSettings.bTileSetOrderUpdateTileMap)){
+					if(ImGui::MenuItem("Update TileMap(s) On Tile Move", NULL, &mGlobalSettings.bTileSetOrderUpdateTileMap)){
 						
 					}
-					if(ImGui::MenuItem("Warn before Tile Removal", NULL, &mGlobalSettings.bTileSetWarnBeforeDelete)){
+					if(ImGui::MenuItem("Warn Before Tile Removal", NULL, &mGlobalSettings.bTileSetWarnBeforeDelete)){
 						
 					}
 					ImGui::EndMenu();
