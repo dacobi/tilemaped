@@ -1023,6 +1023,13 @@ int parseArgs(int argc, char *argv[]){
 	if(argc == 2){
 		if(std::string(argv[argpos]) == "-h"){
 			return 0;
+		}
+
+		if(fs::is_directory(fs::status(std::string(argv[1])))){					
+			if(mGlobalSettings.testProjectFolder(std::string(argv[1]))){
+				mGlobalSettings.ProjectPath = std::string(argv[1]); 						
+				return 2;		
+			}
 		}		
 	}	
 	
