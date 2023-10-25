@@ -3171,7 +3171,8 @@ DTDialog* DTDialog::createProjectCreateDialog(){
 	newDialog->addSeperator();
 	newDialog->addText("TileSet Initial Size");
 	newDialog->addRadioGroup(4, &mGlobalSettings.mNewTileSize);
-	newDialog->addRadioButton("4x4", 4);
+	newDialog->addRadioButton("2x2", 2);
+	newDialog->addRadioButton("4x4", 4, true);
 	newDialog->addRadioButton("8x8", 8, true);
 	newDialog->addRadioButton("16x16", 16, true);
 	newDialog->addSeperator();

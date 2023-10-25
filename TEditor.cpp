@@ -149,7 +149,7 @@ int TEditor::createNewProject(){
 				}
 			}
 			} else if(mGlobalSettings.mNewTileSize){
-				if((mGlobalSettings.mNewTileSize == 4) || (mGlobalSettings.mNewTileSize == 8) || (mGlobalSettings.mNewTileSize == 16)){
+				if((mGlobalSettings.mNewTileSize == 2) || (mGlobalSettings.mNewTileSize == 4) || (mGlobalSettings.mNewTileSize == 8) || (mGlobalSettings.mNewTileSize == 16)){
 					mTileSet.mSelEdWidth = mGlobalSettings.mNewTileSize;
 					mGlobalSettings.mTileSetEditWidth = mGlobalSettings.mNewTileSize;
 					for(int i = 0; i < (mGlobalSettings.mNewTileSize*mGlobalSettings.mNewTileSize); i++){
@@ -4144,10 +4144,6 @@ int TEditor::handlePalette(){
 			replaceSelectedColor(ImButtonsPalette.mRight.mMousePos.x, ImButtonsPalette.mRight.mMousePos.y);		
 		}
 	}
-
-	
-
-	
 
 	return 0;
 }
