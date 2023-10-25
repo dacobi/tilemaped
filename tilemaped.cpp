@@ -921,14 +921,23 @@ void TSettings::initHelpText(){
 }
 
 void printUsage(){
-		std::cout << std::endl;	
-		std::cout << "TilemapEd Version: " << TilemapEd_Version  << std::endl;
-		std::cout << std::endl;	
-		std::cout << "Command Line Usage:" << std::endl;
-		std::cout << "tilemaped [ --opengl, --d3d, --software, --window, --maximize, --highdpi <uiscaleinpercent>, --nohighdpi, --vsync, --novsync ]" << std::endl; std::cout <<  "(options are saved to \""+mINIPath+"\")" << std::endl;
-		std::cout << "tilemaped -o <folder>" << std::endl;		
-		std::cout << "tilemaped -n <mapwidth> <mapheight> <tilewidth> <tileheight> <folder> [ -p <palette file> ]" << std::endl;
-		std::cout << "tilemaped -c <Gimp Palette> <palfile.bin>" << std::endl;		
+
+	std::string mTilemapEdString = "tilemaped";
+
+#ifdef MWIN64
+	mTilemapEdString = "tilemaped.exe";
+#endif
+
+	std::cout << std::endl;	
+	std::cout << "TilemapEd Version: " << TilemapEd_Version  << std::endl;
+	std::cout << std::endl;	
+	std::cout << "Command Line Usage:" << std::endl;
+	std::cout << mTilemapEdString + " [ --opengl, --d3d, --software, --window, --maximize, --highdpi <uiscaleinpercent>, --nohighdpi, --vsync, --novsync ]" << std::endl; 
+	std::cout <<  "(options are saved to \""+mINIPath+"\")" << std::endl;
+	std::cout << mTilemapEdString + " [ -o ] <project folder>" << std::endl;		
+	std::cout << mTilemapEdString + " -n <mapwidth> <mapheight> <tilewidth> <tileheight> <new folder> [ -p <palette file> ]" << std::endl;
+	std::cout << mTilemapEdString + " -c <Gimp Palette> <palfile.bin>" << std::endl;
+	std::cout << mTilemapEdString + " -h" << std::endl;		
 }
 
 
