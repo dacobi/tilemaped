@@ -60,10 +60,12 @@ class DTDialog : public Dialog{
 		int mRequiredCondition = -1;
 		int mConditionLast = -1;		
 		int mTargetState = 0;
+		std::vector<std::tuple<int, int>> mAltTargets;
 		bool bHasColor = false;
 		bool *bCloseBool = NULL;
 		virtual void setLabel(std::string cLabel){mDialogTextTitle = cLabel;};
 		virtual void setTarget(int cTarget){mTargetState = cTarget;};
+		virtual void addAltTarget(int cAction, int cTarget){mAltTargets.push_back(std::tuple<int, int>(cAction, cTarget));};
 		virtual void setCondition(int cCond){mCondition = cCond; mConditionBackup = mCondition; mConditionLast = mCondition;}; //mConditionLast = cCond;
 		virtual void setCurrentCondition(int cCond){mCondition = cCond; mConditionLast = cCond;};
 		virtual void restoreContition(){mCondition = mConditionBackup; mConditionLast = mConditionBackup;};
@@ -136,6 +138,7 @@ class DTDialog : public Dialog{
 		static DTDialog* createProjectCreateDialog();
 		static DTDialog* createProjectCloseDialog();
 		static DTDialog* createProgramQuitDialog();
+		static DTDialog* createProgramQuitDialogSave();
 		static DTDialog* createProjectSaveDialog();
 		static DTDialog* createTileSetImportDialog();
 		static DTDialog* createTileMapRemoveDialog();

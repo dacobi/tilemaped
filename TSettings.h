@@ -246,6 +246,9 @@ class TSettings{
 
 		std::string mProgramMessage;
 
+		bool bProjectIsDirty = false;
+		int mDirtyCount = 0;
+		
 		void windowResizeHighDPI(int cWidth, int cHeight);
 		void renderShow();
 
@@ -450,6 +453,7 @@ enum {
 	EDIALOG_PROJECTCREATE,
 	EDIALOG_PROJECTCLOSE,
 	EDIALOG_PROGRAMQUIT,
+	EDIALOG_PROGRAMQUITSAVE,
 	EDIALOG_PROJECTSAVE,
 	EDIALOG_PROJECTSAVEAS,
 	EDIALOG_TILESETIMPORT,
@@ -477,6 +481,7 @@ enum {
 enum {
 	ESTATE_NONE,
 	ESTATE_PROGRAMQUIT,
+	ESTATE_PROGRAMQUITSAVE,
 	ESTATE_PROJECTSAVE,	
 	ESTATE_PROJECTCREATE,	
 	ESTATE_PROJECTOPEN,	

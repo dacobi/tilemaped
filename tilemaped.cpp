@@ -474,6 +474,9 @@ void TSettings::close(){
 	TileMapWidth=128;
 
 	TileSetMaxSize = 1024;		
+
+	bProjectIsDirty = false;
+	mDirtyCount = 0;
 	
 	texParamReset(mGlobalTexParam);
 

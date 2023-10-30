@@ -821,6 +821,8 @@ TEActionUndoStack::TEActionUndoStack(){
 void TEActionUndoStack::newActionGroup(){
 	TEActionGroup *newGroup = new TEActionGroup();
 	mUndoStack.push_back(newGroup);
+	
+	mGlobalSettings.mDirtyCount++;		
 }
 
 void TEActionUndoStack::addAction(TEAction *newAction){
@@ -843,13 +845,17 @@ void TEActionUndoStack::undoLastActionGroup(){
 		mRedoStack.push_back(mGroup);
 		mGroup->undo();
 		mLastAction = &mEmptyAction;
+
+		mGlobalSettings.mDirtyCount--;
 	}
 }
 
 void TEActionUndoStack::dropLastGroup(){
 	if(mUndoStack.size()){			
 		mUndoStack.pop_back();
-		mLastAction = &mEmptyAction;				
+		mLastAction = &mEmptyAction;
+
+		mGlobalSettings.mDirtyCount--;
 	}		
 }
 
@@ -860,6 +866,8 @@ void TEActionUndoStack::redoLastActionGroup(){
 		mRedoStack.pop_back();
 		mUndoStack.push_back(mGroup);
 		mGroup->redo();
+
+		mGlobalSettings.mDirtyCount++;
 	}
 }
 
@@ -870,8 +878,10 @@ void TEActionUndoStack::redoClearStack(){
 				delete dAction;				
 			}		
 		}
-		mRedoStack.erase(mRedoStack.begin(), mRedoStack.end());
+		mRedoStack.erase(mRedoStack.begin(), mRedoStack.end());		
 	}	
+
+	mGlobalSettings.bProjectIsDirty = true;	
 }
 
 void TEActionUndoStack::undoClearStack(){
@@ -888,5 +898,9 @@ void TEActionUndoStack::undoClearStack(){
 			}		
 		}
 		mUndoStack.erase(mUndoStack.begin(), mUndoStack.end());
+
+		
 	}	
+
+	mGlobalSettings.bProjectIsDirty = true;
 }

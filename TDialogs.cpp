@@ -301,7 +301,7 @@ int TBDialog::render(){
 			ImGui::Separator();
 
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mExit + " Quit")).c_str(), "ESC")){
-				mEditor->activateDTDialog(EDIALOG_PROGRAMQUIT);
+				mEditor->activateProgramQuit();
 			}
 
 			ImGui::EndMenu();
@@ -1694,6 +1694,27 @@ void DTDialog::recieveInput(int mKey){
 				mActiveInput->autoComplete();
 			}
 		}		 
+	}
+
+	if(mAltTargets.size()){
+		for(auto &cAlt : mAltTargets){
+			if(std::get<0>(cAlt) == mKey){
+				
+				for(auto *cInput : mFiles){
+					if(!cInput->bIsValid){
+						return;
+					}
+				}
+
+				bInputIsAccept=true;	
+		
+				for(auto cVal : mValues){
+					cVal->apply();			
+				}
+
+				mGlobalSettings.mEditorState = std::get<1>(cAlt);			
+			}
+		}
 	}
 }
 
@@ -3586,6 +3607,31 @@ DTDialog* DTDialog::createPaletteUpdateDialog(){
 	return newDialog;
 }
 
+DTDialog* DTDialog::createProgramQuitDialogSave(){
+
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Quit Program");
+
+	newDialog->addAltTarget(SDLK_a, ESTATE_PROGRAMQUIT);
+
+	newDialog->setTarget(ESTATE_PROGRAMQUITSAVE);
+
+	newDialog->addText(mGlobalSettings.mFile + " Project Has Unsaved Changes");
+	
+	newDialog->addSeperator();
+
+	newDialog->addButton("Save & Quit", SDLK_y);
+
+	newDialog->addButton("Discard & Quit", SDLK_a, true);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+
+
+}
+
 DTDialog* DTDialog::createProgramQuitDialog(){
 	DTDialog* newDialog = new DTDialog();
 
@@ -3594,7 +3640,8 @@ DTDialog* DTDialog::createProgramQuitDialog(){
 	newDialog->setTarget(ESTATE_PROGRAMQUIT);
 
 	newDialog->addText(mGlobalSettings.mInfo + " Quit Program?");
-	newDialog->addText(mGlobalSettings.mFile + " Unsaved progress will be lost");
+
+	newDialog->addBool("Show This Warning?", true, &mGlobalSettings.mINIFile.Win_WarnBeforeQuit->bvalue);
 
 	newDialog->addSeperator();
 

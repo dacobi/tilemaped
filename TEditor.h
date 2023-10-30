@@ -246,6 +246,8 @@ class TEditor{
 
 		int activateProjectInfo();
 		int activatePaletteEdit();
+
+		int activateProgramQuit();
 		
 		int activateDropUnusedTile();
 		int activateRemoveFrame();
@@ -265,6 +267,7 @@ class TEditor{
 
 		void stateNone();
 		void stateProgramQuit();
+		void stateProgramQuitSave();
 		void stateProjectSave();
 		void stateProjectCreate();
 		void stateProjectOpen();

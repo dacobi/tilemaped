@@ -47,7 +47,7 @@ class TEActionGroup{
 	public:
 		std::vector<TEAction*> mActions;
 		void undo();
-		void redo();
+		void redo();		
 };
 
 class TEActionReplaceMany: public TEAction{

@@ -211,6 +211,7 @@ void TEditor::initStates(){
 	
 	mStates[ESTATE_NONE] = &TEditor::stateNone;
 	mStates[ESTATE_PROGRAMQUIT] = &TEditor::stateProgramQuit;
+	mStates[ESTATE_PROGRAMQUITSAVE] = &TEditor::stateProgramQuitSave;
 	mStates[ESTATE_PROJECTSAVE] = &TEditor::stateProjectSave;
 	mStates[ESTATE_PROJECTCREATE] = &TEditor::stateProjectCreate;
 	mStates[ESTATE_PROJECTOPEN] = &TEditor::stateProjectOpen;
@@ -252,6 +253,16 @@ void TEditor::stateNone(){std::cout << "ESTATE_NONE"  << std::endl;}
 
 void TEditor::stateProgramQuit(){
 	bEditorRunning = false;
+}
+
+void TEditor::stateProgramQuitSave(){
+
+	if(saveToFolder(mGlobalSettings.ProjectPath)){		
+		showMessage("Error Creating Project Folder!", true);
+	} else {		
+		stateProgramQuit();
+	}
+
 }
 
 void TEditor::stateProjectSave(){
@@ -916,6 +927,7 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_PROJECTCREATE] = DTDialog::createProjectCreateDialog();
 	mDTDialogs[EDIALOG_PROJECTCLOSE] = DTDialog::createProjectCloseDialog();
 	mDTDialogs[EDIALOG_PROGRAMQUIT] = DTDialog::createProgramQuitDialog();
+	mDTDialogs[EDIALOG_PROGRAMQUITSAVE] = DTDialog::createProgramQuitDialogSave();
 	mDTDialogs[EDIALOG_PROJECTSAVE] = DTDialog::createProjectSaveDialog();
 	mDTDialogs[EDIALOG_PROJECTSAVEAS] = DTDCDialog::createProjectSaveAsDialog();
 	mDTDialogs[EDIALOG_TILESETIMPORT] = DTDialog::createTileSetImportDialog();
@@ -1613,6 +1625,9 @@ int TEditor::saveToFolder(std::string path){
 	mGlobalSettings.mProjectSettings.writedefault(path + DIRDEL + "settings.ini");
 
 	ImGui::SaveIniSettingsToDisk(std::string(path + DIRDEL + "imgui.ini").c_str());
+
+	mGlobalSettings.bProjectIsDirty = false;
+	mGlobalSettings.mDirtyCount = 0;
 
 	return 0;
 }
@@ -3079,6 +3094,21 @@ bool TEditor::checkQuit(){
 	}
 
 	return false;
+}
+
+int TEditor::activateProgramQuit(){
+
+	if(mGlobalSettings.bProjectIsDirty || (mGlobalSettings.mDirtyCount != 0)){
+		activateDTDialog(EDIALOG_PROGRAMQUITSAVE);
+	} else {
+		if(mGlobalSettings.mINIFile.Win_WarnBeforeQuit->bvalue){
+			activateDTDialog(EDIALOG_PROGRAMQUIT);
+		} else {		
+			stateProgramQuit();
+		}
+	}
+
+	return 0;
 }
 
 void TEditor::activateSaveDialog(){
@@ -4934,7 +4964,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 			}
 			break;
 		case SDL_QUIT:			
-			activateDTDialog(EDIALOG_PROGRAMQUIT);			  		
+			activateProgramQuit();		  		
   			break;
 			
 	  	case SDL_KEYDOWN:			
@@ -4966,7 +4996,7 @@ int TEditor::handleEvents(SDL_Event* cEvent){
 						return 0;
 					}
 										
-					activateDTDialog(EDIALOG_PROGRAMQUIT);
+					activateProgramQuit();
 	  			}
 	  			if(cEvent->key.keysym.sym == SDLK_SPACE){
 	  				switchMode();
