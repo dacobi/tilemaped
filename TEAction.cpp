@@ -822,7 +822,9 @@ void TEActionUndoStack::newActionGroup(){
 	TEActionGroup *newGroup = new TEActionGroup();
 	mUndoStack.push_back(newGroup);
 	
-	mGlobalSettings.mDirtyCount++;		
+	mGlobalSettings.mDirtyCount++;
+
+	//std::cout << "Dirty: " << mGlobalSettings.mDirtyCount << std::endl;
 }
 
 void TEActionUndoStack::addAction(TEAction *newAction){
@@ -847,6 +849,8 @@ void TEActionUndoStack::undoLastActionGroup(){
 		mLastAction = &mEmptyAction;
 
 		mGlobalSettings.mDirtyCount--;
+
+		//std::cout << "Dirty: " << mGlobalSettings.mDirtyCount << std::endl;
 	}
 }
 
@@ -856,6 +860,8 @@ void TEActionUndoStack::dropLastGroup(){
 		mLastAction = &mEmptyAction;
 
 		mGlobalSettings.mDirtyCount--;
+
+		//std::cout << "Dirty: " << mGlobalSettings.mDirtyCount << std::endl;
 	}		
 }
 
@@ -868,6 +874,8 @@ void TEActionUndoStack::redoLastActionGroup(){
 		mGroup->redo();
 
 		mGlobalSettings.mDirtyCount++;
+
+		//std::cout << "Dirty: " << mGlobalSettings.mDirtyCount << std::endl;
 	}
 }
 
@@ -881,7 +889,9 @@ void TEActionUndoStack::redoClearStack(){
 		mRedoStack.erase(mRedoStack.begin(), mRedoStack.end());		
 	}	
 
-	mGlobalSettings.bProjectIsDirty = true;	
+	//mGlobalSettings.bProjectIsDirty = true;	
+
+	//std::cout << "Dirty!" << std::endl;
 }
 
 void TEActionUndoStack::undoClearStack(){
@@ -903,4 +913,6 @@ void TEActionUndoStack::undoClearStack(){
 	}	
 
 	mGlobalSettings.bProjectIsDirty = true;
+	
+	//std::cout << "Dirty!" << std::endl;
 }
