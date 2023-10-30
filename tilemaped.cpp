@@ -600,6 +600,7 @@ void TSettings::settingsMenu(){
 		ImGui::Checkbox("VSYNC", &mINIFile.Sys_VSYNC->bvalue);
 		ImGui::Separator();
 		ImGui::Text("Window");
+		ImGui::Checkbox("Warn Before Quit", &mINIFile.Win_WarnBeforeQuit->bvalue);
 		ImGui::Checkbox("Restore Size", &mINIFile.Win_Restore->bvalue);
 		
 		if(!mINIFile.Win_Restore->bvalue){
@@ -1048,7 +1049,12 @@ int parseArgs(int argc, char *argv[]){
 			if((argc-argpos) >= 2){
 				argpos++;
 				if(fs::is_directory(fs::status(argv[argpos]))){					
-					mGlobalSettings.ProjectPath = std::string(argv[argpos]); 						
+					mGlobalSettings.ProjectPath = std::string(argv[argpos]); 		
+
+					if((returnval & 0x4)){ 
+						return -1;
+					}
+
 					returnval += 2;
 					argpos++;
 					continue;	
@@ -1132,6 +1138,10 @@ int parseArgs(int argc, char *argv[]){
 					mGlobalSettings.ProjectPath = std::string(argv[argpos]);						
 				}
 				
+				if((returnval & 0x2)){ 
+					return -1;
+				}
+
 				returnval += 4;
 				argpos++;
 

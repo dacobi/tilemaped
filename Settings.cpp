@@ -143,6 +143,7 @@ ProgramSettings::ProgramSettings(){
 	Sys_Renderer = new sKey("Sys_Renderer", type_int, 0);
 	Sys_VSYNC = new sKey("Sys_VSYNC", type_bool, true);
 	Sys_FontPath = new sKey("Sys_FontPath", type_string, std::string("NONE"));
+	Win_WarnBeforeQuit = new sKey("Win_WarnBeforeQuit", type_bool, true);
 	Win_Restore = new sKey("Win_Restore", type_bool, true);
 	Win_Width = new sKey("Win_Width", type_int, 1900);
 	Win_Height = new sKey("Win_Height", type_int, 1000);
@@ -160,6 +161,7 @@ ProgramSettings::ProgramSettings(){
 	keys.push_back(Sys_Renderer);
 	keys.push_back(Sys_VSYNC);
 	keys.push_back(Sys_FontPath);
+	keys.push_back(Win_WarnBeforeQuit);
 	keys.push_back(Win_Restore);
 	keys.push_back(Win_Width);
 	keys.push_back(Win_Height);	
