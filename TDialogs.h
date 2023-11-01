@@ -137,6 +137,7 @@ class DTDialog : public Dialog{
 		static DTDialog* createProjectOpenDialog();
 		static DTDialog* createProjectCreateDialog();
 		static DTDialog* createProjectCloseDialog();
+		static DTDialog* createProjectCloseDialogSave();
 		static DTDialog* createProgramQuitDialog();
 		static DTDialog* createProgramQuitDialogSave();
 		static DTDialog* createProjectSaveDialog();

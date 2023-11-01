@@ -176,6 +176,10 @@ int TEditor::createNewProject(){
 
 	initDialogs();
 
+	if(retval == 0){
+		mGlobalSettings.bProjectIsDirty = true;
+	}
+
 	return retval;
 }
 
@@ -209,6 +213,7 @@ void TEditor::handleState(){
 
 void TEditor::initStates(){
 	
+
 	mStates[ESTATE_NONE] = &TEditor::stateNone;
 	mStates[ESTATE_PROGRAMQUIT] = &TEditor::stateProgramQuit;
 	mStates[ESTATE_PROGRAMQUITSAVE] = &TEditor::stateProgramQuitSave;
@@ -216,6 +221,7 @@ void TEditor::initStates(){
 	mStates[ESTATE_PROJECTCREATE] = &TEditor::stateProjectCreate;
 	mStates[ESTATE_PROJECTOPEN] = &TEditor::stateProjectOpen;
 	mStates[ESTATE_PROJECTCLOSE] = &TEditor::stateProjectClose;
+	mStates[ESTATE_PROJECTCLOSESAVE] = &TEditor::stateProjectCloseSave;
 	mStates[ESTATE_TILEIMPORT] = &TEditor::stateTileImport;	
 	mStates[ESTATE_TILEDELETE] = &TEditor::stateTileDelete;
 	mStates[ESTATE_TILEDELETEALL] = &TEditor::stateTileDeleteAll;
@@ -280,6 +286,18 @@ void TEditor::stateProjectCreate(){
 void TEditor::stateProjectOpen(){
 	mGlobalSettings.bRunningOCD = false;
 }
+
+void TEditor::stateProjectCloseSave(){
+
+	if(saveToFolder(mGlobalSettings.ProjectPath)){		
+		mGlobalSettings.mOpenCreateProjectState = ESTATE_NONE;
+		showMessage("Error Creating Project Folder!", true);
+	} else {		
+		stateProjectClose();
+	}
+
+}
+
 
 void TEditor::stateProjectClose(){
 	bEditorRunning = false;
@@ -926,6 +944,7 @@ void TEditor::createDialogs(){
 	mDTDialogs[EDIALOG_PROJECTOPEN] = DTDialog::createProjectOpenDialog();
 	mDTDialogs[EDIALOG_PROJECTCREATE] = DTDialog::createProjectCreateDialog();
 	mDTDialogs[EDIALOG_PROJECTCLOSE] = DTDialog::createProjectCloseDialog();
+	mDTDialogs[EDIALOG_PROJECTCLOSESAVE] = DTDialog::createProjectCloseDialogSave();
 	mDTDialogs[EDIALOG_PROGRAMQUIT] = DTDialog::createProgramQuitDialog();
 	mDTDialogs[EDIALOG_PROGRAMQUITSAVE] = DTDialog::createProgramQuitDialogSave();
 	mDTDialogs[EDIALOG_PROJECTSAVE] = DTDialog::createProjectSaveDialog();
@@ -3094,6 +3113,23 @@ bool TEditor::checkQuit(){
 	}
 
 	return false;
+}
+
+int TEditor::activateProjectClose(int cState){
+
+	if(mGlobalSettings.bProjectIsDirty || (mGlobalSettings.mDirtyCount != 0)){
+		activateDTDialog(EDIALOG_PROJECTCLOSESAVE, cState);
+	} else {
+		if(mGlobalSettings.mINIFile.Win_WarnBeforeQuit->bvalue){
+			activateDTDialog(EDIALOG_PROJECTCLOSE, cState);
+		} else {	
+			mGlobalSettings.mOpenCreateProjectState = cState;	
+			stateProjectClose();
+		}
+	}
+
+	return 0;
+
 }
 
 int TEditor::activateProgramQuit(){

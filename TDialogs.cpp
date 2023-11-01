@@ -118,10 +118,10 @@ int TBDialog::render(){
 				mEditor->activateDTDialog(EDIALOG_PROJECTSAVEAS);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Open")).c_str())){
-				mEditor->activateDTDialog(EDIALOG_PROJECTCLOSE, ESTATE_PROJECTOPEN);
+				mEditor->activateProjectClose(ESTATE_PROJECTOPEN);
 			}
 			if(ImGui::MenuItem((std::string(mGlobalSettings.mFile + " Create")).c_str())){
-				mEditor->activateDTDialog(EDIALOG_PROJECTCLOSE, ESTATE_PROJECTCREATE);				
+				mEditor->activateProjectClose(ESTATE_PROJECTCREATE);				
 			}
 
 
@@ -3520,15 +3520,14 @@ DTDialog* DTDialog::createTileMapImportDialog(){
 
 }
 
-DTDialog* DTDialog::createProjectCloseDialog(){
+DTDialog* DTDialog::createProjectCloseDialogSave(){
+
 	DTDialog* newDialog = new DTDialog();
 
 	newDialog->setLabel("Close Project");
 
-	newDialog->setTarget(ESTATE_PROJECTCLOSE);
-
-	newDialog->addText(mGlobalSettings.mInfo + " Close Current Project?");
-	newDialog->addText(mGlobalSettings.mFile + " Unsaved progress will be lost");
+	newDialog->setTarget(ESTATE_PROJECTCLOSESAVE);
+	newDialog->addAltTarget(SDLK_a, ESTATE_PROJECTCLOSE);
 
 	newDialog->setRequiredCondition(ESTATE_PROJECTOPEN);
 	newDialog->addIntTarget(ESTATE_PROJECTOPEN, &mGlobalSettings.mOpenCreateProjectState);
@@ -3537,6 +3536,40 @@ DTDialog* DTDialog::createProjectCloseDialog(){
 	newDialog->addIntTarget(ESTATE_PROJECTCREATE, &mGlobalSettings.mOpenCreateProjectState);
 
 	newDialog->clearRequiredCondition();
+
+	newDialog->addText(mGlobalSettings.mInfo + " Close Current Project?");
+	newDialog->addText(mGlobalSettings.mFile + " Project Has Unsaved Changes");
+	
+	newDialog->addSeperator();
+
+	newDialog->addButton("Save & Close", SDLK_y);
+
+	newDialog->addButton("Discard & Close", SDLK_a, true);
+	
+	newDialog->addButton("Cancel", SDLK_n, true);
+
+	return newDialog;
+
+}
+
+DTDialog* DTDialog::createProjectCloseDialog(){
+	DTDialog* newDialog = new DTDialog();
+
+	newDialog->setLabel("Close Project");
+
+	newDialog->setTarget(ESTATE_PROJECTCLOSE);
+
+	newDialog->addText(mGlobalSettings.mInfo + " Close Current Project?");
+	
+	newDialog->setRequiredCondition(ESTATE_PROJECTOPEN);
+	newDialog->addIntTarget(ESTATE_PROJECTOPEN, &mGlobalSettings.mOpenCreateProjectState);
+
+	newDialog->setRequiredCondition(ESTATE_PROJECTCREATE);
+	newDialog->addIntTarget(ESTATE_PROJECTCREATE, &mGlobalSettings.mOpenCreateProjectState);
+
+	newDialog->clearRequiredCondition();
+
+	newDialog->addBool("Show This Warning", true, &mGlobalSettings.mINIFile.Win_WarnBeforeQuit->bvalue);
 
 	newDialog->addSeperator();
 
@@ -3641,7 +3674,7 @@ DTDialog* DTDialog::createProgramQuitDialog(){
 
 	newDialog->addText(mGlobalSettings.mInfo + " Quit Program?");
 
-	newDialog->addBool("Show This Warning?", true, &mGlobalSettings.mINIFile.Win_WarnBeforeQuit->bvalue);
+	newDialog->addBool("Show This Warning", true, &mGlobalSettings.mINIFile.Win_WarnBeforeQuit->bvalue);
 
 	newDialog->addSeperator();
 
